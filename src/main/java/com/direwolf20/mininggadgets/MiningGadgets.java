@@ -1,7 +1,12 @@
 package com.direwolf20.mininggadgets;
 
+import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
+import com.direwolf20.mininggadgets.common.setup.ModSetup;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,6 +30,8 @@ public class MiningGadgets
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
 
+    public static ModSetup setup = new ModSetup();
+
     public MiningGadgets() {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -44,6 +51,7 @@ public class MiningGadgets
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        setup.init();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -78,7 +86,14 @@ public class MiningGadgets
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             // register a new block here
+            blockRegistryEvent.getRegistry().register(new RenderBlock());
             LOGGER.info("HELLO from Register Block");
+        }
+        @SubscribeEvent
+        public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
+            Item.Properties properties = new Item.Properties()
+                    .group(setup.itemGroup);
+            event.getRegistry().register(new BlockItem(ModBlocks.RENDERBLOCK, properties).setRegistryName("renderblock"));
         }
     }
 }
