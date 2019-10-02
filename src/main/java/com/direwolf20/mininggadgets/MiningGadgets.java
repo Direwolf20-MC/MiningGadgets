@@ -3,10 +3,12 @@ package com.direwolf20.mininggadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.setup.ModSetup;
+import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -94,6 +96,10 @@ public class MiningGadgets
             Item.Properties properties = new Item.Properties()
                     .group(setup.itemGroup);
             event.getRegistry().register(new BlockItem(ModBlocks.RENDERBLOCK, properties).setRegistryName("renderblock"));
+        }
+        @SubscribeEvent
+        public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event) {
+            event.getRegistry().register(TileEntityType.Builder.create(RenderBlockTileEntity::new, ModBlocks.RENDERBLOCK).build(null).setRegistryName("renderblock"));
         }
     }
 }
