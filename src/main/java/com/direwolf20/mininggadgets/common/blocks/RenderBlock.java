@@ -9,6 +9,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Hand;
@@ -35,7 +36,7 @@ public class RenderBlock extends Block {
         if (!worldIn.isRemote) {
             TileEntity tileEntity = worldIn.getTileEntity(pos);
             if (tileEntity instanceof RenderBlockTileEntity) {
-                ((RenderBlockTileEntity) tileEntity).durability++;
+                //((RenderBlockTileEntity) tileEntity).durability++;
             }
         }
         return true;
