@@ -1,14 +1,24 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.event.world.BlockEvent;
+import org.apache.logging.log4j.core.jmx.Server;
+
+import java.util.List;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
@@ -19,9 +29,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private BlockState renderBlock;
     private int priorDurability = 9999;
     private int durability;
-
+    private PlayerEntity player;
     private int originalDurability;
     private int ticks = 0;
+
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE);
@@ -50,6 +61,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void setOriginalDurability(int originalDurability) {
         this.originalDurability = originalDurability;
+    }
+
+    public PlayerEntity getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(PlayerEntity player) {
+        this.player = player;
     }
 
     @Override
@@ -88,6 +107,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         originalDurability = tag.getInt("originalDurability");
         priorDurability = tag.getInt("priorDurability");
         durability = tag.getInt("durability");
+        player = world.getPlayerByUuid(tag.getUniqueId("playerUUID"));
         markDirtyClient();
     }
 
@@ -97,6 +117,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("originalDurability", originalDurability);
         tag.putInt("priorDurability", priorDurability);
         tag.putInt("durability", durability);
+        tag.putUniqueId("playerUUID", player.getUniqueID());
         return super.write(tag);
     }
 
@@ -122,6 +143,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
             if (durability <= 0) {
                 world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+                BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, getPos(), renderBlock, player);
+                boolean cancelledBreak = MinecraftForge.EVENT_BUS.post(e);
+                if (!cancelledBreak) {
+                    List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
+                    for (ItemStack drop : blockDrops) {
+                        if (drop != null) {
+                            player.addItemStackToInventory(drop);
+                        }
+                    }
+                }
             }
         }
     }

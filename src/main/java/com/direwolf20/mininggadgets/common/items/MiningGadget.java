@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.world.World;
+import net.minecraftforge.event.world.BlockEvent;
 
 public class MiningGadget extends Item {
     public MiningGadget() {
@@ -68,6 +69,7 @@ public class MiningGadget extends Item {
             te.setRenderBlock(state);
             te.setDurability(40);
             te.setOriginalDurability(40);
+            te.setPlayer((PlayerEntity) player);
         } else {
             RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(pos);
             te.setDurability(te.getDurability() - 1);
