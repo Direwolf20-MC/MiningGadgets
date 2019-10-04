@@ -151,7 +151,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                         if (drop != null) {
                             boolean success = player.addItemStackToInventory(drop);
                             if (!success) {
-                                Block.spawnDrops(renderBlock, world, pos);
+                                Block.spawnAsEntity(world, pos, drop);
                             }
                         }
                     }
