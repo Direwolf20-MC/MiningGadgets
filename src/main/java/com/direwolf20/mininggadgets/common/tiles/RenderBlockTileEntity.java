@@ -11,12 +11,9 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.world.BlockEvent;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.List;
 
@@ -48,7 +45,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void setDurability(int dur) {
         durability = dur;
-        markDirtyClient();
+        markDirty();
     }
 
     public int getDurability() {
@@ -124,23 +121,21 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     @Override
     public void tick() {
-        if (!getWorld().isRemote) {
             if (priorDurability == 9999) {
                 priorDurability = durability;
             }
-            System.out.println(durability);
             if (priorDurability == durability) {
                 if (durability > originalDurability) {
                     world.setBlockState(this.pos, renderBlock);
                 } else {
                     durability++;
                     priorDurability = durability;
-                    markDirtyClient();
+                    markDirty();
                 }
             } else {
                 priorDurability = durability;
             }
-
+        if (!getWorld().isRemote) {
             if (durability <= 0) {
                 world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
                 BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, getPos(), renderBlock, player);

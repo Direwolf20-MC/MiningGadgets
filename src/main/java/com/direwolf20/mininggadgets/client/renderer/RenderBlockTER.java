@@ -25,14 +25,9 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         int durability = tile.getDurability();
         int originalDurability = tile.getOriginalDurability();
-        System.out.println("Render Durability: " + durability);
-        //teCounter = teCounter > maxLife ? maxLife : teCounter;
         float scale = (float) (durability) / (float) originalDurability;
-        System.out.println("Scale: " + scale);
         if (scale >= 1.0f)
             scale = 0.99f;
-        //if (toolMode == EffectBlock.Mode.REMOVE || toolMode == EffectBlock.Mode.REPLACE)
-        //scale = (float) (maxLife - teCounter) / maxLife;
         float trans = (1 - scale) / 2;
 
         GlStateManager.translated(x, y, z);
