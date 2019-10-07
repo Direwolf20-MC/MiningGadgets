@@ -82,6 +82,10 @@ public class RenderMiningLaser {
             wr.pos(thickness, 0, distance).tex(0, v + distance * 1.5).endVertex();
             wr.pos(-thickness, 0, distance).tex(1, v + distance * 1.5).endVertex();
             wr.pos(-thickness+startXOffset, startYOffset, 0).tex(1, v).endVertex();*/
+            wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
+            wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
 
             wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
             wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
@@ -98,6 +102,11 @@ public class RenderMiningLaser {
             wr.pos(thickness, 0, distance).tex(0, v + distance * 1.5).endVertex();
             wr.pos(-thickness, 0, distance).tex(1, v + distance * 1.5).endVertex();
             wr.pos(-thickness, startYOffset, 0).tex(1, v).endVertex();*/
+            wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
+            wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
+
             wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
             wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
             wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
