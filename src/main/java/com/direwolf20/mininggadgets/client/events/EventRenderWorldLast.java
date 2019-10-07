@@ -23,6 +23,8 @@ public class EventRenderWorldLast {
         PlayerEntity myplayer = Minecraft.getInstance().player;
 
         for (PlayerEntity player : players) {
+            if (player.getDistanceSq(myplayer) > 500)
+                continue;
             ItemStack heldItem = MiscTools.getGadget(player);
             if (player.isHandActive() && heldItem.getItem() instanceof MiningGadget) {
                 RenderMiningLaser.renderLaser(player, evt.getPartialTicks());
@@ -30,3 +32,4 @@ public class EventRenderWorldLast {
         }
     }
 }
+
