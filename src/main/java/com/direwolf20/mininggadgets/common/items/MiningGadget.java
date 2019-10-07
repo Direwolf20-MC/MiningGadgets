@@ -19,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.world.World;
-import net.minecraftforge.event.world.BlockEvent;
 
 public class MiningGadget extends Item {
     public MiningGadget() {
@@ -29,7 +28,7 @@ public class MiningGadget extends Item {
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.BOW;
+        return UseAction.NONE;
     }
 
     @Override
@@ -53,7 +52,6 @@ public class MiningGadget extends Item {
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         World world = player.world;
-        //public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         if (world.isRemote) {
             return;
         }
@@ -67,12 +65,15 @@ public class MiningGadget extends Item {
             world.setBlockState(lookingAt.getPos(), ModBlocks.RENDERBLOCK.getDefaultState());
             RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(pos);
             te.setRenderBlock(state);
-            te.setDurability(40);
-            te.setOriginalDurability(40);
+            te.setDurability(50);
+            te.setOriginalDurability(50);
             te.setPlayer((PlayerEntity) player);
         } else {
             RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(pos);
-            te.setDurability(te.getDurability() - 1);
+            if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
+                te.setDurability(te.getDurability() - 2);
+            else
+                te.setDurability(te.getDurability() - 1);
         }
 
         return;

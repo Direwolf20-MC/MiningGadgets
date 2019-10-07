@@ -1,19 +1,17 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
@@ -65,27 +63,49 @@ public class RenderMiningLaser {
         //Vec3d playerPos = player.getPositionVec();
 
         GlStateManager.color3f(r, g, b);
-
         GlStateManager.pushMatrix();
         GlStateManager.translated(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
         GlStateManager.translated(from.x, from.y, from.z);
         GlStateManager.rotatef(-player.getRotationYawHead(), 0, 1, 0);
         GlStateManager.rotatef(player.rotationPitch, 1, 0, 0);
-        GlStateManager.translated(offset.x, offset.y, offset.z);
+        //GlStateManager.translated(offset.x, offset.y, offset.z);
         BufferBuilder wr = Tessellator.getInstance().getBuffer();
-        wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        wr.pos(thickness, 0, 0).tex(0, v).endVertex();
-        wr.pos(thickness, 0, distance).tex(0, v + distance * 1.5).endVertex();
-        wr.pos(-thickness, 0, distance).tex(1, v + distance * 1.5).endVertex();
-        wr.pos(-thickness, 0, 0).tex(1, v).endVertex();
 
-        wr.pos(0, thickness, 0).tex(0, v).endVertex();
-        wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
-        wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
-        wr.pos(0, -thickness, 0).tex(1, v).endVertex();
-        Tessellator.getInstance().draw();
+        ItemStack heldItem = player.getHeldItemMainhand();
+
+
+        if (heldItem.getItem() instanceof MiningGadget) {
+            double startYOffset = -.25;
+            double startXOffset = -0.35;
+            wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            /*wr.pos(thickness+startXOffset, startYOffset, 0).tex(0, v).endVertex();
+            wr.pos(thickness, 0, distance).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(-thickness, 0, distance).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(-thickness+startXOffset, startYOffset, 0).tex(1, v).endVertex();*/
+
+            wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
+            wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
+            Tessellator.getInstance().draw();
+        }
+        heldItem = player.getHeldItemOffhand();
+        if (heldItem.getItem() instanceof MiningGadget) {
+            double startYOffset = -0.25;
+            double startXOffset = 0.35;
+            wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            /*wr.pos(thickness, startYOffset, 0).tex(0, v).endVertex();
+            wr.pos(thickness, 0, distance).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(-thickness, 0, distance).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(-thickness, startYOffset, 0).tex(1, v).endVertex();*/
+            wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
+            wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
+            Tessellator.getInstance().draw();
+        }
+
         GlStateManager.popMatrix();
-
     }
 
 }
