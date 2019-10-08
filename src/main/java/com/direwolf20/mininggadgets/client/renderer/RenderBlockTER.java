@@ -28,7 +28,10 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         float scale = (float) (durability) / (float) originalDurability;
         if (scale >= 1.0f)
             scale = 1f;
+        if (scale <= 0)
+            scale = 0;
         float trans = (1 - scale) / 2;
+
 
         GlStateManager.translated(x, y, z);
         GlStateManager.translatef(trans, trans, trans);

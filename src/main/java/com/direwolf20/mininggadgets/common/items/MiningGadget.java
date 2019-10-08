@@ -8,6 +8,7 @@ import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -94,28 +95,44 @@ public class MiningGadget extends Item {
         if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
             return;
         BlockPos pos = lookingAt.getPos();
-
         List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
-
+        float hardness = getHardness(coords, (PlayerEntity) player);
+        hardness = hardness * getToolRange(stack);
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             if (!(state.getBlock() instanceof RenderBlock)) {
-                world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
-                RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
-                te.setRenderBlock(state);
-                te.setDurability(40 - 1);
-                te.setOriginalDurability(40);
-                te.setPlayer((PlayerEntity) player);
+                if (!world.isRemote) {
+                    world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
+                    RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
+                    te.setRenderBlock(state);
+                    te.setDurability((int) hardness - 1);
+                    te.setOriginalDurability((int) hardness);
+                    te.setPlayer((PlayerEntity) player);
+                }
             } else {
+                //if (!world.isRemote) {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                 if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
                     te.setDurability(te.getDurability() - 2);
                 else
                     te.setDurability(te.getDurability() - 1);
+                //}
             }
         }
 
         return;
+    }
+
+    private static float getHardness(List<BlockPos> coords, PlayerEntity player) {
+        float hardness = 0;
+        World world = player.getEntityWorld();
+        for (BlockPos coord : coords) {
+            BlockState state = world.getBlockState(coord);
+            float temphardness = state.getBlockHardness(world, coord);
+            if (state.getMaterial() == Material.EARTH) temphardness = temphardness * 4;
+            hardness += temphardness;
+        }
+        return ((hardness / coords.size()) * 3);
     }
 
     public static List<BlockPos> getMinableBlocks(ItemStack stack, BlockRayTraceResult lookingAt, PlayerEntity player) {
@@ -132,19 +149,26 @@ public class MiningGadget extends Item {
         Direction down = up.getOpposite();
         Direction right = vertical ? up.rotateY() : side.rotateYCCW();
         Direction left = right.getOpposite();
+        World world = player.world;
 
-        coordinates.add(lookingAt.getPos().offset(up).offset(left));
-        coordinates.add(lookingAt.getPos().offset(up));
-        coordinates.add(lookingAt.getPos().offset(up).offset(right));
-        coordinates.add(lookingAt.getPos().offset(left));
-        coordinates.add(lookingAt.getPos());
-        coordinates.add(lookingAt.getPos().offset(right));
-        coordinates.add(lookingAt.getPos().offset(down).offset(left));
-        coordinates.add(lookingAt.getPos().offset(down));
-        coordinates.add(lookingAt.getPos().offset(down).offset(right));
-
+        addCoord(coordinates, lookingAt.getPos().offset(up).offset(left), world);
+        addCoord(coordinates, lookingAt.getPos().offset(up), world);
+        addCoord(coordinates, lookingAt.getPos().offset(up).offset(right), world);
+        addCoord(coordinates, lookingAt.getPos().offset(left), world);
+        addCoord(coordinates, lookingAt.getPos(), world);
+        addCoord(coordinates, lookingAt.getPos().offset(right), world);
+        addCoord(coordinates, lookingAt.getPos().offset(down).offset(left), world);
+        addCoord(coordinates, lookingAt.getPos().offset(down), world);
+        addCoord(coordinates, lookingAt.getPos().offset(down).offset(right), world);
 
         return coordinates;
+    }
+
+    private static void addCoord(List<BlockPos> coordinates, BlockPos coord, World world) {
+        BlockState state = world.getBlockState(coord);
+        if (state.getMaterial() != Material.AIR) {
+            coordinates.add(coord);
+        }
     }
 
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {

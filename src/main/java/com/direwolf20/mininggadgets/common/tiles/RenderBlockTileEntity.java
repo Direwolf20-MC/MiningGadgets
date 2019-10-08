@@ -26,6 +26,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private int durability;
     private UUID playerUUID;
     private int originalDurability;
+    private int ticksSinceMine = 0;
 
 
     public RenderBlockTileEntity() {
@@ -45,7 +46,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         if (priorDurability == 9999) {
             priorDurability = durability + 1;
         }
-        markDirty();
+        ticksSinceMine = 0;
+        //markDirty();
     }
 
     public int getDurability() {
@@ -104,6 +106,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         originalDurability = tag.getInt("originalDurability");
         priorDurability = tag.getInt("priorDurability");
         durability = tag.getInt("durability");
+        ticksSinceMine = tag.getInt("ticksSinceMine");
         playerUUID = tag.getUniqueId("playerUUID");
     }
 
@@ -113,6 +116,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("originalDurability", originalDurability);
         tag.putInt("priorDurability", priorDurability);
         tag.putInt("durability", durability);
+        tag.putInt("ticksSinceMine", ticksSinceMine);
         tag.putUniqueId("playerUUID", playerUUID);
         return super.write(tag);
     }
@@ -127,7 +131,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 markDirty();
             }
             if (durability <= 0) {
-                world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
                 BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, getPos(), renderBlock, player);
                 boolean cancelledBreak = MinecraftForge.EVENT_BUS.post(e);
                 if (!cancelledBreak) {
@@ -140,14 +143,22 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                         }
                     }
                     player.giveExperiencePoints(renderBlock.getExpDrop(world, pos, 0, 0));
+                    world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+                    world.removeTileEntity(this.pos);
+                    markDirtyClient();
                 }
             }
         }
-        if (priorDurability == durability) {
-            durability++;
-            priorDurability = durability;
+        if (ticksSinceMine >= 10) {
+            if (priorDurability == durability) {
+                durability++;
+                priorDurability = durability;
+            } else {
+                priorDurability = durability;
+            }
+            ticksSinceMine++;
         } else {
-            priorDurability = durability;
+            ticksSinceMine++;
         }
 
     }
