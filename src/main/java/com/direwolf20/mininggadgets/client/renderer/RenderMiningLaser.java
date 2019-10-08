@@ -19,19 +19,24 @@ public class RenderMiningLaser {
 
     public static void renderLaser(PlayerEntity player, float ticks) {
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
-        Vec3d pos = player.getEyePosition(ticks);
-        Vec3d blockpos = lookingAt.getHitVec();
+        Vec3d playerPos = player.getEyePosition(ticks);
+        Vec3d lookBlockPos = lookingAt.getHitVec();
 
-        //if (Minecraft.getInstance().world.getBlockState(lookingAt.getPos()) != Blocks.AIR.getDefaultState()) {
-        renderBeam(pos.getX(), pos.getY(), pos.getZ(), blockpos.getX(), blockpos.getY(), blockpos.getZ(), 1f, 0f, 0f, 0.01f, player);
+       /* List<BlockPos> coords = new ArrayList<BlockPos>();
+        coords = MiningGadget.getMinableBlocks(MiscTools.getGadget(player), lookingAt, (PlayerEntity) player);
+        for (BlockPos coord : coords) {
+            if (Minecraft.getInstance().world.getBlockState(coord) != Blocks.AIR.getDefaultState()) {*/
+        //renderBeam(pos.getX(), pos.getY(), pos.getZ(), blockpos.getX(), blockpos.getY(), blockpos.getZ(), 1f, 0f, 0f, 0.01f, player);
+
+        renderBeam(playerPos, lookBlockPos, 0, 0, 0, 1f, 0f, 0f, 0.01f, player);
         //}
+        //}
+
     }
 
-    public static void renderBeam(double startX, double startY, double startZ, double endX, double endY, double endZ, float r, float g, float b, float thickness, PlayerEntity player) {
+    public static void renderBeam(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player) {
         Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
 
-        Vec3d from = new Vec3d(startX, startY, startZ);
-        Vec3d to = new Vec3d(endX, endY, endZ);
         double distance = from.subtract(to).length();
         double v = -player.world.getGameTime() * 0.2;
 
@@ -50,13 +55,13 @@ public class RenderMiningLaser {
             double startXOffset = -0.35;
             wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
-            wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
-            wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
             wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
 
             wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
-            wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
-            wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
             wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
             Tessellator.getInstance().draw();
         }
@@ -66,13 +71,13 @@ public class RenderMiningLaser {
             double startXOffset = 0.35;
             wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
-            wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
-            wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
             wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
 
             wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
-            wr.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
-            wr.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
+            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
+            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
             wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
             Tessellator.getInstance().draw();
         }

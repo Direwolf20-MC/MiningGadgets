@@ -16,6 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
@@ -26,7 +27,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private BlockState renderBlock;
     private int priorDurability = 9999;
     private int durability;
-    private PlayerEntity player;
+    private UUID playerUUID;
     private int originalDurability;
     private int ticks = 0;
 
@@ -64,11 +65,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public PlayerEntity getPlayer() {
-        return player;
+        return world.getPlayerByUuid(playerUUID);
     }
 
     public void setPlayer(PlayerEntity player) {
-        this.player = player;
+        this.playerUUID = player.getUniqueID();
     }
 
     @Override
@@ -107,7 +108,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         originalDurability = tag.getInt("originalDurability");
         priorDurability = tag.getInt("priorDurability");
         durability = tag.getInt("durability");
-        player = world.getPlayerByUuid(tag.getUniqueId("playerUUID"));
+        playerUUID = tag.getUniqueId("playerUUID");
         markDirtyClient();
     }
 
@@ -117,7 +118,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("originalDurability", originalDurability);
         tag.putInt("priorDurability", priorDurability);
         tag.putInt("durability", durability);
-        tag.putUniqueId("playerUUID", player.getUniqueID());
+        tag.putUniqueId("playerUUID", playerUUID);
         return super.write(tag);
     }
 
@@ -125,6 +126,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     @Override
     public void tick() {
         if (!getWorld().isRemote) {
+            PlayerEntity player = world.getPlayerByUuid(playerUUID);
             if (durability >= originalDurability) {
                 world.setBlockState(this.pos, renderBlock);
                 markDirty();
