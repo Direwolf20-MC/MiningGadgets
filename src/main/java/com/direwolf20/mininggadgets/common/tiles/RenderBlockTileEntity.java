@@ -45,6 +45,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void setDurability(int dur) {
         durability = dur;
+        if (priorDurability == 9999) {
+            priorDurability = durability + 1;
+        }
         markDirty();
     }
 
@@ -121,21 +124,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     @Override
     public void tick() {
-            if (priorDurability == 9999) {
-                priorDurability = durability;
-            }
-            if (priorDurability == durability) {
-                if (durability > originalDurability) {
-                    world.setBlockState(this.pos, renderBlock);
-                } else {
-                    durability++;
-                    priorDurability = durability;
-                    markDirty();
-                }
-            } else {
-                priorDurability = durability;
-            }
         if (!getWorld().isRemote) {
+            if (durability >= originalDurability) {
+                world.setBlockState(this.pos, renderBlock);
+                markDirty();
+            }
             if (durability <= 0) {
                 world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
                 BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, getPos(), renderBlock, player);
@@ -153,5 +146,12 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 }
             }
         }
+        if (priorDurability == durability) {
+            durability++;
+            priorDurability = durability;
+        } else {
+            priorDurability = durability;
+        }
+
     }
 }

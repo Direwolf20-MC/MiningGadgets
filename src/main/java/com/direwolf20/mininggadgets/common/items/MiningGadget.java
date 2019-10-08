@@ -103,12 +103,11 @@ public class MiningGadget extends Item {
 
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
-
             if (!(state.getBlock() instanceof RenderBlock)) {
                 world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                 te.setRenderBlock(state);
-                te.setDurability(40);
+                te.setDurability(40 - 1);
                 te.setOriginalDurability(40);
                 te.setPlayer((PlayerEntity) player);
             } else {
@@ -153,6 +152,6 @@ public class MiningGadget extends Item {
     }
 
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
-        System.out.println("Stopped Using");
+        //System.out.println("Stopped Using");
     }
 }
