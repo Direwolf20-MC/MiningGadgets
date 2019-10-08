@@ -90,16 +90,12 @@ public class MiningGadget extends Item {
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         World world = player.world;
-        /*if (world.isRemote) {
-            return;
-        }*/
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
         if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
             return;
         BlockPos pos = lookingAt.getPos();
 
-        List<BlockPos> coords = new ArrayList<BlockPos>();
-        coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
+        List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
 
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
@@ -152,6 +148,6 @@ public class MiningGadget extends Item {
     }
 
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
-        //System.out.println("Stopped Using");
+
     }
 }

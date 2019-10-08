@@ -21,15 +21,11 @@ import java.util.UUID;
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
 public class RenderBlockTileEntity extends TileEntity implements ITickableTileEntity {
-    /**
-     * Even though this is called "rendered", is will be used for replacement under normal conditions.
-     */
     private BlockState renderBlock;
     private int priorDurability = 9999;
     private int durability;
     private UUID playerUUID;
     private int originalDurability;
-    private int ticks = 0;
 
 
     public RenderBlockTileEntity() {
@@ -109,7 +105,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         priorDurability = tag.getInt("priorDurability");
         durability = tag.getInt("durability");
         playerUUID = tag.getUniqueId("playerUUID");
-        markDirtyClient();
     }
 
     @Override

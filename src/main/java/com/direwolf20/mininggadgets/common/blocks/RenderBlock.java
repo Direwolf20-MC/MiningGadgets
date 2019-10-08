@@ -24,17 +24,6 @@ public class RenderBlock extends Block {
         setRegistryName("renderblock");
     }
 
-    /*@Override
-    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (!worldIn.isRemote) {
-            TileEntity tileEntity = worldIn.getTileEntity(pos);
-            if (tileEntity instanceof RenderBlockTileEntity) {
-                //((RenderBlockTileEntity) tileEntity).durability++;
-            }
-        }
-        return true;
-    }*/
-
     @Override
     public boolean hasTileEntity(BlockState state) {
         return true;

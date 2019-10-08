@@ -35,8 +35,6 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         GlStateManager.scalef(scale, scale, scale);
 
-        //BlockState renderBlockState = renderData.getState();
-
         try {
             blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
         } catch (Throwable t) {

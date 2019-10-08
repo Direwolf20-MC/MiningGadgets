@@ -22,16 +22,7 @@ public class RenderMiningLaser {
         Vec3d playerPos = player.getEyePosition(ticks);
         Vec3d lookBlockPos = lookingAt.getHitVec();
 
-       /* List<BlockPos> coords = new ArrayList<BlockPos>();
-        coords = MiningGadget.getMinableBlocks(MiscTools.getGadget(player), lookingAt, (PlayerEntity) player);
-        for (BlockPos coord : coords) {
-            if (Minecraft.getInstance().world.getBlockState(coord) != Blocks.AIR.getDefaultState()) {*/
-        //renderBeam(pos.getX(), pos.getY(), pos.getZ(), blockpos.getX(), blockpos.getY(), blockpos.getZ(), 1f, 0f, 0f, 0.01f, player);
-
         renderBeam(playerPos, lookBlockPos, 0, 0, 0, 1f, 0f, 0f, 0.01f, player);
-        //}
-        //}
-
     }
 
     public static void renderBeam(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player) {
