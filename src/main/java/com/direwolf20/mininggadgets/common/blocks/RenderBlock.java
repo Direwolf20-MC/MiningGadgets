@@ -9,6 +9,7 @@ import net.minecraft.block.material.PushReaction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.storage.loot.LootContext;
 
@@ -22,6 +23,11 @@ public class RenderBlock extends Block {
                 .hardnessAndResistance(2.0f)
         );
         setRegistryName("renderblock");
+    }
+
+    @Override
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return false;
     }
 
     @Override
@@ -73,5 +79,10 @@ public class RenderBlock extends Block {
     @Override
     public PushReaction getPushReaction(BlockState state) {
         return PushReaction.BLOCK;
+    }
+
+    @Override
+    public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return 0;
     }
 }
