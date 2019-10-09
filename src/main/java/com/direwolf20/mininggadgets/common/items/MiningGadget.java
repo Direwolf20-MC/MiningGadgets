@@ -97,7 +97,7 @@ public class MiningGadget extends Item {
         BlockPos pos = lookingAt.getPos();
         List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
         float hardness = getHardness(coords, (PlayerEntity) player);
-        hardness = hardness * getToolRange(stack);
+        hardness = hardness * getToolRange(stack) * 5;
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             if (!(state.getBlock() instanceof RenderBlock)) {

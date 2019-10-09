@@ -82,7 +82,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         GlStateManager.pushMatrix();
         GlStateManager.translated(x, y, z);
         GlStateManager.translated(partPos.x, partPos.y, partPos.z);
-        GlStateManager.translatef((1 - blockSizeScale) / 2, (1 - blockSizeScale) / 2, (1 - blockSizeScale) / 2);
+        GlStateManager.translatef((1 - blockSizeScale * scale) / 2, (1 - blockSizeScale * scale) / 2, (1 - blockSizeScale * scale) / 2);
 
         GlStateManager.rotatef(-player.getRotationYawHead(), 0, 1, 0);
         GlStateManager.rotatef(player.rotationPitch, 1, 0, 0);
@@ -90,7 +90,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         GlStateManager.rotatef(player.rotationPitch, -1, 0, 0);
         GlStateManager.rotatef(-player.getRotationYawHead(), 0, -1, 0);
 
-        GlStateManager.scalef(blockSizeScale, blockSizeScale, blockSizeScale);
+        GlStateManager.scalef(blockSizeScale * scale, blockSizeScale * scale, blockSizeScale * scale);
         GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
 
         try {
