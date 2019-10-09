@@ -63,7 +63,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public PlayerEntity getPlayer() {
-        return world.getPlayerByUuid(playerUUID);
+        return this.getWorld().getPlayerByUuid(playerUUID);
+    }
+
+    public UUID getPlayerUUID() {
+        return this.playerUUID;
     }
 
     public void setPlayer(PlayerEntity player) {

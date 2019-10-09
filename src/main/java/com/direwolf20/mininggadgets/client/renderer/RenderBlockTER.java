@@ -13,8 +13,11 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL14;
 
 import java.util.List;
@@ -48,15 +51,6 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
     @Override
     public void render(RenderBlockTileEntity tile, double x, double y, double z, float partialTicks, int destroyStage) {
-        BlockState renderState = tile.getRenderBlock();
-
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-        Minecraft mc = Minecraft.getInstance();
-        mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        //This blend function allows you to use a constant alpha, which is defined later
-        GlStateManager.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
 
         int durability = tile.getDurability();
         int originalDurability = tile.getOriginalDurability();
@@ -66,6 +60,59 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         if (scale <= 0)
             scale = 0;
         float trans = (1 - scale) / 2;
+
+        BlockState renderState = tile.getRenderBlock();
+
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
+        Minecraft mc = Minecraft.getInstance();
+        mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+
+        //Particles
+        World world = tile.getWorld();
+        PlayerEntity player = world.getPlayerByUuid(tile.getPlayerUUID());
+        if (player == null) return;
+        float blockSizeScale = 0.1f;
+        double yOffset = -.25;
+        double startXOffset = -0.35;
+
+        Vec3d playerEye = player.getEyePosition(partialTicks);
+        Vec3d blockPos = new Vec3d(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5);
+        Vec3d partPos = new Vec3d((playerEye.x - blockPos.x) * (1 - scale), (playerEye.y - blockPos.y) * (1 - scale), (playerEye.z - blockPos.z) * (1 - scale));
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translated(x, y, z);
+        GlStateManager.translated(partPos.x, partPos.y, partPos.z);
+        GlStateManager.translatef((1 - blockSizeScale) / 2, (1 - blockSizeScale) / 2, (1 - blockSizeScale) / 2);
+
+        GlStateManager.rotatef(-player.getRotationYawHead(), 0, 1, 0);
+        GlStateManager.rotatef(player.rotationPitch, 1, 0, 0);
+        GlStateManager.translated(startXOffset, yOffset, 0);
+        GlStateManager.rotatef(player.rotationPitch, -1, 0, 0);
+        GlStateManager.rotatef(-player.getRotationYawHead(), 0, -1, 0);
+
+        GlStateManager.scalef(blockSizeScale, blockSizeScale, blockSizeScale);
+        GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+
+        try {
+            blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
+        } catch (Throwable t) {
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferBuilder = tessellator.getBuffer();
+            try {
+                // If the buffer is already not drawing then it'll throw
+                // and IllegalStateException... Very rare
+                bufferBuilder.finishDrawing();
+            } catch (IllegalStateException ex) {
+
+            }
+        }
+        GlStateManager.popMatrix();
+
+
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        //This blend function allows you to use a constant alpha, which is defined later
+        GlStateManager.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
 
         //todo Have the gadget have an option for fading/shrinking blocks in the table.
 
