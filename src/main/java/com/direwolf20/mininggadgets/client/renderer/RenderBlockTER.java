@@ -144,7 +144,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         GlStateManager.translated(x, y, z);
         //GlStateManager.translatef((1-0.99f)/2, (1-0.99f)/2, (1-0.99f)/2);
-        //GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         //GlStateManager.scalef(0.99f, 0.99f, 0.99f);
         GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
         try {
