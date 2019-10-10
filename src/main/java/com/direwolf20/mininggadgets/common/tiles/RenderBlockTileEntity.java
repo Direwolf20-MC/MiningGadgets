@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
+import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -154,6 +155,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             }
         }
         if (ticksSinceMine >= 10) {
+            LaserParticleData data = LaserParticleData.laserparticle(Blocks.COBBLESTONE.getDefaultState(), 1F, 1F, 1F, 1F, 5);
+            getWorld().addParticle(data, this.getPos().getX() + 0.5, this.getPos().getY() + 0.5 + 1, this.getPos().getZ() + 0.5, 0, 0f, 0);
             if (priorDurability == durability) {
                 durability++;
                 priorDurability = durability;

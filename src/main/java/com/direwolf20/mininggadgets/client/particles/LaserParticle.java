@@ -1,8 +1,9 @@
 package com.direwolf20.mininggadgets.client.particles;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.BreakingParticle;
+import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.item.ItemStack;
@@ -26,6 +27,7 @@ public class LaserParticle extends BreakingParticle {
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul, BlockState blockState) {
         this(world, d, d1, d2, xSpeed, ySpeed, zSpeed, size, red, green, blue, depthTest, maxAgeMul);
         this.blockState = blockState;
+        this.setSprite(Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getTexture(blockState));
     }
 
     public LaserParticle(World world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
@@ -55,9 +57,9 @@ public class LaserParticle extends BreakingParticle {
 
     @Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-
-        BlockState renderState = Blocks.COBBLESTONE.getDefaultState();
-        float scale = 0.125f;
+        super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+        //BlockState renderState = Blocks.COBBLESTONE.getDefaultState();
+        //float scale = 0.125f;
 
         /*GlStateManager.pushMatrix();
         //GlStateManager.enableBlend();
@@ -103,12 +105,12 @@ public class LaserParticle extends BreakingParticle {
         if (this.age++ >= this.maxAge) {
             this.setExpired();
         }
-        this.move(motionX, motionY, motionZ);
-        /*this.prevPosX = this.posX;
+
+        this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
-
-        if (this.age++ >= this.maxAge)
+        this.move(motionX, motionY, motionZ);
+        /*if (this.age++ >= this.maxAge)
         {
             this.setExpired();
         }
@@ -129,6 +131,10 @@ public class LaserParticle extends BreakingParticle {
         motionY = my;
         motionZ = mz;
     }
+
+    public static IParticleFactory<LaserParticleData> FACTORY =
+            (data, world, x, y, z, xSpeed, ySpeed, zSpeed) ->
+                    new LaserParticle(world, x, y, z, xSpeed, ySpeed, zSpeed, data.size, data.r, data.g, data.b, data.depthTest, data.maxAgeMul, data.state);
 
     private boolean depthTest;
     private final float moteParticleScale;

@@ -10,6 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 public class ParticleRenderDispatcher {
     @SubscribeEvent
     public static void registerFactories(ParticleFactoryRegisterEvent evt) {
-        Minecraft.getInstance().particles.registerFactory(ModParticles.LASERPARTICLE, LaserParticleType.FACTORY);
+        Minecraft.getInstance().particles.registerFactory(ModParticles.LASERPARTICLE, LaserParticle.FACTORY);
     }
 }

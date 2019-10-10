@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL14;
 
@@ -144,16 +146,21 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         GlStateManager.translated(x, y, z);
         //GlStateManager.translatef((1-0.99f)/2, (1-0.99f)/2, (1-0.99f)/2);
-        GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+        //GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         //GlStateManager.scalef(0.99f, 0.99f, 0.99f);
         GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
         try {
             IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
             Random random = new Random(42L);
+            BlockColors blockColors = Minecraft.getInstance().getBlockColors();
+            int color = blockColors.getColor(renderState, (IEnviromentBlockReader) null, (BlockPos) null, 0);
+            float f = (float) (color >> 16 & 255) / 255.0F;
+            float f1 = (float) (color >> 8 & 255) / 255.0F;
+            float f2 = (float) (color & 255) / 255.0F;
             //blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
             for (Direction direction : Direction.values()) {
                 if (!(getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                    renderModelBrightnessColorQuads(1f, 1f, 1f, 1f, ibakedmodel.getQuads(renderState, direction, random));
+                    renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, random));
                 }
             }
         } catch (Throwable t) {
