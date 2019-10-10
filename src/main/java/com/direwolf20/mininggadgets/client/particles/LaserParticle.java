@@ -1,7 +1,6 @@
 package com.direwolf20.mininggadgets.client.particles;
 
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.BreakingParticle;
@@ -12,8 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -117,11 +114,13 @@ public class LaserParticle extends BreakingParticle {
     public void tick() {
         float speed = 0.1f;
         PlayerEntity player = world.getPlayerByUuid(this.playerUUID);
-        Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
+        Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight() - 0.35, 0);
 
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
-        Vec3d lookBlockHit = lookingAt.getHitVec();
-        BlockPos lookBlockPos = lookingAt.getPos();
+        Vec3d look = player.getLookVec(); // or getLook(partialTicks)
+        Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
+        right = right.scale(0.25f);
+        Vec3d rightPos = playerPos.add(right);
+        playerPos = rightPos;
 
 
         double moveX = (playerPos.getX() - this.posX) / 10;

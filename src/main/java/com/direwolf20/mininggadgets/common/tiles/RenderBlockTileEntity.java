@@ -155,8 +155,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             }
         }
         if (ticksSinceMine >= 10) {
-            LaserParticleData data = LaserParticleData.laserparticle(Blocks.COBBLESTONE.getDefaultState(), 1F, 1F, 1F, 1F, 200);
-            getWorld().addParticle(data, this.getPos().getX() + 0.5, this.getPos().getY() + 0.5, this.getPos().getZ() + 0.5, 0, 0.0f, 0);
             if (priorDurability == durability) {
                 durability++;
                 priorDurability = durability;
@@ -166,6 +164,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             ticksSinceMine++;
         } else {
             ticksSinceMine++;
+            LaserParticleData data = LaserParticleData.laserparticle(renderBlock, 1F, 1F, 1F, 1F, 200);
+            getWorld().addParticle(data, this.getPos().getX() + 0.5, this.getPos().getY() + 0.5, this.getPos().getZ() + 0.5, 0, 0.0f, 0);
         }
 
     }

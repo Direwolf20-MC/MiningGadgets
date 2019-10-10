@@ -1,7 +1,6 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
@@ -81,9 +80,9 @@ public class MiningGadget extends Item {
             changeRange(itemstack);
             //player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent(prefix, new TranslationTextComponent(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedComponentText()), true);
             player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + "Range Change: " + getToolRange(itemstack) + "x" + getToolRange(itemstack)), true);
-            LaserParticleData data = LaserParticleData.laserparticle(Blocks.COBBLESTONE.getDefaultState(), 1F, 1F, 1F, 1F, 80);
-            BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
-            player.world.addParticle(data, lookingAt.getPos().getX() + 0.5, lookingAt.getPos().getY() + 0.5 + 1, lookingAt.getPos().getZ() + 0.5, 0, 0f, 0);
+            //LaserParticleData data = LaserParticleData.laserparticle(Blocks.COBBLESTONE.getDefaultState(), 1F, 1F, 1F, 1F, 80);
+            //BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
+            //player.world.addParticle(data, lookingAt.getPos().getX() + 0.5, lookingAt.getPos().getY() + 0.5 + 1, lookingAt.getPos().getZ() + 0.5, 0, 0f, 0);
             return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
         } else {
             player.setActiveHand(hand);
@@ -101,7 +100,7 @@ public class MiningGadget extends Item {
         BlockPos pos = lookingAt.getPos();
         List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
         float hardness = getHardness(coords, (PlayerEntity) player);
-        hardness = hardness * getToolRange(stack) * 15;
+        hardness = hardness * getToolRange(stack) * 3;
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             if (!(state.getBlock() instanceof RenderBlock)) {
