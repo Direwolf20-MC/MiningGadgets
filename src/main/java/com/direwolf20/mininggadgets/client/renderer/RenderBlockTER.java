@@ -16,10 +16,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL14;
 
@@ -79,17 +76,14 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         double startXOffset = -0.35;
 
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
-        Vec3d lookBlockPos = lookingAt.getHitVec();
-        if (lookingAt.getFace() == Direction.WEST) {
-            lookBlockPos = lookBlockPos.add(0, 0, 0);
-        }
-
+        Vec3d lookBlockHit = lookingAt.getHitVec();
+        BlockPos lookBlockPos = lookingAt.getPos();
         Vec3d playerEye = player.getEyePosition(partialTicks);
         Vec3d blockPos = new Vec3d(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5);
 
-        double xDiff = blockPos.getX() - lookBlockPos.getX();
-        double yDiff = blockPos.getY() - lookBlockPos.getY();
-        double zDiff = blockPos.getZ() - lookBlockPos.getZ();
+        double xDiff = blockPos.getX() - lookBlockHit.getX() + (lookBlockPos.getX() - tile.getPos().getX());
+        double yDiff = blockPos.getY() - lookBlockHit.getY() + (lookBlockPos.getY() - tile.getPos().getY());
+        double zDiff = blockPos.getZ() - lookBlockHit.getZ() + (lookBlockPos.getZ() - tile.getPos().getZ());
 
         //Vec3d partPos = new Vec3d(blockPos.x, blockPos.y, blockPos.z);
 
@@ -105,6 +99,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         //We're about to shrink the block. Before doing so, we move it relative to the amount we're shrinking it. Also shrink it more based on proximity to player
         GlStateManager.translatef((1 - blockSizeScale * scale) / 2, (1 - blockSizeScale * scale) / 2, (1 - blockSizeScale * scale) / 2);
+
         //We want the particle to go into the player's shoulder instead of middle of his eyes, so we move it a bit
         //Rotate to players look vector. Then move particle. Then rotate back
         GlStateManager.rotatef(-player.getRotationYawHead(), 0, 1, 0);
