@@ -1,14 +1,23 @@
 package com.direwolf20.mininggadgets.client.particles;
 
+import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.BreakingParticle;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.UUID;
 
 public class LaserParticle extends BreakingParticle {
     private static final ResourceLocation vanillaParticles = new ResourceLocation("textures/particle/particles.png");
@@ -22,6 +31,7 @@ public class LaserParticle extends BreakingParticle {
     private float f4;
     private float f5;
     private BlockState blockState;
+    private UUID playerUUID;
 
     public LaserParticle(World world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul, BlockState blockState) {
@@ -52,6 +62,9 @@ public class LaserParticle extends BreakingParticle {
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
+        RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(new BlockPos(this.posX, this.posY, this.posZ));
+        if (!(te == null))
+            playerUUID = te.getPlayerUUID();
     }
 
 
@@ -102,14 +115,25 @@ public class LaserParticle extends BreakingParticle {
     // [VanillaCopy] of super, without drag when onGround is true
     @Override
     public void tick() {
+        float speed = 0.1f;
+        PlayerEntity player = world.getPlayerByUuid(this.playerUUID);
+        Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
+
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
+        Vec3d lookBlockHit = lookingAt.getHitVec();
+        BlockPos lookBlockPos = lookingAt.getPos();
+
+
+        double moveX = (playerPos.getX() - this.posX) / 10;
+        double moveY = (playerPos.getY() - this.posY) / 10;
+        double moveZ = (playerPos.getZ() - this.posZ) / 10;
         if (this.age++ >= this.maxAge) {
             this.setExpired();
         }
-
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
-        this.move(motionX, motionY, motionZ);
+        this.move(moveX, moveY, moveZ);
         /*if (this.age++ >= this.maxAge)
         {
             this.setExpired();

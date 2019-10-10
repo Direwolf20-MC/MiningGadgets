@@ -2,7 +2,6 @@ package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -15,11 +14,10 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL14;
 
 import java.util.List;
@@ -70,7 +68,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
         //Particles
-        World world = tile.getWorld();
+        /*World world = tile.getWorld();
         PlayerEntity player = world.getPlayerByUuid(tile.getPlayerUUID());
         if (player == null) return;
         float blockSizeScale = 0.1f;
@@ -136,7 +134,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             }
             GlStateManager.popMatrix();
         }
-
+*/
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         //This blend function allows you to use a constant alpha, which is defined later
