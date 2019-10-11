@@ -170,7 +170,7 @@ public class MiningGadget extends Item {
 
     private static void addCoord(List<BlockPos> coordinates, BlockPos coord, World world) {
         BlockState state = world.getBlockState(coord);
-        if (state.getMaterial() != Material.AIR) {
+        if (state.getFluidState().isEmpty() && state.getMaterial() != Material.AIR) {
             coordinates.add(coord);
         }
     }
