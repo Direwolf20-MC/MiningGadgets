@@ -1,0 +1,8 @@
+{
+  "comment-items": "Items",
+  "itemGroup.mininggadgets": "Mining Gadgets",
+  "item.mininggadgets.mininggadget": "Mining Gadget",
+
+  "comment-gagdets": "Gadgets",
+  "mininggadgets.mininggadget.range_change": "Range Change: %1$d x %1$d"
+}

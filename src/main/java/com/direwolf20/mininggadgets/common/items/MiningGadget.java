@@ -9,6 +9,7 @@ import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -79,7 +80,7 @@ public class MiningGadget extends Item {
         if (player.isSneaking()) {
             changeRange(itemstack);
             //player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent(prefix, new TranslationTextComponent(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedComponentText()), true);
-            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + "Range Change: " + getToolRange(itemstack) + "x" + getToolRange(itemstack)), true);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
             //LaserParticleData data = LaserParticleData.laserparticle(Blocks.COBBLESTONE.getDefaultState(), 1F, 1F, 1F, 1F, 80);
             //BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
             //player.world.addParticle(data, lookingAt.getPos().getX() + 0.5, lookingAt.getPos().getY() + 0.5 + 1, lookingAt.getPos().getZ() + 0.5, 0, 0f, 0);
