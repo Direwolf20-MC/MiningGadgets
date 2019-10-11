@@ -6,6 +6,8 @@ import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
+import net.minecraft.block.BedrockBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -133,6 +135,7 @@ public class MiningGadget extends Item {
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             float temphardness = state.getBlockHardness(world, coord);
+            System.out.println(temphardness);
             if (state.getMaterial() == Material.EARTH) temphardness = temphardness * 4;
             hardness += temphardness;
         }
@@ -170,9 +173,16 @@ public class MiningGadget extends Item {
 
     private static void addCoord(List<BlockPos> coordinates, BlockPos coord, World world) {
         BlockState state = world.getBlockState(coord);
-        if (state.getFluidState().isEmpty() && state.getMaterial() != Material.AIR) {
-            coordinates.add(coord);
-        }
+
+        // Reject fluids and air
+        if (!state.getFluidState().isEmpty() || world.isAirBlock(coord))
+            return;
+
+        // Rejects any blocks with a hardness less than 0
+        if( state.getBlockHardness(world, coord) < 0 )
+            return;
+        
+        coordinates.add(coord);
     }
 
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
