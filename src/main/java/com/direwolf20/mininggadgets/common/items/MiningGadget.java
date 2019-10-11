@@ -141,9 +141,10 @@ public class MiningGadget extends Item {
 
     public static List<BlockPos> getMinableBlocks(ItemStack stack, BlockRayTraceResult lookingAt, PlayerEntity player) {
         List<BlockPos> coordinates = new ArrayList<BlockPos>();
+        World world = player.world;
 
         if (getToolRange(stack) == 1) {
-            coordinates.add(lookingAt.getPos());
+            addCoord(coordinates, lookingAt.getPos(), world);
             return coordinates;
         }
 
@@ -153,7 +154,6 @@ public class MiningGadget extends Item {
         Direction down = up.getOpposite();
         Direction right = vertical ? up.rotateY() : side.rotateYCCW();
         Direction left = right.getOpposite();
-        World world = player.world;
 
         addCoord(coordinates, lookingAt.getPos().offset(up).offset(left), world);
         addCoord(coordinates, lookingAt.getPos().offset(up), world);
