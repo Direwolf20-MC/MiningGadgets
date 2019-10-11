@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -29,6 +30,9 @@ public class LaserParticle extends BreakingParticle {
     private float f5;
     private BlockState blockState;
     private UUID playerUUID;
+    private double sourceX;
+    private double sourceY;
+    private double sourceZ;
 
     public LaserParticle(World world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul, BlockState blockState) {
@@ -62,57 +66,40 @@ public class LaserParticle extends BreakingParticle {
         RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(new BlockPos(this.posX, this.posY, this.posZ));
         if (!(te == null))
             playerUUID = te.getPlayerUUID();
+        sourceX = d;
+        sourceY = d1;
+        sourceZ = d2;
     }
 
 
     @Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
-        //BlockState renderState = Blocks.COBBLESTONE.getDefaultState();
-        //float scale = 0.125f;
-
-        /*GlStateManager.pushMatrix();
-        //GlStateManager.enableBlend();
-        //This blend function allows you to use a constant alpha, which is defined later
-        //GlStateManager.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
-        Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
-
-        //BlockPos pos = entityIn.getBlockPos();
-        GlStateManager.translated(-playerPos.x, -playerPos.y, -playerPos.z);
-        GlStateManager.translated(this.posX, this.posY, this.posZ);
-        GlStateManager.scalef(scale,scale,scale);
-        GlStateManager.translated(-0.5f, -0.5f, -0.5f);
-        GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-        GL14.glBlendColor(1F, 1F, 1F, 1f); //Set the alpha of the blocks we are rendering
-        try {
-            blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
-        } catch (Throwable t) {
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferBuilder = tessellator.getBuffer();
-            try {
-                // If the buffer is already not drawing then it'll throw
-                // and IllegalStateException... Very rare
-                bufferBuilder.finishDrawing();
-            } catch (IllegalStateException ex) {
-
-            }
-        }
-        //Disable blend
-        //GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        //GlStateManager.disableBlend();
-        GlStateManager.popMatrix();*/
     }
 
-    /*@Nonnull
-    @Override
-    public IParticleRenderType getRenderType() {
-        return IParticleRenderType.CUSTOM;
-    }*/
+    public boolean particleToPlayer(PlayerEntity player) {
+        boolean partToPlayer = false;
+        //if (player.isHandActive()) partToPlayer = true;
+        BlockPos sourcePos = new BlockPos(sourceX, sourceY, sourceZ);
+        if (!(world.getBlockState(sourcePos) == this.blockState)) partToPlayer = true;
+        TileEntity te = world.getTileEntity(sourcePos);
+        if (te != null && te instanceof RenderBlockTileEntity) {
+            if (((RenderBlockTileEntity) te).getTicksSinceMine() >= 10) {
+                partToPlayer = false;
+            }
+        }
+        //if (world.getBlockState(sourcePos).getBlock() instanceof RenderBlock) partToPlayer = true;
+        return partToPlayer;
+    }
 
     // [VanillaCopy] of super, without drag when onGround is true
     @Override
     public void tick() {
         float speed = 0.1f;
+        double moveX;
+        double moveY;
+        double moveZ;
+
         PlayerEntity player = world.getPlayerByUuid(this.playerUUID);
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight() - 0.35, 0);
 
@@ -123,15 +110,34 @@ public class LaserParticle extends BreakingParticle {
         playerPos = rightPos;
 
 
-        double moveX = (playerPos.getX() - this.posX) / 10;
-        double moveY = (playerPos.getY() - this.posY) / 10;
-        double moveZ = (playerPos.getZ() - this.posZ) / 10;
+        if (particleToPlayer(player)) {
+            Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
+            double distance = playerPos.distanceTo(partPos);
+            if (distance < 0.25) {
+                this.setExpired();
+            }
+            moveX = (playerPos.getX() - this.posX) / 20;
+            moveY = (playerPos.getY() - this.posY) / 20;
+            moveZ = (playerPos.getZ() - this.posZ) / 20;
+        } else {
+            Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
+            Vec3d sourcePos = new Vec3d(sourceX, sourceY, sourceZ);
+            double distance = sourcePos.distanceTo(partPos);
+            if (distance < 0.75) {
+                this.setExpired();
+            }
+            moveX = (sourceX - this.posX) / 20;
+            moveY = (sourceY - this.posY) / 20;
+            moveZ = (sourceZ - this.posZ) / 20;
+        }
         if (this.age++ >= this.maxAge) {
             this.setExpired();
         }
+
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
+
         this.move(moveX, moveY, moveZ);
         /*if (this.age++ >= this.maxAge)
         {

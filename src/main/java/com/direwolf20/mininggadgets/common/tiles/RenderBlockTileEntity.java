@@ -27,8 +27,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private int durability;
     private UUID playerUUID;
     private int originalDurability;
-    private int ticksSinceMine = 0;
-
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE);
@@ -74,6 +72,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     public void setPlayer(PlayerEntity player) {
         this.playerUUID = player.getUniqueID();
     }
+
+    public int getTicksSinceMine() {
+        return ticksSinceMine;
+    }
+
+    public void setTicksSinceMine(int ticksSinceMine) {
+        this.ticksSinceMine = ticksSinceMine;
+    }
+
+    private int ticksSinceMine = 0;
 
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
