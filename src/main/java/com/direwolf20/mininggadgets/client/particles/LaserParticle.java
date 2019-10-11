@@ -146,7 +146,7 @@ public class LaserParticle extends BreakingParticle {
         Vec3d forward = look;
         Vec3d down = right.crossProduct(forward);
         right = right.scale(0.65f);
-        forward = forward.scale(1f);
+        forward = forward.scale(0.85f);
         down = down.scale(-0.35);
         Vec3d rightPos = playerPos.add(right);
         rightPos = rightPos.add(forward);
@@ -156,13 +156,13 @@ public class LaserParticle extends BreakingParticle {
 
         if (particleToPlayer(player)) {
             speedModifier++;
-            int speedAdjust = (20 - speedModifier) <= 0 ? 1 : (20 - speedModifier);
+            int speedAdjust = (30 - speedModifier) <= 0 ? 1 : (30 - speedModifier);
             Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
             double distance = playerPos.distanceTo(partPos);
             if (distance < 0.25) {
                 this.setExpired();
             }
-            this.particleScale = particleScale * MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.2f, 0.55f);
+            this.particleScale = particleScale * MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.05f, 0.85f);
             //this.particleScale = MathHelper.lerp(1- (float) distance/(float)totalDistance, 0.09f, 0.005f);
             moveX = (playerPos.getX() - this.posX) / speedAdjust;
             moveY = (playerPos.getY() - this.posY) / speedAdjust;
