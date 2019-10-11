@@ -135,7 +135,6 @@ public class MiningGadget extends Item {
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             float temphardness = state.getBlockHardness(world, coord);
-            System.out.println(temphardness);
             if (state.getMaterial() == Material.EARTH) temphardness = temphardness * 4;
             hardness += temphardness;
         }
@@ -143,7 +142,7 @@ public class MiningGadget extends Item {
     }
 
     public static List<BlockPos> getMinableBlocks(ItemStack stack, BlockRayTraceResult lookingAt, PlayerEntity player) {
-        List<BlockPos> coordinates = new ArrayList<BlockPos>();
+        List<BlockPos> coordinates = new ArrayList<>();
         World world = player.world;
 
         if (getToolRange(stack) == 1) {
@@ -181,7 +180,7 @@ public class MiningGadget extends Item {
         // Rejects any blocks with a hardness less than 0
         if( state.getBlockHardness(world, coord) < 0 )
             return;
-        
+
         coordinates.add(coord);
     }
 
