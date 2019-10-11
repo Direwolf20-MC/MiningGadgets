@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IEnviromentBlockReader;
 import org.lwjgl.opengl.GL14;
@@ -140,12 +141,15 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         //This blend function allows you to use a constant alpha, which is defined later
         GlStateManager.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
 
+        //GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
         //todo Have the gadget have an option for fading/shrinking blocks in the table.
 
         GlStateManager.translated(x, y, z);
         //GlStateManager.translatef((1-0.99f)/2, (1-0.99f)/2, (1-0.99f)/2);
         //GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         //GlStateManager.scalef(0.99f, 0.99f, 0.99f);
+        //scale = (scale < 0.1f) ? 0.1f : scale;
+        scale = MathHelper.lerp(scale, 0.5f, 1.0f);
         GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
         try {
             IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
@@ -173,6 +177,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             }
         }
         //Disable blend
+        //GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();

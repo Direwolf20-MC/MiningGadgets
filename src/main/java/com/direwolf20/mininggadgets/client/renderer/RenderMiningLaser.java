@@ -42,34 +42,36 @@ public class RenderMiningLaser {
         ItemStack heldItem = player.getHeldItemMainhand();
 
         if (heldItem.getItem() instanceof MiningGadget) {
-            double startYOffset = -.25;
             double startXOffset = -0.35;
+            double startYOffset = -.165;
+            double startZOffset = 0.5;
             wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
+            wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v).endVertex();
             wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
             wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
-            wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
+            wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v).endVertex();
 
-            wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
+            wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v).endVertex();
             wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
             wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
-            wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
+            wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v).endVertex();
             Tessellator.getInstance().draw();
         }
         heldItem = player.getHeldItemOffhand();
         if (heldItem.getItem() instanceof MiningGadget) {
-            double startYOffset = -0.25;
             double startXOffset = 0.35;
+            double startYOffset = -.165;
+            double startZOffset = 0.5;
             wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
+            wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v).endVertex();
             wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
             wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
-            wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
+            wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v).endVertex();
 
-            wr.pos(startXOffset, -thickness + startYOffset, 0).tex(1, v).endVertex();
+            wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v).endVertex();
             wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
             wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
-            wr.pos(startXOffset, thickness + startYOffset, 0).tex(0, v).endVertex();
+            wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v).endVertex();
             Tessellator.getInstance().draw();
         }
 

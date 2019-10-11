@@ -17,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
@@ -27,6 +28,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private int durability;
     private UUID playerUUID;
     private int originalDurability;
+    private Random rand = new Random();
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE);
@@ -172,8 +174,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             ticksSinceMine++;
         } else {
             ticksSinceMine++;
-            LaserParticleData data = LaserParticleData.laserparticle(renderBlock, 1F, 1F, 1F, 1F, 200);
-            getWorld().addParticle(data, this.getPos().getX() + 0.5, this.getPos().getY() + 0.5, this.getPos().getZ() + 0.5, 0, 0.0f, 0);
+            if (durability % 1 == 0) {
+                double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
+                double randomX = rand.nextDouble();
+                double randomY = rand.nextDouble();
+                double randomZ = rand.nextDouble();
+                LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, 1F, 1F, 1F, 200);
+                getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
+            }
         }
 
     }
