@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
 
@@ -22,10 +23,10 @@ public class RenderMiningLaser {
         Vec3d playerPos = player.getEyePosition(ticks);
         Vec3d lookBlockPos = lookingAt.getHitVec();
 
-        renderBeam(playerPos, lookBlockPos, 0, 0, 0, 1f, 0f, 0f, 0.01f, player);
+        renderBeam(playerPos, lookBlockPos, 0, 0, 0, 1f, 0f, 0f, 0.01f, player, ticks);
     }
 
-    public static void renderBeam(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player) {
+    public static void renderBeam(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks) {
         Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
 
         double distance = from.subtract(to).length();
@@ -33,10 +34,11 @@ public class RenderMiningLaser {
 
         GlStateManager.color3f(r, g, b);
         GlStateManager.pushMatrix();
+        GlStateManager.disableTexture();
         GlStateManager.translated(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
         GlStateManager.translated(from.x, from.y, from.z);
-        GlStateManager.rotatef(-player.getRotationYawHead(), 0, 1, 0);
-        GlStateManager.rotatef(player.rotationPitch, 1, 0, 0);
+        GlStateManager.rotatef(MathHelper.lerp(ticks, -player.rotationYaw, -player.prevRotationYaw), 0, 1, 0);
+        GlStateManager.rotatef(MathHelper.lerp(ticks, player.rotationPitch, player.prevRotationPitch), 1, 0, 0);
         BufferBuilder wr = Tessellator.getInstance().getBuffer();
 
         ItemStack heldItem = player.getHeldItemMainhand();
@@ -74,7 +76,7 @@ public class RenderMiningLaser {
             wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v).endVertex();
             Tessellator.getInstance().draw();
         }
-
+        GlStateManager.enableTexture();
         GlStateManager.popMatrix();
     }
 

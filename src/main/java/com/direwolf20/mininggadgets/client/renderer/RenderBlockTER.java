@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IEnviromentBlockReader;
 import org.lwjgl.opengl.GL14;
@@ -145,12 +144,12 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         //todo Have the gadget have an option for fading/shrinking blocks in the table.
 
         GlStateManager.translated(x, y, z);
-        //GlStateManager.translatef((1-0.99f)/2, (1-0.99f)/2, (1-0.99f)/2);
-        //GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-        //GlStateManager.scalef(0.99f, 0.99f, 0.99f);
+        GlStateManager.translatef((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
+        GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.scalef(scale, scale, scale);
         //scale = (scale < 0.1f) ? 0.1f : scale;
-        scale = MathHelper.lerp(scale, 0.5f, 1.0f);
-        GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
+        //scale = MathHelper.lerp(scale, 0.5f, 1.0f);
+        GL14.glBlendColor(1F, 1F, 1F, 1f); //Set the alpha of the blocks we are rendering
         try {
             IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
             Random random = new Random(42L);
@@ -159,10 +158,10 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             float f = (float) (color >> 16 & 255) / 255.0F;
             float f1 = (float) (color >> 8 & 255) / 255.0F;
             float f2 = (float) (color & 255) / 255.0F;
-            //blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
+            blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
             for (Direction direction : Direction.values()) {
                 if (!(getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                    renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, random));
+                    //renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, random));
                 }
             }
         } catch (Throwable t) {
