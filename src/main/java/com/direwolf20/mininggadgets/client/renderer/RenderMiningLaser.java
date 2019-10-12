@@ -45,8 +45,8 @@ public class RenderMiningLaser {
 
         if (heldItem.getItem() instanceof MiningGadget) {
             double startXOffset = -0.35;
-            double startYOffset = -.165;
-            double startZOffset = 0.5;
+            double startYOffset = -.135;
+            double startZOffset = 0.4;
             wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v).endVertex();
             wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
