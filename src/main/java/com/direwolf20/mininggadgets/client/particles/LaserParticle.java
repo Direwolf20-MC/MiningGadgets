@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -19,9 +18,6 @@ import net.minecraft.world.World;
 import java.util.UUID;
 
 public class LaserParticle extends BreakingParticle {
-    private static final ResourceLocation vanillaParticles = new ResourceLocation("textures/particle/particles.png");
-
-    //protected float particleScale = (this.rand.nextFloat() * 0.5F + 0.5F) * 2.0F;
     // Queue values
     private float f;
     private float f1;
@@ -78,36 +74,6 @@ public class LaserParticle extends BreakingParticle {
     @Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
-        /*float f = this.getScale(partialTicks);
-        float f1 = this.getMinU();
-        float f2 = this.getMaxU();
-        float f3 = this.getMinV();
-        float f4 = this.getMaxV();
-        float f5 = (float)(MathHelper.lerp((double)partialTicks, this.prevPosX, this.posX) - interpPosX);
-        float f6 = (float)(MathHelper.lerp((double)partialTicks, this.prevPosY, this.posY) - interpPosY);
-        float f7 = (float)(MathHelper.lerp((double)partialTicks, this.prevPosZ, this.posZ) - interpPosZ);
-        int i = this.getBrightnessForRender(partialTicks);
-        int j = i >> 16 & '\uffff';
-        int k = i & '\uffff';
-        Vec3d[] avec3d = new Vec3d[]{new Vec3d((double)(-rotationX * f - rotationXY * f), (double)(-rotationZ * f), (double)(-rotationYZ * f - rotationXZ * f)), new Vec3d((double)(-rotationX * f + rotationXY * f), (double)(rotationZ * f), (double)(-rotationYZ * f + rotationXZ * f)), new Vec3d((double)(rotationX * f + rotationXY * f), (double)(rotationZ * f), (double)(rotationYZ * f + rotationXZ * f)), new Vec3d((double)(rotationX * f - rotationXY * f), (double)(-rotationZ * f), (double)(rotationYZ * f - rotationXZ * f))};
-        if (this.particleAngle != 0.0F) {
-            float f8 = MathHelper.lerp(partialTicks, this.prevParticleAngle, this.particleAngle);
-            float f9 = MathHelper.cos(f8 * 0.5F);
-            float f10 = (float)((double)MathHelper.sin(f8 * 0.5F) * entityIn.getLookDirection().x);
-            float f11 = (float)((double)MathHelper.sin(f8 * 0.5F) * entityIn.getLookDirection().y);
-            float f12 = (float)((double)MathHelper.sin(f8 * 0.5F) * entityIn.getLookDirection().z);
-            Vec3d vec3d = new Vec3d((double)f10, (double)f11, (double)f12);
-
-            for(int l = 0; l < 4; ++l) {
-                avec3d[l] = vec3d.scale(2.0D * avec3d[l].dotProduct(vec3d)).add(avec3d[l].scale((double)(f9 * f9) - vec3d.dotProduct(vec3d))).add(vec3d.crossProduct(avec3d[l]).scale((double)(2.0F * f9)));
-            }
-        }
-
-        buffer.pos((double)f5 + avec3d[0].x, (double)f6 + avec3d[0].y, (double)f7 + avec3d[0].z).tex((double)f2, (double)f4).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-        buffer.pos((double)f5 + avec3d[1].x, (double)f6 + avec3d[1].y, (double)f7 + avec3d[1].z).tex((double)f2, (double)f3).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-        buffer.pos((double)f5 + avec3d[2].x, (double)f6 + avec3d[2].y, (double)f7 + avec3d[2].z).tex((double)f1, (double)f3).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-        buffer.pos((double)f5 + avec3d[3].x, (double)f6 + avec3d[3].y, (double)f7 + avec3d[3].z).tex((double)f1, (double)f4).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-*/
     }
 
     public boolean particleToPlayer(PlayerEntity player) {
@@ -138,41 +104,69 @@ public class LaserParticle extends BreakingParticle {
             this.setExpired();
             return;
         }
+        //Some calculations for the particle motion
         PlayerEntity player = world.getPlayerByUuid(this.playerUUID);
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d blockPos = new Vec3d(sourceX, sourceY, sourceZ);
         Vec3d look = player.getLookVec(); // or getLook(partialTicks)
+        //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
         Vec3d forward = look;
         Vec3d down = right.crossProduct(forward);
+
+        //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
         right = right.scale(0.65f);
         forward = forward.scale(0.85f);
         down = down.scale(-0.35);
-        Vec3d rightPos = playerPos.add(right);
-        rightPos = rightPos.add(forward);
-        rightPos = rightPos.add(down);
-        playerPos = rightPos;
-        double totalDistance = blockPos.distanceTo(playerPos);
 
+        //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
+        Vec3d laserPos = playerPos.add(right);
+        laserPos = laserPos.add(forward);
+        laserPos = laserPos.add(down);
+
+        //Get the current position of the particle, and figure out the vector of where it's going
+        Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
+        Vec3d targetDirection = new Vec3d(laserPos.getX() - this.posX, laserPos.getY() - this.posY, laserPos.getZ() - this.posZ);
+
+        //The total distance between the laser's endpoint and the block(s) we're mining
+        double totalDistance = blockPos.distanceTo(laserPos);
+
+        //Figure out if the particles are flowing TO the player, or BACK to the blocks
         if (particleToPlayer(player)) {
+            //This is like age, how many ticks the thing has been around, but we reset it when we send particles back to their source so can't use age.
             speedModifier++;
+            //Basically we want it to get faster the longer its been around, up to a limit
             int speedAdjust = (30 - speedModifier) <= 0 ? 1 : (30 - speedModifier);
-            Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
-            double distance = playerPos.distanceTo(partPos);
+            //Get the distance between the laser (endpoint) and current particle position
+            double distance = laserPos.distanceTo(partPos);
+            //Remove the particle from the game if its really close to the laser endpoint.
             if (distance < 0.25) {
                 this.setExpired();
             }
+            //Apply the spinning effect, but only if the particle has been around for a bit, and slow the spin it gets closer to player.
+            if (age > 5) {
+                float spinSpeed = MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.1f, 0.05f);
+                targetDirection = targetDirection.add(targetDirection.crossProduct(look).scale(spinSpeed).mul(3, 3, 3));
+            }
+            //Change particle size as it gets closer to player.
             this.particleScale = particleScale * MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.05f, 0.85f);
-            //this.particleScale = MathHelper.lerp(1- (float) distance/(float)totalDistance, 0.09f, 0.005f);
-            moveX = (playerPos.getX() - this.posX) / speedAdjust;
-            moveY = (playerPos.getY() - this.posY) / speedAdjust;
-            moveZ = (playerPos.getZ() - this.posZ) / speedAdjust;
+            //Calculate where the particle's next position should be.
+            moveX = (targetDirection.getX()) / speedAdjust;
+            moveY = (targetDirection.getY()) / speedAdjust;
+            moveZ = (targetDirection.getZ()) / speedAdjust;
+            //If the particle is less than 5 ticks old, rapidly move the particles towards the player's look position
+            //This is what clumps them together early on. Comment this out if you wanna see the difference without.
+            if (age < 5) {
+                int compressionFactor = 7;
+                moveX = moveX * ((1 - Math.abs(look.x)) * compressionFactor);
+                moveY = moveY * ((1 - Math.abs(look.y)) * compressionFactor);
+                moveZ = moveZ * ((1 - Math.abs(look.z)) * compressionFactor);
+            }
         } else {
+            //What to do if we are sending the particles BACK to the source block, mostly similiar to the above. Much less flair.
             speedModifier = 0;
             int speedAdjust = (20 - speedModifier) <= 0 ? 1 : (20 - speedModifier);
-            Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
-            Vec3d sourcePos = new Vec3d(sourceX, sourceY, sourceZ);
-            double distance = sourcePos.distanceTo(partPos);
+            double distance = blockPos.distanceTo(partPos);
             if (distance < 0.75) {
                 this.setExpired();
             }
@@ -181,25 +175,18 @@ public class LaserParticle extends BreakingParticle {
             moveZ = (sourceZ - this.posZ) / speedAdjust;
 
         }
+        //Just in case something goes weird, we remove the particle if its been around too long.
         if (this.age++ >= this.maxAge) {
             this.setExpired();
         }
-
+        //prevPos is used in the render. if you don't do this your particle rubber bands (Like lag in an MMO).
+        //This is used because ticks are 20 per second, and FPS is usually 60 or higher.
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
 
+        //Perform the ACTUAL move of the particle.
         this.move(moveX, moveY, moveZ);
-        /*if (this.age++ >= this.maxAge)
-        {
-            this.setExpired();
-        }
-
-        this.motionY -= 0.04D * (double)this.particleGravity;
-        this.move(this.motionX, this.motionY, this.motionZ);
-        this.motionX *= 0.9800000190734863D;
-        this.motionY *= 0.9800000190734863D;
-        this.motionZ *= 0.9800000190734863D;*/
     }
 
     public void setGravity(float value) {
