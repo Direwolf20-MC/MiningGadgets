@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -26,6 +27,7 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,6 @@ public class MiningGadget extends Item {
             setToolRange(tool, 3);
         else
             setToolRange(tool, 1);
-
     }
 
     public static void setLastBreak(ItemStack tool, long lastBreak) {
@@ -199,5 +200,85 @@ public class MiningGadget extends Item {
             return;
 
         coordinates.add(coord);
+    }
+
+    /**
+     * UPGRADE CODE :D
+     */
+    public static void applyUpgrade(ItemStack tool, UpgradeCard upgradeCard) {
+        if( hasUpgrade(tool, upgradeCard.getUpgrade()) )
+            return;
+
+        setUpgrade(tool, upgradeCard);
+    }
+
+    private static void setUpgrade(ItemStack tool, UpgradeCard upgrade) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+
+        ListNBT list = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
+        CompoundNBT compound = new CompoundNBT();
+        compound.putString("upgrade", upgrade.getUpgrade().getName());
+        compound.putInt("tier", upgrade.getTier());
+
+        list.add(compound);
+        tagCompound.put("upgrades", list);
+    }
+
+    // Return all upgrades in the item.
+    public static List<TieredUpgrade> getUpgrades(ItemStack tool) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
+
+        List<TieredUpgrade> functionalUpgrades = new ArrayList<>();
+        if( upgrades.isEmpty() )
+            return functionalUpgrades;
+
+        for (int i = 0; i < upgrades.size(); i++) {
+            CompoundNBT tag = upgrades.getCompound(i);
+
+            // If the name doesn't exist then move on
+            try {
+                Upgrade type = Upgrade.valueOf(tag.getString("upgrade").toUpperCase());
+                functionalUpgrades.add(new TieredUpgrade(tag.getInt("tier"), type));
+            } catch (IllegalArgumentException ignored) {}
+        }
+
+        return functionalUpgrades;
+    }
+
+    // Get a single upgrade and it's tier
+    public static TieredUpgrade getUpgrade(ItemStack tool, Upgrade type) {
+        List<TieredUpgrade> upgrades = getUpgrades(tool);
+        if( upgrades.isEmpty() )
+            return null;
+
+        for (TieredUpgrade upgrade: upgrades) {
+            if(upgrade.getUpgrade().getName().equals(type.getName()))
+                return upgrade;
+        }
+
+        return null;
+    }
+
+    public static boolean hasUpgrade(ItemStack tool, Upgrade type) {
+        return getUpgrade(tool, type) != null;
+    }
+
+    public static final class TieredUpgrade {
+        private int tier;
+        private Upgrade upgrade;
+
+        public TieredUpgrade(int tier, Upgrade upgrade) {
+            this.tier = tier;
+            this.upgrade = upgrade;
+        }
+
+        public int getTier() {
+            return tier;
+        }
+
+        public Upgrade getUpgrade() {
+            return upgrade;
+        }
     }
 }

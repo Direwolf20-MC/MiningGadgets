@@ -2,6 +2,10 @@
   "comment-items": "Items",
   "itemGroup.mininggadgets": "Mining Gadgets",
   "item.mininggadgets.mininggadget": "Mining Gadget",
+  "item.mininggadgets.upgrade_silk": "Upgrade: Silk touch",
+  "item.mininggadgets.upgrade_fortune_1": "Upgrade: Fortune, Tier 1",
+  "item.mininggadgets.upgrade_fortune_2": "Upgrade: Fortune, Tier 2",
+  "item.mininggadgets.upgrade_fortune_3": "Upgrade: Fortune, Tier 3",
 
   "comment-blocks": "Blocks",
   "block.mininggadgets.minersight": "Miners Sight",
