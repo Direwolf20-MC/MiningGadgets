@@ -27,7 +27,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -203,10 +206,10 @@ public class MiningGadget extends Item {
                     te.setDurability(te.getDurability() - 1);
                 }
 
-                if( te.getDurability() <= 1 ) {
+                /*if( te.getDurability() <= 1 ) {
                     // This is clearly not where you'd want to put this.
                     stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.extractEnergy(energyPerItem, false));
-                }
+                }*/
             }
         }
     }
