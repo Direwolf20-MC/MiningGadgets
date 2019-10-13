@@ -3,8 +3,7 @@ package com.direwolf20.mininggadgets.common.items;
 import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
-import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
@@ -13,32 +12,85 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MiningGadget extends Item {
+    private int energyCapacity;
+    private static int energyPerItem;
+
     public MiningGadget() {
         super(new Item.Properties().maxStackSize(1).group(Setup.getItemGroup()));
         setRegistryName("mininggadget");
+
+        this.energyCapacity = 1000;
+    }
+
+    @Override
+    public int getMaxDamage(ItemStack stack) {
+        return this.energyCapacity;
+    }
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+        return new CapabilityEnergyProvider(stack, 1500);
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        if( energy == null )
+            return 0;
+
+        return 1D - (energy.getEnergyStored() / (double) energy.getMaxEnergyStored());
+    }
+
+    @Override
+    public int getRGBDurabilityForDisplay(ItemStack stack) {
+        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        if (energy == null)
+            return super.getRGBDurabilityForDisplay(stack);
+
+        return MathHelper.hsvToRGB(Math.max(0.0F, (float) energy.getEnergyStored() / (float) energy.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+        super.addInformation(stack, world, tooltip, flag);
+
+        stack.getCapability(CapabilityEnergy.ENERGY, null)
+            .ifPresent(energy -> tooltip.add(
+                    new TranslationTextComponent("mininggadgets.item.energy", energy.getEnergyStored(), energy.getMaxEnergyStored())
+            )
+        );
     }
 
     private static void setToolRange(ItemStack tool, int range) {
@@ -74,6 +126,10 @@ public class MiningGadget extends Item {
     }
 
     public static boolean canMine(ItemStack tool, World world) {
+        IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        if( energy.getEnergyStored() <= energyPerItem )
+            return false;
+
         long lastBreak = getLastBreak(tool);
         if ((world.getGameTime() - lastBreak) < 4) return false;
         return true;
@@ -97,6 +153,7 @@ public class MiningGadget extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
+        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(50, false));
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 changeRange(itemstack);

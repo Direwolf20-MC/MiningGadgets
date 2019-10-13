@@ -75,6 +75,7 @@ public class UpgradeTools {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
         ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
 
+        // Slightly completed but basically it just makes a new list and collects that back to an ListNBT
         tagCompound.put("upgrades", upgrades.stream()
                 .filter(e -> !((CompoundNBT) e).getString("upgrade").equals(upgrade.getName()))
                 .collect(Collectors.toCollection(ListNBT::new)));

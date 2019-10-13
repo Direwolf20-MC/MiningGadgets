@@ -12,5 +12,6 @@
   "block.mininggadgets.renderblock": "Render Block (Don't use)",
 
   "comment-gagdets": "Gadgets",
-  "mininggadgets.mininggadget.range_change": "Range Change: %1$d x %1$d"
+  "mininggadgets.mininggadget.range_change": "Range Change: %1$d x %1$d",
+  "mininggadgets.item.energy": "Energy: %d/%d"
 }
