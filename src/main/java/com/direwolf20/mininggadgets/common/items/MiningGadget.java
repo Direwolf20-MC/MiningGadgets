@@ -6,8 +6,6 @@ import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
-import net.minecraft.block.BedrockBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -61,6 +59,22 @@ public class MiningGadget extends Item {
 
     }
 
+    public static void setLastBreak(ItemStack tool, long lastBreak) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        tagCompound.putLong("lastBreak", lastBreak);
+    }
+
+    public static long getLastBreak(ItemStack tool) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        return tagCompound.getLong("lastBreak");
+    }
+
+    public static boolean canMine(ItemStack tool, World world) {
+        long lastBreak = getLastBreak(tool);
+        if ((world.getGameTime() - lastBreak) < 4) return false;
+        return true;
+    }
+
     @Override
     public UseAction getUseAction(ItemStack stack) {
         return UseAction.NONE;
@@ -79,19 +93,17 @@ public class MiningGadget extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
-        if (player.isSneaking()) {
-            changeRange(itemstack);
-            //player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent(prefix, new TranslationTextComponent(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedComponentText()), true);
-            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
-            //LaserParticleData data = LaserParticleData.laserparticle(Blocks.COBBLESTONE.getDefaultState(), 1F, 1F, 1F, 1F, 80);
-            //BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
-            //player.world.addParticle(data, lookingAt.getPos().getX() + 0.5, lookingAt.getPos().getY() + 0.5 + 1, lookingAt.getPos().getZ() + 0.5, 0, 0f, 0);
-            return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
-        } else {
-            player.setActiveHand(hand);
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
+        if (!world.isRemote) {
+            if (player.isSneaking()) {
+                changeRange(itemstack);
+                player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
+                return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
+            } else {
+                player.setActiveHand(hand);
+                return new ActionResult<>(ActionResultType.PASS, itemstack);
+            }
         }
-
+        return new ActionResult<>(ActionResultType.PASS, itemstack);
     }
 
     @Override
@@ -100,7 +112,6 @@ public class MiningGadget extends Item {
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
         if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
             return;
-        BlockPos pos = lookingAt.getPos();
         List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
         float hardness = getHardness(coords, (PlayerEntity) player);
         hardness = hardness * getToolRange(stack) * 1;
@@ -108,6 +119,10 @@ public class MiningGadget extends Item {
             BlockState state = world.getBlockState(coord);
             if (!(state.getBlock() instanceof RenderBlock)) {
                 if (!world.isRemote) {
+                    if (!canMine(stack, world)) {
+                        player.resetActiveHand();
+                        return;
+                    }
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
@@ -116,17 +131,19 @@ public class MiningGadget extends Item {
                     te.setPlayer((PlayerEntity) player);
                 }
             } else {
-                //if (!world.isRemote) {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
-                if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
+                if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget) {
+                    if (te.getDurability() <= 2)
+                        setLastBreak(stack, world.getGameTime());
                     te.setDurability(te.getDurability() - 2);
-                else
+                } else {
+                    if (te.getDurability() <= 1)
+                        setLastBreak(stack, world.getGameTime());
                     te.setDurability(te.getDurability() - 1);
-                //}
+                }
             }
         }
 
-        return;
     }
 
     private static float getHardness(List<BlockPos> coords, PlayerEntity player) {
@@ -178,13 +195,9 @@ public class MiningGadget extends Item {
             return;
 
         // Rejects any blocks with a hardness less than 0
-        if( state.getBlockHardness(world, coord) < 0 )
+        if (state.getBlockHardness(world, coord) < 0)
             return;
 
         coordinates.add(coord);
-    }
-
-    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
-
     }
 }

@@ -27,7 +27,9 @@ public class EventRenderWorldLast {
                 continue;
             ItemStack heldItem = MiscTools.getGadget(player);
             if (player.isHandActive() && heldItem.getItem() instanceof MiningGadget) {
-                RenderMiningLaser.renderLaser(player, evt.getPartialTicks());
+                if (MiningGadget.canMine(heldItem, myplayer.world)) {
+                    RenderMiningLaser.renderLaser(player, evt.getPartialTicks());
+                }
             }
         }
     }

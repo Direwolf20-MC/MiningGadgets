@@ -13,8 +13,6 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.List;
 import java.util.Random;
@@ -146,20 +144,17 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 markDirty();
             }
             if (durability <= 0) {
-                BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, getPos(), renderBlock, player);
-                boolean cancelledBreak = MinecraftForge.EVENT_BUS.post(e);
-                if (!cancelledBreak) {
-                    List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
-                    for (ItemStack drop : blockDrops) {
-                        if (drop != null) {
-                            if (!player.addItemStackToInventory(drop)) {
-                                Block.spawnAsEntity(world, pos, drop);
-                            }
+                List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
+                for (ItemStack drop : blockDrops) {
+                    if (drop != null) {
+                        if (!player.addItemStackToInventory(drop)) {
+                            Block.spawnAsEntity(world, pos, drop);
                         }
                     }
+
                     player.giveExperiencePoints(renderBlock.getExpDrop(world, pos, 0, 0));
-                    world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
                     world.removeTileEntity(this.pos);
+                    world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
                     markDirtyClient();
                 }
             }
