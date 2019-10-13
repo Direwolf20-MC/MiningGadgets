@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.common.items.ModItems;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
@@ -10,7 +11,7 @@ public class Setup {
     private static ItemGroup itemGroup = new ItemGroup(MOD_ID) {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(ModBlocks.RENDERBLOCK);
+            return new ItemStack(ModItems.MININGGADGET);
         }
     };
 

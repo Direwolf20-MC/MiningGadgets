@@ -19,15 +19,16 @@ public class ModItems {
 
     @SubscribeEvent
     public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-        Item.Properties properties = new Item.Properties().group(Setup.getItemGroup());
+        Item.Properties groupedProps = new Item.Properties().group(Setup.getItemGroup());
 
+        // Keep in mind that items & item blocks are loaded into the ItemGroup
+        // in order of registry so don't put things below the minerslight / renderblock
         event.getRegistry().registerAll(
                 // Items
                 new MiningGadget(),
 
                 // BlockItems
-                new BlockItem(ModBlocks.RENDERBLOCK, properties).setRegistryName("renderblock"),
-                new BlockItem(ModBlocks.MINERSLIGHT, properties).setRegistryName("minerslight")
+                new BlockItem(ModBlocks.MINERSLIGHT, groupedProps).setRegistryName("minerslight")
         );
     }
 }
