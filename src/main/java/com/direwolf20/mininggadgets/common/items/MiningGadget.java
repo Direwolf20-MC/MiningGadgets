@@ -3,6 +3,9 @@ package com.direwolf20.mininggadgets.common.items;
 import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
+import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
@@ -202,83 +205,10 @@ public class MiningGadget extends Item {
         coordinates.add(coord);
     }
 
-    /**
-     * UPGRADE CODE :D
-     */
     public static void applyUpgrade(ItemStack tool, UpgradeCard upgradeCard) {
-        if( hasUpgrade(tool, upgradeCard.getUpgrade()) )
+        if(UpgradeTools.hasUpgrade(tool, upgradeCard.getUpgrade()) )
             return;
 
-        setUpgrade(tool, upgradeCard);
-    }
-
-    private static void setUpgrade(ItemStack tool, UpgradeCard upgrade) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-
-        ListNBT list = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
-        CompoundNBT compound = new CompoundNBT();
-        compound.putString("upgrade", upgrade.getUpgrade().getName());
-        compound.putInt("tier", upgrade.getTier());
-
-        list.add(compound);
-        tagCompound.put("upgrades", list);
-    }
-
-    // Return all upgrades in the item.
-    public static List<TieredUpgrade> getUpgrades(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
-
-        List<TieredUpgrade> functionalUpgrades = new ArrayList<>();
-        if( upgrades.isEmpty() )
-            return functionalUpgrades;
-
-        for (int i = 0; i < upgrades.size(); i++) {
-            CompoundNBT tag = upgrades.getCompound(i);
-
-            // If the name doesn't exist then move on
-            try {
-                Upgrade type = Upgrade.valueOf(tag.getString("upgrade").toUpperCase());
-                functionalUpgrades.add(new TieredUpgrade(tag.getInt("tier"), type));
-            } catch (IllegalArgumentException ignored) {}
-        }
-
-        return functionalUpgrades;
-    }
-
-    // Get a single upgrade and it's tier
-    public static TieredUpgrade getUpgrade(ItemStack tool, Upgrade type) {
-        List<TieredUpgrade> upgrades = getUpgrades(tool);
-        if( upgrades.isEmpty() )
-            return null;
-
-        for (TieredUpgrade upgrade: upgrades) {
-            if(upgrade.getUpgrade().getName().equals(type.getName()))
-                return upgrade;
-        }
-
-        return null;
-    }
-
-    public static boolean hasUpgrade(ItemStack tool, Upgrade type) {
-        return getUpgrade(tool, type) != null;
-    }
-
-    public static final class TieredUpgrade {
-        private int tier;
-        private Upgrade upgrade;
-
-        public TieredUpgrade(int tier, Upgrade upgrade) {
-            this.tier = tier;
-            this.upgrade = upgrade;
-        }
-
-        public int getTier() {
-            return tier;
-        }
-
-        public Upgrade getUpgrade() {
-            return upgrade;
-        }
+        UpgradeTools.setUpgrade(tool, upgradeCard);
     }
 }

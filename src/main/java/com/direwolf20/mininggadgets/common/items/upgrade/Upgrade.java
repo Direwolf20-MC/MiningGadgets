@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.items;
+package com.direwolf20.mininggadgets.common.items.upgrade;
 
 public enum Upgrade {
     SILK("silk"),
