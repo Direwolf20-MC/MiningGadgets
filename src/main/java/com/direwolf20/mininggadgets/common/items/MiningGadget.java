@@ -39,7 +39,7 @@ import java.util.List;
 
 public class MiningGadget extends Item {
     private int energyCapacity;
-    private static int energyPerItem;
+    private static int energyPerItem = 15;
 
     public MiningGadget() {
         super(new Item.Properties().maxStackSize(1).group(Setup.getItemGroup()));
@@ -61,7 +61,7 @@ public class MiningGadget extends Item {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
-        return new CapabilityEnergyProvider(stack, 1500);
+        return new CapabilityEnergyProvider(stack, 150000);
     }
 
     @Override
@@ -153,9 +153,9 @@ public class MiningGadget extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
-        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(50, false));
         if (!world.isRemote) {
             if (player.isSneaking()) {
+                itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(150000, false));
                 changeRange(itemstack);
                 player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
                 return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
@@ -202,9 +202,13 @@ public class MiningGadget extends Item {
                         setLastBreak(stack, world.getGameTime());
                     te.setDurability(te.getDurability() - 1);
                 }
+
+                if( te.getDurability() <= 1 ) {
+                    // This is clearly not where you'd want to put this.
+                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.extractEnergy(energyPerItem, false));
+                }
             }
         }
-
     }
 
     private static float getHardness(List<BlockPos> coords, PlayerEntity player) {
