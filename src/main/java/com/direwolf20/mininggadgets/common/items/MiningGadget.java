@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
@@ -32,7 +33,7 @@ import java.util.List;
 
 public class MiningGadget extends Item {
     public MiningGadget() {
-        super(new Item.Properties().maxStackSize(1).group(MiningGadgets.setup.itemGroup));
+        super(new Item.Properties().maxStackSize(1).group(Setup.getItemGroup()));
         setRegistryName("mininggadget");
     }
 

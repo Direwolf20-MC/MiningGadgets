@@ -19,9 +19,10 @@ import java.util.List;
 
 public class RenderBlock extends Block {
     public RenderBlock() {
-        super(Properties.create(Material.IRON)
-                .hardnessAndResistance(2.0f)
+        super(
+                Properties.create(Material.IRON).hardnessAndResistance(2.0f)
         );
+
         setRegistryName("renderblock");
     }
 

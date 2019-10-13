@@ -23,9 +23,10 @@ public class MinersLight extends Block {
     protected static final VoxelShape SHAPE = Block.makeCuboidShape(6.0D, 6.0D, 6.0D, 10.0D, 10.0D, 10.0D);
 
     public MinersLight() {
-        super(Block.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement()
-                .hardnessAndResistance(0.0f).lightValue(14)
+        super(
+                Block.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().hardnessAndResistance(0.0f).lightValue(14)
         );
+
         setRegistryName("minerslight");
     }
 
