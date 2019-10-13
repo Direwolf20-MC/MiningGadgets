@@ -36,7 +36,7 @@ public class UpgradeCard extends Item {
                     MiningGadget.applyUpgrade(stack, ((UpgradeCard) itemstack.getItem()));
                 else
                     UpgradeTools.removeUpgrade(stack, ((UpgradeCard) itemstack.getItem()).getUpgrade());
-                
+
                 itemstack.shrink(1);
                 player.sendMessage(new StringTextComponent("Upgrades applied so far: "));
                 UpgradeTools.getUpgrades(stack).forEach(e -> player.sendMessage(new StringTextComponent(e.getUpgrade() + ": " + e.getTier())));

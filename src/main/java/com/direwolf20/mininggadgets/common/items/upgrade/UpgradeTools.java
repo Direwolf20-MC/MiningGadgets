@@ -8,8 +8,10 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 
+import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UpgradeTools {
     /**
@@ -73,12 +75,9 @@ public class UpgradeTools {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
         ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
 
-        upgrades.iterator().forEachRemaining( e -> {
-            if( ((CompoundNBT) e).getString("upgrade").equals(upgrade.getName()) )
-                upgrades.remove(e);
-        });
-
-        tagCompound.put("upgrades", upgrades);
+        tagCompound.put("upgrades", upgrades.stream()
+                .filter(e -> !((CompoundNBT) e).getString("upgrade").equals(upgrade.getName()))
+                .collect(Collectors.toCollection(ListNBT::new)));
     }
 
     public static boolean hasUpgrade(ItemStack tool, Upgrade type) {
