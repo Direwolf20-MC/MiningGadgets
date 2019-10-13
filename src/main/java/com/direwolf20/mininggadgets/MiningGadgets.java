@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets;
 
+import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
@@ -95,13 +96,14 @@ public class MiningGadgets
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             // register a new block here
             blockRegistryEvent.getRegistry().register(new RenderBlock());
-            LOGGER.info("HELLO from Register Block");
+            blockRegistryEvent.getRegistry().register(new MinersLight());
         }
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             Item.Properties properties = new Item.Properties()
                     .group(setup.itemGroup);
             event.getRegistry().register(new BlockItem(ModBlocks.RENDERBLOCK, properties).setRegistryName("renderblock"));
+            event.getRegistry().register(new BlockItem(ModBlocks.MINERSLIGHT, properties).setRegistryName("minerslight"));
             event.getRegistry().register(new MiningGadget());
         }
         @SubscribeEvent

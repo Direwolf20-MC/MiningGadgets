@@ -13,6 +13,9 @@ public class ModBlocks {
     @ObjectHolder("mininggadgets:renderblock")
     public static RenderBlock RENDERBLOCK;
 
+    @ObjectHolder("mininggadgets:minerslight")
+    public static MinersLight MINERSLIGHT;
+
     @ObjectHolder("mininggadgets:renderblock")
     public static TileEntityType<RenderBlockTileEntity> RENDERBLOCK_TILE;
 
