@@ -143,6 +143,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 world.setBlockState(this.pos, renderBlock);
                 markDirty();
             }
+            if (player == null) return;
             if (durability <= 0) {
                 List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
                 for (ItemStack drop : blockDrops) {

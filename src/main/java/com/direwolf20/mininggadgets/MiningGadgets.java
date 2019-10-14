@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.setup.ClientProxy;
 import com.direwolf20.mininggadgets.common.setup.IProxy;
 import com.direwolf20.mininggadgets.common.setup.ServerProxy;
@@ -49,6 +50,7 @@ public class MiningGadgets
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
         setup.init();
         proxy.init();
+        PacketHandler.register();
     }
 
     // Register the doClientStuff method for modloading

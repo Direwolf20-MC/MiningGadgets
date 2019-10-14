@@ -1,14 +1,13 @@
 package com.direwolf20.mininggadgets.common.items.upgrade;
 
+import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,5 +82,17 @@ public class UpgradeTools {
 
     public static boolean hasUpgrade(ItemStack tool, Upgrade type) {
         return getUpgrade(tool, type) != null;
+    }
+
+    public static UpgradeCard getUpgadeItem(Upgrade upgrade, int tier) {
+        //todo Make this way better
+        if (upgrade == Upgrade.FORTUNE) {
+            if (tier == 1) return ModItems.UPGRADE_FORTUNE_1;
+            if (tier == 2) return ModItems.UPGRADE_FORTUNE_2;
+            if (tier == 3) return ModItems.UPGRADE_FORTUNE_3;
+        } else if (upgrade == Upgrade.SILK) {
+            return ModItems.UPGRADE_SILK;
+        }
+        return null;
     }
 }

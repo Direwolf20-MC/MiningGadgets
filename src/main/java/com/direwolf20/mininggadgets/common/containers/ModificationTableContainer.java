@@ -32,8 +32,8 @@ public class ModificationTableContainer extends Container {
         this.playerInventory = new InvWrapper(playerInventory);
 
         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new SlotItemHandler(h, 0, 64, 24));
-            addSlot(new SlotItemHandler(h, 1, 84, 24));
+            addSlot(new SlotItemHandler(h, 0, 24, 10));
+            addSlot(new SlotItemHandler(h, 1, 90, 10));
         });
         layoutPlayerInventorySlots(10, 70);
     }
@@ -41,6 +41,10 @@ public class ModificationTableContainer extends Container {
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
         return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerEntity, ModBlocks.MODIFICATIONTABLE);
+    }
+
+    public TileEntity getTE() {
+        return this.tileEntity;
     }
 
 

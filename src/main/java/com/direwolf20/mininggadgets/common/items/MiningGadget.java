@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
+import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
@@ -88,6 +89,17 @@ public class MiningGadget extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         super.addInformation(stack, world, tooltip, flag);
+
+        //if (Minecraft.getInstance().player.isSneaking()) {
+        List<TieredUpgrade> upgrades = UpgradeTools.getUpgrades(stack);
+        if (!(upgrades.isEmpty())) {
+            for (TieredUpgrade upgrade : upgrades) {
+                String upgradeName = upgrade.getUpgrade().getName();
+                int upgradeLevel = upgrade.getTier();
+                tooltip.add(new StringTextComponent("Upgrade: " + upgradeName + " " + upgradeLevel));
+            }
+        }
+        //}
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
             .ifPresent(energy -> tooltip.add(
@@ -270,9 +282,24 @@ public class MiningGadget extends Item {
     }
 
     public static void applyUpgrade(ItemStack tool, UpgradeCard upgradeCard) {
-        if(UpgradeTools.hasUpgrade(tool, upgradeCard.getUpgrade()) )
-            return;
+        /*if(UpgradeTools.hasUpgrade(tool, upgradeCard.getUpgrade()) )
+            return;*/
 
         UpgradeTools.setUpgrade(tool, upgradeCard);
+    }
+
+    @Override
+    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+        if (entityLiving instanceof PlayerEntity) {
+            entityLiving.resetActiveHand();
+        }
+    }
+
+    @Override
+    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
+        if (entityLiving instanceof PlayerEntity) {
+            entityLiving.resetActiveHand();
+        }
+        return stack;
     }
 }
