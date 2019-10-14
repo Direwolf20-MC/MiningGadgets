@@ -96,7 +96,9 @@ public class MiningGadget extends Item {
             for (TieredUpgrade upgrade : upgrades) {
                 String upgradeName = upgrade.getUpgrade().getName();
                 int upgradeLevel = upgrade.getTier();
-                tooltip.add(new StringTextComponent("Upgrade: " + upgradeName + " " + upgradeLevel));
+                String tip = "Upgrade: " + upgradeName;
+                if (upgradeLevel != -1) tip = tip + " " + upgradeLevel;
+                tooltip.add(new StringTextComponent(tip));
             }
         }
         //}
