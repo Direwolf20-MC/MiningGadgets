@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.Setup;
+import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
@@ -20,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -177,8 +179,10 @@ public class MiningGadget extends Item {
                 player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
                 return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
             } else {
-                player.setActiveHand(hand);
-                return new ActionResult<>(ActionResultType.PASS, itemstack);
+                if (canMine(itemstack, world)) {
+                    player.setActiveHand(hand);
+                    return new ActionResult<>(ActionResultType.PASS, itemstack);
+                }
             }
         }
         return new ActionResult<>(ActionResultType.PASS, itemstack);
@@ -192,13 +196,13 @@ public class MiningGadget extends Item {
             return;
         List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
         float hardness = getHardness(coords, (PlayerEntity) player);
+        if (hardness < 4) hardness = 4;
         hardness = hardness * getToolRange(stack) * 1;
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             if (!(state.getBlock() instanceof RenderBlock)) {
                 if (!world.isRemote) {
                     if (!canMine(stack, world)) {
-                        player.resetActiveHand();
                         return;
                     }
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
@@ -210,20 +214,16 @@ public class MiningGadget extends Item {
                 }
             } else {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
-                if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget) {
-                    if (te.getDurability() <= 2)
-                        setLastBreak(stack, world.getGameTime());
-                    te.setDurability(te.getDurability() - 2);
-                } else {
-                    if (te.getDurability() <= 1)
-                        setLastBreak(stack, world.getGameTime());
-                    te.setDurability(te.getDurability() - 1);
+                int durability = te.getDurability();
+                if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
+                    durability = durability - 2;
+                else
+                    durability = durability - 1;
+                if (durability <= 0) {
+                    setLastBreak(stack, world.getGameTime());
+                    player.resetActiveHand();
                 }
-
-                /*if( te.getDurability() <= 1 ) {
-                    // This is clearly not where you'd want to put this.
-                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.extractEnergy(energyPerItem, false));
-                }*/
+                te.setDurability(durability);
             }
         }
         if (!world.isRemote) {
@@ -289,6 +289,15 @@ public class MiningGadget extends Item {
         if (state.getBlockHardness(world, coord) < 0)
             return;
 
+        // No TE's
+        TileEntity te = world.getTileEntity(coord);
+        if (te != null && !(te instanceof RenderBlockTileEntity))
+            return;
+
+        //Ignore our Miners Light Block
+        if (state.getBlock() instanceof MinersLight)
+            return;
+
         coordinates.add(coord);
     }
 
@@ -304,13 +313,5 @@ public class MiningGadget extends Item {
         if (entityLiving instanceof PlayerEntity) {
             entityLiving.resetActiveHand();
         }
-    }
-
-    @Override
-    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
-        if (entityLiving instanceof PlayerEntity) {
-            entityLiving.resetActiveHand();
-        }
-        return stack;
     }
 }

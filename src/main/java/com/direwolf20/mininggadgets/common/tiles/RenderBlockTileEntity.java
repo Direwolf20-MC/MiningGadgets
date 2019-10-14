@@ -45,8 +45,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         if (priorDurability == 9999) {
             priorDurability = durability + 1;
         }
+        if (dur <= 0) {
+            removeBlock();
+        }
         ticksSinceMine = 0;
-        //markDirty();
+        markDirty();
     }
 
     public int getDurability() {
@@ -134,32 +137,37 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         return super.write(tag);
     }
 
+    private void removeBlock() {
+        if (!getWorld().isRemote) {
+            PlayerEntity player = world.getPlayerByUuid(playerUUID);
+            if (player == null) return;
+
+            List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
+            for (ItemStack drop : blockDrops) {
+                if (drop != null) {
+                    if (!player.addItemStackToInventory(drop)) {
+                        Block.spawnAsEntity(world, pos, drop);
+                    }
+                }
+            }
+            player.giveExperiencePoints(renderBlock.getExpDrop(world, pos, 0, 0));
+            world.removeTileEntity(this.pos);
+            world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+            markDirtyClient();
+        }
+    }
+
+    private void resetBlock() {
+        if (!getWorld().isRemote) {
+            world.setBlockState(this.pos, renderBlock);
+            markDirtyClient();
+        }
+    }
+
 
     @Override
     public void tick() {
-        if (!getWorld().isRemote) {
-            PlayerEntity player = world.getPlayerByUuid(playerUUID);
-            if (durability >= originalDurability) {
-                world.setBlockState(this.pos, renderBlock);
-                markDirty();
-            }
-            if (player == null) return;
-            if (durability <= 0) {
-                List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
-                for (ItemStack drop : blockDrops) {
-                    if (drop != null) {
-                        if (!player.addItemStackToInventory(drop)) {
-                            Block.spawnAsEntity(world, pos, drop);
-                        }
-                    }
-
-                    player.giveExperiencePoints(renderBlock.getExpDrop(world, pos, 0, 0));
-                    world.removeTileEntity(this.pos);
-                    world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
-                    markDirtyClient();
-                }
-            }
-        }
+        ticksSinceMine++;
         if (ticksSinceMine >= 10) {
             if (priorDurability == durability) {
                 durability++;
@@ -167,9 +175,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             } else {
                 priorDurability = durability;
             }
-            ticksSinceMine++;
         } else {
-            ticksSinceMine++;
             if (durability % 1 == 0) {
                 double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
                 double randomX = rand.nextDouble();
@@ -179,6 +185,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
             }
         }
-
+        if (durability >= originalDurability) {
+            resetBlock();
+        }
     }
 }
