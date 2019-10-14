@@ -10,6 +10,7 @@
   "comment-blocks": "Blocks",
   "block.mininggadgets.minersight": "Miners Sight",
   "block.mininggadgets.renderblock": "Render Block (Don't use)",
+  "block.mininggadgets.modificationtable": "Modification Table",
 
   "comment-gagdets": "Gadgets",
   "mininggadgets.mininggadget.range_change": "Range Change: %1$d x %1$d",

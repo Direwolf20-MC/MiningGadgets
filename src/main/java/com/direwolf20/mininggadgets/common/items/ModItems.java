@@ -40,5 +40,6 @@ public class ModItems {
 
         // BlockItems
         event.getRegistry().register(new BlockItem(ModBlocks.MINERSLIGHT, groupedProps).setRegistryName("minerslight"));
+        event.getRegistry().register(new BlockItem(ModBlocks.MODIFICATIONTABLE, groupedProps).setRegistryName("modificationtable"));
     }
 }

@@ -1,6 +1,9 @@
 package com.direwolf20.mininggadgets;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.common.setup.ClientProxy;
+import com.direwolf20.mininggadgets.common.setup.IProxy;
+import com.direwolf20.mininggadgets.common.setup.ServerProxy;
 import net.minecraft.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,6 +25,10 @@ import java.util.stream.Collectors;
 @Mod(Setup.MOD_ID)
 public class MiningGadgets
 {
+    public static final String MODID = "mininggadgets";
+
+    public static IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
+
     private static final Logger LOGGER = LogManager.getLogger();
     public static Setup setup = new Setup();
 
@@ -41,6 +48,7 @@ public class MiningGadgets
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
         setup.init();
+        proxy.init();
     }
 
     // Register the doClientStuff method for modloading
