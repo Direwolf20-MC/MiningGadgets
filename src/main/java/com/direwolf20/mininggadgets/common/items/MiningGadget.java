@@ -226,6 +226,15 @@ public class MiningGadget extends Item {
                 }*/
             }
         }
+        if (!world.isRemote) {
+            Direction side = lookingAt.getFace();
+            boolean vertical = side.getAxis().isVertical();
+            Direction up = vertical ? player.getHorizontalFacing() : Direction.UP;
+            Direction right = vertical ? up.rotateY() : side.rotateYCCW();
+            BlockPos pos = lookingAt.getPos().offset(side).offset(right);
+            if (world.getLight(pos) <= 12 && world.getBlockState(pos).getMaterial() == Material.AIR)
+                world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
+        }
     }
 
     private static float getHardness(List<BlockPos> coords, PlayerEntity player) {
