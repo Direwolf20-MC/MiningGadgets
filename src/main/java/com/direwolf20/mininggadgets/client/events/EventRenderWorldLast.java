@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.client.events;
 
-import com.direwolf20.mininggadgets.Setup;
+import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.renderer.RenderMiningLaser;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Setup.MOD_ID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT)
 public class EventRenderWorldLast {
     @SubscribeEvent
     static void renderWorldLastEvent(RenderWorldLastEvent evt) {

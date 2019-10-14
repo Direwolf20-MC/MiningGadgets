@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.items;
 
+import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
@@ -11,8 +12,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ObjectHolder;
 
-@EventBusSubscriber(bus = Bus.MOD, modid = Setup.MOD_ID)
-@ObjectHolder(Setup.MOD_ID)
+@EventBusSubscriber(bus = Bus.MOD, modid = MiningGadgets.MOD_ID)
+@ObjectHolder(MiningGadgets.MOD_ID)
 public class ModItems {
 
     @ObjectHolder("mininggadget")

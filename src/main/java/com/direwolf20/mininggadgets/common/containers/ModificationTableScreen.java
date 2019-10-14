@@ -16,7 +16,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
     private Button buttonInsert, buttonExtract;
 
-    private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MODID, "textures/gui/modificationtable.png");
+    private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
     private BlockPos tePos;
 
     public ModificationTableScreen(ModificationTableContainer container, PlayerInventory inv, ITextComponent name) {

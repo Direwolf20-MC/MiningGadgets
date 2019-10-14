@@ -3,11 +3,13 @@ package com.direwolf20.mininggadgets.common.containers;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
@@ -17,36 +19,46 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.MODIFICATIONTABLE_CONTAINER;
-
 public class ModificationTableContainer extends Container {
 
     private TileEntity tileEntity;
-    private PlayerEntity playerEntity;
     private IItemHandler playerInventory;
 
-    public ModificationTableContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
-        super(MODIFICATIONTABLE_CONTAINER, windowId);
-        tileEntity = world.getTileEntity(pos);
-        this.playerEntity = player;
+    public ModificationTableContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
+        super(ModContainers.MODIFICATIONTABLE_CONTAINER, windowId);
+
+        this.tileEntity = Minecraft.getInstance().world.getTileEntity(extraData.readBlockPos());
         this.playerInventory = new InvWrapper(playerInventory);
 
-        tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new SlotItemHandler(h, 0, 24, 10));
-            addSlot(new SlotItemHandler(h, 1, 90, 10));
-        });
+        setupContainerSlots();
+        layoutPlayerInventorySlots(10, 70);
+    }
+
+    public ModificationTableContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
+        super(ModContainers.MODIFICATIONTABLE_CONTAINER, windowId);
+
+        this.tileEntity = world.getTileEntity(pos);
+        this.playerInventory = new InvWrapper(playerInventory);
+
+        setupContainerSlots();
         layoutPlayerInventorySlots(10, 70);
     }
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerEntity, ModBlocks.MODIFICATIONTABLE);
+        return isWithinUsableDistance(IWorldPosCallable.of(Minecraft.getInstance().world, tileEntity.getPos()), playerIn, ModBlocks.MODIFICATIONTABLE);
+    }
+
+    private void setupContainerSlots() {
+        this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+            addSlot(new SlotItemHandler(h, 0, 24, 10));
+            addSlot(new SlotItemHandler(h, 1, 90, 10));
+        });
     }
 
     public TileEntity getTE() {
         return this.tileEntity;
     }
-
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0; i < amount; i++) {

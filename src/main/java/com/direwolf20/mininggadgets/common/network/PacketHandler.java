@@ -21,7 +21,7 @@ public class PacketHandler {
     private static short index = 0;
 
     public static final SimpleChannel HANDLER = NetworkRegistry.ChannelBuilder
-            .named(new ResourceLocation(MiningGadgets.MODID, "main_network_channel"))
+            .named(new ResourceLocation(MiningGadgets.MOD_ID, "main_network_channel"))
             .clientAcceptedVersions(PROTOCOL_VERSION::equals)
             .serverAcceptedVersions(PROTOCOL_VERSION::equals)
             .networkProtocolVersion(() -> PROTOCOL_VERSION)

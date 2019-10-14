@@ -82,10 +82,10 @@ public class ModificationTableTileEntity extends TileEntity implements INamedCon
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new ModificationTableContainer(i, world, pos, playerInventory, playerEntity);
+        return new ModificationTableContainer(i, world, pos, playerInventory);
     }
 
     public ModificationTableContainer getContainer(PlayerEntity playerIn) {
-        return new ModificationTableContainer(0, playerIn.world, this.pos, playerIn.inventory, playerIn);
+        return new ModificationTableContainer(0, playerIn.world, this.pos, playerIn.inventory);
     }
 }

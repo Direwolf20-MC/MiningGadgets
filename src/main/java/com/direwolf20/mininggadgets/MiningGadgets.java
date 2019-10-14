@@ -1,11 +1,8 @@
 package com.direwolf20.mininggadgets;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.setup.ClientProxy;
-import com.direwolf20.mininggadgets.common.setup.IProxy;
-import com.direwolf20.mininggadgets.common.setup.ServerProxy;
-import net.minecraft.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,12 +20,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Collectors;
 
-@Mod(Setup.MOD_ID)
+@Mod(MiningGadgets.MOD_ID)
 public class MiningGadgets
 {
-    public static final String MODID = "mininggadgets";
-
-    public static IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
+    public static final String MOD_ID = "mininggadgets";
 
     private static final Logger LOGGER = LogManager.getLogger();
     public static Setup setup = new Setup();
@@ -45,25 +40,31 @@ public class MiningGadgets
 
     private void setup(final FMLCommonSetupEvent event)
     {
-        // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
         setup.init();
-        proxy.init();
         PacketHandler.register();
     }
 
-    // Register the doClientStuff method for modloading
+    /**
+     * Only run on the client making it a safe place to register client
+     * components. Remember that you shouldn't reference client only
+     * methods in this class as it'll crash the mod :P
+     */
     private void doClientStuff(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
-        LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+        // Register the container screens.
+        ModContainers.registerContainerScreens();
     }
 
+    @SubscribeEvent
+    public void onServerStarting(FMLServerStartingEvent event) {}
+
+    /**
+     * Intermod communication
+     */
     // Register the enqueueIMC method for modloading
     private void enqueueIMC(final InterModEnqueueEvent event)
     {
         // some example code to dispatch IMC to another mod
-        InterModComms.sendTo(Setup.MOD_ID, "helloworld", () -> { LOGGER.info("Hello world from the MDK"); return "Hello world";});
+        InterModComms.sendTo(MOD_ID, "helloworld", () -> { LOGGER.info("Hello world from the MDK"); return "Hello world";});
     }
 
     // Register the processIMC method for modloading
@@ -75,8 +76,6 @@ public class MiningGadgets
                 collect(Collectors.toList()));
     }
 
-    @SubscribeEvent
-    public void onServerStarting(FMLServerStartingEvent event) {}
 
     public static Logger getLogger() {
         return LOGGER;
