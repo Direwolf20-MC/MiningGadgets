@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -32,6 +33,7 @@ public class ModificationTableContainer extends Container {
 
         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
             addSlot(new SlotItemHandler(h, 0, 64, 24));
+            addSlot(new SlotItemHandler(h, 1, 84, 24));
         });
         layoutPlayerInventorySlots(10, 70);
     }
@@ -75,8 +77,8 @@ public class ModificationTableContainer extends Container {
         if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             itemstack = stack.copy();
-            if (index == 0) {
-                if (!this.mergeItemStack(stack, 1, 37, true)) {
+            if (index <= 1) {
+                if (!this.mergeItemStack(stack, 2, 38, true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onSlotChange(stack, itemstack);
@@ -85,11 +87,15 @@ public class ModificationTableContainer extends Container {
                     if (!this.mergeItemStack(stack, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 28) {
-                    if (!this.mergeItemStack(stack, 28, 37, false)) {
+                } else if (stack.getItem() instanceof UpgradeCard) {
+                    if (!this.mergeItemStack(stack, 1, 2, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 37 && !this.mergeItemStack(stack, 1, 28, false)) {
+                } else if (index < 29) {
+                    if (!this.mergeItemStack(stack, 29, 38, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index < 38 && !this.mergeItemStack(stack, 2, 29, false)) {
                     return ItemStack.EMPTY;
                 }
             }
@@ -109,6 +115,4 @@ public class ModificationTableContainer extends Container {
 
         return itemstack;
     }
-
-
 }

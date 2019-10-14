@@ -1,10 +1,13 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -47,10 +50,17 @@ public class ModificationTableTileEntity extends TileEntity implements INamedCon
     }
 
     private IItemHandler createHandler() {
-        return new ItemStackHandler(1) {
+        return new ItemStackHandler(2) {
             @Override
             protected void onContentsChanged(int slot) {
                 markDirty();
+            }
+
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                if (slot == 0 && stack.getItem() instanceof MiningGadget) return true;
+                if (slot == 1 && stack.getItem() instanceof UpgradeCard) return true;
+                return false;
             }
         };
     }
