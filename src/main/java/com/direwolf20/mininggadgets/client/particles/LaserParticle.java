@@ -164,7 +164,7 @@ public class LaserParticle extends BreakingParticle {
             }
         } else {
             //What to do if we are sending the particles BACK to the source block, mostly similiar to the above. Much less flair.
-            //speedModifier = 0;
+            speedModifier = 10;
             int speedAdjust = (20 - speedModifier) <= 0 ? 1 : (20 - speedModifier);
             double distance = blockPos.distanceTo(partPos);
             if (distance < 0.75) {
