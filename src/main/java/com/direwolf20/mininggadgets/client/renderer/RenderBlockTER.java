@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IEnviromentBlockReader;
 import org.lwjgl.opengl.GL14;
@@ -54,7 +55,10 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         int durability = tile.getDurability();
         int originalDurability = tile.getOriginalDurability();
-        float scale = (float) (durability) / (float) originalDurability;
+        int prevDurability = tile.getPriorDurability();
+        float nowScale = (float) (durability) / (float) originalDurability;
+        float prevScale = (float) (prevDurability) / (float) originalDurability;
+        float scale = (float) (MathHelper.lerp(partialTicks, prevScale, nowScale));
         if (scale >= 1.0f)
             scale = 1f;
         if (scale <= 0)

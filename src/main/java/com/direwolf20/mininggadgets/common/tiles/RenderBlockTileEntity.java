@@ -22,11 +22,14 @@ import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_T
 
 public class RenderBlockTileEntity extends TileEntity implements ITickableTileEntity {
     private BlockState renderBlock;
+
     private int priorDurability = 9999;
+    private int clientDurability;
     private int durability;
     private UUID playerUUID;
     private int originalDurability;
     private Random rand = new Random();
+    private int ticksSinceMine = 0;
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE);
@@ -41,14 +44,20 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public void setDurability(int dur) {
+        priorDurability = durability;
         durability = dur;
-        if (priorDurability == 9999) {
-            priorDurability = durability + 1;
-        }
         if (dur <= 0) {
             removeBlock();
         }
         ticksSinceMine = 0;
+        if (durability % 1 == 0) {
+            double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
+            double randomX = rand.nextDouble();
+            double randomY = rand.nextDouble();
+            double randomZ = rand.nextDouble();
+            LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, 1F, 1F, 1F, 200);
+            getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
+        }
         markDirty();
     }
 
@@ -84,7 +93,21 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         this.ticksSinceMine = ticksSinceMine;
     }
 
-    private int ticksSinceMine = 0;
+    public int getPriorDurability() {
+        return priorDurability;
+    }
+
+    public void setPriorDurability(int priorDurability) {
+        this.priorDurability = priorDurability;
+    }
+
+    public int getClientDurability() {
+        return clientDurability;
+    }
+
+    public void setClientDurability(int clientDurability) {
+        this.clientDurability = clientDurability;
+    }
 
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
@@ -107,7 +130,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         read(pkt.getNbtCompound());
     }
 
-    private void markDirtyClient() {
+    public void markDirtyClient() {
         markDirty();
         if (getWorld() != null) {
             BlockState state = getWorld().getBlockState(getPos());
@@ -153,37 +176,30 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             player.giveExperiencePoints(renderBlock.getExpDrop(world, pos, 0, 0));
             world.removeTileEntity(this.pos);
             world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
-            markDirtyClient();
+            //markDirtyClient();
         }
     }
 
     private void resetBlock() {
         if (!getWorld().isRemote) {
             world.setBlockState(this.pos, renderBlock);
-            markDirtyClient();
+            //markDirtyClient();
         }
     }
 
 
     @Override
     public void tick() {
+        if (ticksSinceMine == 1) {
+            priorDurability = durability;
+            //markDirtyClient();
+        }
         ticksSinceMine++;
         if (ticksSinceMine >= 10) {
-            if (priorDurability == durability) {
-                durability++;
-                priorDurability = durability;
-            } else {
-                priorDurability = durability;
-            }
+            priorDurability = durability;
+            durability++;
         } else {
-            if (durability % 1 == 0) {
-                double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
-                double randomX = rand.nextDouble();
-                double randomY = rand.nextDouble();
-                double randomZ = rand.nextDouble();
-                LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, 1F, 1F, 1F, 200);
-                getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
-            }
+
         }
         if (durability >= originalDurability) {
             resetBlock();

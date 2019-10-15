@@ -208,13 +208,15 @@ public class MiningGadget extends Item {
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
-                    te.setDurability((int) hardness - 1);
-                    te.setOriginalDurability((int) hardness);
+                    te.setDurability((int) hardness);
+                    te.setPriorDurability((int) hardness + 1);
+                    te.setOriginalDurability((int) hardness + 1);
                     te.setPlayer((PlayerEntity) player);
                 }
             } else {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                 int durability = te.getDurability();
+                //System.out.println(durability);
                 if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
                     durability = durability - 2;
                 else
@@ -232,7 +234,7 @@ public class MiningGadget extends Item {
             Direction up = vertical ? player.getHorizontalFacing() : Direction.UP;
             Direction right = vertical ? up.rotateY() : side.rotateYCCW();
             BlockPos pos = lookingAt.getPos().offset(side).offset(right);
-            if (world.getLight(pos) <= 12 && world.getBlockState(pos).getMaterial() == Material.AIR)
+            if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR)
                 world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
         }
     }
@@ -312,6 +314,19 @@ public class MiningGadget extends Item {
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof PlayerEntity) {
             entityLiving.resetActiveHand();
+        }
+
+        if (!(worldIn.isRemote)) {
+            BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) entityLiving, RayTraceContext.FluidMode.NONE);
+            if (lookingAt == null || (worldIn.getBlockState(VectorHelper.getLookingAt((PlayerEntity) entityLiving, stack).getPos()) == Blocks.AIR.getDefaultState()))
+                return;
+
+            List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) entityLiving);
+            for (BlockPos coord : coords) {
+                TileEntity te = worldIn.getTileEntity(coord);
+                if (te instanceof RenderBlockTileEntity)
+                    ((RenderBlockTileEntity) te).markDirtyClient();
+            }
         }
     }
 }
