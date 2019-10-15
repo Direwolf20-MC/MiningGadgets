@@ -92,6 +92,14 @@ public class UpgradeTools {
             if (tier == 3) return ModItems.UPGRADE_FORTUNE_3;
         } else if (upgrade == Upgrade.SILK) {
             return ModItems.UPGRADE_SILK;
+        } else if (upgrade == Upgrade.VOID_JUNK) {
+            return ModItems.VOID_JUNK;
+        } else if (upgrade == Upgrade.THREEBYTHREE) {
+            return ModItems.THREEBYTHREE;
+        } else if (upgrade == Upgrade.LIGHT_PLACER) {
+            return ModItems.LIGHT_PLACER;
+        } else if (upgrade == Upgrade.MAGNET) {
+            return ModItems.MAGNET;
         }
         return null;
     }

@@ -23,6 +23,15 @@ public class ModItems {
     @ObjectHolder("upgrade_fortune_1")    public static UpgradeCard  UPGRADE_FORTUNE_1;
     @ObjectHolder("upgrade_fortune_2")    public static UpgradeCard  UPGRADE_FORTUNE_2;
     @ObjectHolder("upgrade_fortune_3")    public static UpgradeCard  UPGRADE_FORTUNE_3;
+    @ObjectHolder("light_placer")
+    public static UpgradeCard LIGHT_PLACER;
+    @ObjectHolder("3x3")
+    public static UpgradeCard THREEBYTHREE;
+    @ObjectHolder("void_junk")
+    public static UpgradeCard VOID_JUNK;
+    @ObjectHolder("magnet")
+    public static UpgradeCard MAGNET;
+
 
     @SubscribeEvent
     public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
@@ -38,6 +47,10 @@ public class ModItems {
         event.getRegistry().register(new UpgradeCard(Upgrade.FORTUNE, 1));
         event.getRegistry().register(new UpgradeCard(Upgrade.FORTUNE, 2));
         event.getRegistry().register(new UpgradeCard(Upgrade.FORTUNE, 3));
+        event.getRegistry().register(new UpgradeCard(Upgrade.LIGHT_PLACER, -1));
+        event.getRegistry().register(new UpgradeCard(Upgrade.THREEBYTHREE, -1));
+        event.getRegistry().register(new UpgradeCard(Upgrade.VOID_JUNK, -1));
+        event.getRegistry().register(new UpgradeCard(Upgrade.MAGNET, -1));
 
         // BlockItems
         event.getRegistry().register(new BlockItem(ModBlocks.MINERSLIGHT, groupedProps).setRegistryName("minerslight"));
