@@ -74,13 +74,9 @@ public class UpgradeTools {
         return getUpgradesFromTag(tagCompound);
     }
 
-    // Get a single upgrade and it's tier
-    public static Optional<Upgrade> getUpgradeFromTag(CompoundNBT tagCompound, Upgrade type) {
-        List<Upgrade> upgrades = getUpgradesFromTag(tagCompound);
-        return getUpgradeFromList(upgrades, type);
-    }
-
-    // Get a single upgrade and it's tier
+    /**
+     * Get a single upgrade and it's tier
+     */
     public static Optional<Upgrade> getUpgradeFromList(List<Upgrade> upgrades, Upgrade type) {
         if( upgrades == null || upgrades.isEmpty() )
             return Optional.empty();
@@ -112,10 +108,6 @@ public class UpgradeTools {
 
     public static boolean containsUpgrade(ItemStack tool, Upgrade type) {
         return getUpgradeFromGadget(tool, type).isPresent();
-    }
-
-    public static boolean containsUpgradeInTag(CompoundNBT nbt, Upgrade type) {
-        return getUpgradeFromTag(nbt, type).isPresent();
     }
 
     public static boolean containsUpgradeFromList(List<Upgrade> upgrades, Upgrade type) {
