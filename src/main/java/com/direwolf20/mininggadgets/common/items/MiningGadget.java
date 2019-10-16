@@ -50,7 +50,7 @@ import java.util.List;
 
 public class MiningGadget extends Item {
     private int energyCapacity;
-    private static int energyPerItem = 15;
+    //private static int energyPerItem = 15;
 
     public MiningGadget() {
         super(new Item.Properties().maxStackSize(1).group(Setup.getItemGroup()));
@@ -66,7 +66,8 @@ public class MiningGadget extends Item {
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        return (energy.getEnergyStored() < energy.getMaxEnergyStored());
     }
 
     @Nullable
@@ -146,12 +147,16 @@ public class MiningGadget extends Item {
     }
 
     public static boolean canMine(ItemStack tool, World world) {
-        IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
-        if (energy.getEnergyStored() <= energyPerItem)
-            return false;
-
         long lastBreak = getLastBreak(tool);
         if ((world.getGameTime() - lastBreak) < 2) return false;
+
+        IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        int cost = getEnergyCost(tool);
+        if (getToolRange(tool) == 3) cost = cost * 9;
+        if (energy.getEnergyStored() <= cost)
+            return false;
+
+
         return true;
     }
 
@@ -189,7 +194,7 @@ public class MiningGadget extends Item {
 
     public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
         // Debug code for free energy
-        //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
+        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
             DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true));
@@ -218,7 +223,7 @@ public class MiningGadget extends Item {
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             if (!(state.getBlock() instanceof RenderBlock)) {
-                if (!world.isRemote) {
+                //if (!world.isRemote) {
                     if (!canMine(stack, world)) {
                         return;
                     }
@@ -233,7 +238,7 @@ public class MiningGadget extends Item {
                     te.setDurability((int) hardness);
                     te.setPlayer((PlayerEntity) player);
 
-                }
+                //}
             } else {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                 int durability = te.getDurability();
@@ -270,7 +275,7 @@ public class MiningGadget extends Item {
         }
     }
 
-    public int getEnergyCost(ItemStack stack) {
+    public static int getEnergyCost(ItemStack stack) {
         int cost = Config.MININGGADGET_BASECOST.get();
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         if (upgrades.isEmpty()) return cost;
