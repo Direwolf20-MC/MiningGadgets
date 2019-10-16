@@ -10,29 +10,30 @@ import com.direwolf20.mininggadgets.common.items.UpgradeCard;
  * tiers as a whole. It also keeps things tidy :+1:
  */
 public enum Upgrade {
-    SILK("silk"),
-    VOID_JUNK("void_junk"),
-    MAGNET("magnet"),
-    THREE_BY_THREE("three_by_three"),
-    LIGHT_PLACER("light_placer"),
+    SILK("silk", 10),
+    VOID_JUNK("void_junk", 10),
+    MAGNET("magnet", 10),
+    THREE_BY_THREE("three_by_three", 10),
+    LIGHT_PLACER("light_placer", 10),
 
     // Tiered
-    FORTUNE_1("fortune_1", 1),
-    FORTUNE_2("fortune_2", 2),
-    FORTUNE_3("fortune_3", 3),
+    FORTUNE_1("fortune_1", 1, 10),
+    FORTUNE_2("fortune_2", 2, 10),
+    FORTUNE_3("fortune_3", 3, 10),
 
-    EFFICIENCY_1("efficiency_1", 1),
-    EFFICIENCY_2("efficiency_2", 2),
-    EFFICIENCY_3("efficiency_3", 3),
-    EFFICIENCY_4("efficiency_4", 4),
-    EFFICIENCY_5("efficiency_5", 5);
+    EFFICIENCY_1("efficiency_1", 1, 10),
+    EFFICIENCY_2("efficiency_2", 2, 10),
+    EFFICIENCY_3("efficiency_3", 3, 10),
+    EFFICIENCY_4("efficiency_4", 4, 10),
+    EFFICIENCY_5("efficiency_5", 5, 10);
 
     private String name;
+    private String baseName;
     private UpgradeCard card;
     private int tier;
-    private String baseName;
+    private int costPerBlock;
 
-    Upgrade(String name, int tier) {
+    Upgrade(String name, int tier, int costPerBlock) {
         this.name = name;
         this.tier = tier;
         this.card = new UpgradeCard(this);
@@ -42,8 +43,8 @@ public enum Upgrade {
     /**
      * If you don't want to add tiers
      */
-    Upgrade(String name) {
-        this(name, -1);
+    Upgrade(String name, int costPerBlock) {
+        this(name, -1, costPerBlock);
     }
 
     public String getName() {
@@ -56,6 +57,10 @@ public enum Upgrade {
 
     public int getTier() {
         return tier;
+    }
+
+    public int getCostPerBlock() {
+        return costPerBlock;
     }
 
     // Try and always use base name eval

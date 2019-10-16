@@ -338,10 +338,9 @@ public class MiningGadget extends Item {
     }
 
     public static void applyUpgrade(ItemStack tool, UpgradeCard upgradeCard) {
-        /*if(UpgradeTools.hasUpgrade(tool, upgradeCard.getUpgrade()) )
-            return;*/
+        if(UpgradeTools.containsUpgrade(tool, upgradeCard.getUpgrade()) )
+            return;
 
-        UpgradeTools.getUpgrades(tool).forEach(e -> System.out.println(e.getName()));
         UpgradeTools.setUpgrade(tool, upgradeCard);
     }
 
