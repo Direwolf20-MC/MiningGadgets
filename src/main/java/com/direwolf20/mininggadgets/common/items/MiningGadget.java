@@ -220,11 +220,12 @@ public class MiningGadget extends Item {
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
-                    te.setDurability((int) hardness);
+                    te.setGadgetUpgrades(gadgetUpgrades);
                     te.setPriorDurability((int) hardness + 1);
                     te.setOriginalDurability((int) hardness + 1);
+                    te.setDurability((int) hardness);
                     te.setPlayer((PlayerEntity) player);
-                    te.setGadgetUpgrades(gadgetUpgrades);
+
                 }
             } else {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
