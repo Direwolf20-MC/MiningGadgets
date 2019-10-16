@@ -1,6 +1,8 @@
 package com.direwolf20.mininggadgets.client.particles;
 
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.BreakingParticle;
@@ -156,11 +158,14 @@ public class LaserParticle extends BreakingParticle {
             moveZ = (targetDirection.getZ()) / speedAdjust;
             //If the particle is less than 5 ticks old, rapidly move the particles towards the player's look position
             //This is what clumps them together early on. Comment this out if you wanna see the difference without.
-            if (age < 5) {
-                int compressionFactor = 7;
-                moveX = moveX * ((1 - Math.abs(look.x)) * compressionFactor);
-                moveY = moveY * ((1 - Math.abs(look.y)) * compressionFactor);
-                moveZ = moveZ * ((1 - Math.abs(look.z)) * compressionFactor);
+            ItemStack heldItem = MiscTools.getGadget(player);
+            if (heldItem.getItem() instanceof MiningGadget && MiningGadget.getToolRange(heldItem) > 1) {
+                if (age < 5) {
+                    int compressionFactor = 7;
+                    moveX = moveX * ((1 - Math.abs(look.x)) * compressionFactor);
+                    moveY = moveY * ((1 - Math.abs(look.y)) * compressionFactor);
+                    moveZ = moveZ * ((1 - Math.abs(look.z)) * compressionFactor);
+                }
             }
         } else {
             //What to do if we are sending the particles BACK to the source block, mostly similiar to the above. Much less flair.
