@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "rur",
+    "iii"
+  ],
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_empty"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "mininggadgets:modificationtable"
+  }
+}
