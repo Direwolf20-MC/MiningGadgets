@@ -5,12 +5,12 @@ import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
-import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -96,14 +96,12 @@ public class MiningGadget extends Item {
         super.addInformation(stack, world, tooltip, flag);
 
         //if (Minecraft.getInstance().player.isSneaking()) {
-        List<TieredUpgrade> upgrades = UpgradeTools.getUpgrades(stack);
+        List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         if (!(upgrades.isEmpty())) {
-            for (TieredUpgrade upgrade : upgrades) {
-                String upgradeName = upgrade.getUpgrade().getName();
-                int upgradeLevel = upgrade.getTier();
-                String tip = "Upgrade: " + upgradeName;
-                if (upgradeLevel != -1) tip = tip + " " + upgradeLevel;
-                tooltip.add(new StringTextComponent(tip));
+            for (Upgrade upgrade : upgrades) {
+                tooltip.add(new StringTextComponent(
+                        I18n.format(String.format("item.mininggadgets.upgrade_%s", upgrade.getName()))
+                ));
             }
         }
         //}
@@ -178,7 +176,7 @@ public class MiningGadget extends Item {
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(150000, false));
-                if (UpgradeTools.hasUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
+                if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
                     changeRange(itemstack);
                     player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
                 }
@@ -200,10 +198,13 @@ public class MiningGadget extends Item {
         if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
             return;
         List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
+
+        // As all upgrade types with tiers contain the same name, we can check for a single
+        // type in the enum and produce a result that we can then pull the tier from
         int efficiency = 0;
-        if (UpgradeTools.hasUpgrade(stack, Upgrade.EFFICIENCY)) {
-            efficiency = UpgradeTools.getUpgrade((stack), Upgrade.EFFICIENCY).getTier();
-        }
+        if( UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).isPresent() )
+            efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
+
         float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
         hardness = hardness * getToolRange(stack) * 1;
         hardness = (float) Math.floor(hardness);
@@ -216,7 +217,7 @@ public class MiningGadget extends Item {
                         return;
                     }
 
-                    List<TieredUpgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
+                    List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
@@ -242,7 +243,7 @@ public class MiningGadget extends Item {
             }
         }
         if (!world.isRemote) {
-            if (!(UpgradeTools.hasUpgrade(stack, Upgrade.LIGHT_PLACER)))
+            if (!(UpgradeTools.containsUpgrade(stack, Upgrade.LIGHT_PLACER)))
                 return;
             Direction side = lookingAt.getFace();
             boolean vertical = side.getAxis().isVertical();
@@ -331,6 +332,7 @@ public class MiningGadget extends Item {
         /*if(UpgradeTools.hasUpgrade(tool, upgradeCard.getUpgrade()) )
             return;*/
 
+        UpgradeTools.getUpgrades(tool).forEach(e -> System.out.println(e.getName()));
         UpgradeTools.setUpgrade(tool, upgradeCard);
     }
 

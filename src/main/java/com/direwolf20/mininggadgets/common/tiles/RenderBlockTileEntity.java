@@ -2,7 +2,6 @@ package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
 import com.direwolf20.mininggadgets.common.items.ModItems;
-import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.block.Block;
@@ -37,7 +36,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private int originalDurability;
     private Random rand = new Random();
     private int ticksSinceMine = 0;
-    private List<TieredUpgrade> gadgetUpgrades;
+    private List<Upgrade> gadgetUpgrades;
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE);
@@ -58,7 +57,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             removeBlock();
         }
         ticksSinceMine = 0;
-        if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.MAGNET)) {
+        if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET)) {
             if (durability % 1 == 0) {
                 double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
                 double randomX = rand.nextDouble();
@@ -119,11 +118,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         this.clientDurability = clientDurability;
     }
 
-    public List<TieredUpgrade> getGadgetUpgrades() {
+    public List<Upgrade> getGadgetUpgrades() {
         return gadgetUpgrades;
     }
 
-    public void setGadgetUpgrades(List<TieredUpgrade> gadgetUpgrades) {
+    public void setGadgetUpgrades(List<Upgrade> gadgetUpgrades) {
         this.gadgetUpgrades = gadgetUpgrades;
     }
 
@@ -165,7 +164,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         durability = tag.getInt("durability");
         ticksSinceMine = tag.getInt("ticksSinceMine");
         playerUUID = tag.getUniqueId("playerUUID");
-        gadgetUpgrades = UpgradeTools.getUpgradesNBT(tag);
+        gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
     }
 
     @Override
@@ -185,18 +184,22 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             PlayerEntity player = world.getPlayerByUuid(playerUUID);
             if (player == null) return;
 
-            if (!(UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
+            if (!(UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
                 ItemStack tempTool = new ItemStack(ModItems.MININGGADGET);
-                if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.SILK)) {
+
+                // If silk is in the upgrades, apply it without a tier.
+                if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.SILK))
                     tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-                } else if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.FORTUNE)) {
-                    tempTool.addEnchantment(Enchantments.FORTUNE, UpgradeTools.getUpgradeList(gadgetUpgrades, Upgrade.FORTUNE).getTier());
-                }
+
+                // If the upgrade exists. Apply it with it's tier
+                UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)
+                        .ifPresent( upgrade -> tempTool.addEnchantment(Enchantments.FORTUNE, upgrade.getTier()));
+
                 List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
                 //List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
                 for (ItemStack drop : blockDrops) {
                     if (drop != null) {
-                        if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.MAGNET)) {
+                        if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET)) {
                             if (!player.addItemStackToInventory(drop)) {
                                 Block.spawnAsEntity(world, pos, drop);
                             }

@@ -5,15 +5,13 @@ import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import net.minecraft.item.Item;
 
 public class UpgradeCard extends Item {
-    private int tier;
     private Upgrade upgrade;
 
-    public UpgradeCard(Upgrade upgrade, int tier) {
+    public UpgradeCard(Upgrade upgrade) {
         super(new Properties().group(Setup.getItemGroup()).maxStackSize(1));
 
-        setRegistryName("upgrade_" + upgrade.getName() + (tier != -1 ? "_" + tier : ""));
+        setRegistryName("upgrade_" + upgrade.getName());
         this.upgrade = upgrade;
-        this.tier = tier;
     }
 
     // Temp way of applying upgrades
@@ -41,9 +39,5 @@ public class UpgradeCard extends Item {
 
     public Upgrade getUpgrade() {
         return upgrade;
-    }
-
-    public int getTier() {
-        return tier;
     }
 }

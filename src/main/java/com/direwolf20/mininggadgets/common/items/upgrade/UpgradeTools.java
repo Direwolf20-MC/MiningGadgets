@@ -1,6 +1,5 @@
 package com.direwolf20.mininggadgets.common.items.upgrade;
 
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.item.ItemStack;
@@ -10,6 +9,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class UpgradeTools {
@@ -18,28 +18,25 @@ public class UpgradeTools {
      * can not, validate the upgrade you are inserting to the item. Please be sure to always
      * use {@link com.direwolf20.mininggadgets.common.items.MiningGadget#applyUpgrade(ItemStack, UpgradeCard)} unless you actually require this
      * kind of unchecked functionality
-     *
-     * @param tool
-     * @param upgrade
      */
 
     public static void setUpgradeNBT(CompoundNBT nbt, UpgradeCard upgrade) {
         ListNBT list = nbt.getList("upgrades", Constants.NBT.TAG_COMPOUND);
+
         CompoundNBT compound = new CompoundNBT();
         compound.putString("upgrade", upgrade.getUpgrade().getName());
-        compound.putInt("tier", upgrade.getTier());
 
         list.add(compound);
         nbt.put("upgrades", list);
+        System.out.println(list);
     }
 
-    public static CompoundNBT setUpgradesNBT(List<TieredUpgrade> laserUpgrades) {
+    public static CompoundNBT setUpgradesNBT(List<Upgrade> laserUpgrades) {
         CompoundNBT listCompound = new CompoundNBT();
         ListNBT list = new ListNBT();
         CompoundNBT compound = new CompoundNBT();
-        for (TieredUpgrade upgrade : laserUpgrades) {
-            compound.putString("upgrade", upgrade.getUpgrade().getName());
-            compound.putInt("tier", upgrade.getTier());
+        for (Upgrade upgrade : laserUpgrades) {
+            compound.putString("upgrade", upgrade.getName());
             list.add(compound);
         }
         listCompound.put("upgrades", list);
@@ -52,10 +49,10 @@ public class UpgradeTools {
     }
 
     // Return all upgrades in the item.
-    public static List<TieredUpgrade> getUpgradesNBT(CompoundNBT tagCompound) {
+    public static List<Upgrade> getUpgradesFromTag(CompoundNBT tagCompound) {
         ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
 
-        List<TieredUpgrade> functionalUpgrades = new ArrayList<>();
+        List<Upgrade> functionalUpgrades = new ArrayList<>();
         if (upgrades.isEmpty())
             return functionalUpgrades;
 
@@ -65,64 +62,45 @@ public class UpgradeTools {
             // If the name doesn't exist then move on
             try {
                 Upgrade type = Upgrade.valueOf(tag.getString("upgrade").toUpperCase());
-                functionalUpgrades.add(new TieredUpgrade(tag.getInt("tier"), type));
-            } catch (IllegalArgumentException ignored) {
-            }
+                functionalUpgrades.add(type);
+            } catch (IllegalArgumentException ignored) { }
         }
 
         return functionalUpgrades;
     }
 
     // Return all upgrades in the item.
-    public static List<TieredUpgrade> getUpgrades(ItemStack tool) {
+    public static List<Upgrade> getUpgrades(ItemStack tool) {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        return getUpgradesNBT(tagCompound);
+        return getUpgradesFromTag(tagCompound);
     }
 
     // Get a single upgrade and it's tier
-    public static TieredUpgrade getUpgradeNBT(CompoundNBT tagCompound, Upgrade type) {
-        List<TieredUpgrade> upgrades = getUpgradesNBT(tagCompound);
-        if (upgrades.isEmpty())
-            return null;
-
-        for (TieredUpgrade upgrade : upgrades) {
-            if (upgrade.getUpgrade().getName().equals(type.getName()))
-                return upgrade;
-        }
-
-        return null;
+    public static Optional<Upgrade> getUpgradeFromTag(CompoundNBT tagCompound, Upgrade type) {
+        List<Upgrade> upgrades = getUpgradesFromTag(tagCompound);
+        return getUpgradeFromList(upgrades, type);
     }
 
     // Get a single upgrade and it's tier
-    public static TieredUpgrade getUpgradeList(List<TieredUpgrade> upgrades, Upgrade type) {
-        if (upgrades == null)
-            return null;
+    public static Optional<Upgrade> getUpgradeFromList(List<Upgrade> upgrades, Upgrade type) {
+        if( upgrades == null || upgrades.isEmpty() )
+            return Optional.empty();
 
-        if (upgrades.isEmpty())
-            return null;
-
-        for (TieredUpgrade upgrade : upgrades) {
-            if (upgrade.getUpgrade().getName().equals(type.getName()))
-                return upgrade;
-        }
-
-        return null;
+        return upgrades.stream()
+                .filter(upgrade -> upgrade.getBaseName().equals(type.getBaseName()))
+                .findFirst();
     }
 
     // Get a single upgrade and it's tier
-    public static TieredUpgrade getUpgrade(ItemStack tool, Upgrade type) {
-        List<TieredUpgrade> upgrades = getUpgrades(tool);
-        if( upgrades.isEmpty() )
-            return null;
-
-        for (TieredUpgrade upgrade: upgrades) {
-            if(upgrade.getUpgrade().getName().equals(type.getName()))
-                return upgrade;
-        }
-
-        return null;
+    public static Optional<Upgrade> getUpgradeFromGadget(ItemStack tool, Upgrade type) {
+        List<Upgrade> upgrades = getUpgrades(tool);
+        return getUpgradeFromList(upgrades, type);
     }
 
+    /**
+     * @implNote note that this is the only instance we use getName for non-eval uses
+     * as the gadget stores the full name and not it's base name
+     */
     public static void removeUpgrade(ItemStack tool, Upgrade upgrade) {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
         ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
@@ -133,41 +111,15 @@ public class UpgradeTools {
                 .collect(Collectors.toCollection(ListNBT::new)));
     }
 
-    public static boolean hasUpgrade(ItemStack tool, Upgrade type) {
-        return getUpgrade(tool, type) != null;
+    public static boolean containsUpgrade(ItemStack tool, Upgrade type) {
+        return getUpgradeFromGadget(tool, type).isPresent();
     }
 
-    public static boolean hasUpgradeNBT(CompoundNBT nbt, Upgrade type) {
-        return getUpgradeNBT(nbt, type) != null;
+    public static boolean containsUpgradeInTag(CompoundNBT nbt, Upgrade type) {
+        return getUpgradeFromTag(nbt, type).isPresent();
     }
 
-    public static boolean hasUpgradeList(List<TieredUpgrade> upgrades, Upgrade type) {
-        return getUpgradeList(upgrades, type) != null;
-    }
-
-    public static UpgradeCard getUpgadeItem(Upgrade upgrade, int tier) {
-        //todo Make this way better
-        if (upgrade == Upgrade.FORTUNE) {
-            if (tier == 1) return ModItems.UPGRADE_FORTUNE_1;
-            if (tier == 2) return ModItems.UPGRADE_FORTUNE_2;
-            if (tier == 3) return ModItems.UPGRADE_FORTUNE_3;
-        } else if (upgrade == Upgrade.SILK) {
-            return ModItems.UPGRADE_SILK;
-        } else if (upgrade == Upgrade.VOID_JUNK) {
-            return ModItems.VOID_JUNK;
-        } else if (upgrade == Upgrade.THREE_BY_THREE) {
-            return ModItems.THREE_BY_THREE;
-        } else if (upgrade == Upgrade.LIGHT_PLACER) {
-            return ModItems.LIGHT_PLACER;
-        } else if (upgrade == Upgrade.MAGNET) {
-            return ModItems.MAGNET;
-        } else if (upgrade == Upgrade.EFFICIENCY) {
-            if (tier == 1) return ModItems.UPGRADE_EFFICIENCY_1;
-            if (tier == 2) return ModItems.UPGRADE_EFFICIENCY_2;
-            if (tier == 3) return ModItems.UPGRADE_EFFICIENCY_3;
-            if (tier == 4) return ModItems.UPGRADE_EFFICIENCY_4;
-            if (tier == 5) return ModItems.UPGRADE_EFFICIENCY_5;
-        }
-        return null;
+    public static boolean containsUpgradeFromList(List<Upgrade> upgrades, Upgrade type) {
+        return getUpgradeFromList(upgrades, type).isPresent();
     }
 }
