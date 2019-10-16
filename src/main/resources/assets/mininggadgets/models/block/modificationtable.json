@@ -1,6 +1,10 @@
 {
-  "parent": "block/cube_all",
+  "parent": "block/orientable",
   "textures": {
-    "all": "mininggadgets:block/modificationtable"
+    "particle": "mininggadgets:block/modificationtable_top",
+    "front": "mininggadgets:block/modificationtable_side",
+    "top": "mininggadgets:block/modificationtable_top",
+    "bottom": "mininggadgets:block/modificationtable_bottom",
+    "side": "mininggadgets:block/modificationtable_side"
   }
 }

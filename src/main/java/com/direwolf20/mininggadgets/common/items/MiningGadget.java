@@ -56,7 +56,7 @@ public class MiningGadget extends Item {
         super(new Item.Properties().maxStackSize(1).group(Setup.getItemGroup()));
         setRegistryName("mininggadget");
 
-        this.energyCapacity = 1000;
+        this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
     @Override
@@ -97,7 +97,6 @@ public class MiningGadget extends Item {
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         super.addInformation(stack, world, tooltip, flag);
 
-        //if (Minecraft.getInstance().player.isSneaking()) {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         if (!(upgrades.isEmpty())) {
             for (Upgrade upgrade : upgrades) {
@@ -106,7 +105,6 @@ public class MiningGadget extends Item {
                 ));
             }
         }
-        //}
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
                 .ifPresent(energy -> tooltip.add(
