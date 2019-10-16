@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.items;
 
+import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
@@ -10,7 +11,6 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -70,7 +70,7 @@ public class MiningGadget extends Item {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
-        return new CapabilityEnergyProvider(stack, 150000);
+        return new CapabilityEnergyProvider(stack, Config.MININGGADGET_MAXPOWER.get());
     }
 
     @Override
