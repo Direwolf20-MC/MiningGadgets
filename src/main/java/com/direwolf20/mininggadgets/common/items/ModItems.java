@@ -31,6 +31,16 @@ public class ModItems {
     public static UpgradeCard VOID_JUNK;
     @ObjectHolder("upgrade_magnet")
     public static UpgradeCard MAGNET;
+    @ObjectHolder("upgrade_efficiency_1")
+    public static UpgradeCard UPGRADE_EFFICIENCY_1;
+    @ObjectHolder("upgrade_efficiency_2")
+    public static UpgradeCard UPGRADE_EFFICIENCY_2;
+    @ObjectHolder("upgrade_efficiency_3")
+    public static UpgradeCard UPGRADE_EFFICIENCY_3;
+    @ObjectHolder("upgrade_efficiency_4")
+    public static UpgradeCard UPGRADE_EFFICIENCY_4;
+    @ObjectHolder("upgrade_efficiency_5")
+    public static UpgradeCard UPGRADE_EFFICIENCY_5;
 
 
     @SubscribeEvent
@@ -51,6 +61,12 @@ public class ModItems {
         event.getRegistry().register(new UpgradeCard(Upgrade.THREE_BY_THREE, -1));
         event.getRegistry().register(new UpgradeCard(Upgrade.VOID_JUNK, -1));
         event.getRegistry().register(new UpgradeCard(Upgrade.MAGNET, -1));
+        event.getRegistry().register(new UpgradeCard(Upgrade.EFFICIENCY, 1));
+        event.getRegistry().register(new UpgradeCard(Upgrade.EFFICIENCY, 2));
+        event.getRegistry().register(new UpgradeCard(Upgrade.EFFICIENCY, 3));
+        event.getRegistry().register(new UpgradeCard(Upgrade.EFFICIENCY, 4));
+        event.getRegistry().register(new UpgradeCard(Upgrade.EFFICIENCY, 5));
+
 
         // BlockItems
         event.getRegistry().register(new BlockItem(ModBlocks.MINERSLIGHT, groupedProps).setRegistryName("minerslight"));

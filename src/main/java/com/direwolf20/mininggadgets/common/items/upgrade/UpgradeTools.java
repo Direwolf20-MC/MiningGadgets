@@ -161,6 +161,12 @@ public class UpgradeTools {
             return ModItems.LIGHT_PLACER;
         } else if (upgrade == Upgrade.MAGNET) {
             return ModItems.MAGNET;
+        } else if (upgrade == Upgrade.EFFICIENCY) {
+            if (tier == 1) return ModItems.UPGRADE_EFFICIENCY_1;
+            if (tier == 2) return ModItems.UPGRADE_EFFICIENCY_2;
+            if (tier == 3) return ModItems.UPGRADE_EFFICIENCY_3;
+            if (tier == 4) return ModItems.UPGRADE_EFFICIENCY_4;
+            if (tier == 5) return ModItems.UPGRADE_EFFICIENCY_5;
         }
         return null;
     }

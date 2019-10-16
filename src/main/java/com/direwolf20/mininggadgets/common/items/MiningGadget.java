@@ -22,6 +22,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -151,7 +153,7 @@ public class MiningGadget extends Item {
             return false;
 
         long lastBreak = getLastBreak(tool);
-        if ((world.getGameTime() - lastBreak) < 4) return false;
+        if ((world.getGameTime() - lastBreak) < 2) return false;
         return true;
     }
 
@@ -198,9 +200,16 @@ public class MiningGadget extends Item {
         if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
             return;
         List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
-        float hardness = getHardness(coords, (PlayerEntity) player);
+        int efficiency = 0;
+        if (UpgradeTools.hasUpgrade(stack, Upgrade.EFFICIENCY)) {
+            efficiency = UpgradeTools.getUpgrade((stack), Upgrade.EFFICIENCY).getTier();
+        }
+        float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
         hardness = hardness * getToolRange(stack) * 1;
-        if (hardness < 4) hardness = 4;
+        //if (hardness < 4) hardness = 4;
+
+        hardness = (float) Math.ceil(hardness);
+        if (hardness == 0) hardness = 1;
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             if (!(state.getBlock() instanceof RenderBlock)) {
@@ -208,6 +217,7 @@ public class MiningGadget extends Item {
                     if (!canMine(stack, world)) {
                         return;
                     }
+                    System.out.println(hardness);
                     List<TieredUpgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
@@ -246,16 +256,25 @@ public class MiningGadget extends Item {
         }
     }
 
-    private static float getHardness(List<BlockPos> coords, PlayerEntity player) {
+    private static float getHardness(List<BlockPos> coords, PlayerEntity player, int efficiency) {
         float hardness = 0;
+        float toolSpeed = 8;
+        if (efficiency > 0) {
+            toolSpeed = toolSpeed + ((efficiency * efficiency + 1));
+        }
+        EffectInstance hasteEffect = player.getActivePotionEffect(Effects.HASTE);
+        if (hasteEffect != null) {
+            int hasteLevel = hasteEffect.getAmplifier() + 1;
+            toolSpeed = toolSpeed + (toolSpeed * ((hasteLevel * 20f) / 100));
+        }
         World world = player.getEntityWorld();
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             float temphardness = state.getBlockHardness(world, coord);
-            if (state.getMaterial() == Material.EARTH) temphardness = temphardness * 4;
-            hardness += temphardness;
+            //if (state.getMaterial() == Material.EARTH) temphardness = temphardness * 4;
+            hardness += (temphardness * 30) / toolSpeed;
         }
-        return ((hardness / coords.size()) * 3);
+        return ((hardness / coords.size()));
     }
 
     public static List<BlockPos> getMinableBlocks(ItemStack stack, BlockRayTraceResult lookingAt, PlayerEntity player) {

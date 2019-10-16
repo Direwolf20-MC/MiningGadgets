@@ -6,6 +6,7 @@ public enum Upgrade {
     VOID_JUNK("void_junk"),
     MAGNET("magnet"),
     THREE_BY_THREE("three_by_three"),
+    EFFICIENCY("efficiency"),
     LIGHT_PLACER("light_placer");
 
 
