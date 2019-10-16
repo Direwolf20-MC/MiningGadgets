@@ -36,6 +36,7 @@ public enum Upgrade {
     Upgrade(String name, int tier, int costPerBlock) {
         this.name = name;
         this.tier = tier;
+        this.costPerBlock = costPerBlock;
         this.card = new UpgradeCard(this);
         this.baseName = tier == -1 ? name : name.substring(0, name.lastIndexOf('_'));
     }
