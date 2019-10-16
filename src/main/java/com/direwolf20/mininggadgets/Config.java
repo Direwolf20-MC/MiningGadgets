@@ -23,6 +23,7 @@ public class Config {
     public static ForgeConfigSpec CLIENT_CONFIG;
 
     public static ForgeConfigSpec.IntValue MININGGADGET_MAXPOWER;
+    public static ForgeConfigSpec.IntValue MININGGADGET_BASECOST;
 
     static {
 
@@ -41,10 +42,12 @@ public class Config {
     }
 
     private static void setupMiningGadgetConfig() {
-        COMMON_BUILDER.comment("FirstBlock settings").push(SUBCATEGORY_MININGGADGET);
+        COMMON_BUILDER.comment("Mining Gadget Settings").push(SUBCATEGORY_MININGGADGET);
 
         MININGGADGET_MAXPOWER = COMMON_BUILDER.comment("Maximum power for the Mining Gadget")
                 .defineInRange("maxPower", 1000000, 0, Integer.MAX_VALUE);
+        MININGGADGET_BASECOST = COMMON_BUILDER.comment("Base cost per block broken")
+                .defineInRange("baseCost", 200, 0, Integer.MAX_VALUE);
         /*FIRSTBLOCK_GENERATE = COMMON_BUILDER.comment("Power generation per diamond")
                 .defineInRange("generate", 1000, 0, Integer.MAX_VALUE);
         FIRSTBLOCK_SEND = COMMON_BUILDER.comment("Power generation to send per tick")

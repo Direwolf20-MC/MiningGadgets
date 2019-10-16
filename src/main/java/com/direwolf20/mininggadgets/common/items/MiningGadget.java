@@ -271,7 +271,7 @@ public class MiningGadget extends Item {
     }
 
     public int getEnergyCost() {
-        int cost = 200;
+        int cost = Config.MININGGADGET_BASECOST.get();
 
         return cost;
     }
