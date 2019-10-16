@@ -10,6 +10,9 @@ import com.direwolf20.mininggadgets.common.items.UpgradeCard;
  * tiers as a whole. It also keeps things tidy :+1:
  */
 public enum Upgrade {
+    //Blank
+    EMPTY("empty", 0),
+
     SILK("silk", 100),
     VOID_JUNK("void_junk", 10),
     MAGNET("magnet", 20),

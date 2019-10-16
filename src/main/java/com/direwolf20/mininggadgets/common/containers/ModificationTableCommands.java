@@ -18,6 +18,8 @@ public class ModificationTableCommands {
         ItemStack upgradeCard = upgradeSlot.getStack();
         if (laser.getItem() instanceof MiningGadget && upgradeCard.getItem() instanceof UpgradeCard) {
             Upgrade card = ((UpgradeCard) upgradeCard.getItem()).getUpgrade();
+            if (card == Upgrade.EMPTY)
+                return; //Don't allow inserting empty cards.
             List<Upgrade> upgrades = UpgradeTools.getUpgrades(laser);
 
             // Fortune has to be done slightly differently as it requires us to check
@@ -28,6 +30,9 @@ public class ModificationTableCommands {
             //
             if ((hasFortune && card == Upgrade.SILK) ||
                     (upgrades.contains(Upgrade.SILK) && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName())))
+                return;
+
+            if (UpgradeTools.containsUpgrade(laser, card))
                 return;
 
             MiningGadget.applyUpgrade(laser, (UpgradeCard) upgradeCard.getItem());

@@ -20,7 +20,8 @@ public class ModItems {
 
     @ObjectHolder("mininggadget")
     public static MiningGadget MININGGADGET;
-
+    @ObjectHolder("upgrade_empty")
+    public static UpgradeCard UPGRADE_EMPTY;
     @ObjectHolder("upgrade_silk")               public static UpgradeCard UPGRADE_SILK;
     @ObjectHolder("upgrade_fortune_1")          public static UpgradeCard UPGRADE_FORTUNE_1;
     @ObjectHolder("upgrade_fortune_2")          public static UpgradeCard UPGRADE_FORTUNE_2;
