@@ -59,7 +59,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
         ticksSinceMine = 0;
         if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.MAGNET) && originalDurability > 0) {
-            int PartCount = 0 / originalDurability;
+            int PartCount = 20 / originalDurability;
             if (PartCount <= 1) PartCount = 1;
             for (int i = 0; i <= PartCount; i++) {
                 double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
