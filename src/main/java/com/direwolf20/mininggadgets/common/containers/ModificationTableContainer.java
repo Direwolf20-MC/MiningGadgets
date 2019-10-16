@@ -31,7 +31,7 @@ public class ModificationTableContainer extends Container {
         this.playerInventory = new InvWrapper(playerInventory);
 
         setupContainerSlots();
-        layoutPlayerInventorySlots(10, 70);
+        layoutPlayerInventorySlots(8, 84);
     }
 
     public ModificationTableContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
@@ -51,8 +51,8 @@ public class ModificationTableContainer extends Container {
 
     private void setupContainerSlots() {
         this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new SlotItemHandler(h, 0, 24, 10));
-            addSlot(new SlotItemHandler(h, 1, 90, 10));
+            addSlot(new SlotItemHandler(h, 0, 8, 7));
+            addSlot(new SlotItemHandler(h, 1, 45, 7));
         });
     }
 

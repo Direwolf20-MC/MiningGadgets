@@ -1,6 +1,7 @@
-package com.direwolf20.mininggadgets.common.containers;
+package com.direwolf20.mininggadgets.client.gui;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.Packets.PacketExtractUpgrade;
 import com.direwolf20.mininggadgets.common.network.Packets.PacketInsertUpgrade;
@@ -14,7 +15,7 @@ import net.minecraft.util.text.ITextComponent;
 
 public class ModificationTableScreen extends ContainerScreen<ModificationTableContainer> {
 
-    private Button buttonInsert, buttonExtract;
+    private DireButton buttonInsert, buttonExtract;
 
     private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
     private BlockPos tePos;
@@ -47,12 +48,12 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
     @Override
     public void init() {
         super.init();
-        buttonInsert = addButton(createAndAddButton(12, 30, 40, 20, "Insert", (button) -> PacketHandler.sendToServer(new PacketInsertUpgrade(tePos))));
-        buttonExtract = addButton(createAndAddButton(78, 30, 40, 20, "Extract", (button) -> PacketHandler.sendToServer(new PacketExtractUpgrade(tePos))));
+        buttonInsert = addButton(createAndAddButton(27, 5, 14, 10, "<-", (button) -> PacketHandler.sendToServer(new PacketInsertUpgrade(tePos))));
+        buttonExtract = addButton(createAndAddButton(27, 15, 14, 10, "->", (button) -> PacketHandler.sendToServer(new PacketExtractUpgrade(tePos))));
     }
 
-    private Button createAndAddButton(int x, int y, int witdth, int height, String text, Button.IPressable action) {
-        Button button = new Button(guiLeft + x, guiTop + y, witdth, height, text, action);
+    private DireButton createAndAddButton(int x, int y, int witdth, int height, String text, Button.IPressable action) {
+        DireButton button = new DireButton(guiLeft + x, guiTop + y, witdth, height, text, action);
         return button;
     }
 }
