@@ -206,9 +206,7 @@ public class MiningGadget extends Item {
         }
         float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
         hardness = hardness * getToolRange(stack) * 1;
-        //if (hardness < 4) hardness = 4;
-
-        hardness = (float) Math.ceil(hardness);
+        hardness = (float) Math.floor(hardness);
         if (hardness == 0) hardness = 1;
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
@@ -217,6 +215,7 @@ public class MiningGadget extends Item {
                     if (!canMine(stack, world)) {
                         return;
                     }
+
                     List<TieredUpgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
