@@ -76,7 +76,7 @@ public class MiningGadget extends Item {
     @Override
     public double getDurabilityForDisplay(ItemStack stack) {
         IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
-        if( energy == null )
+        if (energy == null)
             return 0;
 
         return 1D - (energy.getEnergyStored() / (double) energy.getMaxEnergyStored());
@@ -107,10 +107,10 @@ public class MiningGadget extends Item {
         //}
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
-            .ifPresent(energy -> tooltip.add(
-                    new TranslationTextComponent("mininggadgets.item.energy", energy.getEnergyStored(), energy.getMaxEnergyStored())
-            )
-        );
+                .ifPresent(energy -> tooltip.add(
+                        new TranslationTextComponent("mininggadgets.item.energy", energy.getEnergyStored(), energy.getMaxEnergyStored())
+                        )
+                );
     }
 
     public static void setToolRange(ItemStack tool, int range) {
@@ -147,7 +147,7 @@ public class MiningGadget extends Item {
 
     public static boolean canMine(ItemStack tool, World world) {
         IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
-        if( energy.getEnergyStored() <= energyPerItem )
+        if (energy.getEnergyStored() <= energyPerItem)
             return false;
 
         long lastBreak = getLastBreak(tool);
@@ -175,7 +175,8 @@ public class MiningGadget extends Item {
         ItemStack itemstack = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
-                itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(150000, false));
+                //Debug code for free energy
+                itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
                 if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
                     changeRange(itemstack);
                     player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
@@ -202,7 +203,7 @@ public class MiningGadget extends Item {
         // As all upgrade types with tiers contain the same name, we can check for a single
         // type in the enum and produce a result that we can then pull the tier from
         int efficiency = 0;
-        if( UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).isPresent() )
+        if (UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).isPresent())
             efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
         float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
@@ -232,13 +233,14 @@ public class MiningGadget extends Item {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                 int durability = te.getDurability();
                 //System.out.println(durability);
-                if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
+                /*if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
                     durability = durability - 2;
-                else
-                    durability = durability - 1;
+                else*/
+                durability = durability - 1;
                 if (durability <= 0) {
                     setLastBreak(stack, world.getGameTime());
                     player.resetActiveHand();
+                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost() * -1, false));
                 }
                 te.setDurability(durability);
             }
@@ -254,6 +256,12 @@ public class MiningGadget extends Item {
             if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR)
                 world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
         }
+    }
+
+    public int getEnergyCost() {
+        int cost = 200;
+
+        return cost;
     }
 
     private static float getHardness(List<BlockPos> coords, PlayerEntity player, int efficiency) {
