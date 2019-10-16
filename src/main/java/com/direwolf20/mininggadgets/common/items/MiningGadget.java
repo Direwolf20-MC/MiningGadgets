@@ -6,6 +6,7 @@ import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
 import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
@@ -231,6 +232,8 @@ public class MiningGadget extends Item {
             }
         }
         if (!world.isRemote) {
+            if (!(UpgradeTools.hasUpgrade(stack, Upgrade.LIGHT_PLACER)))
+                return;
             Direction side = lookingAt.getFace();
             boolean vertical = side.getAxis().isVertical();
             Direction up = vertical ? player.getHorizontalFacing() : Direction.UP;

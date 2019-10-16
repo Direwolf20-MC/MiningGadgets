@@ -23,7 +23,7 @@ public class UpgradeTools {
      * @param upgrade
      */
 
-    public static CompoundNBT setUpgradeNBT(CompoundNBT nbt, UpgradeCard upgrade) {
+    public static void setUpgradeNBT(CompoundNBT nbt, UpgradeCard upgrade) {
         ListNBT list = nbt.getList("upgrades", Constants.NBT.TAG_COMPOUND);
         CompoundNBT compound = new CompoundNBT();
         compound.putString("upgrade", upgrade.getUpgrade().getName());
@@ -31,7 +31,6 @@ public class UpgradeTools {
 
         list.add(compound);
         nbt.put("upgrades", list);
-        return nbt;
     }
 
     public static CompoundNBT setUpgradesNBT(List<TieredUpgrade> laserUpgrades) {
@@ -49,7 +48,7 @@ public class UpgradeTools {
 
     public static void setUpgrade(ItemStack tool, UpgradeCard upgrade) {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        tagCompound.put("upgrades", setUpgradeNBT(tagCompound, upgrade));
+        setUpgradeNBT(tagCompound, upgrade);
     }
 
     // Return all upgrades in the item.
