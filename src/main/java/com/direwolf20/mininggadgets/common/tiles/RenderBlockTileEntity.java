@@ -1,12 +1,14 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
+import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -184,7 +186,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             if (player == null) return;
 
             if (!(UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
-                List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
+                ItemStack tempTool = new ItemStack(ModItems.MININGGADGET);
+                if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.SILK)) {
+                    tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+                } else if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.FORTUNE)) {
+                    tempTool.addEnchantment(Enchantments.FORTUNE, UpgradeTools.getUpgradeList(gadgetUpgrades, Upgrade.FORTUNE).getTier());
+                }
+                List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
+                //List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
                 for (ItemStack drop : blockDrops) {
                     if (drop != null) {
                         if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.MAGNET)) {
