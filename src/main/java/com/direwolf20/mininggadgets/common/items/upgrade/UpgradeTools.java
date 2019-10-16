@@ -97,7 +97,7 @@ public class UpgradeTools {
     public static TieredUpgrade getUpgradeList(List<TieredUpgrade> upgrades, Upgrade type) {
         if (upgrades == null)
             return null;
-        
+
         if (upgrades.isEmpty())
             return null;
 
@@ -155,8 +155,8 @@ public class UpgradeTools {
             return ModItems.UPGRADE_SILK;
         } else if (upgrade == Upgrade.VOID_JUNK) {
             return ModItems.VOID_JUNK;
-        } else if (upgrade == Upgrade.THREEBYTHREE) {
-            return ModItems.THREEBYTHREE;
+        } else if (upgrade == Upgrade.THREE_BY_THREE) {
+            return ModItems.THREE_BY_THREE;
         } else if (upgrade == Upgrade.LIGHT_PLACER) {
             return ModItems.LIGHT_PLACER;
         } else if (upgrade == Upgrade.MAGNET) {

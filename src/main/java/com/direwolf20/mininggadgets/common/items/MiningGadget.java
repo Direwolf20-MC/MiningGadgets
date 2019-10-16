@@ -113,7 +113,7 @@ public class MiningGadget extends Item {
         );
     }
 
-    private static void setToolRange(ItemStack tool, int range) {
+    public static void setToolRange(ItemStack tool, int range) {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
         tagCompound.putInt("range", range);
     }
@@ -176,8 +176,10 @@ public class MiningGadget extends Item {
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(150000, false));
-                changeRange(itemstack);
-                player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
+                if (UpgradeTools.hasUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
+                    changeRange(itemstack);
+                    player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
+                }
                 return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
             } else {
                 if (canMine(itemstack, world)) {

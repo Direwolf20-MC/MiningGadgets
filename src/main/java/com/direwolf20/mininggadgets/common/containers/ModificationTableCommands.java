@@ -4,6 +4,7 @@ package com.direwolf20.mininggadgets.common.containers;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -33,6 +34,9 @@ public class ModificationTableCommands {
                 TieredUpgrade upgrade = upgrades.get(upgrades.size() - 1);
                 UpgradeTools.removeUpgrade(laser, upgrade.getUpgrade());
                 container.putStackInSlot(1, new ItemStack(UpgradeTools.getUpgadeItem(upgrade.getUpgrade(), upgrade.getTier())));
+                if (upgrade.getUpgrade() == Upgrade.THREE_BY_THREE) {
+                    MiningGadget.setToolRange(laser, 1);
+                }
             }
         }
 

@@ -25,8 +25,8 @@ public class ModItems {
     @ObjectHolder("upgrade_fortune_3")    public static UpgradeCard  UPGRADE_FORTUNE_3;
     @ObjectHolder("upgrade_light_placer")
     public static UpgradeCard LIGHT_PLACER;
-    @ObjectHolder("upgrade_3x3")
-    public static UpgradeCard THREEBYTHREE;
+    @ObjectHolder("upgrade_three_by_three")
+    public static UpgradeCard THREE_BY_THREE;
     @ObjectHolder("upgrade_void_junk")
     public static UpgradeCard VOID_JUNK;
     @ObjectHolder("upgrade_magnet")
@@ -48,7 +48,7 @@ public class ModItems {
         event.getRegistry().register(new UpgradeCard(Upgrade.FORTUNE, 2));
         event.getRegistry().register(new UpgradeCard(Upgrade.FORTUNE, 3));
         event.getRegistry().register(new UpgradeCard(Upgrade.LIGHT_PLACER, -1));
-        event.getRegistry().register(new UpgradeCard(Upgrade.THREEBYTHREE, -1));
+        event.getRegistry().register(new UpgradeCard(Upgrade.THREE_BY_THREE, -1));
         event.getRegistry().register(new UpgradeCard(Upgrade.VOID_JUNK, -1));
         event.getRegistry().register(new UpgradeCard(Upgrade.MAGNET, -1));
 

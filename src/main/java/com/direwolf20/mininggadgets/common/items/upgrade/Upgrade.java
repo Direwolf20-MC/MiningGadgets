@@ -5,7 +5,7 @@ public enum Upgrade {
     FORTUNE("fortune"),
     VOID_JUNK("void_junk"),
     MAGNET("magnet"),
-    THREEBYTHREE("3x3"),
+    THREE_BY_THREE("three_by_three"),
     LIGHT_PLACER("light_placer");
 
 
