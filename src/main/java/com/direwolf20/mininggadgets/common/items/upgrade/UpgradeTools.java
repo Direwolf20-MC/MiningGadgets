@@ -33,8 +33,8 @@ public class UpgradeTools {
     public static CompoundNBT setUpgradesNBT(List<Upgrade> laserUpgrades) {
         CompoundNBT listCompound = new CompoundNBT();
         ListNBT list = new ListNBT();
-        CompoundNBT compound = new CompoundNBT();
         for (Upgrade upgrade : laserUpgrades) {
+            CompoundNBT compound = new CompoundNBT();
             compound.putString("upgrade", upgrade.getName());
             list.add(compound);
         }

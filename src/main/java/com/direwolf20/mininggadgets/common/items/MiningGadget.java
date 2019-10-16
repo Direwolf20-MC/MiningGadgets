@@ -173,23 +173,28 @@ public class MiningGadget extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
-        if (!world.isRemote) {
-            if (player.isSneaking()) {
-                //Debug code for free energy
-                itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
-                if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
-                    changeRange(itemstack);
-                    player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
-                }
-                return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
-            } else {
-                if (canMine(itemstack, world)) {
-                    player.setActiveHand(hand);
-                    return new ActionResult<>(ActionResultType.PASS, itemstack);
-                }
-            }
-        }
+        if (world.isRemote)
+            return new ActionResult<>(ActionResultType.PASS, itemstack);
+
+        // Only perform the shift action
+        if( player.isSneaking() )
+            return this.onItemShiftRightClick(world, player, hand, itemstack);
+
+        if (!canMine(itemstack, world))
+            return new ActionResult<>(ActionResultType.FAIL, itemstack);
+
+        player.setActiveHand(hand);
         return new ActionResult<>(ActionResultType.PASS, itemstack);
+    }
+
+    public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
+        // Debug code for free energy
+        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
+        if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
+            changeRange(itemstack);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
+        }
+        return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
 
     @Override
