@@ -10,22 +10,22 @@ import com.direwolf20.mininggadgets.common.items.UpgradeCard;
  * tiers as a whole. It also keeps things tidy :+1:
  */
 public enum Upgrade {
-    SILK("silk", 10),
+    SILK("silk", 100),
     VOID_JUNK("void_junk", 10),
-    MAGNET("magnet", 10),
-    THREE_BY_THREE("three_by_three", 10),
-    LIGHT_PLACER("light_placer", 10),
+    MAGNET("magnet", 20),
+    THREE_BY_THREE("three_by_three", 0),
+    LIGHT_PLACER("light_placer", 0),
 
     // Tiered
-    FORTUNE_1("fortune_1", 1, 10),
-    FORTUNE_2("fortune_2", 2, 10),
-    FORTUNE_3("fortune_3", 3, 10),
+    FORTUNE_1("fortune_1", 1, 30),
+    FORTUNE_2("fortune_2", 2, 60),
+    FORTUNE_3("fortune_3", 3, 100),
 
     EFFICIENCY_1("efficiency_1", 1, 10),
-    EFFICIENCY_2("efficiency_2", 2, 10),
-    EFFICIENCY_3("efficiency_3", 3, 10),
-    EFFICIENCY_4("efficiency_4", 4, 10),
-    EFFICIENCY_5("efficiency_5", 5, 10);
+    EFFICIENCY_2("efficiency_2", 2, 20),
+    EFFICIENCY_3("efficiency_3", 3, 30),
+    EFFICIENCY_4("efficiency_4", 4, 40),
+    EFFICIENCY_5("efficiency_5", 5, 50);
 
     private String name;
     private String baseName;

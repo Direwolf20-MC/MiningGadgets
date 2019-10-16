@@ -245,7 +245,7 @@ public class MiningGadget extends Item {
                 if (durability <= 0) {
                     setLastBreak(stack, world.getGameTime());
                     player.resetActiveHand();
-                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost() * -1, false));
+                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                 }
                 te.setDurability(durability);
             }
@@ -270,9 +270,13 @@ public class MiningGadget extends Item {
         }
     }
 
-    public int getEnergyCost() {
+    public int getEnergyCost(ItemStack stack) {
         int cost = Config.MININGGADGET_BASECOST.get();
-
+        List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
+        if (upgrades.isEmpty()) return cost;
+        for (Upgrade upgrade : upgrades) {
+            cost = cost + upgrade.getCostPerBlock();
+        }
         return cost;
     }
 
