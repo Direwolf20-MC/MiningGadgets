@@ -94,6 +94,22 @@ public class UpgradeTools {
     }
 
     // Get a single upgrade and it's tier
+    public static TieredUpgrade getUpgradeList(List<TieredUpgrade> upgrades, Upgrade type) {
+        if (upgrades == null)
+            return null;
+        
+        if (upgrades.isEmpty())
+            return null;
+
+        for (TieredUpgrade upgrade : upgrades) {
+            if (upgrade.getUpgrade().getName().equals(type.getName()))
+                return upgrade;
+        }
+
+        return null;
+    }
+
+    // Get a single upgrade and it's tier
     public static TieredUpgrade getUpgrade(ItemStack tool, Upgrade type) {
         List<TieredUpgrade> upgrades = getUpgrades(tool);
         if( upgrades.isEmpty() )
@@ -119,6 +135,14 @@ public class UpgradeTools {
 
     public static boolean hasUpgrade(ItemStack tool, Upgrade type) {
         return getUpgrade(tool, type) != null;
+    }
+
+    public static boolean hasUpgradeNBT(CompoundNBT nbt, Upgrade type) {
+        return getUpgradeNBT(nbt, type) != null;
+    }
+
+    public static boolean hasUpgradeList(List<TieredUpgrade> upgrades, Upgrade type) {
+        return getUpgradeList(upgrades, type) != null;
     }
 
     public static UpgradeCard getUpgadeItem(Upgrade upgrade, int tier) {

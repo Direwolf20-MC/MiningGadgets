@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
 import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -54,13 +55,15 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             removeBlock();
         }
         ticksSinceMine = 0;
-        if (durability % 1 == 0) {
-            double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
-            double randomX = rand.nextDouble();
-            double randomY = rand.nextDouble();
-            double randomZ = rand.nextDouble();
-            LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, 1F, 1F, 1F, 200);
-            getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
+        if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.MAGNET)) {
+            if (durability % 1 == 0) {
+                double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
+                double randomX = rand.nextDouble();
+                double randomY = rand.nextDouble();
+                double randomZ = rand.nextDouble();
+                LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, 1F, 1F, 1F, 200);
+                getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
+            }
         }
         markDirty();
     }
@@ -182,7 +185,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
             for (ItemStack drop : blockDrops) {
                 if (drop != null) {
-                    if (!player.addItemStackToInventory(drop)) {
+                    if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.MAGNET)) {
+                        if (!player.addItemStackToInventory(drop)) {
+                            Block.spawnAsEntity(world, pos, drop);
+                        }
+                    } else {
                         Block.spawnAsEntity(world, pos, drop);
                     }
                 }
