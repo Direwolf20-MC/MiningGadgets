@@ -44,7 +44,7 @@ public class Config {
         COMMON_BUILDER.comment("FirstBlock settings").push(SUBCATEGORY_MININGGADGET);
 
         MININGGADGET_MAXPOWER = COMMON_BUILDER.comment("Maximum power for the Mining Gadget")
-                .defineInRange("maxPower", 250000, 0, Integer.MAX_VALUE);
+                .defineInRange("maxPower", 1000000, 0, Integer.MAX_VALUE);
         /*FIRSTBLOCK_GENERATE = COMMON_BUILDER.comment("Power generation per diamond")
                 .defineInRange("generate", 1000, 0, Integer.MAX_VALUE);
         FIRSTBLOCK_SEND = COMMON_BUILDER.comment("Power generation to send per tick")
