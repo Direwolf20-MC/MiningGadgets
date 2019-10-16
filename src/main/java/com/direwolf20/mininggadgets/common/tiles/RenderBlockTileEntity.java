@@ -16,6 +16,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -182,15 +183,17 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             PlayerEntity player = world.getPlayerByUuid(playerUUID);
             if (player == null) return;
 
-            List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
-            for (ItemStack drop : blockDrops) {
-                if (drop != null) {
-                    if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.MAGNET)) {
-                        if (!player.addItemStackToInventory(drop)) {
+            if (!(UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
+                List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
+                for (ItemStack drop : blockDrops) {
+                    if (drop != null) {
+                        if (UpgradeTools.hasUpgradeList(gadgetUpgrades, Upgrade.MAGNET)) {
+                            if (!player.addItemStackToInventory(drop)) {
+                                Block.spawnAsEntity(world, pos, drop);
+                            }
+                        } else {
                             Block.spawnAsEntity(world, pos, drop);
                         }
-                    } else {
-                        Block.spawnAsEntity(world, pos, drop);
                     }
                 }
             }
