@@ -38,9 +38,11 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -192,7 +194,7 @@ public class MiningGadget extends Item {
         itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
-            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true);
+            DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + I18n.format("mininggadgets.mininggadget.range_change", getToolRange(itemstack))), true));
         }
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
@@ -253,11 +255,18 @@ public class MiningGadget extends Item {
         if (!world.isRemote) {
             if (!(UpgradeTools.containsUpgrade(stack, Upgrade.LIGHT_PLACER)))
                 return;
+
             Direction side = lookingAt.getFace();
             boolean vertical = side.getAxis().isVertical();
             Direction up = vertical ? player.getHorizontalFacing() : Direction.UP;
             Direction right = vertical ? up.rotateY() : side.rotateYCCW();
-            BlockPos pos = lookingAt.getPos().offset(side).offset(right);
+
+            BlockPos pos;
+            if( getToolRange(stack) == 1 )
+                pos = lookingAt.getPos().offset(side, 4);
+            else
+                pos = lookingAt.getPos().offset(side).offset(right);
+
             if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR)
                 world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
         }
