@@ -217,7 +217,6 @@ public class MiningGadget extends Item {
                     if (!canMine(stack, world)) {
                         return;
                     }
-                    System.out.println(hardness);
                     List<TieredUpgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
