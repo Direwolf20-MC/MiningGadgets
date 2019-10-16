@@ -28,7 +28,6 @@ public class UpgradeTools {
 
         list.add(compound);
         nbt.put("upgrades", list);
-        System.out.println(list);
     }
 
     public static CompoundNBT setUpgradesNBT(List<Upgrade> laserUpgrades) {

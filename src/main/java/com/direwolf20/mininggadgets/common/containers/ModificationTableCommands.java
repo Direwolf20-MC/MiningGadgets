@@ -16,8 +16,20 @@ public class ModificationTableCommands {
         Slot upgradeSlot = container.inventorySlots.get(1);
         ItemStack laser = laserSlot.getStack();
         ItemStack upgradeCard = upgradeSlot.getStack();
-        System.out.println(((UpgradeCard)upgradeCard.getItem()).getUpgrade().getName());
         if (laser.getItem() instanceof MiningGadget && upgradeCard.getItem() instanceof UpgradeCard) {
+            Upgrade card = ((UpgradeCard) upgradeCard.getItem()).getUpgrade();
+            List<Upgrade> upgrades = UpgradeTools.getUpgrades(laser);
+
+            // Fortune has to be done slightly differently as it requires us to check
+            // against all fortune tiers and not just it's existence.
+            boolean hasFortune = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.FORTUNE_1);
+
+            // Reject fortune and silk upgrades when combined together.
+            //
+            if ((hasFortune && card == Upgrade.SILK) ||
+                    (upgrades.contains(Upgrade.SILK) && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName())))
+                return;
+
             MiningGadget.applyUpgrade(laser, (UpgradeCard) upgradeCard.getItem());
             container.putStackInSlot(1, ItemStack.EMPTY);
         }
