@@ -6,6 +6,10 @@
   "item.mininggadgets.upgrade_fortune_1": "Upgrade: Fortune, Tier 1",
   "item.mininggadgets.upgrade_fortune_2": "Upgrade: Fortune, Tier 2",
   "item.mininggadgets.upgrade_fortune_3": "Upgrade: Fortune, Tier 3",
+  "item.mininggadgets.upgrade_light_placer": "Upgrade: Light Placer",
+  "item.mininggadgets.upgrade_magnet": "Upgrade: Magnet",
+  "item.mininggadgets.upgrade_three_by_three": "Upgrade: 3x3",
+  "item.mininggadgets.upgrade_void_junk": "Upgrade: Void Junk",
 
   "comment-blocks": "Blocks",
   "block.mininggadgets.minersight": "Miners Sight",
