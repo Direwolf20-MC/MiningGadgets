@@ -205,6 +205,7 @@ public class MiningGadget extends Item {
                     if (!canMine(stack, world)) {
                         return;
                     }
+                    List<TieredUpgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
@@ -212,6 +213,7 @@ public class MiningGadget extends Item {
                     te.setPriorDurability((int) hardness + 1);
                     te.setOriginalDurability((int) hardness + 1);
                     te.setPlayer((PlayerEntity) player);
+                    te.setGadgetUpgrades(gadgetUpgrades);
                 }
             } else {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);

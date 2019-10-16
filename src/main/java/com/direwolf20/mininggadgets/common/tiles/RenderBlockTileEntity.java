@@ -1,6 +1,8 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
+import com.direwolf20.mininggadgets.common.items.upgrade.TieredUpgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -13,6 +15,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 import java.util.Random;
@@ -30,6 +33,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private int originalDurability;
     private Random rand = new Random();
     private int ticksSinceMine = 0;
+    private List<TieredUpgrade> gadgetUpgrades;
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE);
@@ -109,6 +113,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         this.clientDurability = clientDurability;
     }
 
+    public List<TieredUpgrade> getGadgetUpgrades() {
+        return gadgetUpgrades;
+    }
+
+    public void setGadgetUpgrades(List<TieredUpgrade> gadgetUpgrades) {
+        this.gadgetUpgrades = gadgetUpgrades;
+    }
+
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         // Vanilla uses the type parameter to indicate which type of tile entity (command block, skull, or beacon?) is receiving the packet, but it seems like Forge has overridden this behavior
@@ -147,6 +159,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         durability = tag.getInt("durability");
         ticksSinceMine = tag.getInt("ticksSinceMine");
         playerUUID = tag.getUniqueId("playerUUID");
+        gadgetUpgrades = UpgradeTools.getUpgradesNBT(tag);
     }
 
     @Override
@@ -157,6 +170,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("durability", durability);
         tag.putInt("ticksSinceMine", ticksSinceMine);
         tag.putUniqueId("playerUUID", playerUUID);
+        tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
         return super.write(tag);
     }
 

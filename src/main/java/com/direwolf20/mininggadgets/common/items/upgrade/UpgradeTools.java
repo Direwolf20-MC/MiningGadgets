@@ -22,25 +22,42 @@ public class UpgradeTools {
      * @param tool
      * @param upgrade
      */
-    public static void setUpgrade(ItemStack tool, UpgradeCard upgrade) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
 
-        ListNBT list = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
+    public static CompoundNBT setUpgradeNBT(CompoundNBT nbt, UpgradeCard upgrade) {
+        ListNBT list = nbt.getList("upgrades", Constants.NBT.TAG_COMPOUND);
         CompoundNBT compound = new CompoundNBT();
         compound.putString("upgrade", upgrade.getUpgrade().getName());
         compound.putInt("tier", upgrade.getTier());
 
         list.add(compound);
-        tagCompound.put("upgrades", list);
+        nbt.put("upgrades", list);
+        return nbt;
+    }
+
+    public static CompoundNBT setUpgradesNBT(List<TieredUpgrade> laserUpgrades) {
+        CompoundNBT listCompound = new CompoundNBT();
+        ListNBT list = new ListNBT();
+        CompoundNBT compound = new CompoundNBT();
+        for (TieredUpgrade upgrade : laserUpgrades) {
+            compound.putString("upgrade", upgrade.getUpgrade().getName());
+            compound.putInt("tier", upgrade.getTier());
+            list.add(compound);
+        }
+        listCompound.put("upgrades", list);
+        return listCompound;
+    }
+
+    public static void setUpgrade(ItemStack tool, UpgradeCard upgrade) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        tagCompound.put("upgrades", setUpgradeNBT(tagCompound, upgrade));
     }
 
     // Return all upgrades in the item.
-    public static List<TieredUpgrade> getUpgrades(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+    public static List<TieredUpgrade> getUpgradesNBT(CompoundNBT tagCompound) {
         ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
 
         List<TieredUpgrade> functionalUpgrades = new ArrayList<>();
-        if( upgrades.isEmpty() )
+        if (upgrades.isEmpty())
             return functionalUpgrades;
 
         for (int i = 0; i < upgrades.size(); i++) {
@@ -50,10 +67,31 @@ public class UpgradeTools {
             try {
                 Upgrade type = Upgrade.valueOf(tag.getString("upgrade").toUpperCase());
                 functionalUpgrades.add(new TieredUpgrade(tag.getInt("tier"), type));
-            } catch (IllegalArgumentException ignored) {}
+            } catch (IllegalArgumentException ignored) {
+            }
         }
 
         return functionalUpgrades;
+    }
+
+    // Return all upgrades in the item.
+    public static List<TieredUpgrade> getUpgrades(ItemStack tool) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        return getUpgradesNBT(tagCompound);
+    }
+
+    // Get a single upgrade and it's tier
+    public static TieredUpgrade getUpgradeNBT(CompoundNBT tagCompound, Upgrade type) {
+        List<TieredUpgrade> upgrades = getUpgradesNBT(tagCompound);
+        if (upgrades.isEmpty())
+            return null;
+
+        for (TieredUpgrade upgrade : upgrades) {
+            if (upgrade.getUpgrade().getName().equals(type.getName()))
+                return upgrade;
+        }
+
+        return null;
     }
 
     // Get a single upgrade and it's tier
