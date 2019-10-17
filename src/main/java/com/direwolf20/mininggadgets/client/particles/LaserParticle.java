@@ -1,6 +1,8 @@
 package com.direwolf20.mininggadgets.client.particles;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.block.BlockState;
@@ -16,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 
 import java.util.UUID;
 
@@ -33,6 +36,7 @@ public class LaserParticle extends BreakingParticle {
     private double sourceY;
     private double sourceZ;
     private int speedModifier;
+    private boolean voiding = false;
 
     public LaserParticle(World world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul, BlockState blockState) {
@@ -64,18 +68,42 @@ public class LaserParticle extends BreakingParticle {
         prevPosY = posY;
         prevPosZ = posZ;
         RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(new BlockPos(this.posX, this.posY, this.posZ));
-        if (te != null)
+        if (te != null) {
             playerUUID = te.getPlayerUUID();
+            voiding = (UpgradeTools.containsUpgradeFromList(te.getGadgetUpgrades(), Upgrade.VOID_JUNK) && !te.getRenderBlock().isIn(Tags.Blocks.ORES));
+        }
         sourceX = d;
         sourceY = d1;
         sourceZ = d2;
         this.canCollide = false;
     }
 
-
     @Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+        /*if (this.playerUUID == null) return;
+        PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(this.playerUUID);
+        Vec3d playerPos = player.getEyePosition(partialTicks);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translated(-playerPos.x, -playerPos.y, -playerPos.z);
+        GlStateManager.translated(this.posX, this.posY, this.posZ);
+        GlStateManager.translated(0,1,0);
+        float thickness = 0.001f;
+        float distance = 0.001f;
+        double v = -player.world.getGameTime() * 0.2;
+
+        buffer.pos(0, -thickness, 0).tex(1, v).endVertex();
+        buffer.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
+        buffer.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
+        buffer.pos(0, thickness, 0).tex(0, v).endVertex();
+
+        buffer.pos(0, thickness, 0).tex(0, v).endVertex();
+        buffer.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
+        buffer.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
+        buffer.pos(0, -thickness, 0).tex(1, v).endVertex();
+
+        GlStateManager.popMatrix();*/
     }
 
     public boolean particleToPlayer(PlayerEntity player) {
