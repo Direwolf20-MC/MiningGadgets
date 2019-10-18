@@ -5,8 +5,7 @@
 
 ### More to come :P 
 
-
-### Meta
+## Meta
 [CHANGELOG](CHANGELOG.md)
 
 [License MIT](License.md)
