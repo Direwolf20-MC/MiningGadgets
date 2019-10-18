@@ -6,6 +6,8 @@ import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
+import com.direwolf20.mininggadgets.common.containers.MiningContainer;
+import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
@@ -18,6 +20,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
@@ -41,6 +44,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -190,13 +194,21 @@ public class MiningGadget extends Item {
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
 
-    public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
+    private ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
         // Debug code for free energy
         //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
             player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.mininggadget.range_change").getUnformattedComponentText() + getToolRange(itemstack)), true);
         }
+
+//        player.openContainer(new MiningContainer.MiningProvider(itemstack));
+        NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider(itemstack), (data) -> {
+            data.writeItemStack(itemstack);
+        });
+//        if (!world.isRemote && player instanceof ServerPlayerEntity)
+//            NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider());
+
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
 
