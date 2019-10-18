@@ -1,0 +1,10 @@
+{
+  "homepage": "https://github.com/Direwolf20-MC/MiningGadgets",
+  "1.14.4": {
+    "1.0.0": "Changelog: https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md"
+  },
+  "promos": {
+    "1.14.4-latest": "1.0.0",
+    "1.14.4-recommended": "1.0.0"
+  }
+}

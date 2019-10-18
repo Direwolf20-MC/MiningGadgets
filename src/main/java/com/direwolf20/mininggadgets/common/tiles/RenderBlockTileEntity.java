@@ -22,6 +22,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -218,19 +219,13 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                     tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
                     silk = 1;
                 }
-                // If the upgrade exists. Apply it with it's tier
-                if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
-                    tempTool.addEnchantment(Enchantments.FORTUNE, 1);
-                    fortune = 1;
-                } else if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_2)) {
-                    tempTool.addEnchantment(Enchantments.FORTUNE, 2);
-                    fortune = 2;
-                } else if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_3)) {
-                    tempTool.addEnchantment(Enchantments.FORTUNE, 3);
-                    fortune = 3;
+
+                // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
+                Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+                if( upgrade.isPresent() ) {
+                    fortune = upgrade.get().getTier();
+                    tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
                 }
-                /*UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)
-                        .ifPresent(upgrade -> tempTool.addEnchantment(Enchantments.FORTUNE, upgrade.getTier()));*/
 
                 List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
                 int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
