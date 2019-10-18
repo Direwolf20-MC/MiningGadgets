@@ -1,4 +1,4 @@
-<img align="center" src=".github/assets/mininggadgets-logo-transparent.png" />
+<p align="center"><img src=".github/assets/mininggadgets-logo-transparent.png" /></p>
 
 # Mining Gadgets
 *Because Mining with Lasers is cool*
