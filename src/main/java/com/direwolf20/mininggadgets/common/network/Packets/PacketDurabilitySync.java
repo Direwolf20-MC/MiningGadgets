@@ -10,6 +10,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -52,22 +54,23 @@ public class PacketDurabilitySync {
 
     public static class Handler {
         public static void handle(PacketDurabilitySync msg, Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(() -> {
-                List<Tuple<BlockPos, Integer>> thisList = msg.updateList;
-
-                World clientWorld = Minecraft.getInstance().world;
-                for (int i = 0; i < thisList.size(); i++) {
-                    BlockPos pos = thisList.get(i).getA();
-                    int durability = thisList.get(i).getB();
-                    TileEntity clientTE = clientWorld.getTileEntity(pos);
-                    if (!(clientTE instanceof RenderBlockTileEntity)) return;
-                    ((RenderBlockTileEntity) clientTE).setClientDurability(durability);
-                }
-
-                //((RenderBlockTileEntity) clientTE).setPriorDurability(msg.priorDurability);
-            });
+            ctx.get().enqueueWork(() -> clientPacketHandler(msg));
 
             ctx.get().setPacketHandled(true);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void clientPacketHandler(PacketDurabilitySync msg) {
+        List<Tuple<BlockPos, Integer>> thisList = msg.updateList;
+
+        World clientWorld = Minecraft.getInstance().world;
+        for (int i = 0; i < thisList.size(); i++) {
+            BlockPos pos = thisList.get(i).getA();
+            int durability = thisList.get(i).getB();
+            TileEntity clientTE = clientWorld.getTileEntity(pos);
+            if (!(clientTE instanceof RenderBlockTileEntity)) return;
+            ((RenderBlockTileEntity) clientTE).setClientDurability(durability);
         }
     }
 }

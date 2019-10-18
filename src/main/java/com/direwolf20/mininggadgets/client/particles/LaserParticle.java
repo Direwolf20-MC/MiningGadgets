@@ -113,7 +113,7 @@ public class LaserParticle extends BreakingParticle {
         if (!(world.getBlockState(sourcePos) == this.blockState)) partToPlayer = true;
         TileEntity te = world.getTileEntity(sourcePos);
         if (te != null && te instanceof RenderBlockTileEntity) {
-            if (((RenderBlockTileEntity) te).getTicksSinceMine() >= 10) {
+            if (((RenderBlockTileEntity) te).getTicksSinceMine() >= 5) {
                 partToPlayer = false;
             }
         }
@@ -197,7 +197,7 @@ public class LaserParticle extends BreakingParticle {
             }
         } else {
             //What to do if we are sending the particles BACK to the source block, mostly similiar to the above. Much less flair.
-            speedModifier = 10;
+            speedModifier = 0;
             int speedAdjust = (20 - speedModifier) <= 0 ? 1 : (20 - speedModifier);
             double distance = blockPos.distanceTo(partPos);
             if (distance < 0.75) {

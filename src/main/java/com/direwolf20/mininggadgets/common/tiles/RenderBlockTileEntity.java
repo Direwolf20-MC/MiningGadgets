@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -73,7 +74,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
             //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
         }
-        spawnParticle();
     }
 
     public void spawnParticle() {
@@ -141,6 +141,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         else
             this.clientPrevDurability = this.durability;
         this.clientDurability = clientDurability;
+        //this.ticksSinceMine = 0;
     }
 
     public List<Upgrade> getGadgetUpgrades() {
@@ -208,73 +209,93 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         if (!world.isRemote) {
             PlayerEntity player = world.getPlayerByUuid(playerUUID);
             if (player == null) return;
-
+            int silk = 0;
+            int fortune = 0;
             if (!(UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
                 ItemStack tempTool = new ItemStack(ModItems.MININGGADGET);
 
                 // If silk is in the upgrades, apply it without a tier.
-                if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.SILK))
+                if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
                     tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-
+                    silk = 1;
+                }
                 // If the upgrade exists. Apply it with it's tier
-                UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)
-                        .ifPresent(upgrade -> tempTool.addEnchantment(Enchantments.FORTUNE, upgrade.getTier()));
+                if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
+                    tempTool.addEnchantment(Enchantments.FORTUNE, 1);
+                    fortune = 1;
+                } else if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_2)) {
+                    tempTool.addEnchantment(Enchantments.FORTUNE, 2);
+                    fortune = 2;
+                } else if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_3)) {
+                    tempTool.addEnchantment(Enchantments.FORTUNE, 3);
+                    fortune = 3;
+                }
+                /*UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)
+                        .ifPresent(upgrade -> tempTool.addEnchantment(Enchantments.FORTUNE, upgrade.getTier()));*/
 
                 List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
-                //List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
+                int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
                 for (ItemStack drop : blockDrops) {
                     if (drop != null) {
                         if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET)) {
                             if (!player.addItemStackToInventory(drop)) {
                                 Block.spawnAsEntity(world, pos, drop);
                             }
+                            if (exp > 0)
+                                player.giveExperiencePoints(exp);
                         } else {
                             Block.spawnAsEntity(world, pos, drop);
+                            if (exp > 0)
+                                world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
                         }
                     }
                 }
             }
-            player.giveExperiencePoints(renderBlock.getExpDrop(world, pos, 0, 0));
             world.removeTileEntity(this.pos);
             world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
-            //markDirtyClient();
         }
     }
 
     private void resetBlock() {
         if (!getWorld().isRemote) {
             world.setBlockState(this.pos, renderBlock);
-            //markDirtyClient();
         }
     }
 
 
     @Override
     public void tick() {
+        //Client and server - spawn a 'block break' particle if the player is actively mining
+        if (ticksSinceMine == 0) {
+            spawnParticle();
+        }
+        //Client only
         if (world.isRemote) {
-            //System.out.println("Tick: Prior: " + priorDurability + " Dur: " + durability+":Client:"+clientPrevDurability+":"+clientDurability);
+            //Update ticks since last mine on client side for particle renders
+            if (!getPlayer().isHandActive()) ticksSinceMine++;
+            else ticksSinceMine = 0;
+            //The packet with new durability arrives between ticks. Update it on tick.
             this.durability = this.clientDurability;
             this.priorDurability = this.clientPrevDurability;
         }
+        //Server Only
         if (!world.isRemote) {
             if (ticksSinceMine == 1) {
+                //Immediately after player stops mining, stability the shrinking effects and notify players
                 priorDurability = durability;
-                //PacketHandler.sendToAll(new PacketDurabilitySync(pos, durability), world);
                 ServerTickHandler.addToList(pos, durability, world);
             }
-
-            ticksSinceMine++;
             if (ticksSinceMine >= 10) {
+                //After half a second, start 'regrowing' blocks that haven't been mined.
                 priorDurability = durability;
                 durability++;
-                //PacketHandler.sendToAll(new PacketDurabilitySync(pos, durability), world);
                 ServerTickHandler.addToList(pos, durability, world);
-            } else {
-
             }
             if (durability >= originalDurability) {
+                //Once we reach the original durability value set the block back to its original blockstate.
                 resetBlock();
             }
+            ticksSinceMine++;
         }
     }
 }
