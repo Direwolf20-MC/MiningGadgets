@@ -182,7 +182,7 @@ public class MiningGadget extends Item {
             return new ActionResult<>(ActionResultType.PASS, itemstack);
 
         // Only perform the shift action
-        if( player.isSneaking() )
+        if (player.isSneaking())
             return this.onItemShiftRightClick(world, player, hand, itemstack);
 
         if (!canMine(itemstack, world))
@@ -205,29 +205,29 @@ public class MiningGadget extends Item {
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         World world = player.world;
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
-            return;
-        List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
+        if (!world.isRemote) {
+            BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
+            if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
+                return;
+            List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
 
-        // As all upgrade types with tiers contain the same name, we can check for a single
-        // type in the enum and produce a result that we can then pull the tier from
-        int efficiency = 0;
-        if (UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).isPresent())
-            efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
+            // As all upgrade types with tiers contain the same name, we can check for a single
+            // type in the enum and produce a result that we can then pull the tier from
+            int efficiency = 0;
+            if (UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).isPresent())
+                efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
-        float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
-        hardness = hardness * getToolRange(stack) * 1;
-        hardness = (float) Math.floor(hardness);
-        if (hardness == 0) hardness = 1;
-        for (BlockPos coord : coords) {
-            BlockState state = world.getBlockState(coord);
-            if (!(state.getBlock() instanceof RenderBlock)) {
-                //if (!world.isRemote) {
+            float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
+            hardness = hardness * getToolRange(stack) * 1;
+            hardness = (float) Math.floor(hardness);
+            if (hardness == 0) hardness = 1;
+            for (BlockPos coord : coords) {
+                BlockState state = world.getBlockState(coord);
+                if (!(state.getBlock() instanceof RenderBlock)) {
+                    //if (!world.isRemote) {
                     if (!canMine(stack, world)) {
                         return;
                     }
-
                     List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                     world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
@@ -238,24 +238,26 @@ public class MiningGadget extends Item {
                     te.setDurability((int) hardness);
                     te.setPlayer((PlayerEntity) player);
 
-                //}
-            } else {
-                RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
-                int durability = te.getDurability();
-                //System.out.println(durability);
+                    //}
+                } else {
+                    //if (!world.isRemote) {
+                    RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
+                    int durability = te.getDurability();
+                    //System.out.println(durability);
                 /*if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
                     durability = durability - 2;
                 else*/
-                durability = durability - 1;
-                if (durability <= 0) {
-                    setLastBreak(stack, world.getGameTime());
-                    player.resetActiveHand();
-                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
+                    durability = durability - 1;
+                    if (durability <= 0) {
+                        setLastBreak(stack, world.getGameTime());
+                        player.resetActiveHand();
+                        stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
+                    }
+                    te.setDurability(durability);
+                    //}
                 }
-                te.setDurability(durability);
             }
-        }
-        if (!world.isRemote) {
+            //if (!world.isRemote) {
             if (!(UpgradeTools.containsUpgrade(stack, Upgrade.LIGHT_PLACER)))
                 return;
 
@@ -265,13 +267,14 @@ public class MiningGadget extends Item {
             Direction right = vertical ? up.rotateY() : side.rotateYCCW();
 
             BlockPos pos;
-            if( getToolRange(stack) == 1 )
+            if (getToolRange(stack) == 1)
                 pos = lookingAt.getPos().offset(side, 4);
             else
                 pos = lookingAt.getPos().offset(side).offset(right);
 
             if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR)
                 world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
+            //}
         }
     }
 
@@ -359,7 +362,7 @@ public class MiningGadget extends Item {
     }
 
     public static void applyUpgrade(ItemStack tool, UpgradeCard upgradeCard) {
-        if(UpgradeTools.containsUpgrade(tool, upgradeCard.getUpgrade()) )
+        if (UpgradeTools.containsUpgrade(tool, upgradeCard.getUpgrade()))
             return;
 
         UpgradeTools.setUpgrade(tool, upgradeCard);
@@ -371,7 +374,7 @@ public class MiningGadget extends Item {
             entityLiving.resetActiveHand();
         }
 
-        if (!(worldIn.isRemote)) {
+        /*if (!(worldIn.isRemote)) {
             BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) entityLiving, RayTraceContext.FluidMode.NONE);
             if (lookingAt == null || (worldIn.getBlockState(VectorHelper.getLookingAt((PlayerEntity) entityLiving, stack).getPos()) == Blocks.AIR.getDefaultState()))
                 return;
@@ -382,6 +385,6 @@ public class MiningGadget extends Item {
                 if (te instanceof RenderBlockTileEntity)
                     ((RenderBlockTileEntity) te).markDirtyClient();
             }
-        }
+        }*/
     }
 }

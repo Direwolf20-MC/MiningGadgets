@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
+import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
@@ -30,6 +31,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private BlockState renderBlock;
 
     private int priorDurability = 9999;
+    private int clientPrevDurability;
     private int clientDurability;
     private int durability;
     private UUID playerUUID;
@@ -37,6 +39,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private Random rand = new Random();
     private int ticksSinceMine = 0;
     private List<Upgrade> gadgetUpgrades;
+
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE);
@@ -50,13 +53,30 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         return renderBlock;
     }
 
-    public void setDurability(int dur) {
+    public void justSetDurability(int dur) {
         priorDurability = durability;
+        durability = dur;
+        //System.out.println("Got:"+ " Prior: " + priorDurability + " Dur: " + durability);
+    }
+
+    public void setDurability(int dur) {
+        ticksSinceMine = 0;
+        if (durability != 0)
+            priorDurability = durability;
         durability = dur;
         if (dur <= 0) {
             removeBlock();
         }
-        ticksSinceMine = 0;
+        if (!(world.isRemote)) {
+            markDirty();
+            ServerTickHandler.addToList(pos, durability, world);
+            //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
+            //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
+        }
+        spawnParticle();
+    }
+
+    public void spawnParticle() {
         if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET) && originalDurability > 0) {
             int PartCount = 20 / originalDurability;
             if (PartCount <= 1) PartCount = 1;
@@ -69,7 +89,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
             }
         }
-        markDirty();
     }
 
     public int getDurability() {
@@ -117,6 +136,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public void setClientDurability(int clientDurability) {
+        if (this.durability == 0)
+            this.clientPrevDurability = clientDurability;
+        else
+            this.clientPrevDurability = this.durability;
         this.clientDurability = clientDurability;
     }
 
@@ -182,7 +205,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void removeBlock() {
-        if (!getWorld().isRemote) {
+        if (!world.isRemote) {
             PlayerEntity player = world.getPlayerByUuid(playerUUID);
             if (player == null) return;
 
@@ -195,7 +218,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
                 // If the upgrade exists. Apply it with it's tier
                 UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)
-                        .ifPresent( upgrade -> tempTool.addEnchantment(Enchantments.FORTUNE, upgrade.getTier()));
+                        .ifPresent(upgrade -> tempTool.addEnchantment(Enchantments.FORTUNE, upgrade.getTier()));
 
                 List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
                 //List<ItemStack> blockDrops = renderBlock.getBlock().getDrops(renderBlock, (ServerWorld) world, pos, world.getTileEntity(pos));
@@ -228,19 +251,30 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     @Override
     public void tick() {
-        if (ticksSinceMine == 1) {
-            priorDurability = durability;
-            //markDirtyClient();
+        if (world.isRemote) {
+            //System.out.println("Tick: Prior: " + priorDurability + " Dur: " + durability+":Client:"+clientPrevDurability+":"+clientDurability);
+            this.durability = this.clientDurability;
+            this.priorDurability = this.clientPrevDurability;
         }
-        ticksSinceMine++;
-        if (ticksSinceMine >= 10) {
-            priorDurability = durability;
-            durability++;
-        } else {
+        if (!world.isRemote) {
+            if (ticksSinceMine == 1) {
+                priorDurability = durability;
+                //PacketHandler.sendToAll(new PacketDurabilitySync(pos, durability), world);
+                ServerTickHandler.addToList(pos, durability, world);
+            }
 
-        }
-        if (durability >= originalDurability) {
-            resetBlock();
+            ticksSinceMine++;
+            if (ticksSinceMine >= 10) {
+                priorDurability = durability;
+                durability++;
+                //PacketHandler.sendToAll(new PacketDurabilitySync(pos, durability), world);
+                ServerTickHandler.addToList(pos, durability, world);
+            } else {
+
+            }
+            if (durability >= originalDurability) {
+                resetBlock();
+            }
         }
     }
 }

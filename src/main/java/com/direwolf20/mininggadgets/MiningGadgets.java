@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
+import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -54,6 +55,7 @@ public class MiningGadgets
     {
         setup.init();
         PacketHandler.register();
+        MinecraftForge.EVENT_BUS.register(ServerTickHandler.class);
     }
 
     /**
