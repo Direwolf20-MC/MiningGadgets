@@ -9,7 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -235,20 +234,25 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
                 List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
                 int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
+                boolean magnetMode = (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
                 for (ItemStack drop : blockDrops) {
                     if (drop != null) {
-                        if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET)) {
+                        if (magnetMode) {
                             if (!player.addItemStackToInventory(drop)) {
                                 Block.spawnAsEntity(world, pos, drop);
                             }
-                            if (exp > 0)
-                                player.giveExperiencePoints(exp);
                         } else {
                             Block.spawnAsEntity(world, pos, drop);
-                            if (exp > 0)
-                                world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
                         }
                     }
+                }
+                if (magnetMode) {
+                    if (exp > 0)
+                        player.giveExperiencePoints(exp);
+                } else {
+                    if (exp > 0)
+                        renderBlock.getBlock().dropXpOnBlockBreak(world, pos, exp);
+                    //world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
                 }
             }
             world.removeTileEntity(this.pos);
