@@ -179,7 +179,7 @@ public class MiningGadget extends Item {
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
         if (world.isRemote)
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
+            return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
 
         // Only perform the shift action
         if (player.isSneaking())
@@ -189,7 +189,7 @@ public class MiningGadget extends Item {
             return new ActionResult<>(ActionResultType.FAIL, itemstack);
 
         player.setActiveHand(hand);
-        return new ActionResult<>(ActionResultType.PASS, itemstack);
+        return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
 
     public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
