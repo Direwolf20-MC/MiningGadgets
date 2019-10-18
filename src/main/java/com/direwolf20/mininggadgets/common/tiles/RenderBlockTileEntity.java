@@ -271,8 +271,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         //Client only
         if (world.isRemote) {
             //Update ticks since last mine on client side for particle renders
-            if (!getPlayer().isHandActive()) ticksSinceMine++;
-            else ticksSinceMine = 0;
+            if (playerUUID != null) {
+                if (!getPlayer().isHandActive()) ticksSinceMine++;
+                else ticksSinceMine = 0;
+            }
             //The packet with new durability arrives between ticks. Update it on tick.
             this.durability = this.clientDurability;
             this.priorDurability = this.clientPrevDurability;
