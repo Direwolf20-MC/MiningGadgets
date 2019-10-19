@@ -146,7 +146,7 @@ public class MiningGadget extends Item {
 
     public static boolean canMine(ItemStack tool, World world) {
         long lastBreak = getLastBreak(tool);
-        if ((world.getGameTime() - lastBreak) < 2) return false;
+        //if ((world.getGameTime() - lastBreak) < 2) return false;
 
         IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
@@ -177,7 +177,7 @@ public class MiningGadget extends Item {
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
         if (world.isRemote)
-            return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
+            return new ActionResult<>(ActionResultType.PASS, itemstack);
 
         // Only perform the shift action
         if (player.isSneaking())
@@ -187,7 +187,7 @@ public class MiningGadget extends Item {
             return new ActionResult<>(ActionResultType.FAIL, itemstack);
 
         player.setActiveHand(hand);
-        return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
+        return new ActionResult<>(ActionResultType.PASS, itemstack);
     }
 
     public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
