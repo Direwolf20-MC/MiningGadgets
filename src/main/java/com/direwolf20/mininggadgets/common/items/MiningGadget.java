@@ -9,12 +9,14 @@ import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.direwolf20.mininggadgets.common.util.BlockOverlayRender;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -386,5 +388,17 @@ public class MiningGadget extends Item {
                     ((RenderBlockTileEntity) te).markDirtyClient();
             }
         }*/
+    }
+
+    public void render(ItemStack item) {
+        System.out.println("HssI");
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(Minecraft.getInstance().player, RayTraceContext.FluidMode.NONE);
+        if (Minecraft.getInstance().world.getBlockState(VectorHelper.getLookingAt(Minecraft.getInstance().player, item).getPos()) == Blocks.AIR.getDefaultState()) {
+            System.out.println("NOPE");
+            return;
+        }
+
+        List<BlockPos> coords = getMinableBlocks(item, lookingAt, Minecraft.getInstance().player);
+        coords.forEach(BlockOverlayRender::render);
     }
 }
