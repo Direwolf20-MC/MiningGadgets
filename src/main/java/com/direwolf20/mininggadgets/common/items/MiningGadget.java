@@ -13,6 +13,7 @@ import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -24,6 +25,7 @@ import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -339,8 +341,8 @@ public class MiningGadget extends Item {
     private static void addCoord(List<BlockPos> coordinates, BlockPos coord, World world) {
         BlockState state = world.getBlockState(coord);
 
-        // Reject fluids and air
-        if (!state.getFluidState().isEmpty() || world.isAirBlock(coord))
+        // Reject fluids and air (supports waterlogged blocks too)
+        if ((!state.getFluidState().isEmpty() && !state.has(BlockStateProperties.WATERLOGGED)) || world.isAirBlock(coord))
             return;
 
         // Rejects any blocks with a hardness less than 0
