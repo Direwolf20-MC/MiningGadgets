@@ -105,6 +105,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public PlayerEntity getPlayer() {
+        if( getWorld() == null )
+            return null;
+
         return this.getWorld().getPlayerByUuid(playerUUID);
     }
 
@@ -273,7 +276,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         if (world.isRemote) {
             //Update ticks since last mine on client side for particle renders
             if (playerUUID != null) {
-                if (!getPlayer().isHandActive()) ticksSinceMine++;
+                if (getPlayer() != null && !getPlayer().isHandActive()) ticksSinceMine++;
                 else ticksSinceMine = 0;
             }
             //The packet with new durability arrives between ticks. Update it on tick.
