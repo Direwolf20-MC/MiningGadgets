@@ -40,6 +40,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private Random rand = new Random();
     private int ticksSinceMine = 0;
     private List<Upgrade> gadgetUpgrades;
+    private boolean packetReceived = false;
 
 
     public RenderBlockTileEntity() {
@@ -141,6 +142,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         else
             this.clientPrevDurability = this.durability;
         this.clientDurability = clientDurability;
+        packetReceived = true;
     }
 
     public List<Upgrade> getGadgetUpgrades() {
@@ -275,8 +277,20 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 else ticksSinceMine = 0;
             }
             //The packet with new durability arrives between ticks. Update it on tick.
-            this.priorDurability = this.durability;
-            this.durability = this.clientDurability;
+            if (packetReceived) {
+                //System.out.println("PreChange: " + this.durability + ":" + this.priorDurability);
+                this.priorDurability = this.durability;
+                this.durability = this.clientDurability;
+                //System.out.println("PostChange: " + this.durability + ":" + this.priorDurability);
+                packetReceived = false;
+            } else {
+                if (durability != 0)
+                    this.priorDurability = this.durability;
+
+            }
+
+
+
         }
         //Server Only
         if (!world.isRemote) {
