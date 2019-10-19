@@ -141,7 +141,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         else
             this.clientPrevDurability = this.durability;
         this.clientDurability = clientDurability;
-        //this.ticksSinceMine = 0;
     }
 
     public List<Upgrade> getGadgetUpgrades() {
@@ -276,8 +275,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 else ticksSinceMine = 0;
             }
             //The packet with new durability arrives between ticks. Update it on tick.
+            this.priorDurability = this.durability;
             this.durability = this.clientDurability;
-            this.priorDurability = this.clientPrevDurability;
         }
         //Server Only
         if (!world.isRemote) {
