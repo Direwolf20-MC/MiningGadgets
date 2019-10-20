@@ -13,7 +13,6 @@ import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -193,6 +192,7 @@ public class MiningGadget extends Item {
     }
 
     public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
+
         // Debug code for free energy
         //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
@@ -205,6 +205,9 @@ public class MiningGadget extends Item {
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         World world = player.world;
+        //Debug code - Remove comments to spawn particles
+        //PlayerParticleData data = PlayerParticleData.playerparticle("ice", player.posX, player.posY+1, player.posZ, 0.01f, 1f, 1f, 1f, 80f, false);
+        //world.addParticle(data, player.posX, player.posY+1, player.posZ, 0, 0.0f, 0);
         if (!world.isRemote) {
             BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
             if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
