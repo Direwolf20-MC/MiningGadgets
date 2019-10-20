@@ -1,5 +1,6 @@
-package com.direwolf20.mininggadgets.client.particles;
+package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
+import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.Block;

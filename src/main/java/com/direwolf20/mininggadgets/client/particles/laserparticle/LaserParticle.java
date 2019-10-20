@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.client.particles;
+package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;

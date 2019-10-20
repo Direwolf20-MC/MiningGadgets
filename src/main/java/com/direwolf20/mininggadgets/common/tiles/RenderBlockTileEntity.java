@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
-import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
+import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
@@ -17,6 +17,8 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
@@ -68,12 +70,26 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         durability = dur;
         if (dur <= 0) {
             removeBlock();
+            if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
+                freeze();
+            }
         }
         if (!(world.isRemote)) {
             markDirty();
             ServerTickHandler.addToList(pos, durability, world);
             //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
             //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
+        }
+    }
+
+    private void freeze() {
+        for (Direction side : Direction.values()) {
+            BlockPos sidePos = pos.offset(side);
+            if (world.getBlockState(sidePos).getBlock() == Blocks.LAVA) {
+                world.setBlockState(sidePos, Blocks.OBSIDIAN.getDefaultState());
+            } else if (world.getBlockState(sidePos).getBlock() == Blocks.WATER) {
+                world.setBlockState(sidePos, Blocks.PACKED_ICE.getDefaultState());
+            }
         }
     }
 

@@ -1,6 +1,8 @@
 package com.direwolf20.mininggadgets.client.particles;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
+import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleType;
 import net.minecraft.particles.ParticleType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

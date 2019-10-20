@@ -18,6 +18,7 @@ public enum Upgrade {
     MAGNET("magnet", 20),
     THREE_BY_THREE("three_by_three", 0),
     LIGHT_PLACER("light_placer", 0),
+    FREEZING("freezing", 0),
 
     // Tiered
     FORTUNE_1("fortune_1", 1, 30),
