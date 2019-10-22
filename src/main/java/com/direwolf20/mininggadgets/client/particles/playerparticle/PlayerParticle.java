@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.client.particles.playerparticle;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.IParticleFactory;
@@ -12,6 +13,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -45,7 +48,7 @@ public class PlayerParticle extends SpriteTexturedParticle {
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
-
+        this.particleScale = size;
         this.sourceX = sourceX;
         this.sourceY = sourceY;
         this.sourceZ = sourceZ;
@@ -54,11 +57,12 @@ public class PlayerParticle extends SpriteTexturedParticle {
         this.targetZ = targetZ;
         this.canCollide = collide;
         this.particleType = particleType;
+        this.setGravity(0f);
     }
 
     @Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        particleScale = 1f;
+        //particleScale = 1f;
         Minecraft.getInstance().getTextureManager().bindTexture(particleType == "ice" ? iceParticle : lightParticle);
         float f10 = 0.5F * particleScale;
         float f11 = (float) (prevPosX + (posX - prevPosX) * partialTicks - interpPosX);
@@ -119,7 +123,7 @@ public class PlayerParticle extends SpriteTexturedParticle {
     // [VanillaCopy] of super, without drag when onGround is true
     @Override
     public void tick() {
-        //System.out.println("I exist!" + posX+":"+posY+":"+posZ);
+        //System.out.println("I exist!" + posX+":"+posY+":"+posZ +"....."+targetX+":"+targetY+":"+targetZ);
         double moveX;
         double moveY;
         double moveZ;
@@ -128,14 +132,38 @@ public class PlayerParticle extends SpriteTexturedParticle {
         if (this.age++ >= this.maxAge) {
             this.setExpired();
         }
+
+
         //prevPos is used in the render. if you don't do this your particle rubber bands (Like lag in an MMO).
         //This is used because ticks are 20 per second, and FPS is usually 60 or higher.
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
 
+        Vec3d sourcePos = new Vec3d(sourceX, sourceY, sourceZ);
+        Vec3d targetPos = new Vec3d(targetX, targetY, targetZ);
+
+        //Get the current position of the particle, and figure out the vector of where it's going
+        Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
+        Vec3d targetDirection = new Vec3d(targetPos.getX() - this.posX, targetPos.getY() - this.posY, targetPos.getZ() - this.posZ);
+
+        //The total distance between the particle and target
+        double totalDistance = targetPos.distanceTo(partPos);
+        if (totalDistance < 0.1)
+            this.setExpired();
+
+        double speedAdjust = 20;
+
+        moveX = (targetX - this.posX) / speedAdjust;
+        moveY = (targetY - this.posY) / speedAdjust;
+        moveZ = (targetZ - this.posZ) / speedAdjust;
+
+        BlockPos nextPos = new BlockPos(this.posX + moveX, this.posY + moveY, this.posZ + moveZ);
+
+        if (world.getBlockState(nextPos).getBlock() == ModBlocks.RENDERBLOCK)
+            this.canCollide = false;
         //Perform the ACTUAL move of the particle.
-        //this.move(moveX, moveY, moveZ);
+        this.move(moveX, moveY, moveZ);
     }
 
     public void setGravity(float value) {

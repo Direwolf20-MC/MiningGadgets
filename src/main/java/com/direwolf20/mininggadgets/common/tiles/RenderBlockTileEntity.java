@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
+import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
@@ -19,14 +20,12 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
@@ -43,6 +42,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private int ticksSinceMine = 0;
     private List<Upgrade> gadgetUpgrades;
     private boolean packetReceived = false;
+    private int totalAge;
 
 
     public RenderBlockTileEntity() {
@@ -80,6 +80,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
             //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
         }
+    }
+
+    private List<BlockPos> findSources() {
+        List<BlockPos> sources = new ArrayList<>();
+        for (Direction side : Direction.values()) {
+            BlockPos sidePos = pos.offset(side);
+            if (world.getBlockState(sidePos).getBlock() == Blocks.LAVA || world.getBlockState(sidePos).getBlock() == Blocks.WATER)
+                sources.add(sidePos);
+        }
+        return sources;
     }
 
     private void freeze() {
@@ -281,12 +291,46 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
+    private void spawnFreezeParticle(PlayerEntity player, BlockPos sourcePos) {
+        float randomPartSize = 0.1f + (0.25f - 0.1f) * rand.nextFloat();
+        double randomTX = rand.nextDouble();
+        double randomTY = rand.nextDouble();
+        double randomTZ = rand.nextDouble();
+        double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+        Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
+        Vec3d look = player.getLookVec(); // or getLook(partialTicks)
+        //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
+        Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
+        Vec3d forward = look;
+        Vec3d down = right.crossProduct(forward);
+
+        //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
+        right = right.scale(0.65f);
+        forward = forward.scale(0.85f);
+        down = down.scale(-0.35);
+
+        //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
+        Vec3d laserPos = playerPos.add(right);
+        laserPos = laserPos.add(forward);
+        laserPos = laserPos.add(down);
+        PlayerParticleData data = PlayerParticleData.playerparticle("ice", sourcePos.getX() + randomTX, sourcePos.getY() + randomTY, sourcePos.getZ() + randomTZ, randomPartSize, 1f, 1f, 1f, 120, true);
+        world.addParticle(data, laserPos.x, laserPos.y, laserPos.z, 0.025, 0.025f, 0.025);
+    }
+
 
     @Override
     public void tick() {
+        totalAge++;
         //Client and server - spawn a 'block break' particle if the player is actively mining
         if (ticksSinceMine == 0) {
             spawnParticle();
+            if (totalAge % 5 == 0) {
+                if (playerUUID != null) {
+                    for (BlockPos sourcePos : findSources()) {
+                        spawnFreezeParticle(getPlayer(), sourcePos);
+                    }
+                }
+            }
         }
         //Client only
         if (world.isRemote) {

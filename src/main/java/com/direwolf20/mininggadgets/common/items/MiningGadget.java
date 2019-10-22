@@ -205,9 +205,6 @@ public class MiningGadget extends Item {
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         World world = player.world;
-        //Debug code - Remove comments to spawn particles
-        //PlayerParticleData data = PlayerParticleData.playerparticle("ice", player.posX, player.posY+1, player.posZ, 0.01f, 1f, 1f, 1f, 80f, false);
-        //world.addParticle(data, player.posX, player.posY+1, player.posZ, 0, 0.0f, 0);
         if (!world.isRemote) {
             BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
             if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
