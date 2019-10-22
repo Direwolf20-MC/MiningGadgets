@@ -1,6 +1,8 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
@@ -71,74 +73,6 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
-        //Particles
-        /*World world = tile.getWorld();
-        PlayerEntity player = world.getPlayerByUuid(tile.getPlayerUUID());
-        if (player == null) return;
-        float blockSizeScale = 0.1f;
-        double yOffset = -.25;
-        double startXOffset = -0.35;
-
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
-        Vec3d lookBlockHit = lookingAt.getHitVec();
-        BlockPos lookBlockPos = lookingAt.getPos();
-        Vec3d playerEye = player.getEyePosition(partialTicks);
-        Vec3d blockPos = new Vec3d(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5);
-
-        //Vec3d partPos = new Vec3d(blockPos.x, blockPos.y, blockPos.z);
-        int maxParts = 8;
-        for (int j = 1; j <= maxParts; j++) {
-            float tempScale = ((scale * maxParts) - (maxParts - j));
-            double xDiff = blockPos.getX() - lookBlockHit.getX() + (lookBlockPos.getX() - tile.getPos().getX()) * tempScale;
-            double yDiff = blockPos.getY() - lookBlockHit.getY() + (lookBlockPos.getY() - tile.getPos().getY()) * tempScale;
-            double zDiff = blockPos.getZ() - lookBlockHit.getZ() + (lookBlockPos.getZ() - tile.getPos().getZ()) * tempScale;
-            GlStateManager.pushMatrix();
-            //Put the particle in the center of the block
-            GlStateManager.translated(x, y, z);
-            //If we are mining, then move the particle relative to where the player is looking (So it follows the laser beam)
-            if (player.isHandActive())
-                GlStateManager.translated(-xDiff * tempScale, -yDiff * tempScale, -zDiff * tempScale);
-            //else
-            //GlStateManager.translated(-xDiff * tempScale, -yDiff * tempScale, -zDiff * tempScale);
-            //Place the particle along the beam, based on the player's eye and block position, and scale (Progress of the mine)
-            Vec3d partPos = new Vec3d((playerEye.x - blockPos.x) * (1 - tempScale), (playerEye.y - blockPos.y) * (1 - tempScale), (playerEye.z - blockPos.z) * (1 - tempScale));
-            GlStateManager.translated(partPos.x, partPos.y, partPos.z);
-            //GlStateManager.translated(0, (scale*2-1)/4, 0);
-
-            //We're about to shrink the block. Before doing so, we move it relative to the amount we're shrinking it. Also shrink it more based on proximity to player
-            GlStateManager.translatef((1 - blockSizeScale * tempScale) / 2, (1 - blockSizeScale * tempScale) / 2, (1 - blockSizeScale * tempScale) / 2);
-
-            //We want the particle to go into the player's shoulder instead of middle of his eyes, so we move it a bit
-            //Rotate to players look vector. Then move particle. Then rotate back
-            GlStateManager.rotatef(-player.getRotationYawHead(), 0, 1, 0);
-            GlStateManager.rotatef(player.rotationPitch, 1, 0, 0);
-            GlStateManager.translated(startXOffset * (1 - scale), yOffset * (1 - scale), 0);
-            GlStateManager.rotatef(player.rotationPitch, -1, 0, 0);
-            GlStateManager.rotatef(-player.getRotationYawHead(), 0, -1, 0);
-
-            //Adjust scale of particle
-            GlStateManager.scalef(blockSizeScale * tempScale, blockSizeScale * tempScale, blockSizeScale * tempScale);
-
-            //The render call below rotates the particle for some reason. We rotate it the opposite way first to negate it.
-            GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-
-            try {
-                if (Math.abs(Math.floor(tempScale)) < 1)
-                    blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
-            } catch (Throwable t) {
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder bufferBuilder = tessellator.getBuffer();
-                try {
-                    // If the buffer is already not drawing then it'll throw
-                    // and IllegalStateException... Very rare
-                    bufferBuilder.finishDrawing();
-                } catch (IllegalStateException ex) {
-
-                }
-            }
-            GlStateManager.popMatrix();
-        }
-*/
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         //This blend function allows you to use a constant alpha, which is defined later
@@ -184,6 +118,12 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
+
+        if (UpgradeTools.containsUpgradeFromList(tile.getGadgetUpgrades(), Upgrade.FREEZING)) {
+            for (BlockPos sourcePos : tile.findSources()) {
+
+            }
+        }
 /*
 
         GlStateManager.enableBlend();

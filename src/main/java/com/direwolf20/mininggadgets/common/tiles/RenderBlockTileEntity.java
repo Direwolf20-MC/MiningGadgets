@@ -6,6 +6,7 @@ import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -20,6 +21,8 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
@@ -82,7 +85,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
-    private List<BlockPos> findSources() {
+    public List<BlockPos> findSources() {
         List<BlockPos> sources = new ArrayList<>();
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
@@ -299,6 +302,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec(); // or getLook(partialTicks)
+        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
+        Vec3d lookingAt = lookAt.getHitVec();
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
         Vec3d forward = look;
@@ -314,7 +319,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
         PlayerParticleData data = PlayerParticleData.playerparticle("ice", sourcePos.getX() + randomTX, sourcePos.getY() + randomTY, sourcePos.getZ() + randomTZ, randomPartSize, 1f, 1f, 1f, 120, true);
-        world.addParticle(data, laserPos.x, laserPos.y, laserPos.z, 0.025, 0.025f, 0.025);
+        world.addParticle(data, lookingAt.x, lookingAt.y, lookingAt.z, 0.025, 0.025f, 0.025);
     }
 
 
@@ -324,10 +329,12 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         //Client and server - spawn a 'block break' particle if the player is actively mining
         if (ticksSinceMine == 0) {
             spawnParticle();
-            if (totalAge % 5 == 0) {
-                if (playerUUID != null) {
-                    for (BlockPos sourcePos : findSources()) {
-                        spawnFreezeParticle(getPlayer(), sourcePos);
+            if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
+                if (totalAge % 3 == 0) {
+                    if (playerUUID != null) {
+                        for (BlockPos sourcePos : findSources()) {
+                            spawnFreezeParticle(getPlayer(), sourcePos);
+                        }
                     }
                 }
             }

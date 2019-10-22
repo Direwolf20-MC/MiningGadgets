@@ -6,7 +6,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.IParticleRenderType;
-import net.minecraft.client.particle.SpriteTexturedParticle;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -18,7 +18,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
-public class PlayerParticle extends SpriteTexturedParticle {
+import java.util.Random;
+
+public class PlayerParticle extends Particle {
     private double sourceX;
     private double sourceY;
     private double sourceZ;
@@ -27,8 +29,13 @@ public class PlayerParticle extends SpriteTexturedParticle {
     private double targetZ;
     private int speedModifier;
     private String particleType;
+    private Random rand = new Random();
+    private int particlePicker;
+    private float particleScale;
 
-    public static final ResourceLocation iceParticle = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/iceparticle.png");
+    public static final ResourceLocation iceParticle = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/snowflake1.png");
+    public static final ResourceLocation iceParticle2 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/snowflake2.png");
+    public static final ResourceLocation iceParticle3 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/snowflake3.png");
     public static final ResourceLocation lightParticle = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/lightparticle.png");
 
     public PlayerParticle(World world, double sourceX, double sourceY, double sourceZ, double targetX, double targetY, double targetZ, double xSpeed, double ySpeed, double zSpeed,
@@ -58,12 +65,30 @@ public class PlayerParticle extends SpriteTexturedParticle {
         this.canCollide = collide;
         this.particleType = particleType;
         this.setGravity(0f);
+        particlePicker = rand.nextInt(3);
     }
 
     @Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         //particleScale = 1f;
-        Minecraft.getInstance().getTextureManager().bindTexture(particleType == "ice" ? iceParticle : lightParticle);
+        //Minecraft.getInstance().getTextureManager().bindTexture(particleType == "ice" ? iceParticle : lightParticle);
+        ResourceLocation particleResource = lightParticle;
+        if (particleType == "ice") {
+            System.out.println(particlePicker);
+            switch (particlePicker) {
+                case 0:
+                    particleResource = iceParticle;
+                    break;
+                case 1:
+                    particleResource = iceParticle2;
+                    break;
+                case 2:
+                    particleResource = iceParticle3;
+                    break;
+            }
+        }
+        System.out.println(particleResource);
+        Minecraft.getInstance().getTextureManager().bindTexture(particleResource);
         float f10 = 0.5F * particleScale;
         float f11 = (float) (prevPosX + (posX - prevPosX) * partialTicks - interpPosX);
         float f12 = (float) (prevPosY + (posY - prevPosY) * partialTicks - interpPosY);
