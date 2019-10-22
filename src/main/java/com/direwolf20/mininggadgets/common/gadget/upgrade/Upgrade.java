@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.items.upgrade;
+package com.direwolf20.mininggadgets.common.gadget.upgrade;
 
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 

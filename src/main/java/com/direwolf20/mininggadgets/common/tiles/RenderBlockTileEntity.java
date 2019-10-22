@@ -4,8 +4,8 @@ import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticle
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

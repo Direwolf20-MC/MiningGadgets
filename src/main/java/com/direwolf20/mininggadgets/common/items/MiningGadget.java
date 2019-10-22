@@ -6,8 +6,9 @@ import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
@@ -209,7 +210,8 @@ public class MiningGadget extends Item {
             BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
             if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
                 return;
-            List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) player);
+
+            List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, getToolRange(stack));
 
             // As all upgrade types with tiers contain the same name, we can check for a single
             // type in the enum and produce a result that we can then pull the tier from
@@ -307,58 +309,6 @@ public class MiningGadget extends Item {
             hardness += (temphardness * 30) / toolSpeed;
         }
         return ((hardness / coords.size()));
-    }
-
-    public static List<BlockPos> getMinableBlocks(ItemStack stack, BlockRayTraceResult lookingAt, PlayerEntity player) {
-        List<BlockPos> coordinates = new ArrayList<>();
-        World world = player.world;
-
-        if (getToolRange(stack) == 1) {
-            addCoord(coordinates, lookingAt.getPos(), world);
-            return coordinates;
-        }
-
-        Direction side = lookingAt.getFace();
-        boolean vertical = side.getAxis().isVertical();
-        Direction up = vertical ? player.getHorizontalFacing() : Direction.UP;
-        Direction down = up.getOpposite();
-        Direction right = vertical ? up.rotateY() : side.rotateYCCW();
-        Direction left = right.getOpposite();
-
-        addCoord(coordinates, lookingAt.getPos().offset(up).offset(left), world);
-        addCoord(coordinates, lookingAt.getPos().offset(up), world);
-        addCoord(coordinates, lookingAt.getPos().offset(up).offset(right), world);
-        addCoord(coordinates, lookingAt.getPos().offset(left), world);
-        addCoord(coordinates, lookingAt.getPos(), world);
-        addCoord(coordinates, lookingAt.getPos().offset(right), world);
-        addCoord(coordinates, lookingAt.getPos().offset(down).offset(left), world);
-        addCoord(coordinates, lookingAt.getPos().offset(down), world);
-        addCoord(coordinates, lookingAt.getPos().offset(down).offset(right), world);
-
-        return coordinates;
-    }
-
-    private static void addCoord(List<BlockPos> coordinates, BlockPos coord, World world) {
-        BlockState state = world.getBlockState(coord);
-
-        // Reject fluids and air (supports waterlogged blocks too)
-        if ((!state.getFluidState().isEmpty() && !state.has(BlockStateProperties.WATERLOGGED)) || world.isAirBlock(coord))
-            return;
-
-        // Rejects any blocks with a hardness less than 0
-        if (state.getBlockHardness(world, coord) < 0)
-            return;
-
-        // No TE's
-        TileEntity te = world.getTileEntity(coord);
-        if (te != null && !(te instanceof RenderBlockTileEntity))
-            return;
-
-        //Ignore our Miners Light Block
-        if (state.getBlock() instanceof MinersLight)
-            return;
-
-        coordinates.add(coord);
     }
 
     public static void applyUpgrade(ItemStack tool, UpgradeCard upgradeCard) {
