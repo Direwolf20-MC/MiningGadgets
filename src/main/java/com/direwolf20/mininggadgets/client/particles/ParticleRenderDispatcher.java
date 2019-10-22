@@ -2,7 +2,7 @@ package com.direwolf20.mininggadgets.client.particles;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticle;
-import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticle;
+import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleType;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -14,6 +14,6 @@ public class ParticleRenderDispatcher {
     @SubscribeEvent
     public static void registerFactories(ParticleFactoryRegisterEvent evt) {
         Minecraft.getInstance().particles.registerFactory(ModParticles.LASERPARTICLE, LaserParticle.FACTORY);
-        Minecraft.getInstance().particles.registerFactory(ModParticles.PLAYERPARTICLE, PlayerParticle.FACTORY);
+        Minecraft.getInstance().particles.registerFactory(ModParticles.PLAYERPARTICLE, PlayerParticleType.FACTORY::new);
     }
 }

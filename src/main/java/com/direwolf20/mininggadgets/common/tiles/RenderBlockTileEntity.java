@@ -295,7 +295,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void spawnFreezeParticle(PlayerEntity player, BlockPos sourcePos) {
-        float randomPartSize = 0.1f + (0.25f - 0.1f) * rand.nextFloat();
+        float randomPartSize = 0.05f + (0.125f - 0.05f) * rand.nextFloat();
         double randomTX = rand.nextDouble();
         double randomTY = rand.nextDouble();
         double randomTZ = rand.nextDouble();
@@ -307,19 +307,23 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
         Vec3d forward = look;
+        Vec3d backward = look.mul(-1, 1, -1);
         Vec3d down = right.crossProduct(forward);
 
         //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
         right = right.scale(0.65f);
         forward = forward.scale(0.85f);
         down = down.scale(-0.35);
+        backward = backward.scale(0.05);
 
         //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
         Vec3d laserPos = playerPos.add(right);
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
+        lookingAt = lookingAt.add(backward);
         PlayerParticleData data = PlayerParticleData.playerparticle("ice", sourcePos.getX() + randomTX, sourcePos.getY() + randomTY, sourcePos.getZ() + randomTZ, randomPartSize, 1f, 1f, 1f, 120, true);
-        world.addParticle(data, lookingAt.x, lookingAt.y, lookingAt.z, 0.025, 0.025f, 0.025);
+        //Change the below laserPos to lookingAt to have it emit from the laser gun itself
+        world.addParticle(data, laserPos.x, laserPos.y, laserPos.z, 0.025, 0.025f, 0.025);
     }
 
 
@@ -330,7 +334,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         if (ticksSinceMine == 0) {
             spawnParticle();
             if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
-                if (totalAge % 3 == 0) {
+                if (totalAge % 4 == 0) {
                     if (playerUUID != null) {
                         for (BlockPos sourcePos : findSources()) {
                             spawnFreezeParticle(getPlayer(), sourcePos);
