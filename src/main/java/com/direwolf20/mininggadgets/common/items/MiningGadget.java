@@ -348,12 +348,14 @@ public class MiningGadget extends Item {
     }
 
     public void render(ItemStack item) {
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(Minecraft.getInstance().player, RayTraceContext.FluidMode.NONE);
-        if (Minecraft.getInstance().world.getBlockState(VectorHelper.getLookingAt(Minecraft.getInstance().player, item).getPos()) == Blocks.AIR.getDefaultState()) {
+        final Minecraft mc = Minecraft.getInstance();
+
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE);
+        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item).getPos()) == Blocks.AIR.getDefaultState()) {
             return;
         }
 
-        List<BlockPos> coords = getMinableBlocks(item, lookingAt, Minecraft.getInstance().player);
+        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.world, getToolRange(item));
 
         Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
 
