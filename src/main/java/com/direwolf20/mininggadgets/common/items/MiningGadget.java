@@ -12,11 +12,17 @@ import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.BlockOverlayRender;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -33,20 +39,22 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -391,14 +399,38 @@ public class MiningGadget extends Item {
     }
 
     public void render(ItemStack item) {
-        System.out.println("HssI");
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(Minecraft.getInstance().player, RayTraceContext.FluidMode.NONE);
         if (Minecraft.getInstance().world.getBlockState(VectorHelper.getLookingAt(Minecraft.getInstance().player, item).getPos()) == Blocks.AIR.getDefaultState()) {
-            System.out.println("NOPE");
             return;
         }
 
         List<BlockPos> coords = getMinableBlocks(item, lookingAt, Minecraft.getInstance().player);
-        coords.forEach(BlockOverlayRender::render);
+
+        Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture();
+
+        GlStateManager.translated(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
+        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+
+        coords.forEach(e -> {
+            GlStateManager.pushMatrix();
+            GlStateManager.translatef(e.getX(), e.getY(), e.getZ());
+            GlStateManager.translatef(-0.005f, -0.005f, 0.005f);
+            GlStateManager.scalef(1.01f, 1.01f, 1.01f);
+            GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+            BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
+
+            GlStateManager.popMatrix();
+        });
+
+        GlStateManager.disableBlend();
+        GlStateManager.enableTexture();
+        GlStateManager.popMatrix();
     }
 }

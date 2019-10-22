@@ -7,64 +7,51 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
+
 public class BlockOverlayRender {
-    public static void render(BlockPos pos) {
-        System.out.println(pos);
-        GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.disableTexture();
+    public static void render(BlockPos pos, Tessellator tessellator, BufferBuilder buffer, Color color) {
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = t.getBuffer();
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        double maxX = pos.getX() + 1, maxY = pos.getY() + 1, maxZ = pos.getZ() + 1;
+        float red = color.getRed() / 255f, green = color.getGreen()/ 255f, blue = color.getBlue()/ 255f, alpha = .2f;
 
-        double maxX = pos.getX() + 1;
-        double maxY = pos.getY() + 1;
-        double maxZ = pos.getZ() + 1;
+        double startX = 0, startY = 0, startZ = -1, endX = 1, endY = 1, endZ = 0;
 
-        float red = 1f;
-        float green = 0.0f;
-        float blue = 0.0f;
-        float alpha = 0.33f;
+        buffer.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
 
-        // Down
-        bufferBuilder.pos(pos.getX(), pos.getY(), pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, pos.getY(), pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, pos.getY(), maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(pos.getX(), pos.getY(), maxZ).color(red, green, blue, alpha).endVertex();
+        //up
+        buffer.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
 
-        // Up
-        bufferBuilder.pos(pos.getX(), maxY, pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(pos.getX(), maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, pos.getZ()).color(red, green, blue, alpha).endVertex();
+        //east
+        buffer.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
 
-        // North
-        bufferBuilder.pos(pos.getX(), pos.getY(), pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(pos.getX(), maxY, pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, pos.getY(), pos.getZ()).color(red, green, blue, alpha).endVertex();
+        //west
+        buffer.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
 
-        // South
-        bufferBuilder.pos(pos.getX(), pos.getY(), maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, pos.getY(), maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(pos.getX(), maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        //south
+        buffer.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
 
-        // East
-        bufferBuilder.pos(maxX, pos.getY(), pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, pos.getY(), maxZ).color(red, green, blue, alpha).endVertex();
-
-        // West
-        bufferBuilder.pos(pos.getX(), pos.getY(), pos.getZ()).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(pos.getX(), pos.getY(), maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(pos.getX(), maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(pos.getX(), maxY, pos.getZ()).color(red, green, blue, alpha).endVertex();
-        t.draw();
-
-        GlStateManager.disableBlend();
-        GlStateManager.enableTexture();
+        //north
+        buffer.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        buffer.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
     }
 }
