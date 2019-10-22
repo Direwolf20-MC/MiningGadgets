@@ -283,11 +283,10 @@ public class MiningGadget extends Item {
     public static int getEnergyCost(ItemStack stack) {
         int cost = Config.MININGGADGET_BASECOST.get();
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
-        if (upgrades.isEmpty()) return cost;
-        for (Upgrade upgrade : upgrades) {
-            cost = cost + upgrade.getCostPerBlock();
-        }
-        return cost;
+        if (upgrades.isEmpty())
+            return cost;
+
+        return cost + upgrades.stream().mapToInt(Upgrade::getCostPerBlock).sum();
     }
 
     private static float getHardness(List<BlockPos> coords, PlayerEntity player, int efficiency) {
