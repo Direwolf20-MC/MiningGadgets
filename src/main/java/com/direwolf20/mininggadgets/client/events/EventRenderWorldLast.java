@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.client.events;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.renderer.RenderMiningLaser;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.util.BlockOverlayRender;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
@@ -24,7 +25,7 @@ public class EventRenderWorldLast {
 
         ItemStack myItem = MiscTools.getGadget(myplayer);
         if (myItem.getItem() instanceof MiningGadget)
-            ((MiningGadget) myItem.getItem()).render(myItem);
+            BlockOverlayRender.render(myItem);
 
         for (PlayerEntity player : players) {
             if (player.getDistanceSq(myplayer) > 500)

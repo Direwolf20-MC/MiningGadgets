@@ -112,8 +112,8 @@ public class PlayerParticle extends SpriteTexturedParticle {
 
         BlockPos nextPos = new BlockPos(this.posX + moveX, this.posY + moveY, this.posZ + moveZ);
 
-        //if (world.getBlockState(nextPos).getBlock() == ModBlocks.RENDERBLOCK)
-        if (age > 20)
+        if (age > 40)
+            //if (world.getBlockState(nextPos).getBlock() == ModBlocks.RENDERBLOCK)
             this.canCollide = false;
         //Perform the ACTUAL move of the particle.
         this.move(moveX, moveY, moveZ);

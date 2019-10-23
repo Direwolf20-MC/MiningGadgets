@@ -10,17 +10,11 @@ import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import com.direwolf20.mininggadgets.common.util.BlockOverlayRender;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -48,7 +42,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -394,44 +387,5 @@ public class MiningGadget extends Item {
                     ((RenderBlockTileEntity) te).markDirtyClient();
             }
         }*/
-    }
-
-    public void render(ItemStack item) {
-        final Minecraft mc = Minecraft.getInstance();
-
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE);
-        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item).getPos()) == Blocks.AIR.getDefaultState()) {
-            return;
-        }
-
-        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.world, getToolRange(item));
-
-        Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture();
-
-        GlStateManager.translated(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-
-        coords.forEach(e -> {
-            if (mc.world.getBlockState(e).getBlock() != ModBlocks.RENDERBLOCK) {
-                GlStateManager.pushMatrix();
-                GlStateManager.translatef(e.getX(), e.getY(), e.getZ());
-                GlStateManager.translatef(-0.0005f, -0.0005f, -0.0005f);
-                GlStateManager.scalef(1.001f, 1.001f, 1.001f);
-                GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-                BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
-                GlStateManager.popMatrix();
-            }
-        });
-
-        GlStateManager.disableBlend();
-        GlStateManager.enableTexture();
-        GlStateManager.popMatrix();
     }
 }

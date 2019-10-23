@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "sss",
+    "sus",
+    "sss"
+  ],
+  "key": {
+    "s": {
+      "item": "minecraft:snowball"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_empty"
+    }
+  },
+  "result": {
+    "item": "mininggadgets:upgrade_freezing"
+  }
+}
