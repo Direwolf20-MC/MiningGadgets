@@ -422,8 +422,8 @@ public class MiningGadget extends Item {
             if (mc.world.getBlockState(e).getBlock() != ModBlocks.RENDERBLOCK) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(e.getX(), e.getY(), e.getZ());
-                GlStateManager.translatef(-0.005f, -0.005f, 0.005f);
-                GlStateManager.scalef(1.01f, 1.01f, 1.01f);
+                GlStateManager.translatef(-0.0005f, -0.0005f, -0.0005f);
+                GlStateManager.scalef(1.001f, 1.001f, 1.001f);
                 GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
                 BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
                 GlStateManager.popMatrix();

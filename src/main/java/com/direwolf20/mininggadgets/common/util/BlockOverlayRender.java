@@ -1,6 +1,5 @@
 package com.direwolf20.mininggadgets.common.util;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -14,7 +13,7 @@ public class BlockOverlayRender {
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
         double maxX = pos.getX() + 1, maxY = pos.getY() + 1, maxZ = pos.getZ() + 1;
-        float red = color.getRed() / 255f, green = color.getGreen()/ 255f, blue = color.getBlue()/ 255f, alpha = .2f;
+        float red = color.getRed() / 255f, green = color.getGreen() / 255f, blue = color.getBlue() / 255f, alpha = .125f;
 
         double startX = 0, startY = 0, startZ = -1, endX = 1, endY = 1, endZ = 0;
 
