@@ -1,8 +1,6 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
@@ -27,6 +25,8 @@ import java.util.List;
 import java.util.Random;
 
 public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
+    //private Map<BlockPos, BlockPos> extraRenderList = new HashMap<>();
+
     public RenderBlockTER() {
     }
 
@@ -119,11 +119,34 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
 
-        if (UpgradeTools.containsUpgradeFromList(tile.getGadgetUpgrades(), Upgrade.FREEZING)) {
+        /*if (UpgradeTools.containsUpgradeFromList(tile.getGadgetUpgrades(), Upgrade.FREEZING)) {
             for (BlockPos sourcePos : tile.findSources()) {
-
+                if (tile.getDurability() == 0 || tile.getDurability() == tile.getOriginalDurability() || (!(tile instanceof RenderBlockTileEntity))) {
+                    extraRenderList.remove(sourcePos);
+                } else {
+                    if (!extraRenderList.containsKey(sourcePos) || extraRenderList.get(sourcePos) == tile.getPos()) {
+                        extraRenderList.put(sourcePos, tile.getPos());
+                        GlStateManager.pushMatrix();
+                        GlStateManager.enableBlend();
+                        //This blend function allows you to use a constant alpha, which is defined later
+                        GlStateManager.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
+                        GlStateManager.translated(x, y, z);
+                        GlStateManager.translated(sourcePos.getX() - tile.getPos().getX(), sourcePos.getY() - tile.getPos().getY(), sourcePos.getZ() - tile.getPos().getZ());
+                        //GlStateManager.translatef((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
+                        GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+                        //GlStateManager.scalef(scale, scale, scale);
+                        GL14.glBlendColor(1F, 1F, 1F, 1 - scale); //Set the alpha of the blocks we are rendering
+                        if (tile.getWorld().getFluidState(sourcePos).getFluid().isEquivalentTo(Fluids.WATER))
+                            blockrendererdispatcher.renderBlockBrightness(Blocks.PACKED_ICE.getDefaultState(), 1.0f);
+                        else if (tile.getWorld().getFluidState(sourcePos).getFluid().isEquivalentTo(Fluids.LAVA))
+                            blockrendererdispatcher.renderBlockBrightness(Blocks.OBSIDIAN.getDefaultState(), 1.0f);
+                        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+                        GlStateManager.disableBlend();
+                        GlStateManager.popMatrix();
+                    }
+                }
             }
-        }
+        }*/
 /*
 
         GlStateManager.enableBlend();

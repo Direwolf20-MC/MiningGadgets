@@ -3,15 +3,17 @@ package com.direwolf20.mininggadgets.common.tiles;
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -89,7 +91,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         List<BlockPos> sources = new ArrayList<>();
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
-            if (world.getBlockState(sidePos).getBlock() == Blocks.LAVA || world.getBlockState(sidePos).getBlock() == Blocks.WATER)
+            IFluidState state = world.getFluidState(sidePos);
+            //if (world.getBlockState(sidePos).getBlock() == Blocks.LAVA || world.getBlockState(sidePos).getBlock() == Blocks.WATER)
+            if ((state.getFluid().isEquivalentTo(Fluids.LAVA) || state.getFluid().isEquivalentTo(Fluids.WATER)) && state.getFluid().isSource(state))
                 sources.add(sidePos);
         }
         return sources;
@@ -98,9 +102,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private void freeze() {
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
-            if (world.getBlockState(sidePos).getBlock() == Blocks.LAVA) {
+            IFluidState state = world.getFluidState(sidePos);
+            if (state.getFluid().isEquivalentTo(Fluids.LAVA) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.OBSIDIAN.getDefaultState());
-            } else if (world.getBlockState(sidePos).getBlock() == Blocks.WATER) {
+            } else if (state.getFluid().isEquivalentTo(Fluids.WATER) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.PACKED_ICE.getDefaultState());
             }
         }
