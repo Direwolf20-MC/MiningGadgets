@@ -2,6 +2,8 @@ package com.direwolf20.mininggadgets.common.util;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.Blocks;
@@ -15,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.Tags;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -51,7 +54,10 @@ public class BlockOverlayRender {
                 GlStateManager.translatef(-0.0005f, -0.0005f, -0.0005f);
                 GlStateManager.scalef(1.001f, 1.001f, 1.001f);
                 GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-                BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
+                if (UpgradeTools.containsUpgrade(item, Upgrade.VOID_JUNK) && !mc.world.getBlockState(e).isIn(Tags.Blocks.ORES))
+                    BlockOverlayRender.render(e, tessellator, buffer, Color.RED);
+                else
+                    BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
                 GlStateManager.popMatrix();
             }
         });
