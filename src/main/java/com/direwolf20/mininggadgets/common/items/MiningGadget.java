@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.Setup;
+import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
@@ -24,6 +25,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
@@ -46,10 +49,13 @@ import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MiningGadget extends Item {
     private int energyCapacity;
+    private Random rand = new Random();
     //private static int energyPerItem = 15;
 
     public MiningGadget() {
@@ -203,16 +209,69 @@ public class MiningGadget extends Item {
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
 
+    public List<BlockPos> findSources(World world, List<BlockPos> coords) {
+        List<BlockPos> sources = new ArrayList<>();
+        for (BlockPos coord : coords) {
+            for (Direction side : Direction.values()) {
+                BlockPos sidePos = coord.offset(side);
+                IFluidState state = world.getFluidState(sidePos);
+                if ((state.getFluid().isEquivalentTo(Fluids.LAVA) || state.getFluid().isEquivalentTo(Fluids.WATER)) && state.getFluid().isSource(state))
+                    if (!sources.contains(sidePos))
+                        sources.add(sidePos);
+            }
+        }
+        return sources;
+    }
+
+    private void spawnFreezeParticle(PlayerEntity player, BlockPos sourcePos, World world) {
+        float randomPartSize = 0.05f + (0.125f - 0.05f) * rand.nextFloat();
+        double randomTX = rand.nextDouble();
+        double randomTY = rand.nextDouble();
+        double randomTZ = rand.nextDouble();
+        double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+        Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
+        Vec3d look = player.getLookVec(); // or getLook(partialTicks)
+        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
+        Vec3d lookingAt = lookAt.getHitVec();
+        //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
+        Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
+        Vec3d forward = look;
+        Vec3d backward = look.mul(-1, 1, -1);
+        Vec3d down = right.crossProduct(forward);
+
+        //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
+        right = right.scale(0.65f);
+        forward = forward.scale(0.85f);
+        down = down.scale(-0.35);
+        backward = backward.scale(0.05);
+
+        //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
+        Vec3d laserPos = playerPos.add(right);
+        laserPos = laserPos.add(forward);
+        laserPos = laserPos.add(down);
+        lookingAt = lookingAt.add(backward);
+        PlayerParticleData data = PlayerParticleData.playerparticle("ice", sourcePos.getX() + randomTX, sourcePos.getY() + randomTY, sourcePos.getZ() + randomTZ, randomPartSize, 1f, 1f, 1f, 120, true);
+        //Change the below laserPos to lookingAt to have it emit from the laser gun itself
+        world.addParticle(data, laserPos.x, laserPos.y, laserPos.z, 0.025, 0.025f, 0.025);
+    }
+
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
+        //Server and Client side
         World world = player.world;
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
+        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
+            return;
+        List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, getToolRange(stack));
+
+        if (UpgradeTools.containsUpgrade(stack, Upgrade.FREEZING)) {
+            for (BlockPos sourcePos : findSources(player.world, coords)) {
+                if (player instanceof PlayerEntity)
+                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world);
+            }
+        }
+        //Server Side
         if (!world.isRemote) {
-            BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
-            if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
-                return;
-
-            List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, getToolRange(stack));
-
             // As all upgrade types with tiers contain the same name, we can check for a single
             // type in the enum and produce a result that we can then pull the tier from
             int efficiency = 0;
