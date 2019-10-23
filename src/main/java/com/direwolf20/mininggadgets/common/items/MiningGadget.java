@@ -2,7 +2,6 @@ package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.Setup;
-import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
@@ -20,9 +19,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -33,8 +30,6 @@ import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -45,17 +40,12 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MiningGadget extends Item {
@@ -370,14 +360,15 @@ public class MiningGadget extends Item {
         BufferBuilder buffer = tessellator.getBuffer();
 
         coords.forEach(e -> {
-            GlStateManager.pushMatrix();
-            GlStateManager.translatef(e.getX(), e.getY(), e.getZ());
-            GlStateManager.translatef(-0.005f, -0.005f, 0.005f);
-            GlStateManager.scalef(1.01f, 1.01f, 1.01f);
-            GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-            BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
-
-            GlStateManager.popMatrix();
+            if (mc.world.getBlockState(e).getBlock() != ModBlocks.RENDERBLOCK) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(e.getX(), e.getY(), e.getZ());
+                GlStateManager.translatef(-0.005f, -0.005f, 0.005f);
+                GlStateManager.scalef(1.01f, 1.01f, 1.01f);
+                GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+                BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
+                GlStateManager.popMatrix();
+            }
         });
 
         GlStateManager.disableBlend();
