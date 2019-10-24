@@ -8,10 +8,28 @@ public class EnergisedItem extends EnergyStorage {
     private ItemStack stack;
 
     public EnergisedItem(ItemStack stack, int capacity) {
-        super(capacity, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        super(getMaxCapacity(stack, capacity), Integer.MAX_VALUE, Integer.MAX_VALUE);
 
         this.stack = stack;
         this.energy = stack.hasTag() && stack.getTag().contains("energy") ? stack.getTag().getInt("energy") : 0;
+    }
+
+    private static int getMaxCapacity(ItemStack stack, int capacity) {
+        if( !stack.hasTag() || !stack.getTag().contains("max_energy") )
+            return capacity;
+
+        return stack.getTag().getInt("max_energy");
+    }
+
+    public void updatedMaxEnergy(int max) {
+        if( !stack.hasTag() )
+            return;
+
+        stack.getTag().putInt("max_energy", max);
+        this.capacity = max;
+
+        // Ensure the current stored energy is up to date with the new max.
+        this.receiveEnergy(1500, false);
     }
 
     @Override
@@ -32,9 +50,5 @@ public class EnergisedItem extends EnergyStorage {
         compound.putInt("energy", amount);
 
         return amount;
-    }
-
-    public void setMaxEnergyStored(int cap) {
-        this.capacity = cap;
     }
 }

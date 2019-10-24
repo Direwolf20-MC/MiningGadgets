@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.common.containers;
 
 
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
@@ -29,7 +30,6 @@ public class ModificationTableCommands {
             boolean hasFortune = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.FORTUNE_1);
 
             // Reject fortune and silk upgrades when combined together.
-            //
             if ((hasFortune && card == Upgrade.SILK) ||
                     (upgrades.contains(Upgrade.SILK) && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName())))
                 return;
@@ -38,12 +38,14 @@ public class ModificationTableCommands {
                 return;
 
             MiningGadget.applyUpgrade(laser, (UpgradeCard) upgradeCard.getItem());
-            if (card == Upgrade.BATTERY_1)
-                laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).setMaxEnergyStored(2000000));
-            else if (card == Upgrade.BATTERY_2)
-                laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).setMaxEnergyStored(5000000));
-            else if (card == Upgrade.BATTERY_3)
-                laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).setMaxEnergyStored(10000000));
+
+            // Did we just insert a battery upgrade?
+            if(card.getBaseName().equals(Upgrade.BATTERY_1.getBaseName())) {
+                UpgradeBatteryLevels.getBatteryByLevel(card.getTier()).ifPresent(power -> {
+                    laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(power.getPower()));
+                });
+            }
+
             container.putStackInSlot(1, ItemStack.EMPTY);
         }
     }
@@ -62,11 +64,11 @@ public class ModificationTableCommands {
 
                 UpgradeTools.removeUpgrade(laser, upgrade);
                 container.putStackInSlot(1, new ItemStack(upgrade.getCard()));
-                if (upgrade == Upgrade.THREE_BY_THREE) {
+                if (upgrade == Upgrade.THREE_BY_THREE)
                     MiningGadget.setToolRange(laser, 1);
-                    if (upgrade == Upgrade.BATTERY_1)
-                        laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).setMaxEnergyStored(1000000));
-                }
+
+                if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
+                    laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
             }
         }
 
