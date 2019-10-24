@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.client.particles;
+package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
 import net.minecraft.particles.ParticleType;
 

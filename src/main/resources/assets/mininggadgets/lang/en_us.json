@@ -4,9 +4,13 @@
   "item.mininggadgets.mininggadget": "Mining Gadget",
   "item.mininggadgets.upgrade_empty": "Blank Upgrade Module",
   "item.mininggadgets.upgrade_silk": "Upgrade: Silk touch",
+  "item.mininggadgets.upgrade_freezing": "Upgrade: Freezing",
   "item.mininggadgets.upgrade_fortune_1": "Upgrade: Fortune, Tier 1",
   "item.mininggadgets.upgrade_fortune_2": "Upgrade: Fortune, Tier 2",
   "item.mininggadgets.upgrade_fortune_3": "Upgrade: Fortune, Tier 3",
+  "item.mininggadgets.upgrade_battery_1": "Upgrade: Battery, Tier 1",
+  "item.mininggadgets.upgrade_battery_2": "Upgrade: Battery, Tier 2",
+  "item.mininggadgets.upgrade_battery_3": "Upgrade: Battery, Tier 3",
   "item.mininggadgets.upgrade_efficiency_1": "Upgrade: Efficiency, Tier 1",
   "item.mininggadgets.upgrade_efficiency_2": "Upgrade: Efficiency, Tier 2",
   "item.mininggadgets.upgrade_efficiency_3": "Upgrade: Efficiency, Tier 3",
@@ -18,7 +22,7 @@
   "item.mininggadgets.upgrade_void_junk": "Upgrade: Void Junk",
 
   "comment-blocks": "Blocks",
-  "block.mininggadgets.minersight": "Miners Sight",
+  "block.mininggadgets.minerslight": "Miner's Light",
   "block.mininggadgets.renderblock": "Render Block (Don't use)",
   "block.mininggadgets.modificationtable": "Modification Table",
 

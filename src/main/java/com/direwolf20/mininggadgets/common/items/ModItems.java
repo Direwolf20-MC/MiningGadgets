@@ -3,7 +3,7 @@ package com.direwolf20.mininggadgets.common.items;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
@@ -23,6 +23,8 @@ public class ModItems {
     @ObjectHolder("upgrade_empty")
     public static UpgradeCard UPGRADE_EMPTY;
     @ObjectHolder("upgrade_silk")               public static UpgradeCard UPGRADE_SILK;
+    @ObjectHolder("upgrade_freezing")
+    public static UpgradeCard UPGRADE_FREEZING;
     @ObjectHolder("upgrade_fortune_1")          public static UpgradeCard UPGRADE_FORTUNE_1;
     @ObjectHolder("upgrade_fortune_2")          public static UpgradeCard UPGRADE_FORTUNE_2;
     @ObjectHolder("upgrade_fortune_3")          public static UpgradeCard UPGRADE_FORTUNE_3;
@@ -35,6 +37,13 @@ public class ModItems {
     @ObjectHolder("upgrade_efficiency_3")       public static UpgradeCard UPGRADE_EFFICIENCY_3;
     @ObjectHolder("upgrade_efficiency_4")       public static UpgradeCard UPGRADE_EFFICIENCY_4;
     @ObjectHolder("upgrade_efficiency_5")       public static UpgradeCard UPGRADE_EFFICIENCY_5;
+    @ObjectHolder("upgrade_battery_1")
+    public static UpgradeCard UPGRADE_BATTERY_1;
+    @ObjectHolder("upgrade_battery_2")
+    public static UpgradeCard UPGRADE_BATTERY_2;
+    @ObjectHolder("upgrade_battery_3")
+    public static UpgradeCard UPGRADE_BATTERY_3;
+
 
     @SubscribeEvent
     public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {

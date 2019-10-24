@@ -1,6 +1,10 @@
 package com.direwolf20.mininggadgets.client.particles;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
+import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleType;
+import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
+import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleType;
 import net.minecraft.particles.ParticleType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -12,11 +16,14 @@ import net.minecraftforge.registries.ObjectHolder;
 public class ModParticles {
     @ObjectHolder("laserparticle")
     public static ParticleType<LaserParticleData> LASERPARTICLE;
+    @ObjectHolder("playerparticle")
+    public static ParticleType<PlayerParticleData> PLAYERPARTICLE;
 
     @SubscribeEvent
     public static void registerParticles(RegistryEvent.Register<ParticleType<?>> evt) {
         evt.getRegistry().registerAll(
-                new LaserParticleType().setRegistryName("laserparticle")
+                new LaserParticleType().setRegistryName("laserparticle"),
+                new PlayerParticleType().setRegistryName("playerparticle")
         );
     }
 }

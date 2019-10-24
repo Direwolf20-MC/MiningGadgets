@@ -53,19 +53,8 @@ public class MinersLight extends Block {
     }
 
     /**
-     * This gets a complete list of items dropped from this block.
-     *
-     * @param state Current state
-     */
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder loot) {
-        return new ArrayList<>();
-    }
-
-    /**
      * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
      */
-
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext selectionContext) {
         return SHAPE;

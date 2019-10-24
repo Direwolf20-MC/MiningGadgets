@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.items.upgrade;
+package com.direwolf20.mininggadgets.common.gadget.upgrade;
 
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 
@@ -18,11 +18,16 @@ public enum Upgrade {
     MAGNET("magnet", 20),
     THREE_BY_THREE("three_by_three", 0),
     LIGHT_PLACER("light_placer", 0),
+    FREEZING("freezing", 0),
 
     // Tiered
     FORTUNE_1("fortune_1", 1, 30),
     FORTUNE_2("fortune_2", 2, 60),
     FORTUNE_3("fortune_3", 3, 100),
+
+    BATTERY_1("battery_1", 1, 0),
+    BATTERY_2("battery_2", 2, 0),
+    BATTERY_3("battery_3", 3, 0),
 
     EFFICIENCY_1("efficiency_1", 1, 10),
     EFFICIENCY_2("efficiency_2", 2, 20),

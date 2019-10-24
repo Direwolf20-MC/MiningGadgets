@@ -1,8 +1,8 @@
-package com.direwolf20.mininggadgets.client.particles;
+package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
+import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.block.BlockState;
@@ -37,6 +37,7 @@ public class LaserParticle extends BreakingParticle {
     private double sourceZ;
     private int speedModifier;
     private boolean voiding = false;
+    private float originalSize;
 
     public LaserParticle(World world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul, BlockState blockState) {
@@ -57,6 +58,7 @@ public class LaserParticle extends BreakingParticle {
         particleBlue = blue;
         particleGravity = 0;
         particleScale *= size;
+        originalSize = particleScale;
         moteParticleScale = particleScale;
         maxAge = Math.round(maxAgeMul);
         this.depthTest = depthTest;
@@ -81,6 +83,7 @@ public class LaserParticle extends BreakingParticle {
     @Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+
         /*if (this.playerUUID == null) return;
         PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(this.playerUUID);
         Vec3d playerPos = player.getEyePosition(partialTicks);
@@ -217,6 +220,24 @@ public class LaserParticle extends BreakingParticle {
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
+
+        if (voiding && age > 10 && age <= 15) {
+            float darkness = MathHelper.lerp((age - 10) / 5f, 1, 0);
+            this.particleRed = darkness;
+            this.particleGreen = darkness;
+            this.particleBlue = darkness;
+        }
+        if (voiding && age > 15 && age <= 25) {
+            float fade = MathHelper.lerp(((age - 15f) / 10f), 1, 0f);
+            this.particleScale = this.originalSize * fade;
+        }
+        /*
+        if (voiding && age > 15) {
+            this.particleAlpha = 0.25f;
+        }
+        if (voiding && age > 20) {
+            this.particleAlpha = 0f;
+        }*/
 
         //Perform the ACTUAL move of the particle.
         this.move(moveX, moveY, moveZ);

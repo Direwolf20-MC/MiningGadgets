@@ -1,5 +1,6 @@
-package com.direwolf20.mininggadgets.common.items.upgrade;
+package com.direwolf20.mininggadgets.common.gadget.upgrade;
 
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.item.ItemStack;
@@ -16,7 +17,7 @@ public class UpgradeTools {
     /**
      * DO NOT USE UNLESS YOU KNOW WHAT YOU'RE DOING. This method does not, and for some reason
      * can not, validate the upgrade you are inserting to the item. Please be sure to always
-     * use {@link com.direwolf20.mininggadgets.common.items.MiningGadget#applyUpgrade(ItemStack, UpgradeCard)} unless you actually require this
+     * use {@link MiningGadget#applyUpgrade(ItemStack, UpgradeCard)} unless you actually require this
      * kind of unchecked functionality
      */
 

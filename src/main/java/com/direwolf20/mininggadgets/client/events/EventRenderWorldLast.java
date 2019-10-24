@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.client.events;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.renderer.RenderMiningLaser;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.util.BlockOverlayRender;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
@@ -19,13 +20,17 @@ import java.util.List;
 public class EventRenderWorldLast {
     @SubscribeEvent
     static void renderWorldLastEvent(RenderWorldLastEvent evt) {
-
         List<AbstractClientPlayerEntity> players = Minecraft.getInstance().world.getPlayers();
         PlayerEntity myplayer = Minecraft.getInstance().player;
+
+        ItemStack myItem = MiscTools.getGadget(myplayer);
+        if (myItem.getItem() instanceof MiningGadget)
+            BlockOverlayRender.render(myItem);
 
         for (PlayerEntity player : players) {
             if (player.getDistanceSq(myplayer) > 500)
                 continue;
+
             ItemStack heldItem = MiscTools.getGadget(player);
             if (player.isHandActive() && heldItem.getItem() instanceof MiningGadget) {
                 if (MiningGadget.canMine(heldItem, myplayer.world)) {

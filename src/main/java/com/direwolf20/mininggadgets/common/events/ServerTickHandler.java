@@ -27,8 +27,7 @@ public class ServerTickHandler {
     }
 
     public static void addToList(BlockPos pos, int durability, World world) {
-        //long longPos = BlockPos.pack(pos.getX(), pos.getY(), pos.getZ());
-        updateList.add(new Tuple<BlockPos, Integer>(pos, durability));
+        updateList.add(new Tuple<>(pos, durability));
         serverWorld = world;
     }
 

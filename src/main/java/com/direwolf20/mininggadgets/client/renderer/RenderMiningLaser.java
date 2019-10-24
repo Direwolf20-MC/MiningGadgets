@@ -32,8 +32,9 @@ public class RenderMiningLaser {
         double distance = from.subtract(to).length();
         double v = -player.world.getGameTime() * 0.2;
 
-        GlStateManager.color3f(r, g, b);
         GlStateManager.pushMatrix();
+        GlStateManager.enableColorMaterial();
+        GlStateManager.color3f(r, g, b);
         GlStateManager.disableTexture();
         GlStateManager.translated(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
         GlStateManager.translated(from.x, from.y, from.z);

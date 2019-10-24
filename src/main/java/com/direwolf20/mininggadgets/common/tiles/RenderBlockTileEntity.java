@@ -1,15 +1,17 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
-import com.direwolf20.mininggadgets.client.particles.LaserParticleData;
+import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.ModItems;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -17,9 +19,12 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +45,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private Random rand = new Random();
     private int ticksSinceMine = 0;
     private List<Upgrade> gadgetUpgrades;
+    private boolean packetReceived = false;
+    private int totalAge;
 
 
     public RenderBlockTileEntity() {
@@ -60,19 +67,36 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         //System.out.println("Got:"+ " Prior: " + priorDurability + " Dur: " + durability);
     }
 
-    public void setDurability(int dur) {
+    public void setDurability(int dur, ItemStack stack) {
         ticksSinceMine = 0;
         if (durability != 0)
             priorDurability = durability;
         durability = dur;
         if (dur <= 0) {
             removeBlock();
+            if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
+                freeze(stack);
+            }
         }
         if (!(world.isRemote)) {
             markDirty();
             ServerTickHandler.addToList(pos, durability, world);
             //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
             //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
+        }
+    }
+
+    private void freeze(ItemStack stack) {
+        for (Direction side : Direction.values()) {
+            BlockPos sidePos = pos.offset(side);
+            IFluidState state = world.getFluidState(sidePos);
+            if (state.getFluid().isEquivalentTo(Fluids.LAVA) && state.getFluid().isSource(state)) {
+                world.setBlockState(sidePos, Blocks.OBSIDIAN.getDefaultState());
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+            } else if (state.getFluid().isEquivalentTo(Fluids.WATER) && state.getFluid().isSource(state)) {
+                world.setBlockState(sidePos, Blocks.PACKED_ICE.getDefaultState());
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+            }
         }
     }
 
@@ -104,6 +128,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public PlayerEntity getPlayer() {
+        if( getWorld() == null )
+            return null;
+
         return this.getWorld().getPlayerByUuid(playerUUID);
     }
 
@@ -141,7 +168,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         else
             this.clientPrevDurability = this.durability;
         this.clientDurability = clientDurability;
-        //this.ticksSinceMine = 0;
+        packetReceived = true;
     }
 
     public List<Upgrade> getGadgetUpgrades() {
@@ -261,9 +288,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
-
     @Override
     public void tick() {
+        totalAge++;
         //Client and server - spawn a 'block break' particle if the player is actively mining
         if (ticksSinceMine == 0) {
             spawnParticle();
@@ -271,11 +298,25 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         //Client only
         if (world.isRemote) {
             //Update ticks since last mine on client side for particle renders
-            if (!getPlayer().isHandActive()) ticksSinceMine++;
-            else ticksSinceMine = 0;
+            if (playerUUID != null) {
+                if (getPlayer() != null && !getPlayer().isHandActive()) ticksSinceMine++;
+                else ticksSinceMine = 0;
+            }
             //The packet with new durability arrives between ticks. Update it on tick.
-            this.durability = this.clientDurability;
-            this.priorDurability = this.clientPrevDurability;
+            if (packetReceived) {
+                //System.out.println("PreChange: " + this.durability + ":" + this.priorDurability);
+                this.priorDurability = this.durability;
+                this.durability = this.clientDurability;
+                //System.out.println("PostChange: " + this.durability + ":" + this.priorDurability);
+                packetReceived = false;
+            } else {
+                if (durability != 0)
+                    this.priorDurability = this.durability;
+
+            }
+
+
+
         }
         //Server Only
         if (!world.isRemote) {
