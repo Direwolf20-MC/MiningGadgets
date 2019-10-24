@@ -132,20 +132,7 @@ public class MiningGadget extends Item {
             setToolRange(tool, 1);
     }
 
-    public static void setLastBreak(ItemStack tool, long lastBreak) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        tagCompound.putLong("lastBreak", lastBreak);
-    }
-
-    public static long getLastBreak(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        return tagCompound.getLong("lastBreak");
-    }
-
     public static boolean canMine(ItemStack tool, World world) {
-        long lastBreak = getLastBreak(tool);
-        //if ((world.getGameTime() - lastBreak) < 2) return false;
-
         IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
         if (getToolRange(tool) == 3) cost = cost * 9;
@@ -189,7 +176,6 @@ public class MiningGadget extends Item {
     }
 
     public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
-
         // Debug code for free energy
         itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
@@ -300,7 +286,6 @@ public class MiningGadget extends Item {
                 else*/
                     durability = durability - 1;
                     if (durability <= 0) {
-                        setLastBreak(stack, world.getGameTime());
                         player.resetActiveHand();
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                     }
