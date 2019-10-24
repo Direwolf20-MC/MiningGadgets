@@ -37,6 +37,13 @@ public class ModItems {
     @ObjectHolder("upgrade_efficiency_3")       public static UpgradeCard UPGRADE_EFFICIENCY_3;
     @ObjectHolder("upgrade_efficiency_4")       public static UpgradeCard UPGRADE_EFFICIENCY_4;
     @ObjectHolder("upgrade_efficiency_5")       public static UpgradeCard UPGRADE_EFFICIENCY_5;
+    @ObjectHolder("upgrade_battery_1")
+    public static UpgradeCard UPGRADE_BATTERY_1;
+    @ObjectHolder("upgrade_battery_2")
+    public static UpgradeCard UPGRADE_BATTERY_2;
+    @ObjectHolder("upgrade_battery_3")
+    public static UpgradeCard UPGRADE_BATTERY_3;
+
 
     @SubscribeEvent
     public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {

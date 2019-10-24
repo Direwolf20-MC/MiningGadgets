@@ -33,4 +33,8 @@ public class EnergisedItem extends EnergyStorage {
 
         return amount;
     }
+
+    public void setMaxEnergyStored(int cap) {
+        this.capacity = cap;
+    }
 }

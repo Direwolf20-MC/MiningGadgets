@@ -25,6 +25,10 @@ public enum Upgrade {
     FORTUNE_2("fortune_2", 2, 60),
     FORTUNE_3("fortune_3", 3, 100),
 
+    BATTERY_1("battery_1", 1, 0),
+    BATTERY_2("battery_2", 2, 0),
+    BATTERY_3("battery_3", 3, 0),
+
     EFFICIENCY_1("efficiency_1", 1, 10),
     EFFICIENCY_2("efficiency_2", 2, 20),
     EFFICIENCY_3("efficiency_3", 3, 30),
