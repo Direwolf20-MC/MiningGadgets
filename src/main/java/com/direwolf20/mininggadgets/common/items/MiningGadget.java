@@ -194,7 +194,7 @@ public class MiningGadget extends Item {
     public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
 
         // Debug code for free energy
-        //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
+        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(100000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
             player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.mininggadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);
@@ -289,7 +289,7 @@ public class MiningGadget extends Item {
                     te.setGadgetUpgrades(gadgetUpgrades);
                     te.setPriorDurability((int) hardness + 1);
                     te.setOriginalDurability((int) hardness + 1);
-                    te.setDurability((int) hardness);
+                    te.setDurability((int) hardness, stack);
                     te.setPlayer((PlayerEntity) player);
 
                     //}
@@ -307,11 +307,10 @@ public class MiningGadget extends Item {
                         player.resetActiveHand();
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                     }
-                    te.setDurability(durability);
+                    te.setDurability(durability, stack);
                     //}
                 }
             }
-            //if (!world.isRemote) {
             if (!(UpgradeTools.containsUpgrade(stack, Upgrade.LIGHT_PLACER)))
                 return;
 
@@ -326,9 +325,11 @@ public class MiningGadget extends Item {
             else
                 pos = lookingAt.getPos().offset(side).offset(right);
 
-            if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR)
+            if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
                 world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
-            //}
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+            }
+
         }
     }
 

@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         //System.out.println("Got:"+ " Prior: " + priorDurability + " Dur: " + durability);
     }
 
-    public void setDurability(int dur) {
+    public void setDurability(int dur, ItemStack stack) {
         ticksSinceMine = 0;
         if (durability != 0)
             priorDurability = durability;
@@ -74,7 +75,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         if (dur <= 0) {
             removeBlock();
             if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
-                freeze();
+                freeze(stack);
             }
         }
         if (!(world.isRemote)) {
@@ -85,14 +86,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
-    private void freeze() {
+    private void freeze(ItemStack stack) {
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
             IFluidState state = world.getFluidState(sidePos);
             if (state.getFluid().isEquivalentTo(Fluids.LAVA) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.OBSIDIAN.getDefaultState());
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
             } else if (state.getFluid().isEquivalentTo(Fluids.WATER) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.PACKED_ICE.getDefaultState());
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
             }
         }
     }
