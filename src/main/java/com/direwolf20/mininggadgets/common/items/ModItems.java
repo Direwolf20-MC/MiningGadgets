@@ -1,7 +1,6 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import net.minecraft.item.BlockItem;
@@ -12,7 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ModItems {
     // The item group is the creative tab it will go into.
-    public static final Item.Properties ITEM_GROUP = new Item.Properties().group(Setup.getItemGroup());
+    public static final Item.Properties ITEM_GROUP = new Item.Properties().group(MiningGadgets.itemGroup);
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MiningGadgets.MOD_ID);
 
     // We have a separate register just to contain all of the upgrades for quick reference

@@ -6,6 +6,8 @@ import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,9 +31,15 @@ import java.util.stream.Collectors;
 public class MiningGadgets
 {
     public static final String MOD_ID = "mininggadgets";
-
     private static final Logger LOGGER = LogManager.getLogger();
-    public static Setup setup = new Setup();
+
+    public static ItemGroup itemGroup = new ItemGroup(MiningGadgets.MOD_ID) {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ModItems.MININGGADGET.get());
+        }
+    };
+
 
     public MiningGadgets() {
         IEventBus event = FMLJavaModLoadingContext.get().getModEventBus();
@@ -46,7 +54,7 @@ public class MiningGadgets
         event.addListener(this::setup);
         event.addListener(this::enqueueIMC);
         event.addListener(this::processIMC);
-        event.addListener(this::doClientStuff);
+        event.addListener(this::setupClient);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
@@ -61,7 +69,6 @@ public class MiningGadgets
 
     private void setup(final FMLCommonSetupEvent event)
     {
-        setup.init();
         PacketHandler.register();
         MinecraftForge.EVENT_BUS.register(ServerTickHandler.class);
     }
@@ -71,7 +78,7 @@ public class MiningGadgets
      * components. Remember that you shouldn't reference client only
      * methods in this class as it'll crash the mod :P
      */
-    private void doClientStuff(final FMLClientSetupEvent event) {
+    private void setupClient(final FMLClientSetupEvent event) {
         // Register the container screens.
         ModContainers.registerContainerScreens();
         ClientSetup.registerRenderers();

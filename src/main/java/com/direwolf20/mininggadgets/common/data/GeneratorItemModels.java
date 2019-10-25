@@ -52,6 +52,6 @@ public class GeneratorItemModels extends ItemModelProvider {
 
     @Override
     public String getName() {
-        return "item.models";
+        return "Item Models";
     }
 }

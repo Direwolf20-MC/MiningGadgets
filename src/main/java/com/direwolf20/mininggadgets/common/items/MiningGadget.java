@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.Config;
-import com.direwolf20.mininggadgets.Setup;
+import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
@@ -52,7 +52,7 @@ public class MiningGadget extends Item {
     //private static int energyPerItem = 15;
 
     public MiningGadget() {
-        super(new Item.Properties().maxStackSize(1).group(Setup.getItemGroup()));
+        super(new Item.Properties().maxStackSize(1).group(MiningGadgets.itemGroup));
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
