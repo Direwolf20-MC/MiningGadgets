@@ -37,7 +37,7 @@ public class GeneratorItemModels extends ItemModelProvider {
         // Register all of the upgrade items
         ModItems.UPGRADE_ITEMS.getEntries().forEach(item -> {
             String path = item.get().getRegistryName().getPath();
-            singleTexture(path, mcLoc("item/handheld"), modLoc("item/" + path));
+            singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
         });
 
         // Our block items
@@ -47,7 +47,7 @@ public class GeneratorItemModels extends ItemModelProvider {
 
     private void registerBlockModel(Block block) {
         String path = block.getRegistryName().getPath();
-        singleTexture(path, mcLoc("block/cube_all"), modLoc("block/" + path));
+        getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
     }
 
     @Override

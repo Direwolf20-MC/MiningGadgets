@@ -17,30 +17,25 @@ public class GeneratorBlockStates extends BlockStateProvider {
     protected void registerStatesAndModels() {
         // Sorry for the formatting on this one, it's because we have to define all the sides :(
         getVariantBuilder(ModBlocks.MODIFICATION_TABLE.get()).forAllStates(state ->
-                ConfiguredModel.builder().modelFile(
-                        getBuilder(ModBlocks.MODIFICATION_TABLE.get().getRegistryName().getPath())
-                            .parent(getExistingFile(mcLoc("orientable")))
-                                .texture("front",  modLoc("block/modificationtable_side"))
-                                .texture("top",  modLoc("block/modificationtable_top"))
-                                .texture("bottom",  modLoc("block/modificationtable_bottom"))
-                                .texture("side",  modLoc("block/modificationtable_side"))
-                ).build()
+                ConfiguredModel.builder().modelFile(cube(
+                        ModBlocks.MODIFICATION_TABLE.get().getRegistryName().getPath(),
+                        modLoc("block/modificationtable_bottom"),
+                        modLoc("block/modificationtable_top"),
+                        modLoc("block/modificationtable_side"),
+                        modLoc("block/modificationtable_side"),
+                        modLoc("block/modificationtable_side"),
+                        modLoc("block/modificationtable_side")
+                )).build()
         );
 
         // Render block
-        buildCubeAll(ModBlocks.RENDER_BLOCK.get(), "block/renderblock");
-
-        // Miners Light
-        buildCubeAll(ModBlocks.MINERS_LIGHT.get(), "block/minerslight");
+        buildCubeAll(ModBlocks.RENDER_BLOCK.get());
+        buildCubeAll(ModBlocks.MINERS_LIGHT.get());
     }
 
-    private void buildCubeAll(Block block, String locationPath) {
+    private void buildCubeAll(Block block) {
         getVariantBuilder(block).forAllStates(state ->
-                ConfiguredModel.builder().modelFile(
-                        getBuilder(block.getRegistryName().getPath())
-                                .parent(getExistingFile(mcLoc("cube_all")))
-                                .texture("all",  modLoc(locationPath))
-                ).build()
+                ConfiguredModel.builder().modelFile(cubeAll(block)).build()
         );
     }
 }

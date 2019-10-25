@@ -1,6 +1,3 @@
 {
-  "parent": "block/cube_all",
-  "textures": {
-    "texture": "mininggadgets:block/minerslight"
-  }
+  "parent": "mininggadgets:block/minerslight"
 }

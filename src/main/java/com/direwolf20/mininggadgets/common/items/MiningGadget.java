@@ -105,7 +105,7 @@ public class MiningGadget extends Item {
         }
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
-                .ifPresent(energy -> tooltip.add(new TranslationTextComponent("mininggadgets.item.energy", MiscTools.tidyValue(energy.getEnergyStored()), MiscTools.tidyValue(energy.getMaxEnergyStored()))));
+                .ifPresent(energy -> tooltip.add(new TranslationTextComponent("mininggadgets.gadget.energy", MiscTools.tidyValue(energy.getEnergyStored()), MiscTools.tidyValue(energy.getMaxEnergyStored()))));
     }
 
     public static void setToolRange(ItemStack tool, int range) {
@@ -183,7 +183,7 @@ public class MiningGadget extends Item {
         //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
-            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.mininggadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }

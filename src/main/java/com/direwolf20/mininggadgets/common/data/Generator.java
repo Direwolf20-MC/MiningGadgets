@@ -29,6 +29,7 @@ public class Generator {
 
         generator.addProvider(new GeneratorBlockStates(generator, helper));
         generator.addProvider(new GeneratorItemModels(generator, helper));
+        generator.addProvider(new GeneratorLanguage(generator));
     }
 
 

@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "texture": "mininggadgets:item/upgrade_silk"
+    "layer0": "mininggadgets:item/upgrade_silk"
   }
 }

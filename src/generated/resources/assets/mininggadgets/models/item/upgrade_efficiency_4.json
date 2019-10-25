@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "texture": "mininggadgets:item/upgrade_efficiency_4"
+    "layer0": "mininggadgets:item/upgrade_efficiency_4"
   }
 }
