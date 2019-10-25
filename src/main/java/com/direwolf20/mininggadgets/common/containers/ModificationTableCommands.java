@@ -7,6 +7,7 @@ import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.util.EnergisedItem;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -50,7 +51,7 @@ public class ModificationTableCommands {
         }
     }
 
-    public static void extractButton(ModificationTableContainer container, String upgradeName) {
+    public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName, boolean isShiftHeld) {
         Slot laserSlot = container.inventorySlots.get(0);
         Slot upgradeSlot = container.inventorySlots.get(1);
 
@@ -68,7 +69,11 @@ public class ModificationTableCommands {
                 return;
 
             UpgradeTools.removeUpgrade(laser, upgrade);
-            container.putStackInSlot(1, new ItemStack(upgrade.getCard()));
+            if( isShiftHeld )
+                player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
+            else
+                container.putStackInSlot(1, new ItemStack(upgrade.getCard(), 1));
+
             if (upgrade == Upgrade.THREE_BY_THREE)
                 MiningGadget.setToolRange(laser, 1);
 

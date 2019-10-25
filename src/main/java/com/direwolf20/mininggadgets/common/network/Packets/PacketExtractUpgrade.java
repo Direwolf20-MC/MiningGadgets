@@ -16,20 +16,26 @@ public class PacketExtractUpgrade {
 
     private final BlockPos pos;
     private final String upgrade;
+    private final int nameLength;
+    private final boolean isShiftHeld;
 
-    public PacketExtractUpgrade(BlockPos blockPos, String upgrade) {
+    public PacketExtractUpgrade(BlockPos blockPos, String upgrade, int nameLength, boolean isShiftHeld) {
         this.pos = blockPos;
         this.upgrade = upgrade;
+        this.nameLength = nameLength;
+        this.isShiftHeld = isShiftHeld;
     }
 
     public static void encode(PacketExtractUpgrade msg, PacketBuffer buffer) {
+        buffer.writeInt(msg.nameLength);
         buffer.writeBlockPos(msg.pos);
         buffer.writeString(msg.upgrade);
+        buffer.writeBoolean(msg.isShiftHeld);
     }
 
     public static PacketExtractUpgrade decode(PacketBuffer buffer) {
-        // Todo: Don't hardcode string lengths... Add as packet?
-        return new PacketExtractUpgrade(buffer.readBlockPos(), buffer.readString(1500));
+        int strLength = buffer.readInt();
+        return new PacketExtractUpgrade(buffer.readBlockPos(), buffer.readString(strLength), strLength, buffer.readBoolean());
     }
 
     public static class Handler {
@@ -45,7 +51,7 @@ public class PacketExtractUpgrade {
                 if (!(te instanceof ModificationTableTileEntity)) return;
                 ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
-                ModificationTableCommands.extractButton(container, msg.upgrade);
+                ModificationTableCommands.extractButton(container, player, msg.upgrade, msg.isShiftHeld);
             });
 
             ctx.get().setPacketHandled(true);

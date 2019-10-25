@@ -121,10 +121,10 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if( !isMouseOver(mouseX, mouseY) || this.upgrade == null || Screen.hasShiftDown() )
+            if( !isMouseOver(mouseX, mouseY) || this.upgrade == null )
                 return false;
 
-            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName()));
+            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length(), Screen.hasShiftDown()));
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
