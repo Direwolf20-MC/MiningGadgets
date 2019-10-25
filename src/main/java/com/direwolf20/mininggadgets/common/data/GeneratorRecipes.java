@@ -182,7 +182,6 @@ public class GeneratorRecipes extends RecipeProvider {
                 .patternLine("sus")
                 .patternLine("sss")
                 .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
-                .addCriterion("has_snow", hasItem(Items.SNOWBALL))
                 .build(consumer);
 
         ShapedRecipeBuilder.shapedRecipe(LIGHT_PLACER.get())
@@ -195,7 +194,6 @@ public class GeneratorRecipes extends RecipeProvider {
                 .patternLine("bub")
                 .patternLine("grg")
                 .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
-                .addCriterion("has_glow", hasItem(Items.GLOWSTONE_DUST))
                 .build(consumer);
 
         ShapedRecipeBuilder.shapedRecipe(MAGNET.get())
@@ -218,8 +216,6 @@ public class GeneratorRecipes extends RecipeProvider {
                 .patternLine("gug")
                 .patternLine("sss")
                 .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
-                .addCriterion("has_slime", hasItem(Tags.Items.SLIMEBALLS))
-                .addCriterion("has_apple", hasItem(Items.GOLDEN_APPLE))
                 .build(consumer);
 
         ShapedRecipeBuilder.shapedRecipe(THREE_BY_THREE.get())
@@ -232,7 +228,6 @@ public class GeneratorRecipes extends RecipeProvider {
                 .patternLine("eue")
                 .patternLine("rpr")
                 .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
-                .addCriterion("has_ender_pearls", hasItem(Tags.Items.ENDER_PEARLS))
                 .build(consumer);
 
         ShapedRecipeBuilder.shapedRecipe(VOID_JUNK.get())
@@ -244,7 +239,6 @@ public class GeneratorRecipes extends RecipeProvider {
                 .patternLine("eue")
                 .patternLine("ror")
                 .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
-                .addCriterion("has_ender_pearls", hasItem(Tags.Items.ENDER_PEARLS))
                 .build(consumer);
     }
 }
