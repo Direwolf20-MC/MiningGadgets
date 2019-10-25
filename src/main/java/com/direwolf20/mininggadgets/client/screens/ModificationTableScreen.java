@@ -67,7 +67,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         this.scrollingUpgrades = new ScrollingUpgrades(Minecraft.getInstance(), this.xSize - 14, 72, guiTop + 7, guiLeft + 7, this);
         this.children.add(this.scrollingUpgrades);
 
-        buttonInsert = new DireButton(guiLeft + (- 17), guiTop + 28, 18, 12, "⤵", (button) -> PacketHandler.sendToServer(new PacketInsertUpgrade(tePos)));
+        buttonInsert = new DireButton(guiLeft + (-17), guiTop + 28, 18, 12, "->", (button) -> PacketHandler.sendToServer(new PacketInsertUpgrade(tePos)));
         addButton(buttonInsert);
    }
 
