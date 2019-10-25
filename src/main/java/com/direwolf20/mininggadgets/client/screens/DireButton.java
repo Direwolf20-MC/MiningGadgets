@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.client.gui;
+package com.direwolf20.mininggadgets.client.screens;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;

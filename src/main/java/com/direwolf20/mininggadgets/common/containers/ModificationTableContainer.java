@@ -1,6 +1,8 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.client.Minecraft;
@@ -19,10 +21,14 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ModificationTableContainer extends Container {
 
     private TileEntity tileEntity;
     private IItemHandler playerInventory;
+    private List<Upgrade> upgradesCache = new ArrayList<>();
 
     public ModificationTableContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
         super(ModContainers.MODIFICATIONTABLE_CONTAINER, windowId);
@@ -51,9 +57,25 @@ public class ModificationTableContainer extends Container {
 
     private void setupContainerSlots() {
         this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new SlotItemHandler(h, 0, 8, 7));
-            addSlot(new SlotItemHandler(h, 1, 45, 7));
+            addSlot(new WatchedSlot(h, 0,  -16, 59, this::updateUpgradeCache));
+            addSlot(new SlotItemHandler(h, 1, -16, 8));
         });
+    }
+
+    private void updateUpgradeCache(int index) {
+        ItemStack stack = this.getSlot(index).getStack();
+        if( (stack.isEmpty() && !upgradesCache.isEmpty()) || !(stack.getItem() instanceof MiningGadget) ) {
+            upgradesCache.clear();
+            return;
+        }
+
+        // Purge and set cache
+        upgradesCache.clear();
+        upgradesCache = UpgradeTools.getUpgrades(stack);
+    }
+
+    public List<Upgrade> getUpgradesCache() {
+        return upgradesCache;
     }
 
     public TileEntity getTE() {

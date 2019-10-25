@@ -7,6 +7,7 @@ import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.util.EnergisedItem;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -50,27 +51,34 @@ public class ModificationTableCommands {
         }
     }
 
-    public static void extractButton(ModificationTableContainer container) {
+    public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName, boolean isShiftHeld) {
         Slot laserSlot = container.inventorySlots.get(0);
         Slot upgradeSlot = container.inventorySlots.get(1);
 
         ItemStack laser = laserSlot.getStack();
         ItemStack upgradeCard = upgradeSlot.getStack();
 
-        if (laser.getItem() instanceof MiningGadget && upgradeCard.isEmpty()) {
-            if (!(UpgradeTools.getUpgrades(laser).isEmpty())) {
-                List<Upgrade> upgrades = UpgradeTools.getUpgrades(laser);
-                Upgrade upgrade = upgrades.get(upgrades.size() - 1);
+        if (!(laser.getItem() instanceof MiningGadget) || !upgradeCard.isEmpty())
+            return;
 
-                UpgradeTools.removeUpgrade(laser, upgrade);
-                container.putStackInSlot(1, new ItemStack(upgrade.getCard()));
-                if (upgrade == Upgrade.THREE_BY_THREE)
-                    MiningGadget.setToolRange(laser, 1);
+        if (!UpgradeTools.containsUpgrades(laser))
+            return;
 
-                if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
-                    laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
-            }
-        }
+        UpgradeTools.getUpgrades(laser).forEach(upgrade -> {
+            if( !upgrade.getName().equals(upgradeName) )
+                return;
 
+            UpgradeTools.removeUpgrade(laser, upgrade);
+            if( isShiftHeld )
+                player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
+            else
+                container.putStackInSlot(1, new ItemStack(upgrade.getCard(), 1));
+
+            if (upgrade == Upgrade.THREE_BY_THREE)
+                MiningGadget.setToolRange(laser, 1);
+
+            if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
+                laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
+        });
     }
 }

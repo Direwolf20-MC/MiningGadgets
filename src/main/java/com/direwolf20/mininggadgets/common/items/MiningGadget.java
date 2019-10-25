@@ -104,7 +104,7 @@ public class MiningGadget extends Item {
         if (!(upgrades.isEmpty())) {
             for (Upgrade upgrade : upgrades) {
                 tooltip.add(new StringTextComponent(
-                        I18n.format(String.format("item.mininggadgets.upgrade_%s", upgrade.getName()))
+                        I18n.format(upgrade.getI18nKey())
                 ));
             }
         }
@@ -157,6 +157,11 @@ public class MiningGadget extends Item {
     }
 
     @Override
+    public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
+        return true;
+    }
+
+    @Override
     public int getUseDuration(ItemStack stack) {
         return 72000;
     }
@@ -180,7 +185,7 @@ public class MiningGadget extends Item {
 
     private ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
         // Debug code for free energy
-        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
+        //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
             player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.mininggadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);
@@ -297,7 +302,7 @@ public class MiningGadget extends Item {
                 else*/
                     durability = durability - 1;
                     if (durability <= 0) {
-                        player.resetActiveHand();
+                        //player.resetActiveHand();
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                     }
                     te.setDurability(durability, stack);
@@ -322,7 +327,6 @@ public class MiningGadget extends Item {
                 world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
                 stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
             }
-
         }
     }
 

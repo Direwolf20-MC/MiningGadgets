@@ -40,6 +40,7 @@ public enum Upgrade {
     private UpgradeCard card;
     private int tier;
     private int costPerBlock;
+    private boolean active = true;
 
     Upgrade(String name, int tier, int costPerBlock) {
         this.name = name;
@@ -77,7 +78,19 @@ public enum Upgrade {
         return baseName;
     }
 
+    public String getI18nKey() {
+        return String.format("item.mininggadgets.upgrade_%s", this.getName());
+    }
+    
     public boolean hasTier() {
         return tier != -1;
+    }
+
+    public boolean isEnabled() {
+        return active;
+    }
+
+    public void setEnabled(boolean active) {
+        this.active = active;
     }
 }
