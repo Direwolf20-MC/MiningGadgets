@@ -48,7 +48,7 @@ public class BlockOverlayRender {
         BufferBuilder buffer = tessellator.getBuffer();
 
         coords.forEach(e -> {
-            if (mc.world.getBlockState(e).getBlock() != ModBlocks.RENDERBLOCK) {
+            if (mc.world.getBlockState(e).getBlock() != ModBlocks.RENDER_BLOCK.get()) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translatef(e.getX(), e.getY(), e.getZ());
                 GlStateManager.translatef(-0.005f, -0.005f, -0.005f);

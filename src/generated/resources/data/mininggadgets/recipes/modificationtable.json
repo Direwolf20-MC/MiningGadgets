@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "rur",
+    "iii"
+  ],
+  "key": {
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_empty"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "mininggadgets:modificationtable"
+  }
+}

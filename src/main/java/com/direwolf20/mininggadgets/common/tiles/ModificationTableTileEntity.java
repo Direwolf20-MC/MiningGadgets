@@ -30,7 +30,7 @@ public class ModificationTableTileEntity extends TileEntity implements INamedCon
     private LazyOptional<IItemHandler> handler = LazyOptional.of(this::createHandler);
 
     public ModificationTableTileEntity() {
-        super(MODIFICATIONTABLE_TILE);
+        super(MODIFICATIONTABLE_TILE.get());
     }
 
     @Override

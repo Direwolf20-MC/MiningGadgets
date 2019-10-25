@@ -6,24 +6,18 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.storage.loot.LootContext;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RenderBlock extends Block {
     public RenderBlock() {
         super(
                 Properties.create(Material.IRON).hardnessAndResistance(2.0f)
         );
-
-        setRegistryName("renderblock");
     }
 
     @Override

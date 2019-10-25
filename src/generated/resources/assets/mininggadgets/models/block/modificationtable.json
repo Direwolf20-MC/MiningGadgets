@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "mininggadgets:block/modificationtable_bottom",
+    "up": "mininggadgets:block/modificationtable_top",
+    "north": "mininggadgets:block/modificationtable_side",
+    "south": "mininggadgets:block/modificationtable_side",
+    "east": "mininggadgets:block/modificationtable_side",
+    "west": "mininggadgets:block/modificationtable_side",
+    "particle": "mininggadgets:block/modificationtable_side"
+  }
+}

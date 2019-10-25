@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.Config;
-import com.direwolf20.mininggadgets.Setup;
+import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
@@ -55,9 +55,7 @@ public class MiningGadget extends Item {
     //private static int energyPerItem = 15;
 
     public MiningGadget() {
-        super(new Item.Properties().maxStackSize(1).group(Setup.getItemGroup()));
-        setRegistryName("mininggadget");
-
+        super(new Item.Properties().maxStackSize(1).group(MiningGadgets.itemGroup));
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
@@ -110,7 +108,7 @@ public class MiningGadget extends Item {
         }
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
-                .ifPresent(energy -> tooltip.add(new TranslationTextComponent("mininggadgets.item.energy", MiscTools.tidyValue(energy.getEnergyStored()), MiscTools.tidyValue(energy.getMaxEnergyStored()))));
+                .ifPresent(energy -> tooltip.add(new TranslationTextComponent("mininggadgets.gadget.energy", MiscTools.tidyValue(energy.getEnergyStored()), MiscTools.tidyValue(energy.getMaxEnergyStored()))));
     }
 
     public static void setToolRange(ItemStack tool, int range) {
@@ -188,7 +186,7 @@ public class MiningGadget extends Item {
         //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
-            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.mininggadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);
         }
 
 //        player.openContainer(new MiningContainer.MiningProvider(itemstack));
@@ -282,7 +280,7 @@ public class MiningGadget extends Item {
                         return;
                     }
                     List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
-                    world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
+                    world.setBlockState(coord, ModBlocks.RENDER_BLOCK.get().getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
                     te.setGadgetUpgrades(gadgetUpgrades);
@@ -324,7 +322,7 @@ public class MiningGadget extends Item {
                 pos = lookingAt.getPos().offset(side).offset(right);
 
             if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
-                world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
+                world.setBlockState(pos, ModBlocks.MINERS_LIGHT.get().getDefaultState());
                 stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
             }
         }

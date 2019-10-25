@@ -48,9 +48,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private boolean packetReceived = false;
     private int totalAge;
 
-
     public RenderBlockTileEntity() {
-        super(RENDERBLOCK_TILE);
+        super(RENDERBLOCK_TILE.get());
     }
 
     public void setRenderBlock(BlockState state) {
@@ -239,7 +238,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             int silk = 0;
             int fortune = 0;
             if (!(UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
-                ItemStack tempTool = new ItemStack(ModItems.MININGGADGET);
+                ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
 
                 // If silk is in the upgrades, apply it without a tier.
                 if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {

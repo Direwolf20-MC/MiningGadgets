@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "mininggadgets:upgrade_light_placer"
+    ]
+  },
+  "criteria": {
+    "has_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "mininggadgets:upgrade_empty"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "mininggadgets:upgrade_light_placer"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_upgrade",
+      "has_the_recipe"
+    ]
+  ]
+}

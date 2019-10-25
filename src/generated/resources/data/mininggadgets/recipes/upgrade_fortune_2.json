@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "lgl",
+    "lul",
+    "lgl"
+  ],
+  "key": {
+    "l": {
+      "item": "minecraft:lapis_block"
+    },
+    "g": {
+      "item": "minecraft:gold_block"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_fortune_1"
+    }
+  },
+  "result": {
+    "item": "mininggadgets:upgrade_fortune_2"
+  }
+}

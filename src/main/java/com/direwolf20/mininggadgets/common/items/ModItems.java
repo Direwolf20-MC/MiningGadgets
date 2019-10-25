@@ -1,66 +1,49 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.Setup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Arrays;
-
-@EventBusSubscriber(bus = Bus.MOD, modid = MiningGadgets.MOD_ID)
-@ObjectHolder(MiningGadgets.MOD_ID)
 public class ModItems {
+    // The item group is the creative tab it will go into.
+    public static final Item.Properties ITEM_GROUP = new Item.Properties().group(MiningGadgets.itemGroup);
+    public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MiningGadgets.MOD_ID);
 
-    @ObjectHolder("mininggadget")
-    public static MiningGadget MININGGADGET;
-    @ObjectHolder("upgrade_empty")
-    public static UpgradeCard UPGRADE_EMPTY;
-    @ObjectHolder("upgrade_silk")               public static UpgradeCard UPGRADE_SILK;
-    @ObjectHolder("upgrade_freezing")
-    public static UpgradeCard UPGRADE_FREEZING;
-    @ObjectHolder("upgrade_fortune_1")          public static UpgradeCard UPGRADE_FORTUNE_1;
-    @ObjectHolder("upgrade_fortune_2")          public static UpgradeCard UPGRADE_FORTUNE_2;
-    @ObjectHolder("upgrade_fortune_3")          public static UpgradeCard UPGRADE_FORTUNE_3;
-    @ObjectHolder("upgrade_light_placer")       public static UpgradeCard LIGHT_PLACER;
-    @ObjectHolder("upgrade_three_by_three")     public static UpgradeCard THREE_BY_THREE;
-    @ObjectHolder("upgrade_void_junk")          public static UpgradeCard VOID_JUNK;
-    @ObjectHolder("upgrade_magnet")             public static UpgradeCard MAGNET;
-    @ObjectHolder("upgrade_efficiency_1")       public static UpgradeCard UPGRADE_EFFICIENCY_1;
-    @ObjectHolder("upgrade_efficiency_2")       public static UpgradeCard UPGRADE_EFFICIENCY_2;
-    @ObjectHolder("upgrade_efficiency_3")       public static UpgradeCard UPGRADE_EFFICIENCY_3;
-    @ObjectHolder("upgrade_efficiency_4")       public static UpgradeCard UPGRADE_EFFICIENCY_4;
-    @ObjectHolder("upgrade_efficiency_5")       public static UpgradeCard UPGRADE_EFFICIENCY_5;
-    @ObjectHolder("upgrade_battery_1")
-    public static UpgradeCard UPGRADE_BATTERY_1;
-    @ObjectHolder("upgrade_battery_2")
-    public static UpgradeCard UPGRADE_BATTERY_2;
-    @ObjectHolder("upgrade_battery_3")
-    public static UpgradeCard UPGRADE_BATTERY_3;
+    // We have a separate register just to contain all of the upgrades for quick reference
+    public static final DeferredRegister<Item> UPGRADE_ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MiningGadgets.MOD_ID);
 
+    // Items
+    public static final RegistryObject<Item> MININGGADGET = ITEMS.register("mininggadget", MiningGadget::new);
 
-    @SubscribeEvent
-    public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-        Item.Properties groupedProps = new Item.Properties().group(Setup.getItemGroup());
+    /**
+     * Upgrades are a bit ugly.. Soz
+     * This one is actually kinda
+     */
+    public static final RegistryObject<Item> UPGRADE_EMPTY =    UPGRADE_ITEMS.register("upgrade_empty", Upgrade.EMPTY::getCard);
+    public static final RegistryObject<Item> SILK =             UPGRADE_ITEMS.register("upgrade_silk", Upgrade.SILK::getCard);
+    public static final RegistryObject<Item> VOID_JUNK =        UPGRADE_ITEMS.register("upgrade_void_junk", Upgrade.VOID_JUNK::getCard);
+    public static final RegistryObject<Item> MAGNET =           UPGRADE_ITEMS.register("upgrade_magnet", Upgrade.MAGNET::getCard);
+    public static final RegistryObject<Item> THREE_BY_THREE =   UPGRADE_ITEMS.register("upgrade_three_by_three", Upgrade.THREE_BY_THREE::getCard);
+    public static final RegistryObject<Item> LIGHT_PLACER =     UPGRADE_ITEMS.register("upgrade_light_placer", Upgrade.LIGHT_PLACER::getCard);
+    public static final RegistryObject<Item> FREEZING =         UPGRADE_ITEMS.register("upgrade_freezing", Upgrade.FREEZING::getCard);
+    public static final RegistryObject<Item> FORTUNE_1 =        UPGRADE_ITEMS.register("upgrade_fortune_1", Upgrade.FORTUNE_1::getCard);
+    public static final RegistryObject<Item> FORTUNE_2 =        UPGRADE_ITEMS.register("upgrade_fortune_2", Upgrade.FORTUNE_2::getCard);
+    public static final RegistryObject<Item> FORTUNE_3 =        UPGRADE_ITEMS.register("upgrade_fortune_3", Upgrade.FORTUNE_3::getCard);
+    public static final RegistryObject<Item> BATTERY_1 =        UPGRADE_ITEMS.register("upgrade_battery_1", Upgrade.BATTERY_1::getCard);
+    public static final RegistryObject<Item> BATTERY_2 =        UPGRADE_ITEMS.register("upgrade_battery_2", Upgrade.BATTERY_2::getCard);
+    public static final RegistryObject<Item> BATTERY_3 =        UPGRADE_ITEMS.register("upgrade_battery_3", Upgrade.BATTERY_3::getCard);
+    public static final RegistryObject<Item> EFFICIENCY_1 =     UPGRADE_ITEMS.register("upgrade_efficiency_1", Upgrade.EFFICIENCY_1::getCard);
+    public static final RegistryObject<Item> EFFICIENCY_2 =     UPGRADE_ITEMS.register("upgrade_efficiency_2", Upgrade.EFFICIENCY_2::getCard);
+    public static final RegistryObject<Item> EFFICIENCY_3 =     UPGRADE_ITEMS.register("upgrade_efficiency_3", Upgrade.EFFICIENCY_3::getCard);
+    public static final RegistryObject<Item> EFFICIENCY_4 =     UPGRADE_ITEMS.register("upgrade_efficiency_4", Upgrade.EFFICIENCY_4::getCard);
+    public static final RegistryObject<Item> EFFICIENCY_5 =     UPGRADE_ITEMS.register("upgrade_efficiency_5", Upgrade.EFFICIENCY_5::getCard);
 
-        // Keep in mind that items & item blocks are loaded into the ItemGroup
-        // in order of registry so don't put things below the minerslight / renderblock
-
-        // Items
-        event.getRegistry().register(new MiningGadget());
-
-        // Register our upgrades :)
-        // Dire, note that all upgrade tiers are now handled in the Enum :+1:
-        Arrays.stream(Upgrade.values()).forEach( upgrade -> event.getRegistry().register(upgrade.getCard()) );
-
-        // BlockItems
-        event.getRegistry().register(new BlockItem(ModBlocks.MINERSLIGHT, groupedProps).setRegistryName("minerslight"));
-        event.getRegistry().register(new BlockItem(ModBlocks.MODIFICATIONTABLE, groupedProps).setRegistryName("modificationtable"));
-    }
+    // Block items
+    public static final RegistryObject<Item> MODIFICATION_TABLE_ITEM = ITEMS.register("modificationtable", () -> new BlockItem(ModBlocks.MODIFICATION_TABLE.get(), ITEM_GROUP));
+    public static final RegistryObject<Item> MINERS_LIGHT_ITEM = ITEMS.register("minerslight", () -> new BlockItem(ModBlocks.MINERS_LIGHT.get(), ITEM_GROUP));
 }

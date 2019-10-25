@@ -52,7 +52,7 @@ public class ModificationTableContainer extends Container {
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(getTE().getWorld(), tileEntity.getPos()), playerIn, ModBlocks.MODIFICATIONTABLE);
+        return isWithinUsableDistance(IWorldPosCallable.of(getTE().getWorld(), tileEntity.getPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
     }
 
     private void setupContainerSlots() {

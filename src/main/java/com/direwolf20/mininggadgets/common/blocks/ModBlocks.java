@@ -1,67 +1,34 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.client.renderer.RenderBlockTER;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-@EventBusSubscriber(bus= EventBusSubscriber.Bus.MOD, modid = MiningGadgets.MOD_ID)
-@ObjectHolder(MiningGadgets.MOD_ID)
 public class ModBlocks {
-    // Blocks
-    @ObjectHolder("renderblock")
-    public static RenderBlock RENDERBLOCK;
-
-    @ObjectHolder("minerslight")
-    public static MinersLight MINERSLIGHT;
-
-    @ObjectHolder("modificationtable")
-    public static ModificationTable MODIFICATIONTABLE;
-
-    @SubscribeEvent
-    public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-        blockRegistryEvent.getRegistry().registerAll(
-                new RenderBlock(),
-                new MinersLight(),
-                new ModificationTable()
-        );
-    }
-
-    // Tiles
-    @ObjectHolder("renderblock")
-    public static TileEntityType<RenderBlockTileEntity> RENDERBLOCK_TILE;
-
-    @ObjectHolder("modificationtable")
-    public static TileEntityType<ModificationTableTileEntity> MODIFICATIONTABLE_TILE;
+    /**
+     * Deferred Registers for the our Main class to load.
+     */
+    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MiningGadgets.MOD_ID);
+    public static final DeferredRegister<TileEntityType<?>> TILES_ENTITIES = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, MiningGadgets.MOD_ID);
 
     /**
-     * TileEntity Registers
+     * Register our blocks to the above registers to be loaded when the mod is initialized
      */
-    @SubscribeEvent
-    public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event) {
-        event.getRegistry().registerAll(
-                TileEntityType.Builder.create(RenderBlockTileEntity::new, ModBlocks.RENDERBLOCK).build(null).setRegistryName("renderblock"),
-                TileEntityType.Builder.create(ModificationTableTileEntity::new, ModBlocks.MODIFICATIONTABLE).build(null).setRegistryName("modificationtable")
-        );
-    }
+    public static final RegistryObject<Block> RENDER_BLOCK = BLOCKS.register("renderblock", RenderBlock::new);
+    public static final RegistryObject<Block> MINERS_LIGHT = BLOCKS.register("minerslight", MinersLight::new);
+    public static final RegistryObject<Block> MODIFICATION_TABLE = BLOCKS.register("modificationtable", ModificationTable::new);
 
     /**
-     * Client Registry for renders
+     * TileEntity Registers to the above deferred registers to be loaded in from the mods main class.
      */
-    @OnlyIn(Dist.CLIENT)
-    public static void registerRenderers() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(event -> {
-            ClientRegistry.bindTileEntitySpecialRenderer(RenderBlockTileEntity.class, new RenderBlockTER());
-        });
-    }
+    public static final RegistryObject<TileEntityType<RenderBlockTileEntity>> RENDERBLOCK_TILE =
+            TILES_ENTITIES.register("renderblock", () -> TileEntityType.Builder.create(RenderBlockTileEntity::new, ModBlocks.RENDER_BLOCK.get()).build(null));
+
+    public static final RegistryObject<TileEntityType<ModificationTableTileEntity>> MODIFICATIONTABLE_TILE =
+            TILES_ENTITIES.register("modificationtable", () -> TileEntityType.Builder.create(ModificationTableTileEntity::new, ModBlocks.MODIFICATION_TABLE.get()).build(null));
 }

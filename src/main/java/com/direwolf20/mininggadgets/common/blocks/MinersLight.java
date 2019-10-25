@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
@@ -12,10 +11,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.loot.LootContext;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class MinersLight extends Block {
@@ -26,8 +22,6 @@ public class MinersLight extends Block {
         super(
                 Block.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().hardnessAndResistance(0.0f).lightValue(14)
         );
-
-        setRegistryName("minerslight");
     }
 
     /**

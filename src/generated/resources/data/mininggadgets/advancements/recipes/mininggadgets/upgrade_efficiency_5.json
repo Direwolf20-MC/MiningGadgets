@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "mininggadgets:upgrade_efficiency_5"
+    ]
+  },
+  "criteria": {
+    "has_efficiency_4": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "mininggadgets:upgrade_efficiency_4"
+          }
+        ]
+      }
+    },
+    "has_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "mininggadgets:upgrade_empty"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "mininggadgets:upgrade_efficiency_5"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_efficiency_4",
+      "has_upgrade",
+      "has_the_recipe"
+    ]
+  ]
+}
