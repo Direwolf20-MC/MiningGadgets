@@ -154,6 +154,11 @@ public class MiningGadget extends Item {
     }
 
     @Override
+    public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
+        return true;
+    }
+
+    @Override
     public int getUseDuration(ItemStack stack) {
         return 72000;
     }
@@ -286,7 +291,7 @@ public class MiningGadget extends Item {
                 else*/
                     durability = durability - 1;
                     if (durability <= 0) {
-                        player.resetActiveHand();
+                        //player.resetActiveHand();
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                     }
                     te.setDurability(durability, stack);
