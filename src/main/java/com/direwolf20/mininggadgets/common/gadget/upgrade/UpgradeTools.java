@@ -75,6 +75,10 @@ public class UpgradeTools {
         return getUpgradesFromTag(tagCompound);
     }
 
+    public static boolean containsUpgrades(ItemStack tool) {
+        return MiscTools.getOrNewTag(tool).contains("upgrades");
+    }
+
     /**
      * Get a single upgrade and it's tier
      */

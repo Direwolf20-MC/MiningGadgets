@@ -101,7 +101,7 @@ public class MiningGadget extends Item {
         if (!(upgrades.isEmpty())) {
             for (Upgrade upgrade : upgrades) {
                 tooltip.add(new StringTextComponent(
-                        I18n.format(String.format("item.mininggadgets.upgrade_%s", upgrade.getName()))
+                        I18n.format(upgrade.getI18nKey())
                 ));
             }
         }
@@ -316,7 +316,6 @@ public class MiningGadget extends Item {
                 world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
                 stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
             }
-
         }
     }
 
