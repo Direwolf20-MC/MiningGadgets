@@ -25,7 +25,6 @@ public class ModItems {
      * Upgrades are a bit ugly.. Soz
      * This one is actually kinda
      */
-
     public static final RegistryObject<Item> UPGRADE_EMPTY =    UPGRADE_ITEMS.register("upgrade_empty", Upgrade.EMPTY::getCard);
     public static final RegistryObject<Item> SILK =             UPGRADE_ITEMS.register("upgrade_silk", Upgrade.SILK::getCard);
     public static final RegistryObject<Item> VOID_JUNK =        UPGRADE_ITEMS.register("upgrade_void_junk", Upgrade.VOID_JUNK::getCard);
