@@ -15,17 +15,21 @@ import java.util.function.Supplier;
 public class PacketExtractUpgrade {
 
     private final BlockPos pos;
+    private final String upgrade;
 
-    public PacketExtractUpgrade(BlockPos blockPos) {
+    public PacketExtractUpgrade(BlockPos blockPos, String upgrade) {
         this.pos = blockPos;
+        this.upgrade = upgrade;
     }
 
     public static void encode(PacketExtractUpgrade msg, PacketBuffer buffer) {
         buffer.writeBlockPos(msg.pos);
+        buffer.writeString(msg.upgrade);
     }
 
     public static PacketExtractUpgrade decode(PacketBuffer buffer) {
-        return new PacketExtractUpgrade(buffer.readBlockPos());
+        // Todo: Don't hardcode string lengths... Add as packet?
+        return new PacketExtractUpgrade(buffer.readBlockPos(), buffer.readString(1500));
     }
 
     public static class Handler {
@@ -41,7 +45,7 @@ public class PacketExtractUpgrade {
                 if (!(te instanceof ModificationTableTileEntity)) return;
                 ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
-                ModificationTableCommands.extractButton(container);
+                ModificationTableCommands.extractButton(container, msg.upgrade);
             });
 
             ctx.get().setPacketHandled(true);

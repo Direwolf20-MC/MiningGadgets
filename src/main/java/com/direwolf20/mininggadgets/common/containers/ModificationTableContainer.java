@@ -57,8 +57,8 @@ public class ModificationTableContainer extends Container {
 
     private void setupContainerSlots() {
         this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new WatchedSlot(h, 0, 8, 7, this::updateUpgradeCache));
-            addSlot(new SlotItemHandler(h, 1, 45, 7));
+            addSlot(new WatchedSlot(h, 0,  -16, 59, this::updateUpgradeCache));
+            addSlot(new SlotItemHandler(h, 1, -16, 8));
         });
     }
 
@@ -66,14 +66,12 @@ public class ModificationTableContainer extends Container {
         ItemStack stack = this.getSlot(index).getStack();
         if( (stack.isEmpty() && !upgradesCache.isEmpty()) || !(stack.getItem() instanceof MiningGadget) ) {
             upgradesCache.clear();
-            System.out.println("Reset cache");
             return;
         }
 
         // Purge and set cache
         upgradesCache.clear();
         upgradesCache = UpgradeTools.getUpgrades(stack);
-        System.out.println("Updated cached with " + upgradesCache.size() + " items");
     }
 
     public List<Upgrade> getUpgradesCache() {

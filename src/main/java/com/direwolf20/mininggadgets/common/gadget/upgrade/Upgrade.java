@@ -78,6 +78,10 @@ public enum Upgrade {
         return baseName;
     }
 
+    public String getI18nKey() {
+        return String.format("item.mininggadgets.upgrade_%s", this.getName());
+    }
+    
     public boolean hasTier() {
         return tier != -1;
     }
