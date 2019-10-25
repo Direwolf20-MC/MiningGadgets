@@ -139,6 +139,7 @@ public class LaserParticle extends BreakingParticle {
         }
         //Some calculations for the particle motion
         PlayerEntity player = world.getPlayerByUuid(this.playerUUID);
+        if (player == null) return;
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d blockPos = new Vec3d(sourceX, sourceY, sourceZ);
         Vec3d look = player.getLookVec(); // or getLook(partialTicks)
