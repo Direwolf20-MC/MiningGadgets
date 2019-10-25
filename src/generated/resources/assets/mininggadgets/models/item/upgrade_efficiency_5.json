@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "texture": "mininggadgets:item/upgrade_efficiency_5"
+  }
+}

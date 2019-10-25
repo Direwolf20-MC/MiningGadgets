@@ -1,0 +1,9 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "front": "mininggadgets:block/modificationtable_side",
+    "top": "mininggadgets:block/modificationtable_top",
+    "bottom": "mininggadgets:block/modificationtable_bottom",
+    "side": "mininggadgets:block/modificationtable_side"
+  }
+}

@@ -38,6 +38,8 @@ public class MiningGadgets
 
         // Register all of our items, blocks, item blocks, etc
         ModItems.ITEMS.register(event);
+        ModItems.UPGRADE_ITEMS.register(event);
+
         ModBlocks.BLOCKS.register(event);
         ModBlocks.TILES_ENTITIES.register(event);
 

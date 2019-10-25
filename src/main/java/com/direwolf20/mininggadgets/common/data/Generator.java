@@ -26,5 +26,10 @@ public class Generator {
 
     private static void registerClientProviders(DataGenerator generator, GatherDataEvent event) {
         ExistingFileHelper helper = event.getExistingFileHelper();
+
+        generator.addProvider(new GeneratorBlockStates(generator, helper));
+        generator.addProvider(new GeneratorItemModels(generator, helper));
     }
+
+
 }
