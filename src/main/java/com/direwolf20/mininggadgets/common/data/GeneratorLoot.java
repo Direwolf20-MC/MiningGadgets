@@ -9,8 +9,8 @@ import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.*;
-import net.minecraftforge.fml.RegistryObject;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -36,19 +36,14 @@ public class GeneratorLoot extends LootTableProvider {
     }
 
     private static class Blocks extends BlockLootTables {
-        /**
-         * @implNote This assumes that all of our Blocks drop themselves, if this is ever not the case
-         *           then this implementation would need to either be split into two lists in ModBlocks
-         *           or itemised into a per block registry call.
-         */
         @Override
         protected void addTables() {
-            ModBlocks.BLOCKS.getEntries().forEach(blockReg -> this.registerDropSelfLootTable(blockReg.get()));
+            this.registerDropSelfLootTable(ModBlocks.MODIFICATION_TABLE.get());
         }
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return ModBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+            return Collections.singletonList(ModBlocks.MODIFICATION_TABLE.get());
         }
     }
 }
