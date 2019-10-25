@@ -8,7 +8,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 /**
  * Only put client code here plz.
  */
-public class Setup {
+public class ClientSetup {
 
     /**
      * Client Registry for renders

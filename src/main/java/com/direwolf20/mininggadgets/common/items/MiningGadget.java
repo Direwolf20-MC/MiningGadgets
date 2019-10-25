@@ -53,8 +53,6 @@ public class MiningGadget extends Item {
 
     public MiningGadget() {
         super(new Item.Properties().maxStackSize(1).group(Setup.getItemGroup()));
-        setRegistryName("mininggadget");
-
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
@@ -271,7 +269,7 @@ public class MiningGadget extends Item {
                         return;
                     }
                     List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
-                    world.setBlockState(coord, ModBlocks.RENDERBLOCK.getDefaultState());
+                    world.setBlockState(coord, ModBlocks.RENDER_BLOCK.get().getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
                     te.setGadgetUpgrades(gadgetUpgrades);
@@ -313,7 +311,7 @@ public class MiningGadget extends Item {
                 pos = lookingAt.getPos().offset(side).offset(right);
 
             if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
-                world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
+                world.setBlockState(pos, ModBlocks.MINERS_LIGHT.get().getDefaultState());
                 stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
             }
         }

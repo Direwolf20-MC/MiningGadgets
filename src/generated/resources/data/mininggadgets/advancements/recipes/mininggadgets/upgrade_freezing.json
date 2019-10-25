@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "mininggadgets:upgrade_freezing"
+    ]
+  },
+  "criteria": {
+    "has_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "mininggadgets:upgrade_empty"
+          }
+        ]
+      }
+    },
+    "has_snow": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:snowball"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "mininggadgets:upgrade_freezing"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_upgrade",
+      "has_snow",
+      "has_the_recipe"
+    ]
+  ]
+}

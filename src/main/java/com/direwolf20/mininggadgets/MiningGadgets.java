@@ -1,13 +1,14 @@
 package com.direwolf20.mininggadgets;
 
+import com.direwolf20.mininggadgets.client.ClientSetup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
+import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -33,22 +34,27 @@ public class MiningGadgets
     public static Setup setup = new Setup();
 
     public MiningGadgets() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        IEventBus event = FMLJavaModLoadingContext.get().getModEventBus();
+
+        // Register all of our items, blocks, item blocks, etc
+        ModItems.ITEMS.register(event);
+        ModBlocks.BLOCKS.register(event);
+        ModBlocks.TILES_ENTITIES.register(event);
+
+        event.addListener(this::setup);
+        event.addListener(this::enqueueIMC);
+        event.addListener(this::processIMC);
+        event.addListener(this::doClientStuff);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
 
         // Register the setup method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        event.addListener(this::setup);
+        MinecraftForge.EVENT_BUS.register(this);
 
         Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-client.toml"));
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
-
-        MinecraftForge.EVENT_BUS.register(this);
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> ModBlocks::registerRenderers);
     }
 
     private void setup(final FMLCommonSetupEvent event)
@@ -66,6 +72,7 @@ public class MiningGadgets
     private void doClientStuff(final FMLClientSetupEvent event) {
         // Register the container screens.
         ModContainers.registerContainerScreens();
+        ClientSetup.registerRenderers();
     }
 
     @SubscribeEvent

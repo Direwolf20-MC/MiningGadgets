@@ -9,7 +9,7 @@ public class Setup {
     private static ItemGroup itemGroup = new ItemGroup(MiningGadgets.MOD_ID) {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(ModItems.MININGGADGET);
+            return new ItemStack(ModItems.MININGGADGET.get());
         }
     };
 

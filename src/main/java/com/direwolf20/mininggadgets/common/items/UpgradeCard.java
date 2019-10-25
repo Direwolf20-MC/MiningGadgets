@@ -9,8 +9,6 @@ public class UpgradeCard extends Item {
 
     public UpgradeCard(Upgrade upgrade) {
         super(new Properties().group(Setup.getItemGroup()).maxStackSize(1));
-
-        setRegistryName("upgrade_" + upgrade.getName());
         this.upgrade = upgrade;
     }
 

@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "mininggadgets:upgrade_silk"
+    ]
+  },
+  "criteria": {
+    "has_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "mininggadgets:upgrade_empty"
+          }
+        ]
+      }
+    },
+    "has_slime": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:slimeballs"
+          }
+        ]
+      }
+    },
+    "has_apple": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:golden_apple"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "mininggadgets:upgrade_silk"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_upgrade",
+      "has_slime",
+      "has_apple",
+      "has_the_recipe"
+    ]
+  ]
+}

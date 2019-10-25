@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "rdr",
+    "eue",
+    "rpr"
+  ],
+  "key": {
+    "r": {
+      "item": "minecraft:redstone_block"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_empty"
+    },
+    "d": {
+      "item": "minecraft:diamond_block"
+    },
+    "p": {
+      "item": "minecraft:diamond_pickaxe"
+    },
+    "e": {
+      "tag": "forge:ender_pearls"
+    }
+  },
+  "result": {
+    "item": "mininggadgets:upgrade_three_by_three"
+  }
+}

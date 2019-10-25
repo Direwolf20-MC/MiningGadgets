@@ -22,8 +22,6 @@ public class ModificationTable extends Block {
         super(
                 Properties.create(Material.IRON).hardnessAndResistance(2.0f)
         );
-
-        setRegistryName("modificationtable");
     }
 
     @Override

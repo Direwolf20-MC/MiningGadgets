@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "rrr",
+    "rur",
+    "rrr"
+  ],
+  "key": {
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_empty"
+    }
+  },
+  "result": {
+    "item": "mininggadgets:upgrade_efficiency_1"
+  }
+}
