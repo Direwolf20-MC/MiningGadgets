@@ -311,7 +311,6 @@ public class MiningGadget extends Item {
                 world.setBlockState(pos, ModBlocks.MINERSLIGHT.getDefaultState());
                 stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
             }
-
         }
     }
 

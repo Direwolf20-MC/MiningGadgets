@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.client.gui;
+package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
