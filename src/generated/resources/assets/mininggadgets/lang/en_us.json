@@ -23,5 +23,6 @@
   "item.mininggadgets.upgrade_void_junk": "Upgrade: Void Junk",
   "itemGroup.mininggadgets": "Mining Gadgets",
   "mininggadgets.gadget.energy": "Energy: %d/%d",
-  "mininggadgets.gadget.range_change": "Range Change: %1$d x %1$d"
+  "mininggadgets.gadget.range_change": "Range Change: %1$d x %1$d",
+  "mininggadgets.tooltip.single.insert": "Insert"
 }

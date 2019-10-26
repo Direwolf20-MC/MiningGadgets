@@ -42,7 +42,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
         this.scrollingUpgrades.render(mouseX, mouseY, partialTicks);
         if( this.buttonInsert.isHovered() )
-            renderTooltip("Insert", mouseX, mouseY);
+            renderTooltip(I18n.format("mininggadgets.tooltip.single.insert"), mouseX, mouseY);
 
         this.renderHoveredToolTip(mouseX, mouseY);
     }

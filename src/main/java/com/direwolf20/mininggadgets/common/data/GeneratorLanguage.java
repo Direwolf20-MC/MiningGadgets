@@ -42,8 +42,15 @@ public class GeneratorLanguage extends LanguageProvider {
 
         addPrefixed("gadget.range_change", "Range Change: %1$d x %1$d");
         addPrefixed("gadget.energy", "Energy: %d/%d");
+
+        // Tooltips?
+        addPrefixed("tooltip.single.insert", "Insert");
     }
 
+    /**
+     * Very simply, prefixes all the keys with the mod_id.{key} instead of
+     * having to input it manually
+     */
     private void addPrefixed(String key, String text) {
         add(String.format("%s.%s", MiningGadgets.MOD_ID, key), text);
     }
