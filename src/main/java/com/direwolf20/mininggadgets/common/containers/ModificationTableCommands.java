@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
@@ -75,7 +76,7 @@ public class ModificationTableCommands {
                 container.putStackInSlot(1, new ItemStack(upgrade.getCard(), 1));
 
             if (upgrade == Upgrade.THREE_BY_THREE)
-                MiningGadget.setToolRange(laser, 1);
+                MiningProperties.setRange(laser, 1);
 
             if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
                 laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));

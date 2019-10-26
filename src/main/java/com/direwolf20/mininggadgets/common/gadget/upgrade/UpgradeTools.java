@@ -38,12 +38,14 @@ public class UpgradeTools {
     public static CompoundNBT setUpgradesNBT(List<Upgrade> laserUpgrades) {
         CompoundNBT listCompound = new CompoundNBT();
         ListNBT list = new ListNBT();
-        for (Upgrade upgrade : laserUpgrades) {
+
+        laserUpgrades.forEach( upgrade -> {
             CompoundNBT compound = new CompoundNBT();
             compound.putString(KEY_UPGRADE, upgrade.getName());
             compound.putBoolean(KEY_ENABLED, upgrade.isEnabled());
             list.add(compound);
-        }
+        });
+
         listCompound.put(KEY_UPGRADES, list);
         return listCompound;
     }
@@ -67,7 +69,8 @@ public class UpgradeTools {
             // If the name doesn't exist then move on
             try {
                 Upgrade type = Upgrade.valueOf(tag.getString(KEY_UPGRADE).toUpperCase());
-                type.setEnabled(tag.getBoolean(KEY_ENABLED));
+                type.setEnabled(!tag.contains(KEY_ENABLED) || tag.getBoolean(KEY_ENABLED));
+
                 functionalUpgrades.add(type);
             } catch (IllegalArgumentException ignored) { }
         }

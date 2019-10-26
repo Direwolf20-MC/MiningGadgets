@@ -6,8 +6,8 @@ import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerPartic
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
-import com.direwolf20.mininggadgets.common.containers.MiningContainer;
 import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
@@ -20,7 +20,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.Item;
@@ -42,7 +41,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -111,32 +109,17 @@ public class MiningGadget extends Item {
                 .ifPresent(energy -> tooltip.add(new TranslationTextComponent("mininggadgets.gadget.energy", MiscTools.tidyValue(energy.getEnergyStored()), MiscTools.tidyValue(energy.getMaxEnergyStored()))));
     }
 
-    public static void setToolRange(ItemStack tool, int range) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        tagCompound.putInt("range", range);
-    }
-
-    public static int getToolRange(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        int range = tagCompound.getInt("range");
-        if (range == 0) {
-            setToolRange(tool, 1);
-            return 1;
-        }
-        return tagCompound.getInt("range");
-    }
-
     public static void changeRange(ItemStack tool) {
-        if (getToolRange(tool) == 1)
-            setToolRange(tool, 3);
+        if (MiningProperties.getRange(tool) == 1)
+            MiningProperties.setRange(tool, 3);
         else
-            setToolRange(tool, 1);
+            MiningProperties.setRange(tool, 1);
     }
 
     public static boolean canMine(ItemStack tool, World world) {
         IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
-        if (getToolRange(tool) == 3) cost = cost * 9;
+        if (MiningProperties.getRange(tool) == 3) cost = cost * 9;
         if (energy.getEnergyStored() <= cost)
             return false;
 
@@ -183,17 +166,17 @@ public class MiningGadget extends Item {
 
     private ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
         // Debug code for free energy
-        System.out.println(itemstack.getTag());
         itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
+
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
-            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
         }
 
 //        player.openContainer(new MiningContainer.MiningProvider(itemstack));
-        NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider(itemstack), (data) -> {
-            data.writeItemStack(itemstack);
-        });
+//        NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider(itemstack), (data) -> {
+//            data.writeItemStack(itemstack);
+//        });
 //        if (!world.isRemote && player instanceof ServerPlayerEntity)
 //            NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider());
 
@@ -253,7 +236,7 @@ public class MiningGadget extends Item {
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
         if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
             return;
-        List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, getToolRange(stack));
+        List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));
 
         if (UpgradeTools.containsUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
@@ -270,7 +253,7 @@ public class MiningGadget extends Item {
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
             float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
-            hardness = hardness * getToolRange(stack) * 1;
+            hardness = hardness * MiningProperties.getRange(stack) * 1;
             hardness = (float) Math.floor(hardness);
             if (hardness == 0) hardness = 1;
             for (BlockPos coord : coords) {
@@ -317,7 +300,7 @@ public class MiningGadget extends Item {
             Direction right = vertical ? up.rotateY() : side.rotateYCCW();
 
             BlockPos pos;
-            if (getToolRange(stack) == 1)
+            if (MiningProperties.getRange(stack) == 1)
                 pos = lookingAt.getPos().offset(side, 4);
             else
                 pos = lookingAt.getPos().offset(side).offset(right);
