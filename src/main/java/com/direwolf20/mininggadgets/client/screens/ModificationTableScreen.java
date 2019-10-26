@@ -75,7 +75,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         ModificationTableScreen parent;
         Upgrade upgrade = null;
 
-        public ScrollingUpgrades(Minecraft client, int width, int height, int top, int left, ModificationTableScreen parent) {
+        ScrollingUpgrades(Minecraft client, int width, int height, int top, int left, ModificationTableScreen parent) {
             super(client, width, height, top, left);
             this.parent = parent;
         }

@@ -1,16 +1,10 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.client.gui.MiningScreen;
-import com.direwolf20.mininggadgets.client.gui.ModificationTableScreen;
+import com.direwolf20.mininggadgets.client.screens.MiningScreen;
+import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
@@ -19,8 +13,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ObjectHolder;
-
-import javax.annotation.Nullable;
 
 @ObjectHolder(MiningGadgets.MOD_ID)
 @Mod.EventBusSubscriber(bus = Bus.MOD, modid = MiningGadgets.MOD_ID)

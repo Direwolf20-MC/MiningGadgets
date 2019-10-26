@@ -8,6 +8,8 @@ import com.direwolf20.mininggadgets.common.items.UpgradeCard;
  * all tiered upgrades ("fortune_1" = base name "fortune") so we can eval against it
  * instead of the full enum name. This really helps us get past some issues with
  * tiers as a whole. It also keeps things tidy :+1:
+ *
+ * @implNote all upgrades will always be active by default
  */
 public enum Upgrade {
     //Blank

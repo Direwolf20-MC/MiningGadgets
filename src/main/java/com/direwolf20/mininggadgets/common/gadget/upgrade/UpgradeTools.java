@@ -14,21 +14,25 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class UpgradeTools {
+    private static final String KEY_UPGRADES = "upgrades";
+    private static final String KEY_UPGRADE = "upgrade";
+    private static final String KEY_ENABLED = "enabled";
+
     /**
      * DO NOT USE UNLESS YOU KNOW WHAT YOU'RE DOING. This method does not, and for some reason
      * can not, validate the upgrade you are inserting to the item. Please be sure to always
      * use {@link MiningGadget#applyUpgrade(ItemStack, UpgradeCard)} unless you actually require this
      * kind of unchecked functionality
      */
-
-    public static void setUpgradeNBT(CompoundNBT nbt, UpgradeCard upgrade) {
-        ListNBT list = nbt.getList("upgrades", Constants.NBT.TAG_COMPOUND);
+    private static void setUpgradeNBT(CompoundNBT nbt, UpgradeCard upgrade) {
+        ListNBT list = nbt.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
         CompoundNBT compound = new CompoundNBT();
-        compound.putString("upgrade", upgrade.getUpgrade().getName());
+        compound.putString(KEY_UPGRADE, upgrade.getUpgrade().getName());
+        compound.putBoolean(KEY_ENABLED, upgrade.getUpgrade().isEnabled());
 
         list.add(compound);
-        nbt.put("upgrades", list);
+        nbt.put(KEY_UPGRADES, list);
     }
 
     public static CompoundNBT setUpgradesNBT(List<Upgrade> laserUpgrades) {
@@ -36,10 +40,11 @@ public class UpgradeTools {
         ListNBT list = new ListNBT();
         for (Upgrade upgrade : laserUpgrades) {
             CompoundNBT compound = new CompoundNBT();
-            compound.putString("upgrade", upgrade.getName());
+            compound.putString(KEY_UPGRADE, upgrade.getName());
+            compound.putBoolean(KEY_ENABLED, upgrade.isEnabled());
             list.add(compound);
         }
-        listCompound.put("upgrades", list);
+        listCompound.put(KEY_UPGRADES, list);
         return listCompound;
     }
 
@@ -50,7 +55,7 @@ public class UpgradeTools {
 
     // Return all upgrades in the item.
     public static List<Upgrade> getUpgradesFromTag(CompoundNBT tagCompound) {
-        ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
+        ListNBT upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
         List<Upgrade> functionalUpgrades = new ArrayList<>();
         if (upgrades.isEmpty())
@@ -61,7 +66,8 @@ public class UpgradeTools {
 
             // If the name doesn't exist then move on
             try {
-                Upgrade type = Upgrade.valueOf(tag.getString("upgrade").toUpperCase());
+                Upgrade type = Upgrade.valueOf(tag.getString(KEY_UPGRADE).toUpperCase());
+                type.setEnabled(tag.getBoolean(KEY_ENABLED));
                 functionalUpgrades.add(type);
             } catch (IllegalArgumentException ignored) { }
         }
@@ -76,7 +82,7 @@ public class UpgradeTools {
     }
 
     public static boolean containsUpgrades(ItemStack tool) {
-        return MiscTools.getOrNewTag(tool).contains("upgrades");
+        return MiscTools.getOrNewTag(tool).contains(KEY_UPGRADES);
     }
 
     /**
@@ -103,16 +109,26 @@ public class UpgradeTools {
      */
     public static void removeUpgrade(ItemStack tool, Upgrade upgrade) {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        ListNBT upgrades = tagCompound.getList("upgrades", Constants.NBT.TAG_COMPOUND);
+        ListNBT upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
         // Slightly completed but basically it just makes a new list and collects that back to an ListNBT
-        tagCompound.put("upgrades", upgrades.stream()
-                .filter(e -> !((CompoundNBT) e).getString("upgrade").equals(upgrade.getName()))
+        tagCompound.put(KEY_UPGRADES, upgrades.stream()
+                .filter(e -> !((CompoundNBT) e).getString(KEY_UPGRADE).equals(upgrade.getName()))
                 .collect(Collectors.toCollection(ListNBT::new)));
     }
 
     public static boolean containsUpgrade(ItemStack tool, Upgrade type) {
         return getUpgradeFromGadget(tool, type).isPresent();
+    }
+
+    /**
+     * Will only return true when we have the upgrade and the upgrade is active.
+     * This method is functionally identical to {@link #containsUpgrade(ItemStack, Upgrade)}
+     * par from it's active check.
+     */
+    public static boolean containsActiveUpgrade(ItemStack tool, Upgrade type) {
+         Optional<Upgrade> upgrade = getUpgradeFromGadget(tool, type);
+        return upgrade.isPresent() && upgrade.get().isEnabled();
     }
 
     public static boolean containsUpgradeFromList(List<Upgrade> upgrades, Upgrade type) {

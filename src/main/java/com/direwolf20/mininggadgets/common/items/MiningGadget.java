@@ -183,7 +183,8 @@ public class MiningGadget extends Item {
 
     private ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
         // Debug code for free energy
-        //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
+        System.out.println(itemstack.getTag());
+        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
         if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
             changeRange(itemstack);
             player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);

@@ -54,7 +54,7 @@ public class BlockOverlayRender {
                 GlStateManager.translatef(-0.005f, -0.005f, -0.005f);
                 GlStateManager.scalef(1.01f, 1.01f, 1.01f);
                 GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-                if (UpgradeTools.containsUpgrade(item, Upgrade.VOID_JUNK) && !mc.world.getBlockState(e).isIn(Tags.Blocks.ORES))
+                if (UpgradeTools.containsActiveUpgrade(item, Upgrade.VOID_JUNK) && !mc.world.getBlockState(e).isIn(Tags.Blocks.ORES))
                     BlockOverlayRender.render(e, tessellator, buffer, Color.RED);
                 else
                     BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
