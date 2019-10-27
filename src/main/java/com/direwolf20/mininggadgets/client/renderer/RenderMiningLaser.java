@@ -1,14 +1,17 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
+import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
@@ -18,12 +21,14 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 public class RenderMiningLaser {
 
+    public static final ResourceLocation laserBeam = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser.png");
+
     public static void renderLaser(PlayerEntity player, float ticks) {
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
         Vec3d playerPos = player.getEyePosition(ticks);
         Vec3d lookBlockPos = lookingAt.getHitVec();
 
-        renderBeam(playerPos, lookBlockPos, 0, 0, 0, 1f, 0f, 0f, 0.01f, player, ticks);
+        renderBeam(playerPos, lookBlockPos, 0, 0, 0, 1f, 0f, 0f, 0.02f, player, ticks);
     }
 
     public static void renderBeam(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks) {
@@ -32,10 +37,13 @@ public class RenderMiningLaser {
         double distance = from.subtract(to).length();
         double v = -player.world.getGameTime() * 0.2;
 
+        Minecraft.getInstance().getTextureManager().bindTexture(laserBeam);
+
         GlStateManager.pushMatrix();
         GlStateManager.enableColorMaterial();
         GlStateManager.color3f(r, g, b);
-        GlStateManager.disableTexture();
+
+        GlStateManager.enableTexture();
         GlStateManager.translated(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
         GlStateManager.translated(from.x, from.y, from.z);
         GlStateManager.rotatef(MathHelper.lerp(ticks, -player.rotationYaw, -player.prevRotationYaw), 0, 1, 0);
@@ -77,7 +85,7 @@ public class RenderMiningLaser {
             wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v).endVertex();
             Tessellator.getInstance().draw();
         }
-        GlStateManager.enableTexture();
+        //GlStateManager.enableTexture();
         GlStateManager.popMatrix();
     }
 
