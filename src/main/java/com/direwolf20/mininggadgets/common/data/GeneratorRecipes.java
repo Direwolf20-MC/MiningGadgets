@@ -83,7 +83,7 @@ public class GeneratorRecipes extends RecipeProvider {
                 .key('q', Items.QUARTZ)
                 .key('b', Items.QUARTZ_BLOCK)
                 .key('g', Tags.Items.INGOTS_GOLD)
-                .key('u', BATTERY_1.get())
+                .key('u', BATTERY_2.get())
                 .patternLine("bqb")
                 .patternLine("gug")
                 .patternLine("bqb")
