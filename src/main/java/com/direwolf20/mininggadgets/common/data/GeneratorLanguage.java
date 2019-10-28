@@ -26,6 +26,9 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
         addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
         addItem(ModItems.FORTUNE_3, "Upgrade: Fortune, Tier 3");
+        addItem(ModItems.RANGE_1, "Upgrade: Range, Tier 1");
+        addItem(ModItems.RANGE_2, "Upgrade: Range, Tier 2");
+        addItem(ModItems.RANGE_3, "Upgrade: Range, Tier 3");
         addItem(ModItems.EFFICIENCY_1, "Upgrade: Efficiency, Tier 1");
         addItem(ModItems.EFFICIENCY_2, "Upgrade: Efficiency, Tier 2");
         addItem(ModItems.EFFICIENCY_3, "Upgrade: Efficiency, Tier 3");

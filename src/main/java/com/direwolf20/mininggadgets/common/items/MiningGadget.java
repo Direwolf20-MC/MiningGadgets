@@ -108,6 +108,21 @@ public class MiningGadget extends Item {
                 .ifPresent(energy -> tooltip.add(new TranslationTextComponent("mininggadgets.gadget.energy", MiscTools.tidyValue(energy.getEnergyStored()), MiscTools.tidyValue(energy.getMaxEnergyStored()))));
     }
 
+    public static void setBeamRange(ItemStack tool, int range) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        tagCompound.putInt("beamRange", range);
+    }
+
+    public static int getBeamRange(ItemStack tool) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        int range = tagCompound.getInt("beamRange");
+        if (range == 0) {
+            setToolRange(tool, 5);
+            return 5;
+        }
+        return tagCompound.getInt("beamRange");
+    }
+
     public static void setToolRange(ItemStack tool, int range) {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
         tagCompound.putInt("range", range);
@@ -202,7 +217,7 @@ public class MiningGadget extends Item {
         return sources;
     }
 
-    private void spawnFreezeParticle(PlayerEntity player, BlockPos sourcePos, World world) {
+    private void spawnFreezeParticle(PlayerEntity player, BlockPos sourcePos, World world, ItemStack stack) {
         float randomPartSize = 0.05f + (0.125f - 0.05f) * rand.nextFloat();
         double randomTX = rand.nextDouble();
         double randomTY = rand.nextDouble();
@@ -210,7 +225,8 @@ public class MiningGadget extends Item {
         double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec(); // or getLook(partialTicks)
-        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
+        int range = getBeamRange(stack);
+        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
         Vec3d lookingAt = lookAt.getHitVec();
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
@@ -238,15 +254,15 @@ public class MiningGadget extends Item {
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         //Server and Client side
         World world = player.world;
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, getBeamRange(stack));
+        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, getBeamRange(stack)).getPos()) == Blocks.AIR.getDefaultState()))
             return;
         List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, getToolRange(stack));
 
         if (UpgradeTools.containsUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
                 if (player instanceof PlayerEntity)
-                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world);
+                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
             }
         }
         //Server Side

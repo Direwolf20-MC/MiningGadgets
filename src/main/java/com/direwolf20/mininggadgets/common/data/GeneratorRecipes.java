@@ -175,6 +175,42 @@ public class GeneratorRecipes extends RecipeProvider {
                 .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
                 .build(consumer);
 
+        ShapedRecipeBuilder.shapedRecipe(RANGE_1.get())
+                .key('l', Items.LAPIS_LAZULI)
+                .key('g', Items.GLASS)
+                .key('d', Items.DIAMOND)
+                .key('u', UPGRADE_EMPTY.get())
+                .patternLine("lgl")
+                .patternLine("dud")
+                .patternLine("lgl")
+                .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
+                .build(consumer);
+
+        ShapedRecipeBuilder.shapedRecipe(RANGE_2.get())
+                .key('l', Items.LAPIS_LAZULI)
+                .key('g', Items.GLASS)
+                .key('e', Items.EMERALD)
+                .key('u', RANGE_1.get())
+                .patternLine("lgl")
+                .patternLine("eue")
+                .patternLine("lgl")
+                .addCriterion("has_range_1", hasItem(RANGE_1.get()))
+                .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
+                .build(consumer);
+
+        ShapedRecipeBuilder.shapedRecipe(RANGE_3.get())
+                .key('l', Items.LAPIS_BLOCK)
+                .key('g', Items.GLASS)
+                .key('d', Items.DIAMOND_BLOCK)
+                .key('e', Items.EMERALD_BLOCK)
+                .key('u', RANGE_2.get())
+                .patternLine("lgl")
+                .patternLine("eud")
+                .patternLine("lgl")
+                .addCriterion("has_range_2", hasItem(RANGE_2.get()))
+                .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
+                .build(consumer);
+
         ShapedRecipeBuilder.shapedRecipe(FREEZING.get())
                 .key('s', Items.SNOWBALL)
                 .key('u', UPGRADE_EMPTY.get())

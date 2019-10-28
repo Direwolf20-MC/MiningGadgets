@@ -28,8 +28,8 @@ public class BlockOverlayRender {
     public static void render(ItemStack item) {
         final Minecraft mc = Minecraft.getInstance();
 
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE);
-        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item).getPos()) == Blocks.AIR.getDefaultState()) {
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE, MiningGadget.getBeamRange(item));
+        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item, MiningGadget.getBeamRange(item)).getPos()) == Blocks.AIR.getDefaultState()) {
             return;
         }
 

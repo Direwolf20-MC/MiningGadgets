@@ -30,6 +30,15 @@ public class ModificationTableCommands {
             // against all fortune tiers and not just it's existence.
             boolean hasFortune = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.FORTUNE_1);
 
+            // Did we just insert a Range upgrade?
+            if (card.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
+                int newRange = 5;
+                if (card.getTier() == 1) newRange = 10;
+                if (card.getTier() == 2) newRange = 15;
+                if (card.getTier() == 3) newRange = 20;
+                MiningGadget.setBeamRange(laser, newRange);
+            }
+
             // Reject fortune and silk upgrades when combined together.
             if ((hasFortune && card == Upgrade.SILK) ||
                     (upgrades.contains(Upgrade.SILK) && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName())))
@@ -46,7 +55,6 @@ public class ModificationTableCommands {
                     laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(power.getPower()));
                 });
             }
-
             container.putStackInSlot(1, ItemStack.EMPTY);
         }
     }
@@ -76,6 +84,9 @@ public class ModificationTableCommands {
 
             if (upgrade == Upgrade.THREE_BY_THREE)
                 MiningGadget.setToolRange(laser, 1);
+
+            if (upgrade.getBaseName().equals(Upgrade.RANGE_1.getBaseName()))
+                MiningGadget.setBeamRange(laser, 5);
 
             if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
                 laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));

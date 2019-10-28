@@ -26,7 +26,11 @@ public class RenderMiningLaser {
     public final static ResourceLocation laserBeam2 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser2.png");
 
     public static void renderLaser(PlayerEntity player, float ticks) {
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
+        ItemStack stack = player.getHeldItemMainhand();
+        if (!(stack.getItem() instanceof MiningGadget))
+            stack = player.getHeldItemOffhand();
+        int range = MiningGadget.getBeamRange(stack);
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
         Vec3d playerPos = player.getEyePosition(ticks);
         Vec3d lookBlockPos = lookingAt.getHitVec();
 

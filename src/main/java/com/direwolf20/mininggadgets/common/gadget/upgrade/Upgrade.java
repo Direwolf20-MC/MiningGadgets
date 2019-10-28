@@ -29,6 +29,10 @@ public enum Upgrade {
     BATTERY_2("battery_2", 2, 0),
     BATTERY_3("battery_3", 3, 0),
 
+    RANGE_1("range_1", 1, 0),
+    RANGE_2("range_2", 2, 0),
+    RANGE_3("range_3", 3, 0),
+
     EFFICIENCY_1("efficiency_1", 1, 10),
     EFFICIENCY_2("efficiency_2", 2, 20),
     EFFICIENCY_3("efficiency_3", 3, 30),
