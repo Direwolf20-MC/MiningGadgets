@@ -117,7 +117,7 @@ public class MiningGadget extends Item {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
         int range = tagCompound.getInt("beamRange");
         if (range == 0) {
-            setToolRange(tool, 5);
+            setBeamRange(tool, 5);
             return 5;
         }
         return tagCompound.getInt("beamRange");
@@ -130,7 +130,6 @@ public class MiningGadget extends Item {
 
     public static int getToolRange(ItemStack tool) {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        if (!UpgradeTools.containsUpgrade(tool, Upgrade.THREE_BY_THREE)) return 1;
         int range = tagCompound.getInt("range");
         if (range == 0) {
             setToolRange(tool, 1);
