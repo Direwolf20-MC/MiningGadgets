@@ -209,7 +209,7 @@ public class MiningGadget extends Item {
             for (Direction side : Direction.values()) {
                 BlockPos sidePos = coord.offset(side);
                 IFluidState state = world.getFluidState(sidePos);
-                if ((state.getFluid().isEquivalentTo(Fluids.LAVA) || state.getFluid().isEquivalentTo(Fluids.WATER)) && state.getFluid().isSource(state))
+                if ((state.getFluid().isEquivalentTo(Fluids.LAVA) || state.getFluid().isEquivalentTo(Fluids.WATER)))
                     if (!sources.contains(sidePos))
                         sources.add(sidePos);
             }
