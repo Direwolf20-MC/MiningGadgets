@@ -22,6 +22,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.MAGNET, "Upgrade: Magnet");
         addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
+        addItem(ModItems.HEATSINK, "Upgrade: HeatSink");
 
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
         addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");

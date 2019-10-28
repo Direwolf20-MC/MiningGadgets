@@ -220,6 +220,15 @@ public class GeneratorRecipes extends RecipeProvider {
                 .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
                 .build(consumer);
 
+        ShapedRecipeBuilder.shapedRecipe(HEATSINK.get())
+                .key('s', Items.MAGMA_CREAM)
+                .key('u', UPGRADE_EMPTY.get())
+                .patternLine("sss")
+                .patternLine("sus")
+                .patternLine("sss")
+                .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
+                .build(consumer);
+
         ShapedRecipeBuilder.shapedRecipe(LIGHT_PLACER.get())
                 .key('g', Items.GLOWSTONE_DUST)
                 .key('b', Items.GLOWSTONE)

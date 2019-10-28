@@ -19,6 +19,7 @@ public enum Upgrade {
     THREE_BY_THREE("three_by_three", 0),
     LIGHT_PLACER("light_placer", 0),
     FREEZING("freezing", 0),
+    HEATSINK("heatsink", 50),
 
     // Tiered
     FORTUNE_1("fortune_1", 1, 30),
