@@ -130,6 +130,7 @@ public class MiningGadget extends Item {
 
     public static int getToolRange(ItemStack tool) {
         CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        if (!UpgradeTools.containsUpgrade(tool, Upgrade.THREE_BY_THREE)) return 1;
         int range = tagCompound.getInt("range");
         if (range == 0) {
             setToolRange(tool, 1);
