@@ -99,7 +99,7 @@ public class RenderMiningLaser {
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam2);
         drawLaser(from, to, xOffset, yOffset, zOffset, r, g, b, thickness, player, ticks, GL14.GL_SRC_ALPHA, GL14.GL_ONE_MINUS_SRC_ALPHA);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam);
-        drawLaser(from, to, xOffset, yOffset, zOffset, 1, 1, 1, thickness, player, ticks, GL14.GL_SRC_ALPHA, GL14.GL_ONE_MINUS_SRC_ALPHA);
+        drawLaser(from, to, xOffset, yOffset, zOffset, 1, 1, 1, thickness / 2, player, ticks, GL14.GL_SRC_ALPHA, GL14.GL_ONE_MINUS_SRC_ALPHA);
     }
 
 }
