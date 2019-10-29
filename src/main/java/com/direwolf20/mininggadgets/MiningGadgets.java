@@ -81,6 +81,8 @@ public class MiningGadgets
     private void setupClient(final FMLClientSetupEvent event) {
         // Register the container screens.
         ModContainers.registerContainerScreens();
+
+        ClientSetup.setup();
         ClientSetup.registerRenderers();
     }
 

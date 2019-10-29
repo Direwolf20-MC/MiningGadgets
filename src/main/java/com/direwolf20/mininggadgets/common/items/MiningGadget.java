@@ -238,7 +238,7 @@ public class MiningGadget extends Item {
             return;
         List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));
 
-        if (UpgradeTools.containsUpgrade(stack, Upgrade.FREEZING)) {
+        if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
                 if (player instanceof PlayerEntity)
                     spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world);
@@ -291,7 +291,7 @@ public class MiningGadget extends Item {
                     //}
                 }
             }
-            if (!(UpgradeTools.containsUpgrade(stack, Upgrade.LIGHT_PLACER)))
+            if (!(UpgradeTools.containsActiveUpgrade(stack, Upgrade.LIGHT_PLACER)))
                 return;
 
             Direction side = lookingAt.getFace();

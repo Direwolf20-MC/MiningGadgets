@@ -73,7 +73,7 @@ public class LaserParticle extends BreakingParticle {
         RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(new BlockPos(this.posX, this.posY, this.posZ));
         if (te != null) {
             playerUUID = te.getPlayerUUID();
-            voiding = (UpgradeTools.containsUpgradeFromList(te.getGadgetUpgrades(), Upgrade.VOID_JUNK) && !te.getRenderBlock().isIn(Tags.Blocks.ORES));
+            voiding = (UpgradeTools.containsActiveUpgradeFromList(te.getGadgetUpgrades(), Upgrade.VOID_JUNK) && !te.getRenderBlock().isIn(Tags.Blocks.ORES));
         }
         sourceX = d;
         sourceY = d1;

@@ -55,6 +55,28 @@ public class UpgradeTools {
         setUpgradeNBT(tagCompound, upgrade);
     }
 
+    /**
+     * There has to be a better way of doing this
+     */
+    public static void updateUpgrade(ItemStack tool, Upgrade upgrade) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        ListNBT newList = new ListNBT();
+        ListNBT originalList = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+
+        originalList.forEach( e -> {
+            CompoundNBT compound = (CompoundNBT) e;
+            compound.putString(KEY_UPGRADE, compound.getString(KEY_UPGRADE));
+            compound.putBoolean(KEY_ENABLED, compound.getString(KEY_UPGRADE).equals(upgrade.getName()) ? upgrade.isEnabled() : compound.getBoolean(KEY_ENABLED));
+
+            newList.add(compound);
+        });
+
+        tagCompound.remove(KEY_UPGRADES);
+//        tagCompound.put(KEY_UPGRADES, newList);
+
+        System.out.println(MiscTools.getOrNewTag(tool));
+    }
+
     // Return all upgrades in the item.
     public static List<Upgrade> getUpgradesFromTag(CompoundNBT tagCompound) {
         ListNBT upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
@@ -140,7 +162,12 @@ public class UpgradeTools {
      * par from it's active check.
      */
     public static boolean containsActiveUpgrade(ItemStack tool, Upgrade type) {
-         Optional<Upgrade> upgrade = getUpgradeFromGadget(tool, type);
+        Optional<Upgrade> upgrade = getUpgradeFromGadget(tool, type);
+        return upgrade.isPresent() && upgrade.get().isEnabled();
+    }
+
+    public static boolean containsActiveUpgradeFromList(List<Upgrade> upgrades, Upgrade type) {
+        Optional<Upgrade> upgrade = getUpgradeFromList(upgrades, type);
         return upgrade.isPresent() && upgrade.get().isEnabled();
     }
 
