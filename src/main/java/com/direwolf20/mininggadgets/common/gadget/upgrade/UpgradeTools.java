@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,10 +72,7 @@ public class UpgradeTools {
             newList.add(compound);
         });
 
-        tagCompound.remove(KEY_UPGRADES);
-//        tagCompound.put(KEY_UPGRADES, newList);
-
-        System.out.println(MiscTools.getOrNewTag(tool));
+        tagCompound.put(KEY_UPGRADES, newList);
     }
 
     // Return all upgrades in the item.
