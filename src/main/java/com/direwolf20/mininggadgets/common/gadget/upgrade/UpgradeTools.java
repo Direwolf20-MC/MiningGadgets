@@ -66,16 +66,26 @@ public class UpgradeTools {
         for (int i = 0; i < upgrades.size(); i++) {
             CompoundNBT tag = upgrades.getCompound(i);
 
-            // If the name doesn't exist then move on
-            try {
-                Upgrade type = Upgrade.valueOf(tag.getString(KEY_UPGRADE).toUpperCase());
-                type.setEnabled(!tag.contains(KEY_ENABLED) || tag.getBoolean(KEY_ENABLED));
+            Upgrade type = getUpgradeByName(tag.getString(KEY_UPGRADE));
+            if( type == null )
+                continue;
 
-                functionalUpgrades.add(type);
-            } catch (IllegalArgumentException ignored) { }
+            type.setEnabled(!tag.contains(KEY_ENABLED) || tag.getBoolean(KEY_ENABLED));
+            functionalUpgrades.add(type);
         }
 
         return functionalUpgrades;
+    }
+
+    @Nullable
+    public static Upgrade getUpgradeByName(String name) {
+        // If the name doesn't exist then move on
+        try {
+            Upgrade type = Upgrade.valueOf(name.toUpperCase());
+            return type;
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 
     // Return all upgrades in the item.
