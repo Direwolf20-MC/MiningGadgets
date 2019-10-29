@@ -1,6 +1,8 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -38,10 +40,20 @@ public class RenderMiningLaser {
     }
 
     public static void drawLaser(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, int src, int dest) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if (!(stack.getItem() instanceof MiningGadget))
+            stack = player.getHeldItemOffhand();
 
         Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
         double distance = from.subtract(to).length();
-        double v = -player.world.getGameTime() * 0.02;
+        double v = -player.world.getGameTime();
+        if (UpgradeTools.containsUpgrade(stack, Upgrade.EFFICIENCY_1)) {
+            double efficiency = UpgradeTools.getUpgradeFromGadget(stack, Upgrade.EFFICIENCY_1).get().getTier() / 5;
+            double speedModifier = MathHelper.lerp(efficiency, 0.02, 0.05);
+            v = v * speedModifier;
+        } else {
+            v = v * 0.02;
+        }
         BufferBuilder wr = Tessellator.getInstance().getBuffer();
 
         GlStateManager.pushMatrix();
@@ -99,7 +111,7 @@ public class RenderMiningLaser {
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam2);
         drawLaser(from, to, xOffset, yOffset, zOffset, r, g, b, thickness, player, ticks, GL14.GL_SRC_ALPHA, GL14.GL_ONE_MINUS_SRC_ALPHA);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam);
-        drawLaser(from, to, xOffset, yOffset, zOffset, 1, 1, 1, thickness, player, ticks, GL14.GL_SRC_ALPHA, GL14.GL_ONE_MINUS_SRC_ALPHA);
+        drawLaser(from, to, xOffset, yOffset, zOffset, 1, 1, 1, thickness / 2, player, ticks, GL14.GL_SRC_ALPHA, GL14.GL_ONE_MINUS_SRC_ALPHA);
     }
 
 }
