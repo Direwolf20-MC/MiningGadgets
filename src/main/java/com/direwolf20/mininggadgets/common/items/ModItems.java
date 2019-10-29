@@ -31,9 +31,13 @@ public class ModItems {
     public static final RegistryObject<Item> THREE_BY_THREE =   UPGRADE_ITEMS.register("upgrade_three_by_three", Upgrade.THREE_BY_THREE::getCard);
     public static final RegistryObject<Item> LIGHT_PLACER =     UPGRADE_ITEMS.register("upgrade_light_placer", Upgrade.LIGHT_PLACER::getCard);
     public static final RegistryObject<Item> FREEZING =         UPGRADE_ITEMS.register("upgrade_freezing", Upgrade.FREEZING::getCard);
+    public static final RegistryObject<Item> HEATSINK = UPGRADE_ITEMS.register("upgrade_heatsink", Upgrade.HEATSINK::getCard);
     public static final RegistryObject<Item> FORTUNE_1 =        UPGRADE_ITEMS.register("upgrade_fortune_1", Upgrade.FORTUNE_1::getCard);
     public static final RegistryObject<Item> FORTUNE_2 =        UPGRADE_ITEMS.register("upgrade_fortune_2", Upgrade.FORTUNE_2::getCard);
     public static final RegistryObject<Item> FORTUNE_3 =        UPGRADE_ITEMS.register("upgrade_fortune_3", Upgrade.FORTUNE_3::getCard);
+    public static final RegistryObject<Item> RANGE_1 = UPGRADE_ITEMS.register("upgrade_range_1", Upgrade.RANGE_1::getCard);
+    public static final RegistryObject<Item> RANGE_2 = UPGRADE_ITEMS.register("upgrade_range_2", Upgrade.RANGE_2::getCard);
+    public static final RegistryObject<Item> RANGE_3 = UPGRADE_ITEMS.register("upgrade_range_3", Upgrade.RANGE_3::getCard);
     public static final RegistryObject<Item> BATTERY_1 =        UPGRADE_ITEMS.register("upgrade_battery_1", Upgrade.BATTERY_1::getCard);
     public static final RegistryObject<Item> BATTERY_2 =        UPGRADE_ITEMS.register("upgrade_battery_2", Upgrade.BATTERY_2::getCard);
     public static final RegistryObject<Item> BATTERY_3 =        UPGRADE_ITEMS.register("upgrade_battery_3", Upgrade.BATTERY_3::getCard);

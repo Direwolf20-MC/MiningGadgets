@@ -109,6 +109,36 @@ public class MiningGadget extends Item {
                 .ifPresent(energy -> tooltip.add(new TranslationTextComponent("mininggadgets.gadget.energy", MiscTools.tidyValue(energy.getEnergyStored()), MiscTools.tidyValue(energy.getMaxEnergyStored()))));
     }
 
+    public static void setBeamRange(ItemStack tool, int range) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        tagCompound.putInt("beamRange", range);
+    }
+
+    public static int getBeamRange(ItemStack tool) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        int range = tagCompound.getInt("beamRange");
+        if (range == 0) {
+            setBeamRange(tool, 5);
+            return 5;
+        }
+        return tagCompound.getInt("beamRange");
+    }
+
+    public static void setToolRange(ItemStack tool, int range) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        tagCompound.putInt("range", range);
+    }
+
+    public static int getToolRange(ItemStack tool) {
+        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        int range = tagCompound.getInt("range");
+        if (range == 0) {
+            setToolRange(tool, 1);
+            return 1;
+        }
+        return tagCompound.getInt("range");
+    }
+
     public static void changeRange(ItemStack tool) {
         if (MiningProperties.getRange(tool) == 1)
             MiningProperties.setRange(tool, 3);
@@ -139,7 +169,7 @@ public class MiningGadget extends Item {
 
     @Override
     public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
-        return true;
+        return UpgradeTools.containsUpgrade(oldStack, Upgrade.HEATSINK);
     }
 
     @Override
@@ -189,7 +219,7 @@ public class MiningGadget extends Item {
             for (Direction side : Direction.values()) {
                 BlockPos sidePos = coord.offset(side);
                 IFluidState state = world.getFluidState(sidePos);
-                if ((state.getFluid().isEquivalentTo(Fluids.LAVA) || state.getFluid().isEquivalentTo(Fluids.WATER)) && state.getFluid().isSource(state))
+                if ((state.getFluid().isEquivalentTo(Fluids.LAVA) || state.getFluid().isEquivalentTo(Fluids.WATER)))
                     if (!sources.contains(sidePos))
                         sources.add(sidePos);
             }
@@ -197,7 +227,7 @@ public class MiningGadget extends Item {
         return sources;
     }
 
-    private void spawnFreezeParticle(PlayerEntity player, BlockPos sourcePos, World world) {
+    private void spawnFreezeParticle(PlayerEntity player, BlockPos sourcePos, World world, ItemStack stack) {
         float randomPartSize = 0.05f + (0.125f - 0.05f) * rand.nextFloat();
         double randomTX = rand.nextDouble();
         double randomTY = rand.nextDouble();
@@ -205,7 +235,8 @@ public class MiningGadget extends Item {
         double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec(); // or getLook(partialTicks)
-        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE);
+        int range = getBeamRange(stack);
+        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
         Vec3d lookingAt = lookAt.getHitVec();
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
@@ -233,15 +264,15 @@ public class MiningGadget extends Item {
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         //Server and Client side
         World world = player.world;
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE);
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack).getPos()) == Blocks.AIR.getDefaultState()))
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, getBeamRange(stack));
+        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, getBeamRange(stack)).getPos()) == Blocks.AIR.getDefaultState()))
             return;
         List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
                 if (player instanceof PlayerEntity)
-                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world);
+                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
             }
         }
         //Server Side
@@ -284,7 +315,9 @@ public class MiningGadget extends Item {
                 else*/
                     durability = durability - 1;
                     if (durability <= 0) {
-                        //player.resetActiveHand();
+                        if (!UpgradeTools.containsUpgrade(stack, Upgrade.HEATSINK)) {
+                            player.resetActiveHand();
+                        }
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                     }
                     te.setDurability(durability, stack);

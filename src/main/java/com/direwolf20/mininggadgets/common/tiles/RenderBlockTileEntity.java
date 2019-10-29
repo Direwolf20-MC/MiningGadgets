@@ -95,6 +95,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             } else if (state.getFluid().isEquivalentTo(Fluids.WATER) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.PACKED_ICE.getDefaultState());
                 stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+            } else if ((state.getFluid().isEquivalentTo(Fluids.WATER) || state.getFluid().isEquivalentTo(Fluids.LAVA)) && !state.getFluid().isSource(state)) {
+                world.setBlockState(sidePos, Blocks.COBBLESTONE.getDefaultState());
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
             }
         }
     }

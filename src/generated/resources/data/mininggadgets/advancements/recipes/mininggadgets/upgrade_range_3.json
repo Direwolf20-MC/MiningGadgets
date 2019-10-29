@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "mininggadgets:upgrade_range_3"
+    ]
+  },
+  "criteria": {
+    "has_range_2": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "mininggadgets:upgrade_range_2"
+          }
+        ]
+      }
+    },
+    "has_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "mininggadgets:upgrade_empty"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "mininggadgets:upgrade_range_3"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_range_2",
+      "has_upgrade",
+      "has_the_recipe"
+    ]
+  ]
+}
