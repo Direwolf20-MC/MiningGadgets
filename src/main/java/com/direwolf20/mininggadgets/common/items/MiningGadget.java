@@ -112,7 +112,6 @@ public class MiningGadget extends Item {
                     ).applyTextStyle(TextFormatting.GRAY));
                 }
             }
-            else tooltip.add(new StringTextComponent("  - No Upgrades Found!").applyTextStyle(TextFormatting.GRAY));
         }
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
