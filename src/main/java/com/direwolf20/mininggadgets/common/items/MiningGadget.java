@@ -12,7 +12,6 @@ import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
-import javafx.scene.input.KeyCode;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -100,7 +99,8 @@ public class MiningGadget extends Item {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         if(!Screen.hasShiftDown())
         {
-            tooltip.add(new StringTextComponent("Hold "+ KeyCode.SHIFT.getName().toUpperCase() +" to show upgrades").applyTextStyle(TextFormatting.GRAY));
+            // Todo: check if we can get the minecraft instance here for Minecraft.getInstance().gameSettings.KeySneaking
+            tooltip.add(new StringTextComponent("Hold shift to show upgrades").applyTextStyle(TextFormatting.GRAY));
         }
         else
         {
