@@ -13,9 +13,11 @@ import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
+import javafx.scene.input.KeyCode;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -97,16 +99,27 @@ public class MiningGadget extends Item {
         super.addInformation(stack, world, tooltip, flag);
 
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
-        if (!(upgrades.isEmpty())) {
-            for (Upgrade upgrade : upgrades) {
-                tooltip.add(new StringTextComponent(
-                        I18n.format(upgrade.getI18nKey())
-                ));
+        if(!Screen.hasShiftDown())
+        {
+            tooltip.add(new StringTextComponent("Hold "+ KeyCode.SHIFT.getName().toUpperCase() +" to show upgrades").applyTextStyle(TextFormatting.GRAY));
+        }
+        else
+        {
+            tooltip.add(new StringTextComponent("Current Upgrades:").applyTextStyle(TextFormatting.AQUA));
+            if (!(upgrades.isEmpty())) {
+                for (Upgrade upgrade : upgrades) {
+                    tooltip.add(new StringTextComponent("  - " +
+                            I18n.format(upgrade.getI18nKey())
+                    ).applyTextStyle(TextFormatting.GRAY));
+                }
             }
         }
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
-                .ifPresent(energy -> tooltip.add(new TranslationTextComponent("mininggadgets.gadget.energy", MiscTools.tidyValue(energy.getEnergyStored()), MiscTools.tidyValue(energy.getMaxEnergyStored()))));
+                .ifPresent(energy -> tooltip.add(
+                        new TranslationTextComponent("mininggadgets.gadget.energy",
+                                        MiscTools.tidyValue(energy.getEnergyStored()),
+                                        MiscTools.tidyValue(energy.getMaxEnergyStored())).applyTextStyles(TextFormatting.GREEN)));
     }
 
     public static void setBeamRange(ItemStack tool, int range) {
