@@ -13,10 +13,10 @@ import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
-import javafx.scene.input.KeyCode;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -101,7 +101,7 @@ public class MiningGadget extends Item {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         if(!Screen.hasShiftDown())
         {
-            tooltip.add(new StringTextComponent("Hold "+ KeyCode.SHIFT.getName().toUpperCase() +" to show upgrades").applyTextStyle(TextFormatting.GRAY));
+            tooltip.add(new StringTextComponent("Hold "+ Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName() +" to show upgrades").applyTextStyle(TextFormatting.GRAY));
         }
         else
         {
@@ -109,7 +109,7 @@ public class MiningGadget extends Item {
             if (!(upgrades.isEmpty())) {
                 for (Upgrade upgrade : upgrades) {
                     tooltip.add(new StringTextComponent("  - " +
-                            I18n.format(upgrade.getI18nKey())
+                            I18n.format(upgrade.getLocal())
                     ).applyTextStyle(TextFormatting.GRAY));
                 }
             }

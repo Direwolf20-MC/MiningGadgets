@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.gadget.upgrade;
 
+import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 
 /**
@@ -13,15 +14,15 @@ import com.direwolf20.mininggadgets.common.items.UpgradeCard;
  */
 public enum Upgrade {
     //Blank
-    EMPTY("empty", 0),
+    EMPTY("empty", 0, false),
 
     SILK("silk", 100),
     VOID_JUNK("void_junk", 10),
     MAGNET("magnet", 20),
-    THREE_BY_THREE("three_by_three", 0),
+    THREE_BY_THREE("three_by_three", 0, false),
     LIGHT_PLACER("light_placer", 0),
     FREEZING("freezing", 0),
-    HEATSINK("heatsink", 50),
+    HEATSINK("heatsink", 50, false),
 
     // Tiered
     FORTUNE_1("fortune_1", 1, 30),
@@ -48,20 +49,27 @@ public enum Upgrade {
     private int tier;
     private int costPerBlock;
     private boolean active = true;
+    private boolean isToggleable;
 
-    Upgrade(String name, int tier, int costPerBlock) {
+    Upgrade(String name, int tier, int costPerBlock, boolean isToggleable) {
         this.name = name;
         this.tier = tier;
         this.costPerBlock = costPerBlock;
         this.card = new UpgradeCard(this);
         this.baseName = tier == -1 ? name : name.substring(0, name.lastIndexOf('_'));
+        this.isToggleable = isToggleable;
     }
 
-    /**
-     * If you don't want to add tiers
-     */
+    Upgrade(String name, int tier, int costPerBlock) {
+        this(name, tier, costPerBlock, false);
+    }
+
     Upgrade(String name, int costPerBlock) {
-        this(name, -1, costPerBlock);
+        this(name, -1, costPerBlock, true);
+    }
+
+    Upgrade(String name, int costPerBlock, boolean isToggleable) {
+        this(name, -1, costPerBlock, isToggleable);
     }
 
     public String getName() {
@@ -85,8 +93,13 @@ public enum Upgrade {
         return baseName;
     }
 
-    public String getI18nKey() {
+    public String getLocal() {
         return String.format("item.mininggadgets.upgrade_%s", this.getName());
+    }
+
+    // Returns the translated string we can use to actively replace.
+    public String getLocalReplacement() {
+        return MiningGadgets.MOD_ID + ".upgrade.replacement";
     }
     
     public boolean hasTier() {
@@ -99,5 +112,9 @@ public enum Upgrade {
 
     public void setEnabled(boolean active) {
         this.active = active;
+    }
+
+    public boolean isToggleable() {
+        return isToggleable;
     }
 }

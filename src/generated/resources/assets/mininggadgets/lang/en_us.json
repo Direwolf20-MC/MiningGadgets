@@ -28,5 +28,6 @@
   "itemGroup.mininggadgets": "Mining Gadgets",
   "mininggadgets.gadget.energy": "Energy: %d/%d",
   "mininggadgets.gadget.range_change": "Range Change: %1$d x %1$d",
-  "mininggadgets.tooltip.single.insert": "Insert"
+  "mininggadgets.tooltip.single.insert": "Insert",
+  "mininggadgets.upgrade.replacement": "Upgrade: "
 }

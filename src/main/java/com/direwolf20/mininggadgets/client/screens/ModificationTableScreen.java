@@ -133,7 +133,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
             super.render(mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                this.parent.renderTooltip(I18n.format(this.upgrade.getI18nKey()), mouseX, mouseY);
+                this.parent.renderTooltip(I18n.format(this.upgrade.getLocal()), mouseX, mouseY);
         }
     }
 }
