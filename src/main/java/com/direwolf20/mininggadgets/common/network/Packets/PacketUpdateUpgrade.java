@@ -36,7 +36,6 @@ public class PacketUpdateUpgrade {
                 if( upgrade == null )
                     return;
 
-                System.out.println(String.format("Updating: %s", upgrade.getName()));
                 ItemStack stack = MiscTools.getGadget(player);
                 UpgradeTools.updateUpgrade(stack, upgrade); //todo: change.
             });
