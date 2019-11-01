@@ -1,9 +1,9 @@
 package com.direwolf20.mininggadgets.common.network;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.common.network.Packets.PacketDurabilitySync;
-import com.direwolf20.mininggadgets.common.network.Packets.PacketExtractUpgrade;
-import com.direwolf20.mininggadgets.common.network.Packets.PacketInsertUpgrade;
+import com.direwolf20.mininggadgets.common.network.packets.PacketDurabilitySync;
+import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
+import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
