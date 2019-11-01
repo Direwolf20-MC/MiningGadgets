@@ -106,6 +106,7 @@ public class RenderMiningLaser {
             wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v).endVertex();*/
             Tessellator.getInstance().draw();
         }
+        GlStateManager.enableDepthTest();
         GlStateManager.enableCull();
         GlStateManager.popMatrix();
     }
@@ -167,10 +168,10 @@ public class RenderMiningLaser {
             double startYOffset = -.165;
             double startZOffset = 0.5;
             wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v).endVertex();
-            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v + distance * 1.5).endVertex();
-            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
-            wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v).endVertex();
+            wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, 0.5).endVertex();
+            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, 1).endVertex();
+            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, 1).endVertex();
+            wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, 0.5).endVertex();
             //In theory no longer needed but leaving here for a version or 2 just in case....
             /*wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v).endVertex();
             wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v + distance * 1.5).endVertex();
