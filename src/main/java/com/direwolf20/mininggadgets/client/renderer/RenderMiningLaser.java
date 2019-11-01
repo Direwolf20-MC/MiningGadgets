@@ -47,7 +47,7 @@ public class RenderMiningLaser {
             double speedModifier = MathHelper.lerp(efficiency, 0.02, 0.05);
             return (float) -speedModifier;
         } else {
-            return 0.02f;
+            return -0.02f;
         }
     }
 
