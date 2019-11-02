@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.network.Packets;
+package com.direwolf20.mininggadgets.common.network.packets;
 
 import com.direwolf20.mininggadgets.common.containers.ModificationTableCommands;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
@@ -12,24 +12,34 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketInsertUpgrade {
+public class PacketExtractUpgrade {
 
     private final BlockPos pos;
+    private final String upgrade;
+    private final int nameLength;
+    private final boolean isShiftHeld;
 
-    public PacketInsertUpgrade(BlockPos blockPos) {
+    public PacketExtractUpgrade(BlockPos blockPos, String upgrade, int nameLength, boolean isShiftHeld) {
         this.pos = blockPos;
+        this.upgrade = upgrade;
+        this.nameLength = nameLength;
+        this.isShiftHeld = isShiftHeld;
     }
 
-    public static void encode(PacketInsertUpgrade msg, PacketBuffer buffer) {
+    public static void encode(PacketExtractUpgrade msg, PacketBuffer buffer) {
+        buffer.writeInt(msg.nameLength);
         buffer.writeBlockPos(msg.pos);
+        buffer.writeString(msg.upgrade);
+        buffer.writeBoolean(msg.isShiftHeld);
     }
 
-    public static PacketInsertUpgrade decode(PacketBuffer buffer) {
-        return new PacketInsertUpgrade(buffer.readBlockPos());
+    public static PacketExtractUpgrade decode(PacketBuffer buffer) {
+        int strLength = buffer.readInt();
+        return new PacketExtractUpgrade(buffer.readBlockPos(), buffer.readString(strLength), strLength, buffer.readBoolean());
     }
 
     public static class Handler {
-        public static void handle(PacketInsertUpgrade msg, Supplier<NetworkEvent.Context> ctx) {
+        public static void handle(PacketExtractUpgrade msg, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
                 ServerPlayerEntity player = ctx.get().getSender();
                 if (player == null) return;
@@ -41,7 +51,7 @@ public class PacketInsertUpgrade {
                 if (!(te instanceof ModificationTableTileEntity)) return;
                 ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
-                ModificationTableCommands.insertButton(container);
+                ModificationTableCommands.extractButton(container, player, msg.upgrade, msg.isShiftHeld);
             });
 
             ctx.get().setPacketHandled(true);

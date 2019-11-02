@@ -54,6 +54,8 @@ public class GeneratorLanguage extends LanguageProvider {
 
         // Tooltips?
         addPrefixed("tooltip.single.insert", "Insert");
+        addPrefixed("tooltip.item.show_upgrades","Hold %s to show upgrades");
+        addPrefixed("tooltip.item.upgrades", "Current Upgrades:");
     }
 
     /**

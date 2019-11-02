@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -99,17 +100,21 @@ public class MiningGadget extends Item {
         super.addInformation(stack, world, tooltip, flag);
 
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
-        if(!Screen.hasShiftDown())
+        Minecraft mc = Minecraft.getInstance();
+
+        if(!InputMappings.isKeyDown(mc.mainWindow.getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode()))
         {
-            tooltip.add(new StringTextComponent("Hold "+ Minecraft.getInstance().gameSettings.keyBindSneak.getLocalizedName() +" to show upgrades").applyTextStyle(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
+                    mc.gameSettings.keyBindSneak.getLocalizedName().toLowerCase())
+                    .applyTextStyle(TextFormatting.GRAY));
         }
         else
         {
-            tooltip.add(new StringTextComponent("Current Upgrades:").applyTextStyle(TextFormatting.AQUA));
+            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").applyTextStyle(TextFormatting.AQUA));
             if (!(upgrades.isEmpty())) {
                 for (Upgrade upgrade : upgrades) {
-                    tooltip.add(new StringTextComponent("  - " +
-                            I18n.format(upgrade.getLocal())
+                    tooltip.add(new StringTextComponent(" - " +
+                            I18n.format(upgrade.getI18nKey())
                     ).applyTextStyle(TextFormatting.GRAY));
                 }
             }
