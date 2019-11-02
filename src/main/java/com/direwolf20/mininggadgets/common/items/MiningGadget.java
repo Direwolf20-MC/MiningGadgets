@@ -16,7 +16,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.InputMappings;
@@ -112,7 +111,7 @@ public class MiningGadget extends Item {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").applyTextStyle(TextFormatting.AQUA));
             if (!(upgrades.isEmpty())) {
                 for (Upgrade upgrade : upgrades) {
-                    tooltip.add(new StringTextComponent("  - " +
+                    tooltip.add(new StringTextComponent(" - " +
                             I18n.format(upgrade.getI18nKey())
                     ).applyTextStyle(TextFormatting.GRAY));
                 }
