@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.network;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.network.Packets.PacketUpdateUpgrade;
 import com.direwolf20.mininggadgets.common.network.packets.PacketDurabilitySync;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
 import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
