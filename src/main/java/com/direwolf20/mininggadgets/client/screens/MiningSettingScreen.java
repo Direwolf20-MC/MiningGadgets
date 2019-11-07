@@ -10,6 +10,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class MiningSettingScreen extends Screen {
         int x = 0;
         List<Upgrade> toggleableList = this.gadgetUpgrades.stream().filter(Upgrade::isToggleable).collect(Collectors.toList());
         for (Upgrade upgrade : toggleableList) {
-            addButton(new ToggleButton((width / 2) - (160 / 2), ((height / 2) - ((toggleableList.size() * 25) / 2)) + (x * 25), 50, I18n.format(upgrade.getLocal()).replace(I18n.format(upgrade.getLocalReplacement()), ""), shouldUpdate -> {
+            addButton(new ToggleButton(((width / 2) - ((toggleableList.size() / 2) * 30)) + (x * 30), (height / 2) + 40, 50, I18n.format(upgrade.getLocal()).replace(I18n.format(upgrade.getLocalReplacement()), ""), shouldUpdate -> {
                 // When the button is clicked we toggle
                 if( shouldUpdate ) {
                     upgrade.setEnabled(!upgrade.isEnabled());
@@ -63,7 +64,7 @@ public class MiningSettingScreen extends Screen {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
 
-
+        drawCenteredString(getMinecraft().fontRenderer, "Mining Gadget", (width / 2), (height / 2) - 75, Color.WHITE.getRGB());
     }
 
     @Override
