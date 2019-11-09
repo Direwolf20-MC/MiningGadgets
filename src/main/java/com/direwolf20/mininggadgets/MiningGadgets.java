@@ -47,9 +47,9 @@ public class MiningGadgets
         // Register all of our items, blocks, item blocks, etc
         ModItems.ITEMS.register(event);
         ModItems.UPGRADE_ITEMS.register(event);
-
         ModBlocks.BLOCKS.register(event);
         ModBlocks.TILES_ENTITIES.register(event);
+        ModContainers.CONTAINERS.register(event);
 
         event.addListener(this::setup);
         event.addListener(this::enqueueIMC);
@@ -80,10 +80,7 @@ public class MiningGadgets
      */
     private void setupClient(final FMLClientSetupEvent event) {
         // Register the container screens.
-        ModContainers.registerContainerScreens();
-
         ClientSetup.setup();
-        ClientSetup.registerRenderers();
     }
 
     @SubscribeEvent

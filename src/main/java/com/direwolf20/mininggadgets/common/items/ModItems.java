@@ -20,6 +20,10 @@ public class ModItems {
     // Items
     public static final RegistryObject<Item> MININGGADGET = ITEMS.register("mininggadget", MiningGadget::new);
 
+    // Block items
+    public static final RegistryObject<Item> MODIFICATION_TABLE_ITEM = ITEMS.register("modificationtable", () -> new BlockItem(ModBlocks.MODIFICATION_TABLE.get(), ITEM_GROUP));
+    public static final RegistryObject<Item> MINERS_LIGHT_ITEM = ITEMS.register("minerslight", () -> new BlockItem(ModBlocks.MINERS_LIGHT.get(), ITEM_GROUP));
+
     /**
      * Upgrades are a bit ugly.. Soz
      * This one is actually kinda
@@ -46,8 +50,4 @@ public class ModItems {
     public static final RegistryObject<Item> EFFICIENCY_3 =     UPGRADE_ITEMS.register("upgrade_efficiency_3", Upgrade.EFFICIENCY_3::getCard);
     public static final RegistryObject<Item> EFFICIENCY_4 =     UPGRADE_ITEMS.register("upgrade_efficiency_4", Upgrade.EFFICIENCY_4::getCard);
     public static final RegistryObject<Item> EFFICIENCY_5 =     UPGRADE_ITEMS.register("upgrade_efficiency_5", Upgrade.EFFICIENCY_5::getCard);
-
-    // Block items
-    public static final RegistryObject<Item> MODIFICATION_TABLE_ITEM = ITEMS.register("modificationtable", () -> new BlockItem(ModBlocks.MODIFICATION_TABLE.get(), ITEM_GROUP));
-    public static final RegistryObject<Item> MINERS_LIGHT_ITEM = ITEMS.register("minerslight", () -> new BlockItem(ModBlocks.MINERS_LIGHT.get(), ITEM_GROUP));
 }

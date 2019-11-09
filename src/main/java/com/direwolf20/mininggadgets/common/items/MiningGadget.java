@@ -220,13 +220,6 @@ public class MiningGadget extends Item {
             player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
         }
 
-//        player.openContainer(new MiningContainer.MiningProvider(itemstack));
-//        NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider(itemstack), (data) -> {
-//            data.writeItemStack(itemstack);
-//        });
-//        if (!world.isRemote && player instanceof ServerPlayerEntity)
-//            NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider());
-
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
 

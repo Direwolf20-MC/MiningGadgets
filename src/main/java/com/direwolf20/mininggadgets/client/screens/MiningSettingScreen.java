@@ -69,15 +69,6 @@ public class MiningSettingScreen extends Screen {
     }
 
     @Override
-    public void tick() {
-//        if(!InputMappings.isKeyDown(getMinecraft().mainWindow.getHandle(), ClientSetup.gadgetMenu.getKey().getKeyCode())) {
-//            onClose();
-//        }
-
-        super.tick();
-    }
-
-    @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
@@ -93,6 +84,15 @@ public class MiningSettingScreen extends Screen {
             if( mouseX > btn.x && mouseX < btn.x + btn.getWidth() && mouseY > btn.y && mouseY < btn.y + btn.getHeight() )
                 renderTooltip(btn.getTooltip(), mouseX, (height / 2) + 90);
         });
+    }
+
+    public void openFilters() {
+        //        player.openContainer(new MiningContainer.MiningProvider(itemstack));
+//        NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider(itemstack), (data) -> {
+//            data.writeItemStack(itemstack);
+//        });
+//        if (!world.isRemote && player instanceof ServerPlayerEntity)
+//            NetworkHooks.openGui((ServerPlayerEntity) player, new MiningContainer.MiningProvider());
     }
 
     @Override
