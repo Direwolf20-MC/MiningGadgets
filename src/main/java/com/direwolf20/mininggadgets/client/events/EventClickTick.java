@@ -3,7 +3,7 @@ package com.direwolf20.mininggadgets.client.events;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.ClientSetup;
 import com.direwolf20.mininggadgets.client.screens.MiningSettingScreen;
-import com.direwolf20.mininggadgets.common.util.MiscTools;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,7 +26,7 @@ public class EventClickTick {
             return;
 
         if(ClientSetup.gadgetMenu.isKeyDown()) {
-            ItemStack stack = MiscTools.getGadget(MC.player);
+            ItemStack stack = MiningGadget.getGadget(MC.player);
             MC.displayGuiScreen(new MiningSettingScreen(stack));
         }
     }

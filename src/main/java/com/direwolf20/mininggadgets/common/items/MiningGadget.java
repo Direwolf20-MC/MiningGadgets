@@ -127,12 +127,12 @@ public class MiningGadget extends Item {
     }
 
     public static void setBeamRange(ItemStack tool, int range) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        CompoundNBT tagCompound = tool.getOrCreateTag();
         tagCompound.putInt("beamRange", range);
     }
 
     public static int getBeamRange(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        CompoundNBT tagCompound = tool.getOrCreateTag();
         int range = tagCompound.getInt("beamRange");
         if (range == 0) {
             setBeamRange(tool, 5);
@@ -142,12 +142,12 @@ public class MiningGadget extends Item {
     }
 
     public static void setToolRange(ItemStack tool, int range) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        CompoundNBT tagCompound = tool.getOrCreateTag();
         tagCompound.putInt("range", range);
     }
 
     public static int getToolRange(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        CompoundNBT tagCompound = tool.getOrCreateTag();
         int range = tagCompound.getInt("range");
         if (range == 0) {
             setToolRange(tool, 1);
@@ -417,5 +417,19 @@ public class MiningGadget extends Item {
                     ((RenderBlockTileEntity) te).markDirtyClient();
             }
         }*/
+    }
+
+    /*
+        UTILS
+    */
+    public static ItemStack getGadget(PlayerEntity player) {
+        ItemStack heldItem = player.getHeldItemMainhand();
+        if (!(heldItem.getItem() instanceof MiningGadget)) {
+            heldItem = player.getHeldItemOffhand();
+            if (!(heldItem.getItem() instanceof MiningGadget)) {
+                return ItemStack.EMPTY;
+            }
+        }
+        return heldItem;
     }
 }

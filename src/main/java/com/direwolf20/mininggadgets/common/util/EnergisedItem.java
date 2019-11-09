@@ -1,7 +1,6 @@
 package com.direwolf20.mininggadgets.common.util;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.energy.EnergyStorage;
 
 public class EnergisedItem extends EnergyStorage {
@@ -22,10 +21,7 @@ public class EnergisedItem extends EnergyStorage {
     }
 
     public void updatedMaxEnergy(int max) {
-        if( !stack.hasTag() )
-            return;
-
-        stack.getTag().putInt("max_energy", max);
+        stack.getOrCreateTag().putInt("max_energy", max);
         this.capacity = max;
 
         // Ensure the current stored energy is up to date with the new max.
@@ -35,9 +31,7 @@ public class EnergisedItem extends EnergyStorage {
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         int amount = super.receiveEnergy(maxReceive, simulate);
-
-        CompoundNBT compound = MiscTools.getOrNewTag(stack);
-        compound.putInt("energy", this.energy);
+        stack.getOrCreateTag().putInt("energy", this.energy);
 
         return amount;
     }
@@ -45,9 +39,7 @@ public class EnergisedItem extends EnergyStorage {
     @Override
     public int getEnergyStored() {
         int amount = super.getEnergyStored();
-
-        CompoundNBT compound = MiscTools.getOrNewTag(stack);
-        compound.putInt("energy", amount);
+        stack.getOrCreateTag().putInt("energy", amount);
 
         return amount;
     }

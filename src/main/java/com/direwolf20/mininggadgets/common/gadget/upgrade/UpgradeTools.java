@@ -2,11 +2,11 @@ package com.direwolf20.mininggadgets.common.gadget.upgrade;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
-import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ForgeI18n;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class UpgradeTools {
     }
 
     public static void setUpgrade(ItemStack tool, UpgradeCard upgrade) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        CompoundNBT tagCompound = tool.getOrCreateTag();
         setUpgradeNBT(tagCompound, upgrade);
     }
 
@@ -60,19 +60,14 @@ public class UpgradeTools {
      * There has to be a better way of doing this
      */
     public static void updateUpgrade(ItemStack tool, Upgrade upgrade) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        ListNBT newList = new ListNBT();
-        ListNBT originalList = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+        CompoundNBT tagCompound = tool.getOrCreateTag();
+        ListNBT list = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
-        originalList.forEach( e -> {
+        list.forEach( e -> {
             CompoundNBT compound = (CompoundNBT) e;
-            compound.putString(KEY_UPGRADE, compound.getString(KEY_UPGRADE));
-            compound.putBoolean(KEY_ENABLED, compound.getString(KEY_UPGRADE).equals(upgrade.getName()) ? upgrade.isEnabled() : compound.getBoolean(KEY_ENABLED));
-
-            newList.add(compound);
+            if( compound.getString(KEY_UPGRADE).equals(upgrade.getName()) )
+                compound.putBoolean(KEY_ENABLED, upgrade.isEnabled());
         });
-
-        tagCompound.put(KEY_UPGRADES, newList);
     }
 
     // Return all upgrades in the item.
@@ -110,12 +105,12 @@ public class UpgradeTools {
 
     // Return all upgrades in the item.
     public static List<Upgrade> getUpgrades(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        CompoundNBT tagCompound = tool.getOrCreateTag();
         return getUpgradesFromTag(tagCompound);
     }
 
     public static boolean containsUpgrades(ItemStack tool) {
-        return MiscTools.getOrNewTag(tool).contains(KEY_UPGRADES);
+        return tool.getOrCreateTag().contains(KEY_UPGRADES);
     }
 
     /**
@@ -141,7 +136,7 @@ public class UpgradeTools {
      * as the gadget stores the full name and not it's base name
      */
     public static void removeUpgrade(ItemStack tool, Upgrade upgrade) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
+        CompoundNBT tagCompound = tool.getOrCreateTag();
         ListNBT upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
         // Slightly completed but basically it just makes a new list and collects that back to an ListNBT
@@ -171,5 +166,9 @@ public class UpgradeTools {
 
     public static boolean containsUpgradeFromList(List<Upgrade> upgrades, Upgrade type) {
         return getUpgradeFromList(upgrades, type).isPresent();
+    }
+
+    public static String getName(Upgrade upgrade) {
+        return ForgeI18n.parseFormat(upgrade.getLocal()).replace(ForgeI18n.parseFormat(upgrade.getLocalReplacement()), "");
     }
 }

@@ -2,7 +2,7 @@ package com.direwolf20.mininggadgets.common.network.Packets;
 
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.util.MiscTools;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -36,7 +36,7 @@ public class PacketUpdateUpgrade {
                 if( upgrade == null )
                     return;
 
-                ItemStack stack = MiscTools.getGadget(player);
+                ItemStack stack = MiningGadget.getGadget(player);
                 UpgradeTools.updateUpgrade(stack, upgrade); //todo: change.
             });
 
