@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.screens.widget.ToggleButton;
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.client.config.GuiSlider;
 
 import java.awt.*;
 import java.util.List;
@@ -26,14 +28,16 @@ public class MiningSettingScreen extends Screen {
 
     @Override
     protected void init() {
+        int baseX = width / 2, baseY = height / 2;
+
         // Filters out the non-toggleable options
         List<Upgrade> toggleableList = UpgradeTools.getUpgrades(this.gadget).stream().filter(Upgrade::isToggleable).collect(Collectors.toList());
 
-        int index = 0, x = ((width / 2) - ((toggleableList.size() / 2) * 30));
+        int index = 0, x = (baseX - ((toggleableList.size() / 2) * 30));
         for (Upgrade upgrade : toggleableList) {
             addButton(new ToggleButton(
                     x + (index * 30),
-                    (height / 2) + 40,
+                    baseY + 40,
                     UpgradeTools.getName(upgrade),
                     new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"),
                     send -> this.toggleUpgrade(upgrade, send)
@@ -42,6 +46,15 @@ public class MiningSettingScreen extends Screen {
             // Spaces the upgrades
             index ++;
         }
+
+        // Sliders
+        addButton(new GuiSlider(baseX - (150 / 2), baseY - 50, 150, 20, "Range: ", "", 1, 16, MiningProperties.getRange(gadget), false, true, (slider) -> {
+
+        }));
+
+        addButton(new GuiSlider(baseX - (150 / 2), baseY - 25, 150, 20, "Distance: ", "", 1, 16, MiningProperties.getRange(gadget), false, true, (slider) -> {
+
+        }));
     }
 
     private boolean toggleUpgrade(Upgrade upgrade, boolean update) {
@@ -69,8 +82,8 @@ public class MiningSettingScreen extends Screen {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
 
-        drawCenteredString(getMinecraft().fontRenderer, "Mining Gadget", (width / 2), (height / 2) - 75, Color.WHITE.getRGB());
-        drawCenteredString(getMinecraft().fontRenderer, "Toggle Upgrades", (width / 2), (height / 2) + 25, Color.WHITE.getRGB());
+        drawCenteredString(getMinecraft().fontRenderer, "Mining Gadget", (width / 2), (height / 2) - 70, Color.WHITE.getRGB());
+        drawCenteredString(getMinecraft().fontRenderer, "Toggle Upgrades", (width / 2), (height / 2) + 20, Color.WHITE.getRGB());
 
         this.children.forEach(e -> {
             if( !(e instanceof ToggleButton) )

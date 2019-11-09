@@ -56,9 +56,6 @@ public class UpgradeTools {
         setUpgradeNBT(tagCompound, upgrade);
     }
 
-    /**
-     * There has to be a better way of doing this
-     */
     public static void updateUpgrade(ItemStack tool, Upgrade upgrade) {
         CompoundNBT tagCompound = tool.getOrCreateTag();
         ListNBT list = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
@@ -168,6 +165,10 @@ public class UpgradeTools {
         return getUpgradeFromList(upgrades, type).isPresent();
     }
 
+    /**
+     * @param upgrade the upgrade Enum
+     * @return A formatted string of the Upgrade without it's `Upgrade:` prefix
+     */
     public static String getName(Upgrade upgrade) {
         return ForgeI18n.parseFormat(upgrade.getLocal()).replace(ForgeI18n.parseFormat(upgrade.getLocalReplacement()), "");
     }
