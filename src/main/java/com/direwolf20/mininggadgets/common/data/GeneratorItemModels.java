@@ -18,7 +18,7 @@ public class GeneratorItemModels extends ItemModelProvider {
     @Override
     protected void registerModels() {
         // The mining gadget gets to use some super call stuffs
-        getBuilder(ModItems.MININGGADGET.get().getRegistryName().getPath())
+        /*getBuilder(ModItems.MININGGADGET.get().getRegistryName().getPath())
                 .parent(new ModelFile.ExistingModelFile(mcLoc("item/handheld"), existingFileHelper))
                 .texture("layer0", modLoc("item/mininggadget"))
                 .transforms()
@@ -32,7 +32,7 @@ public class GeneratorItemModels extends ItemModelProvider {
                         .translation(6, 0, -7)
                         .scale(1f)
                     .end()
-                .end();
+                .end();*/
 
         // Register all of the upgrade items
         ModItems.UPGRADE_ITEMS.getEntries().forEach(item -> {

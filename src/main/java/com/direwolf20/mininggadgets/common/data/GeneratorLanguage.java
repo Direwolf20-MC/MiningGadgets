@@ -14,7 +14,7 @@ public class GeneratorLanguage extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add("itemGroup.mininggadgets", "Mining Gadgets");
-        addItem(ModItems.MININGGADGET, "Mining Gadgets");
+        addItem(ModItems.MININGGADGET, "Mining Gadget");
         addItem(ModItems.UPGRADE_EMPTY, "Blank Upgrade Module");
         addItem(ModItems.SILK, "Upgrade: Silk touch");
         addItem(ModItems.FREEZING, "Upgrade: Freezing");

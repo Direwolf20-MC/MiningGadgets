@@ -24,15 +24,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -56,6 +54,20 @@ public class MiningGadget extends Item {
     public MiningGadget() {
         super(new Item.Properties().maxStackSize(1).group(MiningGadgets.itemGroup));
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
+    }
+
+    @Override
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+        if(group == MiningGadgets.itemGroup)
+        {
+            items.add(new ItemStack(this));
+
+            ItemStack full = new ItemStack(this);
+            full.getCapability(CapabilityEnergy.ENERGY, null).ifPresent(energy -> {
+                energy.receiveEnergy(energyCapacity, false);
+                items.add(full);
+            });
+        }
     }
 
     @Override
