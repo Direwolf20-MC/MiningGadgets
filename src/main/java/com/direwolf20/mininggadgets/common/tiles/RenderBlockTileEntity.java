@@ -73,7 +73,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         durability = dur;
         if (dur <= 0) {
             removeBlock();
-            if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
+            if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
                 freeze(stack);
             }
         }
@@ -103,7 +103,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public void spawnParticle() {
-        if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET) && originalDurability > 0) {
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET) && originalDurability > 0) {
             int PartCount = 20 / originalDurability;
             if (PartCount <= 1) PartCount = 1;
             for (int i = 0; i <= PartCount; i++) {
@@ -240,11 +240,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             if (player == null) return;
             int silk = 0;
             int fortune = 0;
-            if (!(UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
+            if (!(UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
                 ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
 
                 // If silk is in the upgrades, apply it without a tier.
-                if (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+                if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
                     tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
                     silk = 1;
                 }
@@ -258,7 +258,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
                 List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
                 int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
-                boolean magnetMode = (UpgradeTools.containsUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
+                boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
                 for (ItemStack drop : blockDrops) {
                     if (drop != null) {
                         if (magnetMode) {

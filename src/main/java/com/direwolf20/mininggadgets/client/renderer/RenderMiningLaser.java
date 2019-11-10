@@ -1,9 +1,9 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
@@ -30,7 +30,7 @@ public class RenderMiningLaser {
 
     public static void renderLaser(PlayerEntity player, float ticks) {
         ItemStack stack = player.getActiveItemStack();
-        int range = MiningGadget.getBeamRange(stack);
+        int range = MiningProperties.getBeamRange(stack);
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
         Vec3d playerPos = player.getEyePosition(ticks);
         Vec3d lookBlockPos = lookingAt.getHitVec();

@@ -3,10 +3,12 @@ package com.direwolf20.mininggadgets.common.items;
 import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
+import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
 import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
@@ -112,7 +114,7 @@ public class MiningGadget extends Item {
             if (!(upgrades.isEmpty())) {
                 for (Upgrade upgrade : upgrades) {
                     tooltip.add(new StringTextComponent(" - " +
-                            I18n.format(upgrade.getI18nKey())
+                            I18n.format(upgrade.getLocal())
                     ).applyTextStyle(TextFormatting.GRAY));
                 }
             }
@@ -125,47 +127,17 @@ public class MiningGadget extends Item {
                                         MiscTools.tidyValue(energy.getMaxEnergyStored())).applyTextStyles(TextFormatting.GREEN)));
     }
 
-    public static void setBeamRange(ItemStack tool, int range) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        tagCompound.putInt("beamRange", range);
-    }
-
-    public static int getBeamRange(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        int range = tagCompound.getInt("beamRange");
-        if (range == 0) {
-            setBeamRange(tool, 5);
-            return 5;
-        }
-        return tagCompound.getInt("beamRange");
-    }
-
-    public static void setToolRange(ItemStack tool, int range) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        tagCompound.putInt("range", range);
-    }
-
-    public static int getToolRange(ItemStack tool) {
-        CompoundNBT tagCompound = MiscTools.getOrNewTag(tool);
-        int range = tagCompound.getInt("range");
-        if (range == 0) {
-            setToolRange(tool, 1);
-            return 1;
-        }
-        return tagCompound.getInt("range");
-    }
-
     public static void changeRange(ItemStack tool) {
-        if (getToolRange(tool) == 1)
-            setToolRange(tool, 3);
+        if (MiningProperties.getRange(tool) == 1)
+            MiningProperties.setRange(tool, 3);
         else
-            setToolRange(tool, 1);
+            MiningProperties.setRange(tool, 1);
     }
 
     public static boolean canMine(ItemStack tool, World world) {
         IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
-        if (getToolRange(tool) == 3) cost = cost * 9;
+        if (MiningProperties.getRange(tool) == 3) cost = cost * 9;
         if (energy.getEnergyStored() <= cost)
             return false;
 
@@ -210,13 +182,17 @@ public class MiningGadget extends Item {
         return new ActionResult<>(ActionResultType.PASS, itemstack);
     }
 
-    public ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
+    private ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
         // Debug code for free energy
-        //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
-        if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
-            changeRange(itemstack);
-            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", getToolRange(itemstack)).getUnformattedComponentText()), true);
-        }
+        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
+
+//        if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
+//            changeRange(itemstack);
+//            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
+//        }
+
+        ModScreens.openGadgetSettingsScreen(itemstack);
+
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
 
@@ -242,7 +218,7 @@ public class MiningGadget extends Item {
         double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec(); // or getLook(partialTicks)
-        int range = getBeamRange(stack);
+        int range = MiningProperties.getBeamRange(stack);
         BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
         Vec3d lookingAt = lookAt.getHitVec();
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
@@ -271,12 +247,15 @@ public class MiningGadget extends Item {
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         //Server and Client side
         World world = player.world;
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, getBeamRange(stack));
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, getBeamRange(stack)).getPos()) == Blocks.AIR.getDefaultState()))
-            return;
-        List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, getToolRange(stack));
 
-        if (UpgradeTools.containsUpgrade(stack, Upgrade.FREEZING)) {
+        int range = MiningProperties.getBeamRange(stack);
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, range);
+        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, range).getPos()) == Blocks.AIR.getDefaultState()))
+            return;
+
+        List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));
+
+        if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
                 if (player instanceof PlayerEntity)
                     spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
@@ -291,7 +270,7 @@ public class MiningGadget extends Item {
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
             float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
-            hardness = hardness * getToolRange(stack) * 1;
+            hardness = hardness * MiningProperties.getRange(stack) * 1;
             hardness = (float) Math.floor(hardness);
             if (hardness == 0) hardness = 1;
             for (BlockPos coord : coords) {
@@ -331,7 +310,7 @@ public class MiningGadget extends Item {
                     //}
                 }
             }
-            if (!(UpgradeTools.containsUpgrade(stack, Upgrade.LIGHT_PLACER)))
+            if (!(UpgradeTools.containsActiveUpgrade(stack, Upgrade.LIGHT_PLACER)))
                 return;
 
             Direction side = lookingAt.getFace();
@@ -340,7 +319,7 @@ public class MiningGadget extends Item {
             Direction right = vertical ? up.rotateY() : side.rotateYCCW();
 
             BlockPos pos;
-            if (getToolRange(stack) == 1)
+            if (MiningProperties.getRange(stack) == 1)
                 pos = lookingAt.getPos().offset(side, 4);
             else
                 pos = lookingAt.getPos().offset(side).offset(right);
@@ -407,5 +386,19 @@ public class MiningGadget extends Item {
                     ((RenderBlockTileEntity) te).markDirtyClient();
             }
         }*/
+    }
+
+    /*
+        UTILS
+    */
+    public static ItemStack getGadget(PlayerEntity player) {
+        ItemStack heldItem = player.getHeldItemMainhand();
+        if (!(heldItem.getItem() instanceof MiningGadget)) {
+            heldItem = player.getHeldItemOffhand();
+            if (!(heldItem.getItem() instanceof MiningGadget)) {
+                return ItemStack.EMPTY;
+            }
+        }
+        return heldItem;
     }
 }

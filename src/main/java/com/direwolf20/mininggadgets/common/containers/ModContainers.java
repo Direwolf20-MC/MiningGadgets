@@ -1,41 +1,23 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
-import net.minecraft.client.gui.ScreenManager;
+import com.direwolf20.mininggadgets.client.ClientSetup;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-@ObjectHolder(MiningGadgets.MOD_ID)
-@Mod.EventBusSubscriber(bus = Bus.MOD, modid = MiningGadgets.MOD_ID)
+/**
+ * @implNote Container screens are registered in {@link ClientSetup#setup()}
+ */
 public class ModContainers {
+    public static final DeferredRegister<ContainerType<?>> CONTAINERS = new DeferredRegister<>(ForgeRegistries.CONTAINERS, MiningGadgets.MOD_ID);
 
-    @ObjectHolder("modificationtable")
-    public static ContainerType<ModificationTableContainer> MODIFICATIONTABLE_CONTAINER
-            = IForgeContainerType.create(ModificationTableContainer::new);
+    // Our containers
+    public static final RegistryObject<ContainerType<ModificationTableContainer>> MODIFICATIONTABLE_CONTAINER
+            = CONTAINERS.register("modificationtable", () -> IForgeContainerType.create(ModificationTableContainer::new));
 
-    /**
-     * Container registry
-     */
-    @SubscribeEvent
-    public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> event) {
-        event.getRegistry().registerAll(
-                MODIFICATIONTABLE_CONTAINER.setRegistryName("modificationtable")
-        );
-    }
-
-    /**
-     * Called from some Client Dist runner in the main class
-     */
-    @OnlyIn(Dist.CLIENT)
-    public static void registerContainerScreens() {
-        ScreenManager.registerFactory(MODIFICATIONTABLE_CONTAINER, ModificationTableScreen::new);
-    }
+    public static final RegistryObject<ContainerType<MiningContainer>> FILTER_CONTAINER
+            = CONTAINERS.register("filter_container", () -> IForgeContainerType.create(MiningContainer::new));
 }
