@@ -9,10 +9,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-public class MiningScreen extends ContainerScreen<MiningContainer> {
+public class FilterScreen extends ContainerScreen<MiningContainer> {
     private ItemStack stack;
 
-    public MiningScreen(MiningContainer container, PlayerInventory inv, ITextComponent name) {
+    public FilterScreen(MiningContainer container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
 
 

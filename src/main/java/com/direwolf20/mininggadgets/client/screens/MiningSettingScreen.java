@@ -6,8 +6,11 @@ import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
+import com.direwolf20.mininggadgets.common.network.packets.PacketChangeMiningSize;
+import com.direwolf20.mininggadgets.common.network.packets.PacketChangeRange;
 import com.direwolf20.mininggadgets.common.network.packets.PacketUpdateUpgrade;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
@@ -17,13 +20,16 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MiningSettingScreen extends Screen {
+public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
     private ItemStack gadget;
+    private Button sizeButton;
+    private int beamRange = 0;
 
     public MiningSettingScreen(ItemStack gadget) {
         super(new StringTextComponent("title"));
 
         this.gadget = gadget;
+        this.beamRange = MiningProperties.getBeamRange(gadget);
     }
 
     @Override
@@ -33,28 +39,30 @@ public class MiningSettingScreen extends Screen {
         // Filters out the non-toggleable options
         List<Upgrade> toggleableList = UpgradeTools.getUpgrades(this.gadget).stream().filter(Upgrade::isToggleable).collect(Collectors.toList());
 
-        int index = 0, x = (baseX - ((toggleableList.size() / 2) * 30));
+        // Remove 6 from x to center it as the padding on the right pushes off center... (I'm a ui nerd)
+        int index = 0, x = baseX - (((toggleableList.size() * 30) / 2) - 6);
         for (Upgrade upgrade : toggleableList) {
-            addButton(new ToggleButton(
-                    x + (index * 30),
-                    baseY + 40,
-                    UpgradeTools.getName(upgrade),
-                    new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"),
-                    send -> this.toggleUpgrade(upgrade, send)
-            ));
+            addButton(new ToggleButton(x + (index * 30), baseY + 40, UpgradeTools.getName(upgrade), new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send)));
 
             // Spaces the upgrades
             index ++;
         }
 
-        // Sliders
-        addButton(new GuiSlider(baseX - (150 / 2), baseY - 50, 150, 20, "Range: ", "", 1, 16, MiningProperties.getRange(gadget), false, true, (slider) -> {
+        sizeButton = new Button(baseX - (150 / 2), baseY - 50, 150, 20, String.format("Size: %1$d x %1$d", MiningProperties.getRange(gadget)), (button) -> {
+            if( MiningProperties.getRange(gadget) == 1 )
+                button.setMessage(String.format("Size: %1$d x %1$d", 3));
+            else
+                button.setMessage(String.format("Size: %1$d x %1$d", 1));
 
-        }));
+            PacketHandler.sendToServer(new PacketChangeMiningSize());
+        });
 
-        addButton(new GuiSlider(baseX - (150 / 2), baseY - 25, 150, 20, "Distance: ", "", 1, 16, MiningProperties.getRange(gadget), false, true, (slider) -> {
+        addButton(sizeButton);
+        addButton(new GuiSlider(baseX - (150 / 2), baseY - 25, 150, 20, "Range: ", "", 0, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this));
 
-        }));
+        // Button logic
+        if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) )
+            sizeButton.active = false;
     }
 
     private boolean toggleUpgrade(Upgrade upgrade, boolean update) {
@@ -98,5 +106,16 @@ public class MiningSettingScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+        PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
+    }
+
+    @Override
+    public void onChangeSliderValue(GuiSlider slider) {
+        this.beamRange = slider.getValueInt();
     }
 }

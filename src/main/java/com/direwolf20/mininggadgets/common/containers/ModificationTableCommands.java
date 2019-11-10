@@ -33,11 +33,10 @@ public class ModificationTableCommands {
 
             // Did we just insert a Range upgrade?
             if (card.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
-                int newRange = 5;
-                if (card.getTier() == 1) newRange = 10;
-                if (card.getTier() == 2) newRange = 15;
-                if (card.getTier() == 3) newRange = 20;
-                MiningProperties.setBeamRange(laser, newRange);
+                // Always reset the range regardless if it's bigger or smaller
+                // We set max range on the gadget so we don't have to check if an upgrade exists.
+                MiningProperties.setBeamRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
+                MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
             }
 
             // Reject fortune and silk upgrades when combined together.
@@ -86,8 +85,11 @@ public class ModificationTableCommands {
             if (upgrade == Upgrade.THREE_BY_THREE)
                 MiningProperties.setRange(laser, 1);
 
-            if (upgrade.getBaseName().equals(Upgrade.RANGE_1.getBaseName()))
-                MiningProperties.setBeamRange(laser, 5);
+            // Set both max and default range to MIN_RANGE.
+            if (upgrade.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
+                MiningProperties.setBeamRange(laser, MiningProperties.MIN_RANGE);
+                MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(0));
+            }
 
             if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
                 laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));

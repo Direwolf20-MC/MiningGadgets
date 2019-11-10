@@ -247,9 +247,12 @@ public class MiningGadget extends Item {
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         //Server and Client side
         World world = player.world;
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, MiningProperties.getBeamRange(stack));
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, MiningProperties.getBeamRange(stack)).getPos()) == Blocks.AIR.getDefaultState()))
+
+        int range = MiningProperties.getBeamRange(stack);
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, range);
+        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, range).getPos()) == Blocks.AIR.getDefaultState()))
             return;
+
         List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {

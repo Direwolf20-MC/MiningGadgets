@@ -12,8 +12,11 @@ public class MiningProperties {
     private MiningProperties() {}
 
     private static final String KEY_BEAM_RANGE = "beamRange";
+    private static final String KEY_MAX_BEAM_RANGE = "maxBeamRange";
     private static final String KEY_RANGE = "range";
     private static final String KEY_SPEED = "speed";
+
+    public static final int MIN_RANGE = 5;
 
     public static int setSpeed(ItemStack gadget, int speed) {
         gadget.getOrCreateTag().putInt(KEY_SPEED, speed);
@@ -40,8 +43,18 @@ public class MiningProperties {
         return range;
     }
 
+    public static int setBeamMaxRange(ItemStack gadget, int range) {
+        gadget.getOrCreateTag().putInt(KEY_MAX_BEAM_RANGE, range);
+        return range;
+    }
+
     public static int getBeamRange(ItemStack gadget) {
         CompoundNBT compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_BEAM_RANGE) ? setRange(gadget, 1) : compound.getInt(KEY_BEAM_RANGE);
+        return !compound.contains(KEY_BEAM_RANGE) ? setBeamRange(gadget, MIN_RANGE) : compound.getInt(KEY_BEAM_RANGE);
+    }
+
+    public static int getBeamMaxRange(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        return !compound.contains(KEY_MAX_BEAM_RANGE) ? setBeamMaxRange(gadget, MIN_RANGE) : compound.getInt(KEY_MAX_BEAM_RANGE);
     }
 }

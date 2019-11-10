@@ -23,7 +23,7 @@ public class MiningContainer extends Container {
     }
 
     public MiningContainer(int windowId, PlayerInventory playerInventory, ItemStack gadget) {
-        super(ModContainers.MINING_CONTAINER.get(), windowId);
+        super(ModContainers.FILTER_CONTAINER.get(), windowId);
         this.setup(playerInventory, 8, 84, gadget);
     }
 

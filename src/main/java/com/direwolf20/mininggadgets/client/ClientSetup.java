@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.client;
 
 import com.direwolf20.mininggadgets.client.renderer.RenderBlockTER;
-import com.direwolf20.mininggadgets.client.screens.MiningScreen;
+import com.direwolf20.mininggadgets.client.screens.FilterScreen;
 import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
@@ -23,7 +23,7 @@ public final class ClientSetup {
      */
     private static void registerContainerScreens() {
         ScreenManager.registerFactory(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), ModificationTableScreen::new);
-        ScreenManager.registerFactory(ModContainers.MINING_CONTAINER.get(), MiningScreen::new);
+        ScreenManager.registerFactory(ModContainers.FILTER_CONTAINER.get(), FilterScreen::new);
     }
 
     /**

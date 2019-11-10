@@ -165,6 +165,10 @@ public class UpgradeTools {
         return getUpgradeFromList(upgrades, type).isPresent();
     }
 
+    public static int getMaxBeamRange(int tier) {
+        return (tier + 1) * 5;
+    }
+
     /**
      * @param upgrade the upgrade Enum
      * @return A formatted string of the Upgrade without it's `Upgrade:` prefix

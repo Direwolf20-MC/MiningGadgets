@@ -1,10 +1,7 @@
 package com.direwolf20.mininggadgets.common.network;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.common.network.packets.PacketUpdateUpgrade;
-import com.direwolf20.mininggadgets.common.network.packets.PacketDurabilitySync;
-import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
-import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
+import com.direwolf20.mininggadgets.common.network.packets.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -36,6 +33,8 @@ public class PacketHandler {
         registerMessage(PacketExtractUpgrade.class, PacketExtractUpgrade::encode, PacketExtractUpgrade::decode, PacketExtractUpgrade.Handler::handle);
         registerMessage(PacketInsertUpgrade.class, PacketInsertUpgrade::encode, PacketInsertUpgrade::decode, PacketInsertUpgrade.Handler::handle);
         registerMessage(PacketUpdateUpgrade.class, PacketUpdateUpgrade::encode, PacketUpdateUpgrade::decode, PacketUpdateUpgrade.Handler::handle);
+        registerMessage(PacketChangeMiningSize.class, PacketChangeMiningSize::encode, PacketChangeMiningSize::decode, PacketChangeMiningSize.Handler::handle);
+        registerMessage(PacketChangeRange.class, PacketChangeRange::encode, PacketChangeRange::decode, PacketChangeRange.Handler::handle);
 
         //Client Side
         registerMessage(PacketDurabilitySync.class, PacketDurabilitySync::encode, PacketDurabilitySync::decode, PacketDurabilitySync.Handler::handle);
