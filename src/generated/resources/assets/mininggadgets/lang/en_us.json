@@ -30,5 +30,6 @@
   "mininggadgets.gadget.range_change": "Range Change: %1$d x %1$d",
   "mininggadgets.tooltip.item.show_upgrades": "Hold %s to show upgrades",
   "mininggadgets.tooltip.item.upgrades": "Current Upgrades:",
-  "mininggadgets.tooltip.single.insert": "Insert"
+  "mininggadgets.tooltip.single.insert": "Insert",
+  "mininggadgets.upgrade.replacement": "Upgrade: "
 }

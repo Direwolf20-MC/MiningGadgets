@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.client.screens.widget.DireButton;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
@@ -75,7 +76,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         ModificationTableScreen parent;
         Upgrade upgrade = null;
 
-        public ScrollingUpgrades(Minecraft client, int width, int height, int top, int left, ModificationTableScreen parent) {
+        ScrollingUpgrades(Minecraft client, int width, int height, int top, int left, ModificationTableScreen parent) {
             super(client, width, height, top, left);
             this.parent = parent;
         }
@@ -133,7 +134,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
             super.render(mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                this.parent.renderTooltip(I18n.format(this.upgrade.getI18nKey()), mouseX, mouseY);
+                this.parent.renderTooltip(I18n.format(this.upgrade.getLocal()), mouseX, mouseY);
         }
     }
 }

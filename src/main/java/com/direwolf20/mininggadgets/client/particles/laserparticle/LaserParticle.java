@@ -1,10 +1,10 @@
 package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.BreakingParticle;
@@ -72,7 +72,7 @@ public class LaserParticle extends BreakingParticle {
         RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(new BlockPos(this.posX, this.posY, this.posZ));
         if (te != null) {
             playerUUID = te.getPlayerUUID();
-            voiding = (UpgradeTools.containsUpgradeFromList(te.getGadgetUpgrades(), Upgrade.VOID_JUNK) && !te.getRenderBlock().isIn(Tags.Blocks.ORES));
+            voiding = (UpgradeTools.containsActiveUpgradeFromList(te.getGadgetUpgrades(), Upgrade.VOID_JUNK) && !te.getRenderBlock().isIn(Tags.Blocks.ORES));
         }
         sourceX = d;
         sourceY = d1;
@@ -193,8 +193,8 @@ public class LaserParticle extends BreakingParticle {
             moveZ = (targetDirection.getZ()) / speedAdjust;
             //If the particle is less than 5 ticks old, rapidly move the particles towards the player's look position
             //This is what clumps them together early on. Comment this out if you wanna see the difference without.
-            ItemStack heldItem = MiscTools.getGadget(player);
-            if (heldItem.getItem() instanceof MiningGadget && MiningGadget.getToolRange(heldItem) > 1) {
+            ItemStack heldItem = MiningGadget.getGadget(player);
+            if (heldItem.getItem() instanceof MiningGadget && MiningProperties.getRange(heldItem) > 1) {
                 if (age < 5) {
                     int compressionFactor = 7;
                     moveX = moveX * ((1 - Math.abs(look.x)) * compressionFactor);

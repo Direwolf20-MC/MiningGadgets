@@ -31,7 +31,7 @@ public class ModificationTableContainer extends Container {
     private List<Upgrade> upgradesCache = new ArrayList<>();
 
     public ModificationTableContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
-        super(ModContainers.MODIFICATIONTABLE_CONTAINER, windowId);
+        super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
 
         this.tileEntity = Minecraft.getInstance().world.getTileEntity(extraData.readBlockPos());
         this.playerInventory = new InvWrapper(playerInventory);
@@ -41,7 +41,7 @@ public class ModificationTableContainer extends Container {
     }
 
     public ModificationTableContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
-        super(ModContainers.MODIFICATIONTABLE_CONTAINER, windowId);
+        super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
 
         this.tileEntity = world.getTileEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);

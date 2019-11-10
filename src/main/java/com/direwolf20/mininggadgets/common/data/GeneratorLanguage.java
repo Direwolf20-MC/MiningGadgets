@@ -16,6 +16,12 @@ public class GeneratorLanguage extends LanguageProvider {
         add("itemGroup.mininggadgets", "Mining Gadgets");
         addItem(ModItems.MININGGADGET, "Mining Gadget");
         addItem(ModItems.UPGRADE_EMPTY, "Blank Upgrade Module");
+
+        // This should always match the start of below upgrade names. I use this
+        // to actively replace the start of the word. (it's an exact search so this should
+        // still work nicely in other languages. It's rare we need the Upgrade: prefix
+        // for most of the gui in the mod so it's purely a gui hack.
+        addPrefixed("upgrade.replacement", "Upgrade: ");
         addItem(ModItems.SILK, "Upgrade: Silk touch");
         addItem(ModItems.FREEZING, "Upgrade: Freezing");
         addItem(ModItems.LIGHT_PLACER, "Upgrade: Light Placer");
@@ -23,7 +29,6 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
         addItem(ModItems.HEATSINK, "Upgrade: HeatSink");
-
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
         addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
         addItem(ModItems.FORTUNE_3, "Upgrade: Fortune, Tier 3");

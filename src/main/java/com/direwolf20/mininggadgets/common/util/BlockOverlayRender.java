@@ -2,9 +2,9 @@ package com.direwolf20.mininggadgets.common.util;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -28,12 +28,13 @@ public class BlockOverlayRender {
     public static void render(ItemStack item) {
         final Minecraft mc = Minecraft.getInstance();
 
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE, MiningGadget.getBeamRange(item));
-        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item, MiningGadget.getBeamRange(item)).getPos()) == Blocks.AIR.getDefaultState()) {
+        int range = MiningProperties.getBeamRange(item);
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE, range);
+        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item, range).getPos()) == Blocks.AIR.getDefaultState()) {
             return;
         }
 
-        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.world, MiningGadget.getToolRange(item));
+        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.world, MiningProperties.getRange(item));
 
         Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
 
@@ -54,7 +55,7 @@ public class BlockOverlayRender {
                 GlStateManager.translatef(-0.005f, -0.005f, -0.005f);
                 GlStateManager.scalef(1.01f, 1.01f, 1.01f);
                 GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-                if (UpgradeTools.containsUpgrade(item, Upgrade.VOID_JUNK) && !mc.world.getBlockState(e).isIn(Tags.Blocks.ORES))
+                if (UpgradeTools.containsActiveUpgrade(item, Upgrade.VOID_JUNK) && !mc.world.getBlockState(e).isIn(Tags.Blocks.ORES))
                     BlockOverlayRender.render(e, tessellator, buffer, Color.RED);
                 else
                     BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
