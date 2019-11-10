@@ -37,7 +37,7 @@ public class ModificationTableCommands {
                 if (card.getTier() == 1) newRange = 10;
                 if (card.getTier() == 2) newRange = 15;
                 if (card.getTier() == 3) newRange = 20;
-                MiningGadget.setBeamRange(laser, newRange);
+                MiningProperties.setBeamRange(laser, newRange);
             }
 
             // Reject fortune and silk upgrades when combined together.
@@ -87,7 +87,7 @@ public class ModificationTableCommands {
                 MiningProperties.setRange(laser, 1);
 
             if (upgrade.getBaseName().equals(Upgrade.RANGE_1.getBaseName()))
-                MiningGadget.setBeamRange(laser, 5);
+                MiningProperties.setBeamRange(laser, 5);
 
             if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
                 laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));

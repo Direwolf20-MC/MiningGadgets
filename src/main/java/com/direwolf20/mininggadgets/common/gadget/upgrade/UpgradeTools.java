@@ -170,6 +170,6 @@ public class UpgradeTools {
      * @return A formatted string of the Upgrade without it's `Upgrade:` prefix
      */
     public static String getName(Upgrade upgrade) {
-        return ForgeI18n.parseFormat(upgrade.getLocal()).replace(ForgeI18n.parseFormat(upgrade.getLocalReplacement()), "");
+        return ForgeI18n.parseMessage(upgrade.getLocal()).replace(ForgeI18n.parseMessage(upgrade.getLocalReplacement()), "");
     }
 }

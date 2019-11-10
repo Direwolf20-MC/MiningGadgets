@@ -5,7 +5,6 @@ import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -29,8 +28,8 @@ public class BlockOverlayRender {
     public static void render(ItemStack item) {
         final Minecraft mc = Minecraft.getInstance();
 
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE, MiningGadget.getBeamRange(item));
-        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item, MiningGadget.getBeamRange(item)).getPos()) == Blocks.AIR.getDefaultState()) {
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE, MiningProperties.getBeamRange(item));
+        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item, MiningProperties.getBeamRange(item)).getPos()) == Blocks.AIR.getDefaultState()) {
             return;
         }
 

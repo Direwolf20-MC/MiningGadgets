@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.network.Packets;
+package com.direwolf20.mininggadgets.common.network.packets;
 
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;

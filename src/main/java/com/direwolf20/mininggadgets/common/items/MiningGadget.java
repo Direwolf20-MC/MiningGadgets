@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.common.items;
 import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
+import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
@@ -126,36 +127,6 @@ public class MiningGadget extends Item {
                                         MiscTools.tidyValue(energy.getMaxEnergyStored())).applyTextStyles(TextFormatting.GREEN)));
     }
 
-    public static void setBeamRange(ItemStack tool, int range) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
-        tagCompound.putInt("beamRange", range);
-    }
-
-    public static int getBeamRange(ItemStack tool) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
-        int range = tagCompound.getInt("beamRange");
-        if (range == 0) {
-            setBeamRange(tool, 5);
-            return 5;
-        }
-        return tagCompound.getInt("beamRange");
-    }
-
-    public static void setToolRange(ItemStack tool, int range) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
-        tagCompound.putInt("range", range);
-    }
-
-    public static int getToolRange(ItemStack tool) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
-        int range = tagCompound.getInt("range");
-        if (range == 0) {
-            setToolRange(tool, 1);
-            return 1;
-        }
-        return tagCompound.getInt("range");
-    }
-
     public static void changeRange(ItemStack tool) {
         if (MiningProperties.getRange(tool) == 1)
             MiningProperties.setRange(tool, 3);
@@ -215,10 +186,12 @@ public class MiningGadget extends Item {
         // Debug code for free energy
         itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
 
-        if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
-            changeRange(itemstack);
-            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
-        }
+//        if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
+//            changeRange(itemstack);
+//            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
+//        }
+
+        ModScreens.openGadgetSettingsScreen(itemstack);
 
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
@@ -245,7 +218,7 @@ public class MiningGadget extends Item {
         double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec(); // or getLook(partialTicks)
-        int range = getBeamRange(stack);
+        int range = MiningProperties.getBeamRange(stack);
         BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
         Vec3d lookingAt = lookAt.getHitVec();
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
@@ -274,8 +247,8 @@ public class MiningGadget extends Item {
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         //Server and Client side
         World world = player.world;
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, getBeamRange(stack));
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, getBeamRange(stack)).getPos()) == Blocks.AIR.getDefaultState()))
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, MiningProperties.getBeamRange(stack));
+        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, MiningProperties.getBeamRange(stack)).getPos()) == Blocks.AIR.getDefaultState()))
             return;
         List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));
 

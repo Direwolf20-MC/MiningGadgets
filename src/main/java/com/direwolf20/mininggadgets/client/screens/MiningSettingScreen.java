@@ -6,7 +6,7 @@ import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.network.Packets.PacketUpdateUpgrade;
+import com.direwolf20.mininggadgets.common.network.packets.PacketUpdateUpgrade;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;

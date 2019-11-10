@@ -11,23 +11,37 @@ import net.minecraft.nbt.CompoundNBT;
 public class MiningProperties {
     private MiningProperties() {}
 
+    private static final String KEY_BEAM_RANGE = "beamRange";
+    private static final String KEY_RANGE = "range";
+    private static final String KEY_SPEED = "speed";
+
     public static int setSpeed(ItemStack gadget, int speed) {
-        gadget.getOrCreateTag().putInt("range", speed);
+        gadget.getOrCreateTag().putInt(KEY_SPEED, speed);
         return speed;
     }
 
     public static int getSpeed(ItemStack gadget) {
         CompoundNBT compound = gadget.getOrCreateTag();
-        return !compound.contains("speed") ? setSpeed(gadget, 1) : compound.getInt("speed");
+        return !compound.contains(KEY_SPEED) ? setSpeed(gadget, 1) : compound.getInt(KEY_SPEED);
     }
 
     public static int setRange(ItemStack gadget, int range) {
-        gadget.getOrCreateTag().putInt("range", range);
+        gadget.getOrCreateTag().putInt(KEY_RANGE, range);
         return range;
     }
 
     public static int getRange(ItemStack gadget) {
         CompoundNBT compound = gadget.getOrCreateTag();
-        return !compound.contains("range") ? setRange(gadget, 1) : compound.getInt("range");
+        return !compound.contains(KEY_RANGE) ? setRange(gadget, 1) : compound.getInt(KEY_RANGE);
+    }
+
+    public static int setBeamRange(ItemStack gadget, int range) {
+        gadget.getOrCreateTag().putInt(KEY_BEAM_RANGE, range);
+        return range;
+    }
+
+    public static int getBeamRange(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        return !compound.contains(KEY_BEAM_RANGE) ? setRange(gadget, 1) : compound.getInt(KEY_BEAM_RANGE);
     }
 }
