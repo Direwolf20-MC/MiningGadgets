@@ -8,4 +8,4 @@
 ## Meta
 [CHANGELOG](CHANGELOG.md)
 
-[License MIT](License.md)
+[License MIT](LICENSE.txt)
