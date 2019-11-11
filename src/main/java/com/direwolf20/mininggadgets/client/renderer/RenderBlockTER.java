@@ -114,6 +114,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             //scale = (scale < 0.1f) ? 0.1f : scale;
             scale = MathHelper.lerp(scale, 0.1f, 1.0f);
             GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
+            GlStateManager.depthMask(false);
             try {
                 for (Direction direction : Direction.values()) {
                     if (!(getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
@@ -131,6 +132,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
                 }
             }
+            GlStateManager.depthMask(true);
         }
 
 
