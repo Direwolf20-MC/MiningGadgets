@@ -82,13 +82,23 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         //todo Have the gadget have an option for fading/shrinking blocks in the table.
         MiningProperties.BreakTypes breakType = tile.getBreakType();
         GlStateManager.translated(x, y, z);
+
+        IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
+        //Random random = new Random();
+        BlockColors blockColors = Minecraft.getInstance().getBlockColors();
+        int color = blockColors.getColor(renderState, (IEnviromentBlockReader) tile.getWorld(), tile.getPos(), 0);
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
+
         if (breakType == MiningProperties.BreakTypes.SHRINK) {
             GlStateManager.translatef((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
-            GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
             GlStateManager.scalef(scale, scale, scale);
             GL14.glBlendColor(1F, 1F, 1F, 1f); //Set the alpha of the blocks we are rendering
             try {
-                blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
+                for (Direction direction : Direction.values()) {
+                    renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
+                }
             } catch (Throwable t) {
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder bufferBuilder = tessellator.getBuffer();
@@ -105,20 +115,11 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             scale = MathHelper.lerp(scale, 0.1f, 1.0f);
             GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
             try {
-                IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
-                //Random random = new Random();
-                BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-                int color = blockColors.getColor(renderState, (IEnviromentBlockReader) tile.getWorld(), tile.getPos(), 0);
-                float f = (float) (color >> 16 & 255) / 255.0F;
-                float f1 = (float) (color >> 8 & 255) / 255.0F;
-                float f2 = (float) (color & 255) / 255.0F;
                 for (Direction direction : Direction.values()) {
-                    //random.setSeed(42L);
                     if (!(getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
                         renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
                     }
                 }
-                //random.setSeed(42L);
             } catch (Throwable t) {
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder bufferBuilder = tessellator.getBuffer();
