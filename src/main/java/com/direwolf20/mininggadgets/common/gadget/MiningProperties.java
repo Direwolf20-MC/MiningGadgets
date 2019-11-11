@@ -19,17 +19,20 @@ public class MiningProperties {
     public static final String COLOR_RED = "colorRed";
     public static final String COLOR_GREEN = "colorGreen";
     public static final String COLOR_BLUE = "colorBlue";
+    public static final String COLOR_RED_INNER = "colorRedInner";
+    public static final String COLOR_GREEN_INNER = "colorGreenInner";
+    public static final String COLOR_BLUE_INNER = "colorBlueInner";
 
     public static final int MIN_RANGE = 5;
 
-    public static enum BreakTypes {
+    public enum BreakTypes {
         SHRINK,
         FADE
     }
 
     public static short getColor(ItemStack gadget, String color) {
         CompoundNBT compound = gadget.getOrCreateTag();
-        if (color == COLOR_RED) {
+        if (color == COLOR_RED || color.contains("Inner")) {
             return !compound.contains(color) ? setColor(gadget, (short) 255, color) : compound.getShort(color);
         } else {
             return !compound.contains(color) ? setColor(gadget, (short) 0, color) : compound.getShort(color);

@@ -53,6 +53,7 @@ public class RenderMiningLaser {
 
     private static void drawLasers(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
         Hand activeHand = player.getActiveHand();
+        ItemStack stack = player.getActiveItemStack();
         Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
         double distance = from.subtract(to).length();
         long gameTime = player.world.getGameTime();
@@ -86,7 +87,7 @@ public class RenderMiningLaser {
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam2);
         drawBeam(xOffset, yOffset, zOffset, thickness, activeHand, distance, wr, v, v + distance * 1.5);
         // white core
-        GlStateManager.color3f(1, 1, 1);
+        GlStateManager.color3f(MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam);
         drawBeam(xOffset, yOffset, zOffset, thickness / 2, activeHand, distance, wr, v, v + distance * 1.5);
 
