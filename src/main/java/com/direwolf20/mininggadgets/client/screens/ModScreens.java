@@ -7,4 +7,8 @@ public class ModScreens {
     public static void openGadgetSettingsScreen(ItemStack itemstack) {
         Minecraft.getInstance().displayGuiScreen(new MiningSettingScreen(itemstack));
     }
+
+    public static void openVisualSettingsScreen(ItemStack itemstack) {
+        Minecraft.getInstance().displayGuiScreen(new MiningVisualsScreen(itemstack));
+    }
 }

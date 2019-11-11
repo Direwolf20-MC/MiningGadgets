@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
     private ItemStack gadget;
     private Button sizeButton;
+    private Button visualButton;
     private int beamRange = 0;
 
     public MiningSettingScreen(ItemStack gadget) {
@@ -59,6 +60,11 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
 
         addButton(sizeButton);
         addButton(new GuiSlider(baseX - (150 / 2), baseY - 25, 150, 20, "Range: ", "", 0, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this));
+
+        visualButton = new Button(baseX - (150 / 2), baseY - 0, 150, 20, "Open Visuals Menu", (button) -> {
+            ModScreens.openVisualSettingsScreen(gadget);
+        });
+        addButton(visualButton);
 
         // Button logic
         if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) )
