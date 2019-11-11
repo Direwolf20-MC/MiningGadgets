@@ -60,6 +60,8 @@ public class MiningGadget extends Item {
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
+    //TODO Add an override for onCreated and initialize all NBT Tags in it
+
     @Override
     public int getMaxDamage(ItemStack stack) {
         return this.energyCapacity;
@@ -284,6 +286,7 @@ public class MiningGadget extends Item {
                     world.setBlockState(coord, ModBlocks.RENDER_BLOCK.get().getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
+                    te.setBreakType(MiningProperties.getBreakType(stack));
                     te.setGadgetUpgrades(gadgetUpgrades);
                     te.setPriorDurability((int) hardness + 1);
                     te.setOriginalDurability((int) hardness + 1);

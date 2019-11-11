@@ -35,6 +35,7 @@ public class PacketHandler {
         registerMessage(PacketUpdateUpgrade.class, PacketUpdateUpgrade::encode, PacketUpdateUpgrade::decode, PacketUpdateUpgrade.Handler::handle);
         registerMessage(PacketChangeMiningSize.class, PacketChangeMiningSize::encode, PacketChangeMiningSize::decode, PacketChangeMiningSize.Handler::handle);
         registerMessage(PacketChangeRange.class, PacketChangeRange::encode, PacketChangeRange::decode, PacketChangeRange.Handler::handle);
+        registerMessage(PacketChangeBreakType.class, PacketChangeBreakType::encode, PacketChangeBreakType::decode, PacketChangeBreakType.Handler::handle);
 
         //Client Side
         registerMessage(PacketDurabilitySync.class, PacketDurabilitySync::encode, PacketDurabilitySync::decode, PacketDurabilitySync.Handler::handle);

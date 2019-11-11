@@ -15,8 +15,34 @@ public class MiningProperties {
     private static final String KEY_MAX_BEAM_RANGE = "maxBeamRange";
     private static final String KEY_RANGE = "range";
     private static final String KEY_SPEED = "speed";
+    private static final String BREAK_TYPE = "breakType";
 
     public static final int MIN_RANGE = 5;
+
+    public static enum BreakTypes {
+        SHRINK,
+        FADE
+    }
+
+    public static BreakTypes setBreakType(ItemStack gadget, BreakTypes breakType) {
+        gadget.getOrCreateTag().putByte(BREAK_TYPE, (byte) breakType.ordinal());
+        return breakType;
+    }
+
+    public static void nextBreakType(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        if (compound.contains(BREAK_TYPE)) {
+            int type = getBreakType(gadget).ordinal() == BreakTypes.values().length - 1 ? 0 : getBreakType(gadget).ordinal() + 1;
+            setBreakType(gadget, BreakTypes.values()[type]);
+        } else {
+            setBreakType(gadget, BreakTypes.FADE);
+        }
+    }
+
+    public static BreakTypes getBreakType(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        return !compound.contains(BREAK_TYPE) ? setBreakType(gadget, BreakTypes.SHRINK) : BreakTypes.values()[compound.getByte(BREAK_TYPE)];
+    }
 
     public static int setSpeed(ItemStack gadget, int speed) {
         gadget.getOrCreateTag().putInt(KEY_SPEED, speed);

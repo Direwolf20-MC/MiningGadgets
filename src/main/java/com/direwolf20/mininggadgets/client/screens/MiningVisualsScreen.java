@@ -1,5 +1,7 @@
 package com.direwolf20.mininggadgets.client.screens;
 
+import com.direwolf20.mininggadgets.common.network.PacketHandler;
+import com.direwolf20.mininggadgets.common.network.packets.PacketChangeBreakType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.ItemStack;
@@ -23,7 +25,7 @@ public class MiningVisualsScreen extends Screen implements GuiSlider.ISlider {
     protected void init() {
         int baseX = width / 2, baseY = height / 2;
         blockBreakButton = new Button(baseX - (150 / 2), baseY - 50, 150, 20, "Toggle Break Visual", (button) -> {
-
+            PacketHandler.sendToServer(new PacketChangeBreakType());
         });
         addButton(blockBreakButton);
     }

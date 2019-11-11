@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.ModItems;
@@ -47,6 +48,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private List<Upgrade> gadgetUpgrades;
     private boolean packetReceived = false;
     private int totalAge;
+    private MiningProperties.BreakTypes breakType;
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE.get());
@@ -58,6 +60,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public BlockState getRenderBlock() {
         return renderBlock;
+    }
+
+    public MiningProperties.BreakTypes getBreakType() {
+        return breakType;
+    }
+
+    public void setBreakType(MiningProperties.BreakTypes breakType) {
+        this.breakType = breakType;
     }
 
     public void justSetDurability(int dur) {
@@ -220,6 +230,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         ticksSinceMine = tag.getInt("ticksSinceMine");
         playerUUID = tag.getUniqueId("playerUUID");
         gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
+        breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
     }
 
     @Override
@@ -231,6 +242,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("ticksSinceMine", ticksSinceMine);
         tag.putUniqueId("playerUUID", playerUUID);
         tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
+        tag.putByte("breakType", (byte) breakType.ordinal());
         return super.write(tag);
     }
 
@@ -340,4 +352,5 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             ticksSinceMine++;
         }
     }
+
 }
