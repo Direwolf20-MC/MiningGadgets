@@ -16,12 +16,29 @@ public class MiningProperties {
     private static final String KEY_RANGE = "range";
     private static final String KEY_SPEED = "speed";
     private static final String BREAK_TYPE = "breakType";
+    public static final String COLOR_RED = "colorRed";
+    public static final String COLOR_GREEN = "colorGreen";
+    public static final String COLOR_BLUE = "colorBlue";
 
     public static final int MIN_RANGE = 5;
 
     public static enum BreakTypes {
         SHRINK,
         FADE
+    }
+
+    public static short getColor(ItemStack gadget, String color) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        if (color == COLOR_RED) {
+            return !compound.contains(color) ? setColor(gadget, (short) 255, color) : compound.getShort(color);
+        } else {
+            return !compound.contains(color) ? setColor(gadget, (short) 0, color) : compound.getShort(color);
+        }
+    }
+
+    public static short setColor(ItemStack gadget, short colorValue, String color) {
+        gadget.getOrCreateTag().putShort(color, colorValue);
+        return colorValue;
     }
 
     public static BreakTypes setBreakType(ItemStack gadget, BreakTypes breakType) {

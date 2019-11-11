@@ -38,7 +38,7 @@ public class RenderMiningLaser {
         // parse data from item
         float speedModifier = getSpeedModifier(stack);
 
-        drawLasers(playerPos, lookBlockPos, 0, 0, 0, 1f, 0f, 0f, 0.02f, player, ticks, speedModifier);
+        drawLasers(playerPos, lookBlockPos, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
     }
 
     private static float getSpeedModifier(ItemStack stack) {
