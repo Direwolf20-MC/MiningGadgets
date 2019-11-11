@@ -106,17 +106,19 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
             try {
                 IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
-                Random random = new Random(42L);
+                //Random random = new Random();
                 BlockColors blockColors = Minecraft.getInstance().getBlockColors();
                 int color = blockColors.getColor(renderState, (IEnviromentBlockReader) tile.getWorld(), tile.getPos(), 0);
                 float f = (float) (color >> 16 & 255) / 255.0F;
                 float f1 = (float) (color >> 8 & 255) / 255.0F;
                 float f2 = (float) (color & 255) / 255.0F;
                 for (Direction direction : Direction.values()) {
+                    //random.setSeed(42L);
                     if (!(getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                        renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, random));
+                        renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
                     }
                 }
+                //random.setSeed(42L);
             } catch (Throwable t) {
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder bufferBuilder = tessellator.getBuffer();
