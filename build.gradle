@@ -65,9 +65,24 @@ minecraft {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
-
+repositories {
+    maven {
+        // JEI
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        //JEI fallback
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
+    }
+}
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
+
+    //JEI
+    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
