@@ -170,12 +170,13 @@ public class MiningGadget extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
-        if (world.isRemote)
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
 
         // Only perform the shift action
         if (player.isSneaking())
             return this.onItemShiftRightClick(world, player, hand, itemstack);
+
+        if (world.isRemote)
+            return new ActionResult<>(ActionResultType.PASS, itemstack);
 
         if (!canMine(itemstack, world))
             return new ActionResult<>(ActionResultType.FAIL, itemstack);
@@ -192,8 +193,8 @@ public class MiningGadget extends Item {
 //            changeRange(itemstack);
 //            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
 //        }
-
-        ModScreens.openGadgetSettingsScreen(itemstack);
+        if (world.isRemote)
+            ModScreens.openGadgetSettingsScreen(itemstack);
 
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
