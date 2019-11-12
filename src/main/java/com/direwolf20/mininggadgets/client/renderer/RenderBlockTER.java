@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.IEnviromentBlockReader;
 import org.lwjgl.opengl.GL14;
 
 import java.util.List;
@@ -69,6 +68,10 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         BlockState renderState = tile.getRenderBlock();
 
+        // We're checking here as sometimes the tile can not have a render block as it's yet to be synced
+        if( renderState == null )
+            return;
+
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
@@ -86,7 +89,9 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
         //Random random = new Random();
         BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-        int color = blockColors.getColor(renderState, (IEnviromentBlockReader) tile.getWorld(), tile.getPos(), 0);
+
+        int color = blockColors.getColor(renderState, tile.getWorld(), tile.getPos(), 0);
+
         float f = (float) (color >> 16 & 255) / 255.0F;
         float f1 = (float) (color >> 8 & 255) / 255.0F;
         float f2 = (float) (color & 255) / 255.0F;
