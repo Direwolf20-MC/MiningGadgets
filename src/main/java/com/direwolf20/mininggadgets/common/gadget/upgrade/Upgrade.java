@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.gadget.upgrade;
 
+import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 
@@ -16,18 +17,18 @@ public enum Upgrade {
     //Blank
     EMPTY("empty", 0, false),
 
-    SILK("silk", 100),
-    VOID_JUNK("void_junk", 10),
-    MAGNET("magnet", 20),
+    SILK("silk", Config.UPGRADECOST_SILKTOUCH.get()),
+    VOID_JUNK("void_junk", Config.UPGRADECOST_VOID.get()),
+    MAGNET("magnet", Config.UPGRADECOST_MAGNET.get()),
     THREE_BY_THREE("three_by_three", 0, false),
     LIGHT_PLACER("light_placer", 0),
     FREEZING("freezing", 0),
-    HEATSINK("heatsink", 50, false),
+    HEATSINK("heatsink", Config.UPGRADECOST_HEATSINK.get(), false),
 
     // Tiered
-    FORTUNE_1("fortune_1", 1, 30),
-    FORTUNE_2("fortune_2", 2, 60),
-    FORTUNE_3("fortune_3", 3, 100),
+    FORTUNE_1("fortune_1", 1, Config.UPGRADECOST_FORTUNE1.get()),
+    FORTUNE_2("fortune_2", 2, Config.UPGRADECOST_FORTUNE2.get()),
+    FORTUNE_3("fortune_3", 3, Config.UPGRADECOST_FORTUNE3.get()),
 
     BATTERY_1("battery_1", 1, 0),
     BATTERY_2("battery_2", 2, 0),
@@ -37,11 +38,11 @@ public enum Upgrade {
     RANGE_2("range_2", 2, 0),
     RANGE_3("range_3", 3, 0),
 
-    EFFICIENCY_1("efficiency_1", 1, 10),
-    EFFICIENCY_2("efficiency_2", 2, 20),
-    EFFICIENCY_3("efficiency_3", 3, 30),
-    EFFICIENCY_4("efficiency_4", 4, 40),
-    EFFICIENCY_5("efficiency_5", 5, 50);
+    EFFICIENCY_1("efficiency_1", 1, Config.UPGRADECOST_EFFICIENCY1.get()),
+    EFFICIENCY_2("efficiency_2", 2, Config.UPGRADECOST_EFFICIENCY2.get()),
+    EFFICIENCY_3("efficiency_3", 3, Config.UPGRADECOST_EFFICIENCY3.get()),
+    EFFICIENCY_4("efficiency_4", 4, Config.UPGRADECOST_EFFICIENCY4.get()),
+    EFFICIENCY_5("efficiency_5", 5, Config.UPGRADECOST_EFFICIENCY5.get());
 
     private String name;
     private String baseName;

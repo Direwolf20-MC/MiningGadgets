@@ -13,9 +13,9 @@ import java.util.Optional;
  */
 public enum UpgradeBatteryLevels {
     BATTERY(0, Config.MININGGADGET_MAXPOWER.get()),
-    BATTERY_1(1, 2000000),
-    BATTERY_2(2, 5000000),
-    BATTERY_3(3, 10000000);
+    BATTERY_1(1, Config.UPGRADECOST_BATTERY1.get()),
+    BATTERY_2(2, Config.UPGRADECOST_BATTERY2.get()),
+    BATTERY_3(3, Config.UPGRADECOST_BATTERY3.get());
 
     private int level;
     private int power;

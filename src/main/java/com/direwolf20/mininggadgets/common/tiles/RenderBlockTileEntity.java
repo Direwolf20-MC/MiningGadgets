@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
+import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
@@ -99,15 +100,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
             IFluidState state = world.getFluidState(sidePos);
+            int freezeCost = Config.UPGRADECOST_FREEZE.get() * -1;
             if (state.getFluid().isEquivalentTo(Fluids.LAVA) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.OBSIDIAN.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
             } else if (state.getFluid().isEquivalentTo(Fluids.WATER) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.PACKED_ICE.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
             } else if ((state.getFluid().isEquivalentTo(Fluids.WATER) || state.getFluid().isEquivalentTo(Fluids.LAVA)) && !state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.COBBLESTONE.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
             }
         }
     }

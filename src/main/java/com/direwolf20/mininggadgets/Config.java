@@ -15,6 +15,7 @@ public class Config {
     public static final String CATEGORY_GENERAL = "general";
     public static final String CATEGORY_POWER = "power";
     public static final String SUBCATEGORY_MININGGADGET = "mining_gadget";
+    public static final String SUBCATEGORY_UPGRADES = "upgrades";
 
     private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
     private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
@@ -24,6 +25,23 @@ public class Config {
 
     public static ForgeConfigSpec.IntValue MININGGADGET_MAXPOWER;
     public static ForgeConfigSpec.IntValue MININGGADGET_BASECOST;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_SILKTOUCH;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_MAGNET;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_VOID;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_HEATSINK;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE1;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE2;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE3;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY1;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY2;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY3;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY4;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY5;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_LIGHT;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_FREEZE;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY1;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY2;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY3;
 
     static {
 
@@ -48,12 +66,44 @@ public class Config {
                 .defineInRange("maxPower", 1000000, 0, Integer.MAX_VALUE);
         MININGGADGET_BASECOST = COMMON_BUILDER.comment("Base cost per block broken")
                 .defineInRange("baseCost", 200, 0, Integer.MAX_VALUE);
-        /*FIRSTBLOCK_GENERATE = COMMON_BUILDER.comment("Power generation per diamond")
-                .defineInRange("generate", 1000, 0, Integer.MAX_VALUE);
-        FIRSTBLOCK_SEND = COMMON_BUILDER.comment("Power generation to send per tick")
-                .defineInRange("send", 100, 0, Integer.MAX_VALUE);
-        FIRSTBLOCK_TICKS = COMMON_BUILDER.comment("Ticks per diamond")
-                .defineInRange("ticks", 20, 0, Integer.MAX_VALUE);*/
+        COMMON_BUILDER.pop();
+
+        COMMON_BUILDER.comment("Upgrade Cost Settings").push(SUBCATEGORY_UPGRADES);
+
+        UPGRADECOST_SILKTOUCH = COMMON_BUILDER.comment("Cost per block for Silk Touch upgrade")
+                .defineInRange("upgradeSilkCost", 100, 0, Integer.MAX_VALUE);
+        UPGRADECOST_MAGNET = COMMON_BUILDER.comment("Cost per block for Magnet upgrade")
+                .defineInRange("upgradeMagnet", 25, 0, Integer.MAX_VALUE);
+        UPGRADECOST_VOID = COMMON_BUILDER.comment("Cost per block for Void Junk upgrade")
+                .defineInRange("upgradeVoid", 10, 0, Integer.MAX_VALUE);
+        UPGRADECOST_HEATSINK = COMMON_BUILDER.comment("Cost per block for Heatsink upgrade")
+                .defineInRange("upgradeHeatsink", 50, 0, Integer.MAX_VALUE);
+        UPGRADECOST_FORTUNE1 = COMMON_BUILDER.comment("Cost per block for Fortune 1 upgrade")
+                .defineInRange("upgradeFortune1", 30, 0, Integer.MAX_VALUE);
+        UPGRADECOST_FORTUNE2 = COMMON_BUILDER.comment("Cost per block for Fortune 2 upgrade")
+                .defineInRange("upgradeFortune2", 60, 0, Integer.MAX_VALUE);
+        UPGRADECOST_FORTUNE3 = COMMON_BUILDER.comment("Cost per block for Fortune 3 upgrade")
+                .defineInRange("upgradeFortune3", 100, 0, Integer.MAX_VALUE);
+        UPGRADECOST_EFFICIENCY1 = COMMON_BUILDER.comment("Cost per block for Efficiency 1 upgrade")
+                .defineInRange("upgradeEfficiency1", 10, 0, Integer.MAX_VALUE);
+        UPGRADECOST_EFFICIENCY2 = COMMON_BUILDER.comment("Cost per block for Efficiency 2 upgrade")
+                .defineInRange("upgradeEfficiency2", 20, 0, Integer.MAX_VALUE);
+        UPGRADECOST_EFFICIENCY3 = COMMON_BUILDER.comment("Cost per block for Efficiency 3 upgrade")
+                .defineInRange("upgradeEfficiency3", 30, 0, Integer.MAX_VALUE);
+        UPGRADECOST_EFFICIENCY4 = COMMON_BUILDER.comment("Cost per block for Efficiency 4 upgrade")
+                .defineInRange("upgradeEfficiency4", 40, 0, Integer.MAX_VALUE);
+        UPGRADECOST_EFFICIENCY5 = COMMON_BUILDER.comment("Cost per block for Efficiency 5 upgrade")
+                .defineInRange("upgradeEfficiency5", 50, 0, Integer.MAX_VALUE);
+        UPGRADECOST_LIGHT = COMMON_BUILDER.comment("Cost per Light Block placed")
+                .defineInRange("upgradeLight", 100, 0, Integer.MAX_VALUE);
+        UPGRADECOST_FREEZE = COMMON_BUILDER.comment("Cost per block Frozen")
+                .defineInRange("upgradeFreeze", 100, 0, Integer.MAX_VALUE);
+        UPGRADECOST_BATTERY1 = COMMON_BUILDER.comment("Capacity Boost from Battery 1 Upgrade")
+                .defineInRange("battery1", 2000000, 0, Integer.MAX_VALUE);
+        UPGRADECOST_BATTERY2 = COMMON_BUILDER.comment("Capacity Boost from Battery 2 Upgrade")
+                .defineInRange("battery2", 5000000, 0, Integer.MAX_VALUE);
+        UPGRADECOST_BATTERY3 = COMMON_BUILDER.comment("Capacity Boost from Battery 3 Upgrade")
+                .defineInRange("battery3", 10000000, 0, Integer.MAX_VALUE);
 
         COMMON_BUILDER.pop();
     }
