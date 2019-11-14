@@ -22,7 +22,7 @@ public class PacketUpdateUpgrade {
     }
 
     public static PacketUpdateUpgrade decode(PacketBuffer buffer) {
-        return new PacketUpdateUpgrade(buffer.readString());
+        return new PacketUpdateUpgrade(buffer.readString(100));
     }
 
     public static class Handler {

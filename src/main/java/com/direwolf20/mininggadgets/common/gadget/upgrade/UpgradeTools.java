@@ -63,7 +63,7 @@ public class UpgradeTools {
         list.forEach( e -> {
             CompoundNBT compound = (CompoundNBT) e;
             if( compound.getString(KEY_UPGRADE).equals(upgrade.getName()) )
-                compound.putBoolean(KEY_ENABLED, upgrade.isEnabled());
+                compound.putBoolean(KEY_ENABLED, !upgrade.isEnabled());
         });
     }
 
