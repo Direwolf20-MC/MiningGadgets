@@ -58,7 +58,11 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.item.upgrades", "Current Upgrades:");
 
         // Screen Buttons and text
-        addPrefixed("tooltip.screen.size", "Size %1$d x %1$d");
+        addPrefixed("tooltip.screen.size", "Size: %1$d x %1$d");
+        addPrefixed("tooltip.screen.range", "Range");
+        addPrefixed("tooltip.screen.visuals_menu", "Show Visuals Menu");
+        addPrefixed("tooltip.screen.mining_gadget", "Mining Gadget");
+        addPrefixed("tooltip.screen.toggle_upgrades", "Toggle Upgrades");
     }
 
     /**

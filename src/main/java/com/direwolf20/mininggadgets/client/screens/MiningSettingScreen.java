@@ -60,9 +60,10 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
         });
 
         addButton(sizeButton);
-        addButton(new GuiSlider(baseX - (150 / 2), baseY - 25, 150, 20, "Range: ", "", 0, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this));
+        addButton(new GuiSlider(baseX - (150 / 2), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.range").getUnformattedComponentText() + ": ", "", 0, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {
+        }, this));
 
-        visualButton = new Button(baseX - (150 / 2), baseY - 0, 150, 20, "Open Visuals Menu", (button) -> {
+        visualButton = new Button(baseX - (150 / 2), baseY - 0, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.visuals_menu").getUnformattedComponentText(), (button) -> {
             ModScreens.openVisualSettingsScreen(gadget);
         });
         addButton(visualButton);
@@ -88,8 +89,8 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
 
-        drawCenteredString(getMinecraft().fontRenderer, "Mining Gadget", (width / 2), (height / 2) - 70, Color.WHITE.getRGB());
-        drawCenteredString(getMinecraft().fontRenderer, "Toggle Upgrades", (width / 2), (height / 2) + 20, Color.WHITE.getRGB());
+        drawCenteredString(getMinecraft().fontRenderer, new TranslationTextComponent("mininggadgets.tooltip.screen.mining_gadget").getUnformattedComponentText(), (width / 2), (height / 2) - 70, Color.WHITE.getRGB());
+        drawCenteredString(getMinecraft().fontRenderer, new TranslationTextComponent("mininggadgets.tooltip.screen.toggle_upgrades").getUnformattedComponentText(), (width / 2), (height / 2) + 20, Color.WHITE.getRGB());
 
         this.children.forEach(e -> {
             if( !(e instanceof ToggleButton) )

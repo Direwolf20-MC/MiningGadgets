@@ -30,7 +30,11 @@
   "mininggadgets.gadget.range_change": "Range Change: %1$d x %1$d",
   "mininggadgets.tooltip.item.show_upgrades": "Hold %s to show upgrades",
   "mininggadgets.tooltip.item.upgrades": "Current Upgrades:",
-  "mininggadgets.tooltip.screen.size": "Size %1$d x %1$d",
+  "mininggadgets.tooltip.screen.mining_gadget": "Mining Gadget",
+  "mininggadgets.tooltip.screen.range": "Range",
+  "mininggadgets.tooltip.screen.size": "Size: %1$d x %1$d",
+  "mininggadgets.tooltip.screen.toggle_upgrades": "Toggle Upgrades",
+  "mininggadgets.tooltip.screen.visuals_menu": "Show Visuals Menu",
   "mininggadgets.tooltip.single.insert": "Insert",
   "mininggadgets.upgrade.replacement": "Upgrade: "
 }
