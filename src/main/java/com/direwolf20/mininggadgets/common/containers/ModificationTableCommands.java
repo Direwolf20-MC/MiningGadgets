@@ -77,8 +77,12 @@ public class ModificationTableCommands {
                 return;
 
             UpgradeTools.removeUpgrade(laser, upgrade);
-            if( isShiftHeld )
-                player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
+            if (isShiftHeld) {
+                boolean success = player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
+                if (!success) {
+                    container.putStackInSlot(1, new ItemStack(upgrade.getCard(), 1));
+                }
+            }
             else
                 container.putStackInSlot(1, new ItemStack(upgrade.getCard(), 1));
 
