@@ -26,6 +26,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
     private Button sizeButton;
     private Button visualButton;
     private int beamRange = 0;
+    private GuiSlider rangeSlider;
 
     public MiningSettingScreen(ItemStack gadget) {
         super(new StringTextComponent("title"));
@@ -60,8 +61,9 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
         });
 
         addButton(sizeButton);
-        addButton(new GuiSlider(baseX - (150 / 2), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.range").getUnformattedComponentText() + ": ", "", 0, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {
-        }, this));
+        rangeSlider = new GuiSlider(baseX - (150 / 2), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.range").getUnformattedComponentText() + ": ", "", 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {
+        }, this);
+        addButton(rangeSlider);
 
         visualButton = new Button(baseX - (150 / 2), baseY - 0, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.visuals_menu").getUnformattedComponentText(), (button) -> {
             ModScreens.openVisualSettingsScreen(gadget);
@@ -124,6 +126,13 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
 
     @Override
     public void onChangeSliderValue(GuiSlider slider) {
-        this.beamRange = slider.getValueInt();
+        //Future proofing for other potential sliders
+        if (slider.equals(rangeSlider))
+            this.beamRange = slider.getValueInt();
+    }
+
+    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+        rangeSlider.dragging = false;
+        return false;
     }
 }

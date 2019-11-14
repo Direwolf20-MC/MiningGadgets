@@ -117,4 +117,14 @@ public class MiningVisualsScreen extends Screen implements GuiSlider.ISlider {
             this.blue_inner = slider.getValueInt();
         }
     }
+
+    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+        sliderRedInner.dragging = false;
+        sliderGreenInner.dragging = false;
+        sliderBlueInner.dragging = false;
+        sliderRedOuter.dragging = false;
+        sliderGreenOuter.dragging = false;
+        sliderBlueOuter.dragging = false;
+        return false;
+    }
 }
