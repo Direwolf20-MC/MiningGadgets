@@ -71,6 +71,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.screen.green_outer", "Green Outer");
         addPrefixed("tooltip.screen.blue_outer", "Blue Outer");
         addPrefixed("tooltip.screen.visual_settings", "Visual Settings");
+        addPrefixed("tooltip.screen.toggle_upgrades", "Upgrade Toggles");
     }
 
     /**
