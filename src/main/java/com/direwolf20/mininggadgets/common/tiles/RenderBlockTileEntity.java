@@ -259,15 +259,19 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
                 // If silk is in the upgrades, apply it without a tier.
                 if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
-                    tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-                    silk = 1;
+                    if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+                        tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+                        silk = 1;
+                    }
                 }
 
                 // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-                Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
-                if( upgrade.isPresent() ) {
-                    fortune = upgrade.get().getTier();
-                    tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
+                if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
+                    Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+                    if (upgrade.isPresent()) {
+                        fortune = upgrade.get().getTier();
+                        tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
+                    }
                 }
 
                 List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);

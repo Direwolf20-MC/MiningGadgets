@@ -269,7 +269,7 @@ public class MiningGadget extends Item {
             // As all upgrade types with tiers contain the same name, we can check for a single
             // type in the enum and produce a result that we can then pull the tier from
             int efficiency = 0;
-            if (UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).isPresent())
+            if (UpgradeTools.containsActiveUpgrade((stack), Upgrade.EFFICIENCY_1))
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
             float hardness = getHardness(coords, (PlayerEntity) player, efficiency);

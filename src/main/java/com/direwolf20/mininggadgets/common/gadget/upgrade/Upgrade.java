@@ -17,7 +17,7 @@ public enum Upgrade {
     //Blank
     EMPTY("empty", 0, false),
 
-    SILK("silk", Config.UPGRADECOST_SILKTOUCH.get()),
+    SILK("silk", Config.UPGRADECOST_SILKTOUCH.get(), true),
     VOID_JUNK("void_junk", Config.UPGRADECOST_VOID.get()),
     MAGNET("magnet", Config.UPGRADECOST_MAGNET.get()),
     THREE_BY_THREE("three_by_three", 0, false),
@@ -26,9 +26,9 @@ public enum Upgrade {
     HEATSINK("heatsink", Config.UPGRADECOST_HEATSINK.get(), false),
 
     // Tiered
-    FORTUNE_1("fortune_1", 1, Config.UPGRADECOST_FORTUNE1.get()),
-    FORTUNE_2("fortune_2", 2, Config.UPGRADECOST_FORTUNE2.get()),
-    FORTUNE_3("fortune_3", 3, Config.UPGRADECOST_FORTUNE3.get()),
+    FORTUNE_1("fortune_1", 1, Config.UPGRADECOST_FORTUNE1.get(), true),
+    FORTUNE_2("fortune_2", 2, Config.UPGRADECOST_FORTUNE2.get(), true),
+    FORTUNE_3("fortune_3", 3, Config.UPGRADECOST_FORTUNE3.get(), true),
 
     BATTERY_1("battery_1", 1, 0),
     BATTERY_2("battery_2", 2, 0),
@@ -38,11 +38,11 @@ public enum Upgrade {
     RANGE_2("range_2", 2, 0),
     RANGE_3("range_3", 3, 0),
 
-    EFFICIENCY_1("efficiency_1", 1, Config.UPGRADECOST_EFFICIENCY1.get()),
-    EFFICIENCY_2("efficiency_2", 2, Config.UPGRADECOST_EFFICIENCY2.get()),
-    EFFICIENCY_3("efficiency_3", 3, Config.UPGRADECOST_EFFICIENCY3.get()),
-    EFFICIENCY_4("efficiency_4", 4, Config.UPGRADECOST_EFFICIENCY4.get()),
-    EFFICIENCY_5("efficiency_5", 5, Config.UPGRADECOST_EFFICIENCY5.get());
+    EFFICIENCY_1("efficiency_1", 1, Config.UPGRADECOST_EFFICIENCY1.get(), true),
+    EFFICIENCY_2("efficiency_2", 2, Config.UPGRADECOST_EFFICIENCY2.get(), true),
+    EFFICIENCY_3("efficiency_3", 3, Config.UPGRADECOST_EFFICIENCY3.get(), true),
+    EFFICIENCY_4("efficiency_4", 4, Config.UPGRADECOST_EFFICIENCY4.get(), true),
+    EFFICIENCY_5("efficiency_5", 5, Config.UPGRADECOST_EFFICIENCY5.get(), true);
 
     private String name;
     private String baseName;
