@@ -78,7 +78,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
     private boolean toggleUpgrade(Upgrade upgrade, boolean update) {
         // When the button is clicked we toggle
         if( update ) {
-            upgrade.setEnabled(!upgrade.isEnabled());
+            //upgrade.setEnabled(!upgrade.isEnabled());
             PacketHandler.sendToServer(new PacketUpdateUpgrade(upgrade.getName()));
         }
 
