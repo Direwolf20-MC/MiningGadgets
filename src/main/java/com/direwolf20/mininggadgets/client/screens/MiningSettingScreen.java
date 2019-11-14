@@ -14,6 +14,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.config.GuiSlider;
 
 import java.awt.*;
@@ -49,11 +50,11 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
             index ++;
         }
 
-        sizeButton = new Button(baseX - (150 / 2), baseY - 50, 150, 20, String.format("Size: %1$d x %1$d", MiningProperties.getRange(gadget)), (button) -> {
-            if( MiningProperties.getRange(gadget) == 1 )
-                button.setMessage(String.format("Size: %1$d x %1$d", 3));
+        sizeButton = new Button(baseX - (150 / 2), baseY - 50, 150, 20, String.format(new TranslationTextComponent("mininggadgets.tooltip.screen.size", MiningProperties.getRange(gadget)).getUnformattedComponentText()), (button) -> {
+            if (sizeButton.getMessage().contains("1"))
+                button.setMessage(String.format(new TranslationTextComponent("mininggadgets.tooltip.screen.size", 3).getUnformattedComponentText()));
             else
-                button.setMessage(String.format("Size: %1$d x %1$d", 1));
+                button.setMessage(String.format(new TranslationTextComponent("mininggadgets.tooltip.screen.size", 1).getUnformattedComponentText()));
 
             PacketHandler.sendToServer(new PacketChangeMiningSize());
         });
