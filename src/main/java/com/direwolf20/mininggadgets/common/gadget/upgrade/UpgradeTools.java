@@ -89,6 +89,28 @@ public class UpgradeTools {
         return functionalUpgrades;
     }
 
+    public static List<Upgrade> getActiveUpgradesFromTag(CompoundNBT tagCompound) {
+        ListNBT upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+
+        List<Upgrade> functionalUpgrades = new ArrayList<>();
+        if (upgrades.isEmpty())
+            return functionalUpgrades;
+
+        for (int i = 0; i < upgrades.size(); i++) {
+            CompoundNBT tag = upgrades.getCompound(i);
+
+            Upgrade type = getUpgradeByName(tag.getString(KEY_UPGRADE));
+            if (type == null)
+                continue;
+
+            type.setEnabled(!tag.contains(KEY_ENABLED) || tag.getBoolean(KEY_ENABLED));
+            if (type.isEnabled())
+                functionalUpgrades.add(type);
+        }
+
+        return functionalUpgrades;
+    }
+
     @Nullable
     public static Upgrade getUpgradeByName(String name) {
         // If the name doesn't exist then move on
@@ -104,6 +126,11 @@ public class UpgradeTools {
     public static List<Upgrade> getUpgrades(ItemStack tool) {
         CompoundNBT tagCompound = tool.getOrCreateTag();
         return getUpgradesFromTag(tagCompound);
+    }
+
+    public static List<Upgrade> getActiveUpgrades(ItemStack tool) {
+        CompoundNBT tagCompound = tool.getOrCreateTag();
+        return getActiveUpgradesFromTag(tagCompound);
     }
 
     public static boolean containsUpgrades(ItemStack tool) {

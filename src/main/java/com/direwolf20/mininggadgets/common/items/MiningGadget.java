@@ -337,7 +337,7 @@ public class MiningGadget extends Item {
 
     public static int getEnergyCost(ItemStack stack) {
         int cost = Config.MININGGADGET_BASECOST.get();
-        List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
+        List<Upgrade> upgrades = UpgradeTools.getActiveUpgrades(stack);
         if (upgrades.isEmpty())
             return cost;
 
