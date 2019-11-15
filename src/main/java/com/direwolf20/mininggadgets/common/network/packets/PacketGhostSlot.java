@@ -40,10 +40,8 @@ public class PacketGhostSlot {
                     return;
 
                 Slot slot = container.inventorySlots.get(msg.slotNumber);
-                if (slot instanceof GhostSlot) {
+                if (slot instanceof GhostSlot)
                     slot.putStack(msg.stack);
-                    System.out.println("Stack added to ghost slot");
-                }
             });
 
             ctx.get().setPacketHandled(true);

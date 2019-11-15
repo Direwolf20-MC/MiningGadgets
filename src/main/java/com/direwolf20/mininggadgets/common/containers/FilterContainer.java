@@ -3,36 +3,35 @@ package com.direwolf20.mininggadgets.common.containers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-public class MiningContainer extends Container {
-    MiningContainer(int windowId, PlayerInventory playerInventory, PacketBuffer buf) {
+public class FilterContainer extends Container {
+    FilterContainer(int windowId, PlayerInventory playerInventory, PacketBuffer buf) {
         this(windowId, playerInventory, new ItemStackHandler(30));
     }
 
-    public MiningContainer(int windowId, PlayerInventory playerInventory, IItemHandler ghostInventory) {
+    public FilterContainer(int windowId, PlayerInventory playerInventory, IItemHandler ghostInventory) {
         super(ModContainers.FILTER_CONTAINER.get(), windowId);
-        this.setup(playerInventory, 8, 84, ghostInventory);
+        this.setup(new InvWrapper(playerInventory), ghostInventory);
     }
 
-    private void setup(PlayerInventory playerInventory, int left, int top, IItemHandler ghostInventory) {
-        IItemHandler playerInventory1 = new InvWrapper(playerInventory);
-
+    private void setup(InvWrapper playerInventory, IItemHandler ghostInventory) {
         int index = 0;
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 9; y ++) {
-                addSlot(new GhostSlot(ghostInventory, index , left + (18 * y), top - 84 + (x * 18)));
+                addSlot(new GhostSlot(ghostInventory, index , 8 + (18 * y), 18 + (x * 18)));
                 index ++;
             }
         }
 
         // Player inventory
-        addSlotBox(playerInventory1, 9, left, top, 9, 18, 3, 18);
-        addSlotRange(playerInventory1, 0, left, top + 58, 9, 18);
+        addSlotBox(playerInventory, 9, 8, 85, 9, 18, 3, 18);
+        addSlotRange(playerInventory, 0, 8, 143, 9, 18);
     }
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
@@ -53,4 +52,9 @@ public class MiningContainer extends Container {
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) { return true; }
+
+    @Override
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+        return ItemStack.EMPTY;
+    }
 }

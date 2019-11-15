@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.network.packets;
 
-import com.direwolf20.mininggadgets.common.containers.MiningContainer;
+import com.direwolf20.mininggadgets.common.containers.FilterContainer;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
@@ -43,7 +43,7 @@ public class PacketOpenFilterContainer {
 
                 ghostInventory.deserializeNBT(stack.getOrCreateChildTag("filter"));
                 sender.openContainer(new SimpleNamedContainerProvider(
-                        (windowId, playerInventory, playerEntity) -> new MiningContainer(windowId, playerInventory, ghostInventory), new StringTextComponent("")
+                        (windowId, playerInventory, playerEntity) -> new FilterContainer(windowId, playerInventory, ghostInventory), new StringTextComponent("")
                 ));
             });
 
