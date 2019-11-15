@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
@@ -29,7 +30,7 @@ public class RenderMiningLaser {
     private final static ResourceLocation laserBeamGlow = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser_glow.png");
 
     public static void renderLaser(PlayerEntity player, float ticks) {
-        ItemStack stack = player.getActiveItemStack();
+        ItemStack stack = MiningGadget.getGadget(player);
         int range = MiningProperties.getBeamRange(stack);
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
         Vec3d playerPos = player.getEyePosition(ticks);
@@ -52,8 +53,15 @@ public class RenderMiningLaser {
     }
 
     private static void drawLasers(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
-        Hand activeHand = player.getActiveHand();
-        ItemStack stack = player.getActiveItemStack();
+        Hand activeHand;
+        if (player.getHeldItemMainhand().getItem() instanceof MiningGadget) {
+            activeHand = Hand.MAIN_HAND;
+        } else if (player.getHeldItemOffhand().getItem() instanceof MiningGadget) {
+            activeHand = Hand.OFF_HAND;
+        } else {
+            return;
+        }
+        ItemStack stack = player.getHeldItem(activeHand);
         Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
         double distance = from.subtract(to).length();
         long gameTime = player.world.getGameTime();
