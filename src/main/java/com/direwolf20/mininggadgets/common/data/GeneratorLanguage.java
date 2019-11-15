@@ -54,14 +54,15 @@ public class GeneratorLanguage extends LanguageProvider {
 
         // Tooltips?
         addPrefixed("tooltip.single.insert", "Insert");
+        addPrefixed("tooltip.single.filters", "Filters");
         addPrefixed("tooltip.item.show_upgrades","Hold %s to show upgrades");
         addPrefixed("tooltip.item.upgrades", "Current Upgrades:");
 
         // Screen Buttons and text
         addPrefixed("tooltip.screen.size", "Size: %1$d x %1$d");
         addPrefixed("tooltip.screen.range", "Range");
-        addPrefixed("tooltip.screen.visuals_menu", "Show Visuals Menu");
-        addPrefixed("tooltip.screen.mining_gadget", "Mining Gadget");
+        addPrefixed("tooltip.screen.visuals_menu", "Edit Visuals");
+        addPrefixed("tooltip.screen.mining_gadget", "Gadget Settings");
         addPrefixed("tooltip.screen.shrink", "Shrink Blocks");
         addPrefixed("tooltip.screen.fade", "Fade Blocks");
         addPrefixed("tooltip.screen.red_inner", "Red Inner");
@@ -71,7 +72,11 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.screen.green_outer", "Green Outer");
         addPrefixed("tooltip.screen.blue_outer", "Blue Outer");
         addPrefixed("tooltip.screen.visual_settings", "Visual Settings");
-        addPrefixed("tooltip.screen.toggle_upgrades", "Upgrade Toggles");
+        addPrefixed("tooltip.screen.toggle_upgrades", "Toggle Upgrades");
+        addPrefixed("tooltip.screen.edit_filters", "Edit Filters");
+        addPrefixed("tooltip.screen.no_upgrades", "No Upgrades available");
+        addPrefixed("tooltip.screen.whitelist", "Whitelist active");
+        addPrefixed("tooltip.screen.blacklist", "Blacklist active");
     }
 
     /**
