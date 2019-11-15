@@ -40,7 +40,6 @@ public class MiningGadgets
         }
     };
 
-
     public MiningGadgets() {
         IEventBus event = FMLJavaModLoadingContext.get().getModEventBus();
 
@@ -52,8 +51,6 @@ public class MiningGadgets
         ModContainers.CONTAINERS.register(event);
 
         event.addListener(this::setup);
-        event.addListener(this::enqueueIMC);
-        event.addListener(this::processIMC);
         event.addListener(this::setupClient);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
@@ -82,29 +79,6 @@ public class MiningGadgets
         // Register the container screens.
         ClientSetup.setup();
     }
-
-    @SubscribeEvent
-    public void onServerStarting(FMLServerStartingEvent event) {}
-
-    /**
-     * Intermod communication
-     */
-    // Register the enqueueIMC method for modloading
-    private void enqueueIMC(final InterModEnqueueEvent event)
-    {
-        // some example code to dispatch IMC to another mod
-        InterModComms.sendTo(MOD_ID, "helloworld", () -> { LOGGER.info("Hello world from the MDK"); return "Hello world";});
-    }
-
-    // Register the processIMC method for modloading
-    private void processIMC(final InterModProcessEvent event)
-    {
-        // some example code to receive and process InterModComms from other mods
-        LOGGER.info("Got IMC {}", event.getIMCStream().
-                map(m->m.getMessageSupplier().get()).
-                collect(Collectors.toList()));
-    }
-
 
     public static Logger getLogger() {
         return LOGGER;
