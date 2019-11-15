@@ -1,17 +1,17 @@
 modLoader="javafml"
 loaderVersion="[28,)"
-issueTrackerURL="${mod_issues}"
+issueTrackerURL="https://github.com/Direwolf20-MC/MiningGadgets"
 
 [[mods]]
-modId="${mod_id}"
+modId="mininggadgets"
 version="${version}"
-displayName="${mod_name}"
-updateJSONURL="${mod_updatejson}"
-displayURL="${mod_url}"
+displayName="Mining Gadgets"
+updateJSONURL="https://raw.githubusercontent.com/Direwolf20-MC/MiningGadgets/master/update.json"
+displayURL="https://github.com/Direwolf20-MC/MiningGadgets/"
 logoFile="mininggadgets-logo.png"
-credits="${mod_credits}"
-authors="${mod_authors}"
-description='''${mod_description}'''
+credits="CPW and Lex for making Forge the best API ever!!"
+authors="Direwolf20"
+description='''Mining is better with lasers.'''
 
 #forge
 [[dependencies.mininggadgets]]

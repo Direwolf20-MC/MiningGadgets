@@ -59,20 +59,6 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if(group == MiningGadgets.itemGroup)
-        {
-            items.add(new ItemStack(this));
-
-            ItemStack full = new ItemStack(this);
-            full.getCapability(CapabilityEnergy.ENERGY, null).ifPresent(energy -> {
-                energy.receiveEnergy(energyCapacity, false);
-                items.add(full);
-            });
-        }
-    }
-
-    @Override
     public int getMaxDamage(ItemStack stack) {
         return this.energyCapacity;
     }
