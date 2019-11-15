@@ -1,7 +1,9 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
+import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.ModItems;
@@ -47,6 +49,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private List<Upgrade> gadgetUpgrades;
     private boolean packetReceived = false;
     private int totalAge;
+    private MiningProperties.BreakTypes breakType;
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE.get());
@@ -58,6 +61,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public BlockState getRenderBlock() {
         return renderBlock;
+    }
+
+    public MiningProperties.BreakTypes getBreakType() {
+        return breakType;
+    }
+
+    public void setBreakType(MiningProperties.BreakTypes breakType) {
+        this.breakType = breakType;
     }
 
     public void justSetDurability(int dur) {
@@ -89,15 +100,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
             IFluidState state = world.getFluidState(sidePos);
+            int freezeCost = Config.UPGRADECOST_FREEZE.get() * -1;
             if (state.getFluid().isEquivalentTo(Fluids.LAVA) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.OBSIDIAN.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
             } else if (state.getFluid().isEquivalentTo(Fluids.WATER) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.PACKED_ICE.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
             } else if ((state.getFluid().isEquivalentTo(Fluids.WATER) || state.getFluid().isEquivalentTo(Fluids.LAVA)) && !state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.COBBLESTONE.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
             }
         }
     }
@@ -220,6 +232,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         ticksSinceMine = tag.getInt("ticksSinceMine");
         playerUUID = tag.getUniqueId("playerUUID");
         gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
+        breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
     }
 
     @Override
@@ -231,6 +244,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("ticksSinceMine", ticksSinceMine);
         tag.putUniqueId("playerUUID", playerUUID);
         tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
+        tag.putByte("breakType", (byte) breakType.ordinal());
         return super.write(tag);
     }
 
@@ -245,15 +259,19 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
                 // If silk is in the upgrades, apply it without a tier.
                 if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
-                    tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-                    silk = 1;
+                    if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+                        tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+                        silk = 1;
+                    }
                 }
 
                 // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-                Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
-                if( upgrade.isPresent() ) {
-                    fortune = upgrade.get().getTier();
-                    tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
+                if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
+                    Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+                    if (upgrade.isPresent()) {
+                        fortune = upgrade.get().getTier();
+                        tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
+                    }
                 }
 
                 List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
@@ -340,4 +358,5 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             ticksSinceMine++;
         }
     }
+
 }

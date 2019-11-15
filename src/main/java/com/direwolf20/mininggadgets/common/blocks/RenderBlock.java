@@ -10,6 +10,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -69,5 +71,11 @@ public class RenderBlock extends Block {
     @Override
     public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return 0;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public float func_220080_a(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return 1.0f;
     }
 }

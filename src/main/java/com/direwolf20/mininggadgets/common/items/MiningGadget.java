@@ -58,6 +58,8 @@ public class MiningGadget extends Item {
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
+    //TODO Add an override for onCreated and initialize all NBT Tags in it
+
     @Override
     public int getMaxDamage(ItemStack stack) {
         return this.energyCapacity;
@@ -166,12 +168,13 @@ public class MiningGadget extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
-        if (world.isRemote)
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
 
         // Only perform the shift action
         if (player.isSneaking())
             return this.onItemShiftRightClick(world, player, hand, itemstack);
+
+        if (world.isRemote)
+            return new ActionResult<>(ActionResultType.PASS, itemstack);
 
         if (!canMine(itemstack, world))
             return new ActionResult<>(ActionResultType.FAIL, itemstack);
@@ -182,14 +185,14 @@ public class MiningGadget extends Item {
 
     private ActionResult<ItemStack> onItemShiftRightClick(World world, PlayerEntity player, Hand hand, ItemStack itemstack) {
         // Debug code for free energy
-        itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
+        //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
 
 //        if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
 //            changeRange(itemstack);
 //            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
 //        }
-
-        ModScreens.openGadgetSettingsScreen(itemstack);
+        if (world.isRemote)
+            ModScreens.openGadgetSettingsScreen(itemstack);
 
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
@@ -264,7 +267,7 @@ public class MiningGadget extends Item {
             // As all upgrade types with tiers contain the same name, we can check for a single
             // type in the enum and produce a result that we can then pull the tier from
             int efficiency = 0;
-            if (UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).isPresent())
+            if (UpgradeTools.containsActiveUpgrade((stack), Upgrade.EFFICIENCY_1))
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
             float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
@@ -282,6 +285,7 @@ public class MiningGadget extends Item {
                     world.setBlockState(coord, ModBlocks.RENDER_BLOCK.get().getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
                     te.setRenderBlock(state);
+                    te.setBreakType(MiningProperties.getBreakType(stack));
                     te.setGadgetUpgrades(gadgetUpgrades);
                     te.setPriorDurability((int) hardness + 1);
                     te.setOriginalDurability((int) hardness + 1);
@@ -324,14 +328,14 @@ public class MiningGadget extends Item {
 
             if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
                 world.setBlockState(pos, ModBlocks.MINERS_LIGHT.get().getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(-100, false));
+                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
             }
         }
     }
 
     public static int getEnergyCost(ItemStack stack) {
         int cost = Config.MININGGADGET_BASECOST.get();
-        List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
+        List<Upgrade> upgrades = UpgradeTools.getActiveUpgrades(stack);
         if (upgrades.isEmpty())
             return cost;
 

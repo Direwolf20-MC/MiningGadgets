@@ -56,6 +56,22 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.single.insert", "Insert");
         addPrefixed("tooltip.item.show_upgrades","Hold %s to show upgrades");
         addPrefixed("tooltip.item.upgrades", "Current Upgrades:");
+
+        // Screen Buttons and text
+        addPrefixed("tooltip.screen.size", "Size: %1$d x %1$d");
+        addPrefixed("tooltip.screen.range", "Range");
+        addPrefixed("tooltip.screen.visuals_menu", "Show Visuals Menu");
+        addPrefixed("tooltip.screen.mining_gadget", "Mining Gadget");
+        addPrefixed("tooltip.screen.shrink", "Shrink Blocks");
+        addPrefixed("tooltip.screen.fade", "Fade Blocks");
+        addPrefixed("tooltip.screen.red_inner", "Red Inner");
+        addPrefixed("tooltip.screen.green_inner", "Green Inner");
+        addPrefixed("tooltip.screen.blue_inner", "Blue Inner");
+        addPrefixed("tooltip.screen.red_outer", "Red Outer");
+        addPrefixed("tooltip.screen.green_outer", "Green Outer");
+        addPrefixed("tooltip.screen.blue_outer", "Blue Outer");
+        addPrefixed("tooltip.screen.visual_settings", "Visual Settings");
+        addPrefixed("tooltip.screen.toggle_upgrades", "Upgrade Toggles");
     }
 
     /**

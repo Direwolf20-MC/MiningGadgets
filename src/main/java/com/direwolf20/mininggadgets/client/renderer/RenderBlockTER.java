@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
+import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
@@ -15,10 +16,8 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.IEnviromentBlockReader;
 import org.lwjgl.opengl.GL14;
 
 import java.util.List;
@@ -69,6 +68,10 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         BlockState renderState = tile.getRenderBlock();
 
+        // We're checking here as sometimes the tile can not have a render block as it's yet to be synced
+        if( renderState == null )
+            return;
+
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
@@ -80,39 +83,64 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         //GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
         //todo Have the gadget have an option for fading/shrinking blocks in the table.
-
+        MiningProperties.BreakTypes breakType = tile.getBreakType();
         GlStateManager.translated(x, y, z);
-        GlStateManager.translatef((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
-        GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.scalef(scale, scale, scale);
-        //scale = (scale < 0.1f) ? 0.1f : scale;
-        //scale = MathHelper.lerp(scale, 0.5f, 1.0f);
-        GL14.glBlendColor(1F, 1F, 1F, 1f); //Set the alpha of the blocks we are rendering
-        try {
-            IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
-            Random random = new Random(42L);
-            BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-            int color = blockColors.getColor(renderState, (IEnviromentBlockReader) null, (BlockPos) null, 0);
-            float f = (float) (color >> 16 & 255) / 255.0F;
-            float f1 = (float) (color >> 8 & 255) / 255.0F;
-            float f2 = (float) (color & 255) / 255.0F;
-            blockrendererdispatcher.renderBlockBrightness(renderState, 1.0f);
-            for (Direction direction : Direction.values()) {
-                if (!(getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                    //renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, random));
+
+        IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
+        //Random random = new Random();
+        BlockColors blockColors = Minecraft.getInstance().getBlockColors();
+
+        int color = blockColors.getColor(renderState, tile.getWorld(), tile.getPos(), 0);
+
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
+
+        if (breakType == MiningProperties.BreakTypes.SHRINK) {
+            GlStateManager.translatef((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
+            GlStateManager.scalef(scale, scale, scale);
+            GL14.glBlendColor(1F, 1F, 1F, 1f); //Set the alpha of the blocks we are rendering
+            try {
+                for (Direction direction : Direction.values()) {
+                    renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
+                }
+            } catch (Throwable t) {
+                Tessellator tessellator = Tessellator.getInstance();
+                BufferBuilder bufferBuilder = tessellator.getBuffer();
+                try {
+                    // If the buffer is already not drawing then it'll throw
+                    // and IllegalStateException... Very rare
+                    bufferBuilder.finishDrawing();
+                } catch (IllegalStateException ex) {
+
                 }
             }
-        } catch (Throwable t) {
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferBuilder = tessellator.getBuffer();
+        } else if (breakType == MiningProperties.BreakTypes.FADE) {
+            //scale = (scale < 0.1f) ? 0.1f : scale;
+            scale = MathHelper.lerp(scale, 0.1f, 1.0f);
+            GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
+            GlStateManager.depthMask(false);
             try {
-                // If the buffer is already not drawing then it'll throw
-                // and IllegalStateException... Very rare
-                bufferBuilder.finishDrawing();
-            } catch (IllegalStateException ex) {
+                for (Direction direction : Direction.values()) {
+                    if (!(getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
+                        renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
+                    }
+                }
+            } catch (Throwable t) {
+                Tessellator tessellator = Tessellator.getInstance();
+                BufferBuilder bufferBuilder = tessellator.getBuffer();
+                try {
+                    // If the buffer is already not drawing then it'll throw
+                    // and IllegalStateException... Very rare
+                    bufferBuilder.finishDrawing();
+                } catch (IllegalStateException ex) {
 
+                }
             }
+            GlStateManager.depthMask(true);
         }
+
+
         //Disable blend
         //GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

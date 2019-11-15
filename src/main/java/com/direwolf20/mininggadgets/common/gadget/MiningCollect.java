@@ -3,13 +3,13 @@ package com.direwolf20.mininggadgets.common.gadget;
 import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.DoorBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -71,6 +71,10 @@ public class MiningCollect {
         // No TE's
         TileEntity te = world.getTileEntity(pos);
         if (te != null && !(te instanceof RenderBlockTileEntity))
+            return false;
+
+        // Ignore Doors because they are special snowflakes
+        if (state.getBlock() instanceof DoorBlock)
             return false;
 
         //Ignore our Miners Light Block

@@ -15,8 +15,54 @@ public class MiningProperties {
     private static final String KEY_MAX_BEAM_RANGE = "maxBeamRange";
     private static final String KEY_RANGE = "range";
     private static final String KEY_SPEED = "speed";
+    private static final String BREAK_TYPE = "breakType";
+    public static final String COLOR_RED = "colorRed";
+    public static final String COLOR_GREEN = "colorGreen";
+    public static final String COLOR_BLUE = "colorBlue";
+    public static final String COLOR_RED_INNER = "colorRedInner";
+    public static final String COLOR_GREEN_INNER = "colorGreenInner";
+    public static final String COLOR_BLUE_INNER = "colorBlueInner";
 
     public static final int MIN_RANGE = 5;
+
+    public enum BreakTypes {
+        SHRINK,
+        FADE
+    }
+
+    public static short getColor(ItemStack gadget, String color) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        if (color == COLOR_RED || color.contains("Inner")) {
+            return !compound.contains(color) ? setColor(gadget, (short) 255, color) : compound.getShort(color);
+        } else {
+            return !compound.contains(color) ? setColor(gadget, (short) 0, color) : compound.getShort(color);
+        }
+    }
+
+    public static short setColor(ItemStack gadget, short colorValue, String color) {
+        gadget.getOrCreateTag().putShort(color, colorValue);
+        return colorValue;
+    }
+
+    public static BreakTypes setBreakType(ItemStack gadget, BreakTypes breakType) {
+        gadget.getOrCreateTag().putByte(BREAK_TYPE, (byte) breakType.ordinal());
+        return breakType;
+    }
+
+    public static void nextBreakType(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        if (compound.contains(BREAK_TYPE)) {
+            int type = getBreakType(gadget).ordinal() == BreakTypes.values().length - 1 ? 0 : getBreakType(gadget).ordinal() + 1;
+            setBreakType(gadget, BreakTypes.values()[type]);
+        } else {
+            setBreakType(gadget, BreakTypes.FADE);
+        }
+    }
+
+    public static BreakTypes getBreakType(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        return !compound.contains(BREAK_TYPE) ? setBreakType(gadget, BreakTypes.SHRINK) : BreakTypes.values()[compound.getByte(BREAK_TYPE)];
+    }
 
     public static int setSpeed(ItemStack gadget, int speed) {
         gadget.getOrCreateTag().putInt(KEY_SPEED, speed);
