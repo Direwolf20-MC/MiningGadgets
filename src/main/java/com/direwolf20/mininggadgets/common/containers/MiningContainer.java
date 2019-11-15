@@ -3,43 +3,41 @@ package com.direwolf20.mininggadgets.common.containers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import javax.annotation.Nullable;
-
 public class MiningContainer extends Container {
-    private IItemHandler playerInventory;
-    private ItemStack gadget;
-
-    public MiningContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
-        this(windowId, playerInventory, extraData.readItemStack());
+    MiningContainer(int windowId, PlayerInventory playerInventory, PacketBuffer buf) {
+        this(windowId, playerInventory, new ItemStackHandler(30));
     }
 
-    public MiningContainer(int windowId, PlayerInventory playerInventory, ItemStack gadget) {
+    public MiningContainer(int windowId, PlayerInventory playerInventory, IItemHandler ghostInventory) {
         super(ModContainers.FILTER_CONTAINER.get(), windowId);
-        this.setup(playerInventory, 8, 84, gadget);
+        this.setup(playerInventory, 8, 84, ghostInventory);
     }
 
-    private void setup(PlayerInventory playerInventory, int left, int top, ItemStack gadget) {
-        this.playerInventory = new InvWrapper(playerInventory);
-        this.gadget = gadget;
-        System.out.println(this.gadget);
+    private void setup(PlayerInventory playerInventory, int left, int top, IItemHandler ghostInventory) {
+        IItemHandler playerInventory1 = new InvWrapper(playerInventory);
+
+        int index = 0;
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 9; y ++) {
+                addSlot(new GhostSlot(ghostInventory, index , left + (18 * y), top - 84 + (x * 18)));
+                index ++;
+            }
+        }
 
         // Player inventory
-        addSlotBox(this.playerInventory, 9, left, top, 9, 18, 3, 18);
-        addSlotRange(this.playerInventory, 0, left, top + 58, 9, 18);
+        addSlotBox(playerInventory1, 9, left, top, 9, 18, 3, 18);
+        addSlotRange(playerInventory1, 0, left, top + 58, 9, 18);
     }
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0; i < amount; i++) {
-            addSlot(new GhostSlot(handler, index, x, y));
+            addSlot(new SlotItemHandler(handler, index, x, y));
             x += dx;
             index++;
         }

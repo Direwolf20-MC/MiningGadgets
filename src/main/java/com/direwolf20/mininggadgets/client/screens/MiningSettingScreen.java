@@ -2,26 +2,21 @@ package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.screens.widget.ToggleButton;
-import com.direwolf20.mininggadgets.common.containers.MiningContainer;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeMiningSize;
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeRange;
+import com.direwolf20.mininggadgets.common.network.packets.PacketOpenFilterContainer;
 import com.direwolf20.mininggadgets.common.network.packets.PacketUpdateUpgrade;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.client.config.GuiSlider;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.awt.*;
 import java.util.List;
@@ -77,7 +72,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
 
         // Temp placement
         addButton(new Button(baseX - 150 - 70, baseY + 15, 70, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.open_filters").getUnformattedComponentText(), (button) -> {
-            openFilters(getMinecraft().world, getMinecraft().player, gadget);
+            PacketHandler.sendToServer(new PacketOpenFilterContainer());
         }));
 
         // Button logic
@@ -112,13 +107,6 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
             if( mouseX > btn.x && mouseX < btn.x + btn.getWidth() && mouseY > btn.y && mouseY < btn.y + btn.getHeight() )
                 renderTooltip(btn.getTooltip(), mouseX, (height / 2) + 90);
         });
-    }
-
-    public void openFilters(World world, PlayerEntity player, ItemStack gadget) {
-        if (!world.isRemote && player instanceof ServerPlayerEntity)
-            NetworkHooks.openGui((ServerPlayerEntity) player, new SimpleNamedContainerProvider(
-                    (windowId, playerInventory, playerEntity) -> new MiningContainer(windowId, playerInventory, gadget), new StringTextComponent("")
-            ));
     }
 
     @Override

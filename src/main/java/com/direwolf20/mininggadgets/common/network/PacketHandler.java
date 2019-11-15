@@ -38,6 +38,7 @@ public class PacketHandler {
         registerMessage(PacketChangeBreakType.class, PacketChangeBreakType::encode, PacketChangeBreakType::decode, PacketChangeBreakType.Handler::handle);
         registerMessage(PacketChangeColor.class, PacketChangeColor::encode, PacketChangeColor::decode, PacketChangeColor.Handler::handle);
         registerMessage(PacketGhostSlot.class, PacketGhostSlot::encode, PacketGhostSlot::decode, PacketGhostSlot.Handler::handle);
+        registerMessage(PacketOpenFilterContainer.class, PacketOpenFilterContainer::encode, PacketOpenFilterContainer::decode, PacketOpenFilterContainer.Handler::handle);
 
         //Client Side
         registerMessage(PacketDurabilitySync.class, PacketDurabilitySync::encode, PacketDurabilitySync::decode, PacketDurabilitySync.Handler::handle);
