@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.client.screens;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.MiningContainer;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -10,11 +11,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 public class FilterScreen extends ContainerScreen<MiningContainer> {
+    // Stealing the normal chest gui, should make this a tad simpler.
+    private static final ResourceLocation TEXTURE =  new ResourceLocation("textures/gui/container/generic_54.png");
+
     private ItemStack stack;
 
     public FilterScreen(MiningContainer container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-
 
     }
 
@@ -43,7 +46,20 @@ public class FilterScreen extends ContainerScreen<MiningContainer> {
     @Override
     public void init() {
         super.init();
-//        buttonInsert = addButton(createAndAddButton(27, 5, 14, 10, "<-", (button) -> PacketHandler.sendToServer(new PacketInsertUpgrade(tePos))));
-//        buttonExtract = addButton(createAndAddButton(27, 15, 14, 10, "->", (button) -> PacketHandler.sendToServer(new PacketExtractUpgrade(tePos))));
+    }
+
+    @Override
+    public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
+        return super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
+    }
+
+    @Override
+    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+        return super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_);
+    }
+
+    @Override
+    public boolean mouseScrolled(double p_mouseScrolled_1_, double p_mouseScrolled_3_, double p_mouseScrolled_5_) {
+        return false;
     }
 }

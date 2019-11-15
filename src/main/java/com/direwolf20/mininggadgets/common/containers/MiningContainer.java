@@ -39,7 +39,7 @@ public class MiningContainer extends Container {
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0; i < amount; i++) {
-            addSlot(new SlotItemHandler(handler, index, x, y));
+            addSlot(new GhostSlot(handler, index, x, y));
             x += dx;
             index++;
         }
@@ -55,22 +55,4 @@ public class MiningContainer extends Container {
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) { return true; }
-
-    // Apparently containers that don't belong to tiles require a provider
-    public static class MiningProvider implements INamedContainerProvider {
-        private ItemStack gadget;
-
-        public MiningProvider(ItemStack gadget) {
-            this.gadget = gadget;
-        }
-
-        @Override
-        public ITextComponent getDisplayName() { return new StringTextComponent(""); }
-
-        @Nullable
-        @Override
-        public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-            return new MiningContainer(i, playerInventory, this.gadget);
-        }
-    }
 }
