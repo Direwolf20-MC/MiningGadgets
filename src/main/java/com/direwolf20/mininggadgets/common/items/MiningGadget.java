@@ -156,7 +156,7 @@ public class MiningGadget extends Item {
 
     @Override
     public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
-        return UpgradeTools.containsUpgrade(oldStack, Upgrade.HEATSINK);
+        return true;
     }
 
     @Override
