@@ -394,6 +394,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             if( blockAllowed )
                 break;
 
+            if( !isWhiteList && filters.size() == 0 ) {
+                blockAllowed = true;
+                break;
+            }
+
             for(ItemStack stack : filters) {
                 if( isWhiteList && stack.isItemEqual(dropStack)) {
                     blockAllowed = true;
