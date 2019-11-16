@@ -104,14 +104,11 @@ public class MiningGadget extends Item {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         Minecraft mc = Minecraft.getInstance();
 
-        if(!InputMappings.isKeyDown(mc.mainWindow.getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode()))
-        {
+        if (!InputMappings.isKeyDown(mc.mainWindow.getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode())) {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
                     mc.gameSettings.keyBindSneak.getLocalizedName().toLowerCase())
                     .applyTextStyle(TextFormatting.GRAY));
-        }
-        else
-        {
+        } else {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").applyTextStyle(TextFormatting.AQUA));
             if (!(upgrades.isEmpty())) {
                 for (Upgrade upgrade : upgrades) {
@@ -125,8 +122,8 @@ public class MiningGadget extends Item {
         stack.getCapability(CapabilityEnergy.ENERGY, null)
                 .ifPresent(energy -> tooltip.add(
                         new TranslationTextComponent("mininggadgets.gadget.energy",
-                                        MiscTools.tidyValue(energy.getEnergyStored()),
-                                        MiscTools.tidyValue(energy.getMaxEnergyStored())).applyTextStyles(TextFormatting.GREEN)));
+                                MiscTools.tidyValue(energy.getEnergyStored()),
+                                MiscTools.tidyValue(energy.getMaxEnergyStored())).applyTextStyles(TextFormatting.GREEN)));
     }
 
     public static void changeRange(ItemStack tool) {
@@ -295,7 +292,7 @@ public class MiningGadget extends Item {
                     te.setOriginalDurability((int) hardness + 1);
                     te.setDurability((int) hardness, stack);
                     te.setPlayer((PlayerEntity) player);
-
+                    te.setBlockAllowed();
                     //}
                 } else {
                     //if (!world.isRemote) {

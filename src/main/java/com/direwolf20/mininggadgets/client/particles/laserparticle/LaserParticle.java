@@ -1,8 +1,6 @@
 package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.block.BlockState;
@@ -18,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Tags;
 
 import java.util.UUID;
 
@@ -72,7 +69,7 @@ public class LaserParticle extends BreakingParticle {
         RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(new BlockPos(this.posX, this.posY, this.posZ));
         if (te != null) {
             playerUUID = te.getPlayerUUID();
-            voiding = (UpgradeTools.containsActiveUpgradeFromList(te.getGadgetUpgrades(), Upgrade.VOID_JUNK) && !te.getRenderBlock().isIn(Tags.Blocks.ORES));
+            voiding = !te.getBlockAllowed();
         }
         sourceX = d;
         sourceY = d1;
