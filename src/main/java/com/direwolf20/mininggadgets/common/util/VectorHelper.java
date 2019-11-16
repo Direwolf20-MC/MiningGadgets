@@ -8,6 +8,10 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+/**
+ * Todo: note: all of this can be replaced with the vanilla implementation. The vanilla implementation is using an
+ *       obfuscated method so an actiontransformer will be needed to make it nice.
+ */
 public class VectorHelper {
     public static BlockRayTraceResult getLookingAt(PlayerEntity player, ItemStack tool, int range) {
         return getLookingAt(player, RayTraceContext.FluidMode.NONE, range);

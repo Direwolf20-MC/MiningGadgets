@@ -12,6 +12,10 @@ import com.direwolf20.mininggadgets.common.items.UpgradeCard;
  * tiers as a whole. It also keeps things tidy :+1:
  *
  * @implNote all upgrades will always be active by default
+ *
+ * @implNote Ideally this will be replaced with an actual class based system based on an
+ *           abstract upgrade to allow for custom upgrades to be added in via some kind
+ *           of api package.
  */
 public enum Upgrade {
     //Blank
