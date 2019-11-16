@@ -122,20 +122,16 @@ public class MiningProperties {
         return !compound.contains(KEY_WHITELIST) ? setWhitelist(gadget, true) : compound.getBoolean(KEY_WHITELIST);
     }
 
-//    setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : stacks.size());
-//    ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
-//        for (int i = 0; i < tagList.size(); i++)
-//    {
-//        CompoundNBT itemTags = tagList.getCompound(i);
-//        int slot = itemTags.getInt("Slot");
-//
-//        if (slot >= 0 && slot < stacks.size())
-//        {
-//            stacks.set(slot, ItemStack.read(itemTags));
-//        }
-//    }
-//    onLoad();
-
+    /**
+     * So this is a bit fun, because we only need the items in our list we're ditching half the data
+     * that the `Items` actually contains.
+     *
+     * @implNote Please do not use {@link #deserializeItemStackList(CompoundNBT)} or {@link #serializeItemStackList(List)}
+     *           if you wish to maintain the original tag data on the gadget. These have specific uses.
+     *
+     *           See {@link com.direwolf20.mininggadgets.common.network.packets.PacketOpenFilterContainer.Handler} for an
+     *           understanding on why you shouldn't change the tad data on the gadget directly.
+     */
     public static List<ItemStack> getFiltersAsList(ItemStack gadget) {
         return deserializeItemStackList(gadget.getOrCreateChildTag(MiningProperties.KEY_FILTERS));
     }
