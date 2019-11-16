@@ -8,6 +8,7 @@ import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -87,17 +88,17 @@ public class RenderMiningLaser {
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color4f(r, g, b, 0.7f);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeamGlow);
-        drawBeam(xOffset, yOffset, zOffset, additiveThickness, activeHand, distance, wr, 0.5, 1);
+        drawBeam(xOffset, yOffset, zOffset, additiveThickness, activeHand, distance, wr, 0.5, 1, ticks);
 
         // main laser, colored part
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color3f(r, g, b);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam2);
-        drawBeam(xOffset, yOffset, zOffset, thickness, activeHand, distance, wr, v, v + distance * 1.5);
+        drawBeam(xOffset, yOffset, zOffset, thickness, activeHand, distance, wr, v, v + distance * 1.5, ticks);
         // white core
         GlStateManager.color3f(MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam);
-        drawBeam(xOffset, yOffset, zOffset, thickness / 2, activeHand, distance, wr, v, v + distance * 1.5);
+        drawBeam(xOffset, yOffset, zOffset, thickness / 2, activeHand, distance, wr, v, v + distance * 1.5, ticks);
 
         GlStateManager.enableDepthTest();
         GlStateManager.enableCull();
@@ -108,10 +109,16 @@ public class RenderMiningLaser {
         return 0.9f + 0.1f * MathHelper.sin(gameTime * 0.99f) * MathHelper.sin(gameTime * 0.3f) * MathHelper.sin(gameTime * 0.1f);
     }
 
-    private static void drawBeam(double xOffset, double yOffset, double zOffset, float thickness, Hand hand, double distance, BufferBuilder wr, double v1, double v2) {
-        double startXOffset = -0.35;
-        double startYOffset = -.135;
-        double startZOffset = 0.5;
+    private static void drawBeam(double xOffset, double yOffset, double zOffset, float thickness, Hand hand, double distance, BufferBuilder wr, double v1, double v2, float ticks) {
+        float startXOffset = -0.25f;
+        float startYOffset = -.115f;
+        float startZOffset = 0.65f;
+
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        float f = (MathHelper.lerp(ticks, player.prevRotationPitch, player.rotationPitch) - MathHelper.lerp(ticks, player.prevRenderArmPitch, player.renderArmPitch));
+        float f1 = (MathHelper.lerp(ticks, player.prevRotationYaw, player.rotationYaw) - MathHelper.lerp(ticks, player.prevRenderArmYaw, player.renderArmYaw));
+        startXOffset = startXOffset + (f1 / 1000);
+        startYOffset = startYOffset + (f / 1000);
 
         wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         if (hand == Hand.MAIN_HAND) {
@@ -120,7 +127,7 @@ public class RenderMiningLaser {
             wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v2).endVertex();
             wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v1).endVertex();
         } else {
-            startYOffset = -.165;
+            startYOffset = -.165f;
             wr.pos(-startXOffset, thickness + startYOffset, startZOffset).tex(0, v1).endVertex();
             wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v2).endVertex();
             wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v2).endVertex();
