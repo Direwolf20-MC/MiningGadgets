@@ -45,7 +45,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
         // Filters out the non-toggleable options
         toggleableList.clear();
         toggleableList = UpgradeTools.getUpgrades(this.gadget).stream().filter(Upgrade::isToggleable).collect(Collectors.toList());
-        boolean containsVoid = UpgradeTools.containsActiveUpgradeFromList(toggleableList, Upgrade.VOID_JUNK);
+        boolean containsVoid = UpgradeTools.containsUpgradeFromList(toggleableList, Upgrade.VOID_JUNK);
 
         isWhitelist = MiningProperties.getWhiteList(gadget);
 
