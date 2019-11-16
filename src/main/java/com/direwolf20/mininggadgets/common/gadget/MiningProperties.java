@@ -2,6 +2,11 @@ package com.direwolf20.mininggadgets.common.gadget;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Slightly nicer way of storing properties on the gadget. Still no where near what I'd
@@ -17,6 +22,8 @@ public class MiningProperties {
     private static final String KEY_RANGE = "range";
     private static final String KEY_SPEED = "speed";
     private static final String BREAK_TYPE = "breakType";
+
+    public static final String KEY_FILTERS = "filters";
     public static final String COLOR_RED = "colorRed";
     public static final String COLOR_GREEN = "colorGreen";
     public static final String COLOR_BLUE = "colorBlue";
@@ -113,5 +120,53 @@ public class MiningProperties {
     public static boolean getWhiteList(ItemStack gadget) {
         CompoundNBT compound = gadget.getOrCreateTag();
         return !compound.contains(KEY_WHITELIST) ? setWhitelist(gadget, true) : compound.getBoolean(KEY_WHITELIST);
+    }
+
+//    setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : stacks.size());
+//    ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
+//        for (int i = 0; i < tagList.size(); i++)
+//    {
+//        CompoundNBT itemTags = tagList.getCompound(i);
+//        int slot = itemTags.getInt("Slot");
+//
+//        if (slot >= 0 && slot < stacks.size())
+//        {
+//            stacks.set(slot, ItemStack.read(itemTags));
+//        }
+//    }
+//    onLoad();
+
+    public static List<ItemStack> getFiltersAsList(ItemStack gadget) {
+        return deserializeItemStackList(gadget.getOrCreateChildTag(MiningProperties.KEY_FILTERS));
+    }
+
+    // mostly stolen from ItemStackHandler
+    public static List<ItemStack> deserializeItemStackList(CompoundNBT nbt) {
+        List<ItemStack> stacks = new ArrayList<>();
+        ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
+
+        for (int i = 0; i < tagList.size(); i++) {
+            CompoundNBT itemTags = tagList.getCompound(i);
+            stacks.add(ItemStack.read(itemTags));
+        }
+
+        return stacks;
+    }
+
+    public static CompoundNBT serializeItemStackList(List<ItemStack> stacks) {
+        ListNBT nbtTagList = new ListNBT();
+        for (int i = 0; i < stacks.size(); i++)
+        {
+            if (stacks.get(i).isEmpty())
+                continue;
+
+            CompoundNBT itemTag = new CompoundNBT();
+            stacks.get(i).write(itemTag);
+            nbtTagList.add(itemTag);
+        }
+
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.put("Items", nbtTagList);
+        return nbt;
     }
 }

@@ -3,8 +3,6 @@ package com.direwolf20.mininggadgets.common.util;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -17,7 +15,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.Tags;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -55,9 +52,12 @@ public class BlockOverlayRender {
                 GlStateManager.translatef(-0.005f, -0.005f, -0.005f);
                 GlStateManager.scalef(1.01f, 1.01f, 1.01f);
                 GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-                if (UpgradeTools.containsActiveUpgrade(item, Upgrade.VOID_JUNK) && !mc.world.getBlockState(e).isIn(Tags.Blocks.ORES))
-                    BlockOverlayRender.render(e, tessellator, buffer, Color.RED);
-                else
+//              Removed as we'd have to build the tool and check all the upgrades etc on a single tick. Todo: cache most of it?
+//                if ( UpgradeTools.containsActiveUpgrade(item, Upgrade.VOID_JUNK) ) {
+//
+//                    BlockOverlayRender.render(e, tessellator, buffer, Color.RED);
+//                }
+//                else
                     BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
                 GlStateManager.popMatrix();
             }
