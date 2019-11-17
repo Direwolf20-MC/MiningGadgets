@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 /**
  * Complete props and thanks to @amadones for their awesome implementation of this system
@@ -18,8 +19,6 @@ import net.minecraft.util.text.ITextComponent;
 public class FilterScreen extends ContainerScreen<FilterContainer> {
     // Stealing the normal chest gui, should make this a tad simpler.
     private static final ResourceLocation TEXTURE =  new ResourceLocation("textures/gui/container/generic_54.png");
-
-    private ItemStack stack;
 
     public FilterScreen(FilterContainer container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
@@ -34,7 +33,7 @@ public class FilterScreen extends ContainerScreen<FilterContainer> {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        font.drawString("Filters", 8, 6, 4210752);
+        font.drawString(new TranslationTextComponent("mininggadgets.tooltip.single.filters").getUnformattedComponentText(), 8, 6, 4210752);
         font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8, (this.ySize - 96 + 3), 4210752);
     }
 

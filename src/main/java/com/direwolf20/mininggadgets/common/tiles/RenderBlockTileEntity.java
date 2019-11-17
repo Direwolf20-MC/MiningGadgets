@@ -24,7 +24,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
 
@@ -47,9 +46,12 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private Random rand = new Random();
     private int ticksSinceMine = 0;
     private List<Upgrade> gadgetUpgrades;
+    private List<ItemStack> gadgetFilters;
+    private boolean gadgetIsWhitelist;
     private boolean packetReceived = false;
     private int totalAge;
     private MiningProperties.BreakTypes breakType;
+    private boolean blockAllowed;
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE.get());
@@ -193,6 +195,22 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         this.gadgetUpgrades = gadgetUpgrades;
     }
 
+    public List<ItemStack> getGadgetFilters() {
+        return gadgetFilters;
+    }
+
+    public void setGadgetFilters(List<ItemStack> gadgetFilters) {
+        this.gadgetFilters = gadgetFilters;
+    }
+
+    public boolean isGadgetIsWhitelist() {
+        return gadgetIsWhitelist;
+    }
+
+    public void setGadgetIsWhitelist(boolean gadgetIsWhitelist) {
+        this.gadgetIsWhitelist = gadgetIsWhitelist;
+    }
+
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         // Vanilla uses the type parameter to indicate which type of tile entity (command block, skull, or beacon?) is receiving the packet, but it seems like Forge has overridden this behavior
@@ -233,6 +251,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         playerUUID = tag.getUniqueId("playerUUID");
         gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
         breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
+        gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"));
+        gadgetIsWhitelist = tag.getBoolean("gadgetIsWhitelist");
+        blockAllowed = tag.getBoolean("blockAllowed");
     }
 
     @Override
@@ -245,6 +266,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putUniqueId("playerUUID", playerUUID);
         tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
         tag.putByte("breakType", (byte) breakType.ordinal());
+        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
+        tag.putBoolean("gadgetIsWhitelist", isGadgetIsWhitelist());
+        tag.putBoolean("blockAllowed", blockAllowed);
         return super.write(tag);
     }
 
@@ -254,30 +278,30 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             if (player == null) return;
             int silk = 0;
             int fortune = 0;
-            if (!(UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.VOID_JUNK)) || renderBlock.isIn(Tags.Blocks.ORES)) {
-                ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
 
-                // If silk is in the upgrades, apply it without a tier.
-                if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
-                    if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
-                        tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-                        silk = 1;
-                    }
+            ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
+
+            // If silk is in the upgrades, apply it without a tier.
+            if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+                tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+                silk = 1;
+            }
+
+            // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
+            if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
+                Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+                if (upgrade.isPresent()) {
+                    fortune = upgrade.get().getTier();
+                    tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
                 }
+            }
 
-                // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-                if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
-                    Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
-                    if (upgrade.isPresent()) {
-                        fortune = upgrade.get().getTier();
-                        tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
-                    }
-                }
+            List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
 
-                List<ItemStack> blockDrops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
+            if ( blockAllowed ) {
                 int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
                 boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
-                for (ItemStack drop : blockDrops) {
+                for (ItemStack drop : drops) {
                     if (drop != null) {
                         if (magnetMode) {
                             if (!player.addItemStackToInventory(drop)) {
@@ -297,6 +321,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                     //world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
                 }
             }
+
             world.removeTileEntity(this.pos);
             world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
         }
@@ -359,4 +384,66 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
+    public static boolean blockAllowed(List<ItemStack> drops, List<ItemStack> filters, boolean isWhiteList) {
+        boolean blockAllowed = false;
+        for (ItemStack dropStack : drops) {
+            if( blockAllowed )
+                break;
+
+            if( !isWhiteList && filters.size() == 0 ) {
+                blockAllowed = true;
+                break;
+            }
+
+            for(ItemStack stack : filters) {
+                if( isWhiteList && stack.isItemEqual(dropStack)) {
+                    blockAllowed = true;
+                    break;
+                }
+
+                if( !isWhiteList && !stack.isItemEqual(dropStack)) {
+                    blockAllowed = true;
+                    break;
+                }
+            }
+        }
+
+        return blockAllowed;
+    }
+
+    public void setBlockAllowed() {
+        if (!UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.VOID_JUNK)) {
+            this.blockAllowed = true;
+            return;
+        }
+        PlayerEntity player = world.getPlayerByUuid(playerUUID);
+        if (player == null) return;
+        int silk = 0;
+        int fortune = 0;
+
+        ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
+
+        // If silk is in the upgrades, apply it without a tier.
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+            tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+            silk = 1;
+        }
+
+        // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
+            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+            if (upgrade.isPresent()) {
+                fortune = upgrade.get().getTier();
+                tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
+            }
+        }
+
+        List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
+
+        this.blockAllowed = blockAllowed(drops, getGadgetFilters(), isGadgetIsWhitelist());
+    }
+
+    public boolean getBlockAllowed() {
+        return blockAllowed;
+    }
 }
