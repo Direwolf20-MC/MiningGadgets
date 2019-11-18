@@ -109,6 +109,7 @@ public class MiningGadget extends Item {
                     mc.gameSettings.keyBindSneak.getLocalizedName().toLowerCase())
                     .applyTextStyle(TextFormatting.GRAY));
         } else {
+            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).applyTextStyle(TextFormatting.RED));
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").applyTextStyle(TextFormatting.AQUA));
             if (!(upgrades.isEmpty())) {
                 for (Upgrade upgrade : upgrades) {
