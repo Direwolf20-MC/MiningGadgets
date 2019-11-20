@@ -28,6 +28,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
     private int beamRange = 0;
     private int currentSize = 1;
     private boolean isWhitelist = true;
+    private boolean isPrecision = true;
     private GuiSlider rangeSlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
 
@@ -48,6 +49,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
         boolean containsVoid = UpgradeTools.containsUpgradeFromList(toggleableList, Upgrade.VOID_JUNK);
 
         isWhitelist = MiningProperties.getWhiteList(gadget);
+        isPrecision = MiningProperties.getPrecisionMode(gadget);
 
         // Remove 6 from x to center it as the padding on the right pushes off center... (I'm a ui nerd)
         int index = 0, x = baseX + 10, y = baseY - (containsVoid ? 20 : 50);
@@ -75,6 +77,13 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
         addButton(rangeSlider);
         addButton(new Button(baseX - 135, baseY, 115, 20, getTrans("tooltip.screen.visuals_menu"), (button) -> {
             ModScreens.openVisualSettingsScreen(gadget);
+        }));
+
+        //Precision Mode
+        addButton(new Button(baseX - 135, baseY + 25, 115, 20, getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
+            isPrecision = !isPrecision;
+            button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
+            PacketHandler.sendToServer(new PacketTogglePrecision());
         }));
 
         // Don't add if we don't have voids

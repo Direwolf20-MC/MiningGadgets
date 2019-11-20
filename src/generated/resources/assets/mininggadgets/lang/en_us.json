@@ -43,6 +43,7 @@
   "mininggadgets.tooltip.screen.green_outer": "Green Outer",
   "mininggadgets.tooltip.screen.mining_gadget": "Gadget Settings",
   "mininggadgets.tooltip.screen.no_upgrades": "No Upgrades available",
+  "mininggadgets.tooltip.screen.precision_mode": "Precision Mode: %1$d",
   "mininggadgets.tooltip.screen.range": "Range",
   "mininggadgets.tooltip.screen.red_inner": "Red Inner",
   "mininggadgets.tooltip.screen.red_outer": "Red Outer",

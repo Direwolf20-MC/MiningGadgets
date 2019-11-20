@@ -25,6 +25,8 @@ public class MiningProperties {
     private static final String KEY_RANGE = "range";
     private static final String KEY_SPEED = "speed";
     private static final String BREAK_TYPE = "breakType";
+    private static final String CAN_MINE = "canMine";
+    private static final String PRECISION_MODE = "precisionMode";
 
     public static final String KEY_FILTERS = "filters";
     public static final String COLOR_RED = "colorRed";
@@ -123,6 +125,26 @@ public class MiningProperties {
     public static boolean getWhiteList(ItemStack gadget) {
         CompoundNBT compound = gadget.getOrCreateTag();
         return !compound.contains(KEY_WHITELIST) ? setWhitelist(gadget, true) : compound.getBoolean(KEY_WHITELIST);
+    }
+
+    public static boolean setCanMine(ItemStack gadget, boolean canMine) {
+        gadget.getOrCreateTag().putBoolean(CAN_MINE, canMine);
+        return canMine;
+    }
+
+    public static boolean getCanMine(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        return !compound.contains(CAN_MINE) ? setCanMine(gadget, true) : compound.getBoolean(CAN_MINE);
+    }
+
+    public static boolean setPrecisionMode(ItemStack gadget, boolean precisionMode) {
+        gadget.getOrCreateTag().putBoolean(PRECISION_MODE, precisionMode);
+        return precisionMode;
+    }
+
+    public static boolean getPrecisionMode(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        return !compound.contains(PRECISION_MODE) ? setPrecisionMode(gadget, false) : compound.getBoolean(PRECISION_MODE);
     }
 
     /**

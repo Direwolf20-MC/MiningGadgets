@@ -191,6 +191,8 @@ public class MiningGadget extends Item {
 //            changeRange(itemstack);
 //            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
 //        }
+        if (!world.isRemote)
+            MiningProperties.setCanMine(itemstack, true);
         if (world.isRemote)
             ModScreens.openGadgetSettingsScreen(itemstack);
 
@@ -246,6 +248,8 @@ public class MiningGadget extends Item {
 
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
+        if (!MiningProperties.getCanMine(stack))
+            return;
         //Server and Client side
         World world = player.world;
 
@@ -309,6 +313,8 @@ public class MiningGadget extends Item {
                             player.resetActiveHand();
                         }
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
+                        if (MiningProperties.getPrecisionMode(stack))
+                            MiningProperties.setCanMine(stack, false);
                     }
                     te.setDurability(durability, stack);
                     //}
@@ -377,7 +383,8 @@ public class MiningGadget extends Item {
         if (entityLiving instanceof PlayerEntity) {
             entityLiving.resetActiveHand();
         }
-
+        if (!worldIn.isRemote)
+            MiningProperties.setCanMine(stack, true);
         /*if (!(worldIn.isRemote)) {
             BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) entityLiving, RayTraceContext.FluidMode.NONE);
             if (lookingAt == null || (worldIn.getBlockState(VectorHelper.getLookingAt((PlayerEntity) entityLiving, stack).getPos()) == Blocks.AIR.getDefaultState()))

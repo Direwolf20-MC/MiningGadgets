@@ -32,6 +32,8 @@ public class RenderMiningLaser {
 
     public static void renderLaser(PlayerEntity player, float ticks) {
         ItemStack stack = MiningGadget.getGadget(player);
+        if (!MiningProperties.getCanMine(stack))
+            return;
         int range = MiningProperties.getBeamRange(stack);
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
         Vec3d playerPos = player.getEyePosition(ticks);
