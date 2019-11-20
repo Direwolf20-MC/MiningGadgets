@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.common.items;
 import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.util.MiscTools;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
@@ -14,6 +15,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class UpgradeCard extends Item {
     private Upgrade upgrade;
@@ -26,6 +28,7 @@ public class UpgradeCard extends Item {
             int cost = upgrade.getCostPerBlock();
             if (cost > 0)
                 tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrade_cost", cost).applyTextStyle(TextFormatting.AQUA));
+
             cost = 0;
             if (upgrade == Upgrade.LIGHT_PLACER)
                 cost = Config.UPGRADECOST_LIGHT.get();
@@ -33,15 +36,12 @@ public class UpgradeCard extends Item {
                 cost = Config.UPGRADECOST_FREEZE.get();
             if (cost > 0)
                 tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.use_cost", cost).applyTextStyle(TextFormatting.AQUA));
-            cost = 0;
-            if (upgrade == Upgrade.BATTERY_1)
-                cost = Config.UPGRADECOST_BATTERY1.get();
-            if (upgrade == Upgrade.BATTERY_2)
-                cost = Config.UPGRADECOST_BATTERY2.get();
-            if (upgrade == Upgrade.BATTERY_3)
-                cost = Config.UPGRADECOST_BATTERY3.get();
-            if (cost > 0)
-                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.battery_boost", MiscTools.tidyValue(cost)).applyTextStyle(TextFormatting.AQUA));
+
+            if( upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()) ) {
+                UpgradeBatteryLevels.getBatteryByLevel(upgrade.getTier()).ifPresent(e -> {
+                    tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.battery_boost", MiscTools.tidyValue(e.getPower())).applyTextStyle(TextFormatting.AQUA));
+                });
+            }
         }
 
     }
