@@ -64,7 +64,13 @@ public class EventRenderSpecificHand
 
             // Render gun
             GlStateManager.pushMatrix();
-            GlStateManager.translatef(rightHand ? 1.1f:-.25f, -.28f, -.75f);
+
+            GlStateManager.translatef(f * (f2 + 0.64000005F - .1f), f3 + -0.4F + equipProgress * -0.6F,
+                    f4 + -0.71999997F - 0.1f);
+            GlStateManager.rotatef(f * f6 * 70.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotatef(f * f5 * -20.0F, 0.0F, 0.0F, 1.0F);
+
+            GlStateManager.translatef(rightHand ? .5f:.3f, .17f, .08f);
             GlStateManager.scalef(1.15f, 1.15f, 1.15f);
 
             FirstPersonRenderer firstPersonRenderer = mc.getFirstPersonRenderer();
