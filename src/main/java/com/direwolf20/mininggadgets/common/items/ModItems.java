@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.client.renderer.RenderMiningGadget;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import net.minecraft.item.BlockItem;
@@ -50,4 +51,6 @@ public class ModItems {
     public static final RegistryObject<Item> EFFICIENCY_3 =     UPGRADE_ITEMS.register("upgrade_efficiency_3", Upgrade.EFFICIENCY_3::getCard);
     public static final RegistryObject<Item> EFFICIENCY_4 =     UPGRADE_ITEMS.register("upgrade_efficiency_4", Upgrade.EFFICIENCY_4::getCard);
     public static final RegistryObject<Item> EFFICIENCY_5 =     UPGRADE_ITEMS.register("upgrade_efficiency_5", Upgrade.EFFICIENCY_5::getCard);
+
+
 }

@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.common.items;
 import com.direwolf20.mininggadgets.Config;
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
+import com.direwolf20.mininggadgets.client.renderer.RenderMiningGadget;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
@@ -18,6 +19,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.InputMappings;
@@ -41,6 +43,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -49,6 +53,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 public class MiningGadget extends Item {
     private int energyCapacity;
@@ -56,7 +62,7 @@ public class MiningGadget extends Item {
     //private static int energyPerItem = 15;
 
     public MiningGadget() {
-        super(new Item.Properties().maxStackSize(1).group(MiningGadgets.itemGroup));
+        super(new Item.Properties().maxStackSize(1).group(MiningGadgets.itemGroup).setTEISR( () -> () -> getRenderer()));
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
@@ -403,5 +409,11 @@ public class MiningGadget extends Item {
             }
         }
         return heldItem;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static ItemStackTileEntityRenderer getRenderer()
+    {
+                return new RenderMiningGadget();
     }
 }

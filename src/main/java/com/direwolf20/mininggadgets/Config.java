@@ -54,7 +54,6 @@ public class Config {
 
         COMMON_BUILDER.pop();
 
-
         COMMON_CONFIG = COMMON_BUILDER.build();
         CLIENT_CONFIG = CLIENT_BUILDER.build();
     }
@@ -121,13 +120,10 @@ public class Config {
     }
 
     @SubscribeEvent
-    public static void onLoad(final ModConfig.Loading configEvent) {
-
-    }
+    public static void onLoad(final ModConfig.Loading configEvent) {}
 
     @SubscribeEvent
-    public static void onReload(final ModConfig.ConfigReloading configEvent) {
-    }
+    public static void onReload(final ModConfig.ConfigReloading configEvent) {}
 
 
 }

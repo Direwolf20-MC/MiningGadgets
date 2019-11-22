@@ -1,6 +1,6 @@
 {
+	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "mininggadgets:item/gadget/power",
 		"2": "mininggadgets:item/gadget/coolant",
 		"3": "mininggadgets:item/gadget/red",
 		"4": "mininggadgets:item/gadget/gray",
@@ -397,45 +397,6 @@
 				"up": {"uv": [8, 6, 10.247, 9.247], "texture": "#6"},
 				"down": {"uv": [8, 6, 10.247, 9.247], "texture": "#6"}
 			}
-		},
-		{
-			"from": [5.5, 6.25, 7.5],
-			"to": [7.25, 8, 8],
-			"rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8]},
-			"faces": {
-				"north": {"uv": [10.75, 6.249, 5.5, 2], "texture": "#6"},
-				"east": {"uv": [10.75, 6.249, 5.5, 2], "texture": "#6"},
-				"south": {"uv": [10.75, 6.249, 5.5, 2], "texture": "#6"},
-				"west": {"uv": [10.75, 6.249, 5.5, 2], "texture": "#6"},
-				"up": {"uv": [10.75, 6.249, 5.5, 2], "texture": "#6"},
-				"down": {"uv": [10.75, 6.249, 5.5, 2], "texture": "#6"}
-			}
-		},
-		{
-			"from": [5.75, 6.5, 8],
-			"to": [7, 7.75, 11.5],
-			"rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8]},
-			"faces": {
-				"north": {"uv": [0, 0, 5.5, 16], "texture": "#1"},
-				"east": {"uv": [0, 0, 4.499, 15.999], "rotation": 270, "texture": "#1"},
-				"south": {"uv": [0, 0, 5.5, 16], "texture": "#1"},
-				"west": {"uv": [0, 0, 5.5, 16], "rotation": 90, "texture": "#1"},
-				"up": {"uv": [0, 0, 5.5, 16], "rotation": 180, "texture": "#1"},
-				"down": {"uv": [0, 0, 5.5, 16], "texture": "#1"}
-			}
-		},
-		{
-			"from": [5.5, 6.25, 11.5],
-			"to": [7.25, 8, 12],
-			"rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8]},
-			"faces": {
-				"north": {"uv": [7.999, 8.249, 4.75, 5], "texture": "#6"},
-				"east": {"uv": [7.999, 8.249, 4.75, 5], "texture": "#6"},
-				"south": {"uv": [7.999, 8.249, 4.75, 5], "texture": "#6"},
-				"west": {"uv": [7.999, 8.249, 4.75, 5], "texture": "#6"},
-				"up": {"uv": [7.999, 8.249, 4.75, 5], "texture": "#6"},
-				"down": {"uv": [7.999, 8.249, 4.75, 5], "texture": "#6"}
-			}
 		}
 	],
 	"display": {
@@ -474,7 +435,7 @@
 		{
 			"name": "power core",
 			"origin": [8, 8, 8],
-			"children": [30, 31, 32]
+			"children": []
 		}
 	]
 }
