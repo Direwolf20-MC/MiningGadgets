@@ -25,7 +25,7 @@ public class EnergisedItem extends EnergyStorage {
         this.capacity = max;
 
         // Ensure the current stored energy is up to date with the new max.
-        this.receiveEnergy(1500, false);
+        this.receiveEnergy(1, false);
     }
 
     @Override

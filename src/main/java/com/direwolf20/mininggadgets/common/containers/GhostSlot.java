@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.containers;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -26,5 +27,10 @@ public class GhostSlot extends SlotItemHandler {
             return;
 
         super.putStack(stack);
+    }
+
+    @Override
+    public boolean canTakeStack(PlayerEntity player) {
+        return false;
     }
 }
