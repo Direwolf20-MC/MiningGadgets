@@ -329,7 +329,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     private void resetBlock() {
         if (!getWorld().isRemote) {
-            world.setBlockState(this.pos, renderBlock);
+            if (renderBlock != null)
+                world.setBlockState(this.pos, renderBlock);
+            else
+                world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
         }
     }
 
