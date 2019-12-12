@@ -23,9 +23,6 @@ public class GhostSlot extends SlotItemHandler {
      */
     @Override
     public void putStack(@Nonnull ItemStack stack) {
-        if( !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.AIR )
-            return;
-
         super.putStack(stack);
     }
 
