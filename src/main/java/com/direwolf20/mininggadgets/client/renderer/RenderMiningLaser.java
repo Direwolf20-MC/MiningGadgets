@@ -9,6 +9,7 @@ import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.screen.CustomizeSkinScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
@@ -64,6 +66,7 @@ public class RenderMiningLaser {
         } else {
             return;
         }
+
         ItemStack stack = player.getHeldItem(activeHand);
         Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
         double distance = from.subtract(to).length();
@@ -122,6 +125,10 @@ public class RenderMiningLaser {
         startXOffset = startXOffset + (f1 / 1000);
         startYOffset = startYOffset + (f / 1000);
 
+        // Support for hand sides remembering to take into account of Skin options
+        if( Minecraft.getInstance().gameSettings.mainHand != HandSide.RIGHT )
+            hand = hand == Hand.MAIN_HAND ? Hand.OFF_HAND : Hand.MAIN_HAND;
+
         wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         if (hand == Hand.MAIN_HAND) {
             wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v1).endVertex();
@@ -129,7 +136,7 @@ public class RenderMiningLaser {
             wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v2).endVertex();
             wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v1).endVertex();
         } else {
-            startYOffset = -.165f;
+            startYOffset = -.120f;
             wr.pos(-startXOffset, thickness + startYOffset, startZOffset).tex(0, v1).endVertex();
             wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v2).endVertex();
             wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v2).endVertex();
