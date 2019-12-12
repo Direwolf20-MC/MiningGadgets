@@ -162,6 +162,16 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
         return false;
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if( rangeSlider.isMouseOver(mouseX, mouseY) ) {
+            rangeSlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
+            rangeSlider.updateSlider();
+        }
+
+        return false;
+    }
+
     private static String getTrans(String key, Object... args) {
         return new TranslationTextComponent(MiningGadgets.MOD_ID + "." + key, args).getUnformattedComponentText();
     }
