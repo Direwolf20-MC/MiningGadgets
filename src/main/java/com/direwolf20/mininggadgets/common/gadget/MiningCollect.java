@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.gadget;
 
 import com.direwolf20.mininggadgets.common.blocks.MinersLight;
+import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;
@@ -30,7 +31,7 @@ public class MiningCollect {
         BlockPos startPos = startBlock.getPos();
 
         if (range == 1) {
-            if( !isValid(startBlock.getPos(), world) )
+            if( !isValid(player, startBlock.getPos(), world) )
                 return coordinates;
 
             coordinates.add(startBlock.getPos());
@@ -54,11 +55,19 @@ public class MiningCollect {
         coordinates.add(startPos.offset(down));
         coordinates.add(startPos.offset(down).offset(right));
 
-        return coordinates.stream().filter(e -> isValid(e, world)).collect(Collectors.toList());
+        return coordinates.stream().filter(e -> isValid(player, e, world)).collect(Collectors.toList());
     }
 
-    private static boolean isValid(BlockPos pos, World world) {
+    private static boolean isValid(PlayerEntity player, BlockPos pos, World world) {
         BlockState state = world.getBlockState(pos);
+
+        // Already checked the contained block. And declaring it invalid would prevent the contained block from being broken
+        if(state.getBlock() instanceof RenderBlock)
+            return true;
+
+        // Reject, if the dimension blocks the player from mining the block
+        if(!world.getDimension().canMineBlock(player, pos))
+           return false;
 
         // Reject fluids and air (supports waterlogged blocks too)
         if ((!state.getFluidState().isEmpty() && !state.has(BlockStateProperties.WATERLOGGED)) || world.isAirBlock(pos))
