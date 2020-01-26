@@ -30,7 +30,6 @@ public class GeneratorLoot extends LootTableProvider {
         );
     }
 
-    //TODO: This was a guess?
     @Override
     protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationresults) {
         map.forEach((name, table) -> LootTableManager.func_227508_a_(validationresults, name, table));

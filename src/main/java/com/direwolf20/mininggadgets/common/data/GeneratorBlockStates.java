@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
@@ -15,18 +16,17 @@ public class GeneratorBlockStates extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        //Todo: cube is red - no idea what it was or is
-    /*    ResourceLocation side = modLoc("block/modificationtable_side");
+        ResourceLocation side = modLoc("block/modificationtable_side");
         // Sorry for the formatting on this one, it's because we have to define all the sides :(
         getVariantBuilder(ModBlocks.MODIFICATION_TABLE.get()).forAllStates(state ->
-                ConfiguredModel.builder().modelFile(cube(
+                ConfiguredModel.builder().modelFile(models().cube(
                         ModBlocks.MODIFICATION_TABLE.get().getRegistryName().getPath(),
                         modLoc("block/modificationtable_bottom"),
                         modLoc("block/modificationtable_top"),
                         side, side, side, side
                 ).texture("particle", side)).build()
         );
-*/
+
         // Render block
         buildCubeAll(ModBlocks.RENDER_BLOCK.get());
         buildCubeAll(ModBlocks.MINERS_LIGHT.get());
