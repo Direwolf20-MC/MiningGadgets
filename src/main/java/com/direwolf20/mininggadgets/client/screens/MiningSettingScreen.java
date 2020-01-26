@@ -14,14 +14,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.config.GuiSlider;
+import net.minecraftforge.fml.client.gui.widget.Slider;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
+public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private ItemStack gadget;
     private Button sizeButton;
 
@@ -29,7 +29,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
     private int currentSize = 1;
     private boolean isWhitelist = true;
     private boolean isPrecision = true;
-    private GuiSlider rangeSlider;
+    private Slider rangeSlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
 
     public MiningSettingScreen(ItemStack gadget) {
@@ -71,7 +71,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
             PacketHandler.sendToServer(new PacketChangeMiningSize());
         });
 
-        rangeSlider = new GuiSlider(baseX - 135, baseY - 25, 115, 20, getTrans("tooltip.screen.range") + ": ", "", 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this);
+        rangeSlider = new Slider(baseX - 135, baseY - 25, 115, 20, getTrans("tooltip.screen.range") + ": ", "", 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this);
 
         addButton(sizeButton);
         addButton(rangeSlider);
@@ -151,7 +151,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
     }
 
     @Override
-    public void onChangeSliderValue(GuiSlider slider) {
+    public void onChangeSliderValue(Slider slider) {
         //Future proofing for other potential sliders
         if (slider.equals(rangeSlider))
             this.beamRange = slider.getValueInt();

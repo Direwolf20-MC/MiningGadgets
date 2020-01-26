@@ -64,10 +64,10 @@ public class PlayerParticle extends SpriteTexturedParticle {
         this.setSprite(sprite.get(particlePicker, 4));
     }
 
-    @Override
+    /*@Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
-    }
+    }*/
 
     public IParticleRenderType getRenderType() {
         return IParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;

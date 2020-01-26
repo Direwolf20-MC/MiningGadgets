@@ -7,7 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+//import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -54,11 +54,12 @@ public class RenderBlock extends Block {
      * Gets the render layer this block will render on. SOLID for solid blocks, CUTOUT or CUTOUT_MIPPED for on-off
      * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
      */
-    @Override
+    //TODO: Figure out how to do this in 1.15
+    /*@Override
     public BlockRenderLayer getRenderLayer() {
         // Since the effect block has no model rendering at all, which means we don't need blending, simply cutout is fine
         return BlockRenderLayer.CUTOUT;
-    }
+    }*/
 
     /**
      * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
@@ -75,7 +76,7 @@ public class RenderBlock extends Block {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public float func_220080_a(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return 1.0f;
     }
 }

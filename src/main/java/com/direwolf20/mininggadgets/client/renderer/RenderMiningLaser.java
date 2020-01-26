@@ -68,7 +68,8 @@ public class RenderMiningLaser {
         }
 
         ItemStack stack = player.getHeldItem(activeHand);
-        Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
+        TileEntityRendererDispatcher tileEntityRendererDispatcher = TileEntityRendererDispatcher.instance;
+        Vec3d playerPos = new Vec3d(tileEntityRendererDispatcher.renderInfo.getRenderViewEntity().getPosX(), tileEntityRendererDispatcher.renderInfo.getRenderViewEntity().getPosY(), tileEntityRendererDispatcher.renderInfo.getRenderViewEntity().getPosZ());
         double distance = from.subtract(to).length();
         long gameTime = player.world.getGameTime();
         double v = gameTime * speedModifier;
@@ -97,11 +98,11 @@ public class RenderMiningLaser {
 
         // main laser, colored part
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.color3f(r, g, b);
+        GlStateManager.color4f(r, g, b, 1.0f);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam2);
         drawBeam(xOffset, yOffset, zOffset, thickness, activeHand, distance, wr, v, v + distance * 1.5, ticks);
         // white core
-        GlStateManager.color3f(MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f);
+        GlStateManager.color4f(MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f, 1.0f);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam);
         drawBeam(xOffset, yOffset, zOffset, thickness / 2, activeHand, distance, wr, v, v + distance * 1.5, ticks);
 
@@ -131,16 +132,16 @@ public class RenderMiningLaser {
 
         wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         if (hand == Hand.MAIN_HAND) {
-            wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, v1).endVertex();
-            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v2).endVertex();
-            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v2).endVertex();
-            wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, v1).endVertex();
+            wr.pos(startXOffset, -thickness + startYOffset, startZOffset).tex(1, (float) v1).endVertex();
+            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, (float) v2).endVertex();
+            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, (float) v2).endVertex();
+            wr.pos(startXOffset, thickness + startYOffset, startZOffset).tex(0, (float) v1).endVertex();
         } else {
             startYOffset = -.120f;
-            wr.pos(-startXOffset, thickness + startYOffset, startZOffset).tex(0, v1).endVertex();
-            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, v2).endVertex();
-            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, v2).endVertex();
-            wr.pos(-startXOffset, -thickness + startYOffset, startZOffset).tex(1, v1).endVertex();
+            wr.pos(-startXOffset, thickness + startYOffset, startZOffset).tex(0, (float) v1).endVertex();
+            wr.pos(xOffset, thickness + yOffset, distance + zOffset).tex(0, (float) v2).endVertex();
+            wr.pos(xOffset, -thickness + yOffset, distance + zOffset).tex(1, (float) v2).endVertex();
+            wr.pos(-startXOffset, -thickness + startYOffset, startZOffset).tex(1, (float) v1).endVertex();
         }
         Tessellator.getInstance().draw();
     }

@@ -3,17 +3,20 @@ package com.direwolf20.mininggadgets.client.renderer;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -24,12 +27,13 @@ import java.util.List;
 import java.util.Random;
 
 public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
-    //private Map<BlockPos, BlockPos> extraRenderList = new HashMap<>();
 
-    public RenderBlockTER() {
+    public RenderBlockTER(TileEntityRendererDispatcher rendererDispatcherIn) {
+        super(rendererDispatcherIn);
     }
 
-    private void renderModelBrightnessColorQuads(float brightness, float red, float green, float blue, List<BakedQuad> listQuads) {
+    //Todo reinstate
+    /*private void renderModelBrightnessColorQuads(float brightness, float red, float green, float blue, List<BakedQuad> listQuads) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         int i = 0;
@@ -49,11 +53,15 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             tessellator.draw();
         }
 
-    }
+    }*/
 
     @Override
-    public void render(RenderBlockTileEntity tile, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(RenderBlockTileEntity tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightsIn, int combinedOverlayIn) {
+    //public void render(RenderBlockTileEntity tile, double x, double y, double z, float partialTicks, int destroyStage) {
 
+        double x = tile.getPos().getX();
+        double y = tile.getPos().getY();
+        double z = tile.getPos().getZ();
         int durability = tile.getDurability();
         int originalDurability = tile.getOriginalDurability();
         int prevDurability = tile.getPriorDurability();
@@ -82,7 +90,6 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         GlStateManager.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
 
         //GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
-        //todo Have the gadget have an option for fading/shrinking blocks in the table.
         MiningProperties.BreakTypes breakType = tile.getBreakType();
         GlStateManager.translated(x, y, z);
 
@@ -102,7 +109,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             GL14.glBlendColor(1F, 1F, 1F, 1f); //Set the alpha of the blocks we are rendering
             try {
                 for (Direction direction : Direction.values()) {
-                    renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
+                    //renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
                 }
             } catch (Throwable t) {
                 Tessellator tessellator = Tessellator.getInstance();
@@ -122,8 +129,8 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             GlStateManager.depthMask(false);
             try {
                 for (Direction direction : Direction.values()) {
-                    if (!(getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                        renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
+                    if (!(tile.getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
+                        //renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
                     }
                 }
             } catch (Throwable t) {
@@ -143,7 +150,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
         //Disable blend
         //GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
 

@@ -30,9 +30,10 @@ public class GeneratorLoot extends LootTableProvider {
         );
     }
 
+    //TODO: This was a guess?
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationResults validationresults) {
-        map.forEach((name, table) -> LootTableManager.func_215302_a(validationresults, name, table, map::get));
+    protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationresults) {
+        map.forEach((name, table) -> LootTableManager.func_227508_a_(validationresults, name, table));
     }
 
     private static class Blocks extends BlockLootTables {

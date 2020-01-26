@@ -19,8 +19,8 @@ public class DireButton extends Button {
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.isHovered = isMouseOver(mouseX, mouseY);
             GlStateManager.enableBlend();
-            GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param, GlStateManager.SourceFactor.ONE.param, GlStateManager.DestFactor.ZERO.param);
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
             this.blit(this.x, this.y, 0, 46, this.width / 2, this.height);
             this.blit(this.x + this.width / 2, this.y, 200 - this.width / 2, 46, this.width / 2, this.height);
 

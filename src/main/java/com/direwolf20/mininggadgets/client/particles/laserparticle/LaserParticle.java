@@ -77,7 +77,7 @@ public class LaserParticle extends BreakingParticle {
         this.canCollide = false;
     }
 
-    @Override
+    /*@Override
     public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
 
@@ -103,8 +103,8 @@ public class LaserParticle extends BreakingParticle {
         buffer.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
         buffer.pos(0, -thickness, 0).tex(1, v).endVertex();
 
-        GlStateManager.popMatrix();*/
-    }
+        GlStateManager.popMatrix();
+    }*/
 
     public boolean particleToPlayer(PlayerEntity player) {
         boolean partToPlayer = false;

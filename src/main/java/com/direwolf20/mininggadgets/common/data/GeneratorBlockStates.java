@@ -16,7 +16,8 @@ public class GeneratorBlockStates extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        ResourceLocation side = modLoc("block/modificationtable_side");
+        //Todo: cube is red - no idea what it was or is
+    /*    ResourceLocation side = modLoc("block/modificationtable_side");
         // Sorry for the formatting on this one, it's because we have to define all the sides :(
         getVariantBuilder(ModBlocks.MODIFICATION_TABLE.get()).forAllStates(state ->
                 ConfiguredModel.builder().modelFile(cube(
@@ -29,7 +30,7 @@ public class GeneratorBlockStates extends BlockStateProvider {
 
         // Render block
         buildCubeAll(ModBlocks.RENDER_BLOCK.get());
-        buildCubeAll(ModBlocks.MINERS_LIGHT.get());
+        buildCubeAll(ModBlocks.MINERS_LIGHT.get());*/
     }
 
     private void buildCubeAll(Block block) {

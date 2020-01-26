@@ -104,7 +104,7 @@ public class MiningGadget extends Item {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         Minecraft mc = Minecraft.getInstance();
 
-        if (!InputMappings.isKeyDown(mc.mainWindow.getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode())) {
+        if (!InputMappings.isKeyDown(mc.getMainWindow().getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode())) {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
                     mc.gameSettings.keyBindSneak.getLocalizedName().toLowerCase())
                     .applyTextStyle(TextFormatting.GRAY));
@@ -170,7 +170,7 @@ public class MiningGadget extends Item {
         ItemStack itemstack = player.getHeldItem(hand);
 
         // Only perform the shift action
-        if (player.isSneaking())
+        if (player.isShiftKeyDown())
             return this.onItemShiftRightClick(world, player, hand, itemstack);
 
         if (world.isRemote)

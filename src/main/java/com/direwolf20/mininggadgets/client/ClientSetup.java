@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.client;
 import com.direwolf20.mininggadgets.client.renderer.RenderBlockTER;
 import com.direwolf20.mininggadgets.client.screens.FilterScreen;
 import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
+import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.client.gui.ScreenManager;
@@ -31,6 +32,6 @@ public final class ClientSetup {
      */
     private static void registerRenderers() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(event ->
-                ClientRegistry.bindTileEntitySpecialRenderer(RenderBlockTileEntity.class, new RenderBlockTER()));
+                ClientRegistry.bindTileEntityRenderer(ModBlocks.RENDERBLOCK_TILE.get(), RenderBlockTER::new));
     }
 }

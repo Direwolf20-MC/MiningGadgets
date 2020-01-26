@@ -5,7 +5,7 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.BlockRenderLayer;
+//import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -40,11 +40,13 @@ public class MinersLight extends Block {
      * Gets the render layer this block will render on. SOLID for solid blocks, CUTOUT or CUTOUT_MIPPED for on-off
      * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
      */
-    @Override
+
+    //TODO: Figure out how to do this in 1.15
+    /*@Override
     public BlockRenderLayer getRenderLayer() {
         // Since the effect block has no model rendering at all, which means we don't need blending, simply cutout is fine
         return BlockRenderLayer.CUTOUT;
-    }
+    }*/
 
     /**
      * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
