@@ -5,24 +5,21 @@ import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.util.VectorHelper;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.screen.CustomizeSkinScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -32,19 +29,21 @@ public class RenderMiningLaser {
     private final static ResourceLocation laserBeam2 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser2.png");
     private final static ResourceLocation laserBeamGlow = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser_glow.png");
 
-    public static void renderLaser(PlayerEntity player, float ticks) {
+    public static void renderLaser(RenderWorldLastEvent event, PlayerEntity player, float ticks) {
         ItemStack stack = MiningGadget.getGadget(player);
+
         if (!MiningProperties.getCanMine(stack))
             return;
+
         int range = MiningProperties.getBeamRange(stack);
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
+
         Vec3d playerPos = player.getEyePosition(ticks);
-        Vec3d lookBlockPos = lookingAt.getHitVec();
+        Vec3d lookBlockPos = player.pick(range, 0.0F, false).getHitVec();
 
         // parse data from item
         float speedModifier = getSpeedModifier(stack);
 
-        drawLasers(playerPos, lookBlockPos, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
+        drawLasers(event, playerPos, lookBlockPos, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
     }
 
     private static float getSpeedModifier(ItemStack stack) {
@@ -57,7 +56,7 @@ public class RenderMiningLaser {
         }
     }
 
-    private static void drawLasers(Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
+    private static void drawLasers(RenderWorldLastEvent event, Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
         Hand activeHand;
         if (player.getHeldItemMainhand().getItem() instanceof MiningGadget) {
             activeHand = Hand.MAIN_HAND;
@@ -68,47 +67,52 @@ public class RenderMiningLaser {
         }
 
         ItemStack stack = player.getHeldItem(activeHand);
-        TileEntityRendererDispatcher tileEntityRendererDispatcher = TileEntityRendererDispatcher.instance;
-        Vec3d playerPos = new Vec3d(tileEntityRendererDispatcher.renderInfo.getRenderViewEntity().getPosX(), tileEntityRendererDispatcher.renderInfo.getRenderViewEntity().getPosY(), tileEntityRendererDispatcher.renderInfo.getRenderViewEntity().getPosZ());
+
         double distance = from.subtract(to).length();
         long gameTime = player.world.getGameTime();
         double v = gameTime * speedModifier;
         float additiveThickness = (thickness * 3.5f) * calculateLaserFlickerModifier(gameTime);
         BufferBuilder wr = Tessellator.getInstance().getBuffer();
 
-        GlStateManager.pushMatrix();
-        GlStateManager.enableColorMaterial();
-        // This makes it so we don't clip into the world, we're effectively drawing on it
-        GlStateManager.disableDepthTest();
-        GlStateManager.enableBlend();
-        //This makes it so multiplayer doesn't matter which side the player is standing on to see someone elses laser
-        GlStateManager.disableCull();
-        GlStateManager.enableTexture();
+        Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 
-        GlStateManager.translated(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
-        GlStateManager.translated(from.x, from.y, from.z);
-        GlStateManager.rotatef(MathHelper.lerp(ticks, -player.rotationYaw, -player.prevRotationYaw), 0, 1, 0);
-        GlStateManager.rotatef(MathHelper.lerp(ticks, player.rotationPitch, player.prevRotationPitch), 1, 0, 0);
+        MatrixStack matrix = event.getMatrixStack();
+        matrix.translate(-view.getX(), -view.getY(), -view.getZ());
+        matrix.translate(from.x, from.y, from.z);
+
+        RenderSystem.pushMatrix();
+        RenderSystem.multMatrix(matrix.getLast().getPositionMatrix());
+
+        RenderSystem.enableColorMaterial();
+        // This makes it so we don't clip into the world, we're effectively drawing on it
+        RenderSystem.disableDepthTest();
+        RenderSystem.enableBlend();
+        //This makes it so multiplayer doesn't matter which side the player is standing on to see someone elses laser
+        RenderSystem.disableCull();
+        RenderSystem.enableTexture();
+
+        RenderSystem.rotatef(MathHelper.lerp(ticks, -player.rotationYaw, -player.prevRotationYaw), 0, 1, 0);
+        RenderSystem.rotatef(MathHelper.lerp(ticks, player.rotationPitch, player.prevRotationPitch), 1, 0, 0);
 
         // additive laser beam
-        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.color4f(r, g, b, 0.7f);
+        RenderSystem.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.color4f(r, g, b, 0.7f);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeamGlow);
         drawBeam(xOffset, yOffset, zOffset, additiveThickness, activeHand, distance, wr, 0.5, 1, ticks);
 
         // main laser, colored part
-        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.color4f(r, g, b, 1.0f);
+        RenderSystem.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.color4f(r, g, b, 1.0f);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam2);
         drawBeam(xOffset, yOffset, zOffset, thickness, activeHand, distance, wr, v, v + distance * 1.5, ticks);
         // white core
-        GlStateManager.color4f(MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f, 1.0f);
+        RenderSystem.color4f(MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f, 1.0f);
         Minecraft.getInstance().getTextureManager().bindTexture(laserBeam);
         drawBeam(xOffset, yOffset, zOffset, thickness / 2, activeHand, distance, wr, v, v + distance * 1.5, ticks);
 
-        GlStateManager.enableDepthTest();
-        GlStateManager.enableCull();
-        GlStateManager.popMatrix();
+        RenderSystem.enableDepthTest();
+        RenderSystem.enableCull();
+        RenderSystem.popMatrix();
     }
 
     private static float calculateLaserFlickerModifier(long gameTime) {

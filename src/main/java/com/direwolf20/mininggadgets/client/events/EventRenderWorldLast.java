@@ -24,7 +24,7 @@ public class EventRenderWorldLast {
 
         ItemStack myItem = MiningGadget.getGadget(myplayer);
         if (myItem.getItem() instanceof MiningGadget)
-            BlockOverlayRender.render(myItem);
+            BlockOverlayRender.render(evt, myItem);
 
         for (PlayerEntity player : players) {
             if (player.getDistanceSq(myplayer) > 500)
@@ -33,7 +33,7 @@ public class EventRenderWorldLast {
             ItemStack heldItem = MiningGadget.getGadget(player);
             if (player.isHandActive() && heldItem.getItem() instanceof MiningGadget) {
                 if (MiningGadget.canMine(heldItem, myplayer.world)) {
-                    RenderMiningLaser.renderLaser(player, evt.getPartialTicks());
+                    RenderMiningLaser.renderLaser(evt, player, Minecraft.getInstance().getRenderPartialTicks());
                 }
             }
         }

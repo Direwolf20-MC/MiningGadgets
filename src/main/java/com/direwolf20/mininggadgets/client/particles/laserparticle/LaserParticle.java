@@ -3,12 +3,13 @@ package com.direwolf20.mininggadgets.client.particles.laserparticle;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.BreakingParticle;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -77,34 +78,40 @@ public class LaserParticle extends BreakingParticle {
         this.canCollide = false;
     }
 
-    /*@Override
-    public void renderParticle(BufferBuilder buffer, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+    @Override
+    public void renderParticle(IVertexBuilder builder, ActiveRenderInfo activeRenderInfo, float partialTicks) {
+        super.renderParticle(builder, activeRenderInfo, partialTicks);
 
-        /*if (this.playerUUID == null) return;
+        if (this.playerUUID == null || Minecraft.getInstance().world == null)
+            return;
+
         PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(this.playerUUID);
-        Vec3d playerPos = player.getEyePosition(partialTicks);
+        if( player == null )
+            return;
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translated(-playerPos.x, -playerPos.y, -playerPos.z);
-        GlStateManager.translated(this.posX, this.posY, this.posZ);
-        GlStateManager.translated(0,1,0);
+        Vec3d playerPos = player.getEyePosition(1.0f);
+
+        RenderSystem.pushMatrix();
+        RenderSystem.translated(-playerPos.x, -playerPos.y, -playerPos.z);
+        RenderSystem.translated(this.posX, this.posY, this.posZ);
+        RenderSystem.translated(0,1,0);
+
         float thickness = 0.001f;
         float distance = 0.001f;
-        double v = -player.world.getGameTime() * 0.2;
+        float v = -player.world.getGameTime() * .2f;
 
-        buffer.pos(0, -thickness, 0).tex(1, v).endVertex();
-        buffer.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
-        buffer.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
-        buffer.pos(0, thickness, 0).tex(0, v).endVertex();
+        builder.pos(0, -thickness, 0).tex(1, v).endVertex();
+        builder.pos(0, -thickness, distance).tex(1, v + distance * 1.5f).endVertex();
+        builder.pos(0, thickness, distance).tex(0, v + distance * 1.5f).endVertex();
+        builder.pos(0, thickness, 0).tex(0, v).endVertex();
 
-        buffer.pos(0, thickness, 0).tex(0, v).endVertex();
-        buffer.pos(0, thickness, distance).tex(0, v + distance * 1.5).endVertex();
-        buffer.pos(0, -thickness, distance).tex(1, v + distance * 1.5).endVertex();
-        buffer.pos(0, -thickness, 0).tex(1, v).endVertex();
+        builder.pos(0, thickness, 0).tex(0, v).endVertex();
+        builder.pos(0, thickness, distance).tex(0, v + distance * 1.5f).endVertex();
+        builder.pos(0, -thickness, distance).tex(1, v + distance * 1.5f).endVertex();
+        builder.pos(0, -thickness, 0).tex(1, v).endVertex();
 
-        GlStateManager.popMatrix();
-    }*/
+        RenderSystem.popMatrix();
+    }
 
     public boolean particleToPlayer(PlayerEntity player) {
         boolean partToPlayer = false;

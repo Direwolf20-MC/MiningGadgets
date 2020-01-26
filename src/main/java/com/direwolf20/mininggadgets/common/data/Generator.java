@@ -9,7 +9,6 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Generator {
-
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
          if( event.includeServer() )
@@ -31,6 +30,4 @@ public class Generator {
         generator.addProvider(new GeneratorItemModels(generator, helper));
         generator.addProvider(new GeneratorLanguage(generator));
     }
-
-
 }

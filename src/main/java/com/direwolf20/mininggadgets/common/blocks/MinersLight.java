@@ -41,6 +41,8 @@ public class MinersLight extends Block {
      * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
      */
 
+
+
     //TODO: Figure out how to do this in 1.15
     /*@Override
     public BlockRenderLayer getRenderLayer() {

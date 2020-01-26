@@ -4,7 +4,6 @@ import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
@@ -27,10 +26,10 @@ public class GeneratorBlockStates extends BlockStateProvider {
                         side, side, side, side
                 ).texture("particle", side)).build()
         );
-
+*/
         // Render block
         buildCubeAll(ModBlocks.RENDER_BLOCK.get());
-        buildCubeAll(ModBlocks.MINERS_LIGHT.get());*/
+        buildCubeAll(ModBlocks.MINERS_LIGHT.get());
     }
 
     private void buildCubeAll(Block block) {

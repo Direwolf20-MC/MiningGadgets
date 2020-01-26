@@ -248,8 +248,9 @@ public class MiningGadget extends Item {
 
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
-        if (!MiningProperties.getCanMine(stack))
+        if (!MiningProperties.getCanMine(stack) || true)
             return;
+
         //Server and Client side
         World world = player.world;
 
