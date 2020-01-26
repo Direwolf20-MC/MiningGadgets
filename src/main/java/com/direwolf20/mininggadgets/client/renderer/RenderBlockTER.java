@@ -5,22 +5,19 @@ import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3i;
 import org.lwjgl.opengl.GL14;
 
 import java.util.List;
@@ -33,27 +30,44 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
     }
 
     //Todo reinstate
-    /*private void renderModelBrightnessColorQuads(float brightness, float red, float green, float blue, List<BakedQuad> listQuads) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
-        int i = 0;
+    private void renderModelBrightnessColorQuads(MatrixStack.Entry matrixEntry, IVertexBuilder builder, float red, float green, float blue, List<BakedQuad> listQuads, int combinedLightsIn, int combinedOverlayIn) {
+//        Tessellator tessellator = Tessellator.getInstance();
+//        BufferBuilder buffer = tessellator.getBuffer();
+//        int i = 0;
+//
+//        for (int j = listQuads.size(); i < j; ++i) {
+//            BakedQuad bakedquad = listQuads.get(i);
+//            bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
+//            bufferbuilder.addVertexData(bakedquad.getVertexData());
+//            if (bakedquad.hasTintIndex()) {
+//                bufferbuilder.putColorRGB_F4(red * brightness, green * brightness, blue * brightness);
+//            } else {
+//                bufferbuilder.putColorRGB_F4(brightness, brightness, brightness);
+//            }
+//
+//            Vec3i vec3i = bakedquad.getFace().getDirectionVec();
+//            bufferbuilder.putNormal((float) vec3i.getX(), (float) vec3i.getY(), (float) vec3i.getZ());
+//            tessellator.draw();
+//        }
 
-        for (int j = listQuads.size(); i < j; ++i) {
-            BakedQuad bakedquad = listQuads.get(i);
-            bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
-            bufferbuilder.addVertexData(bakedquad.getVertexData());
+        for(BakedQuad bakedquad : listQuads) {
+            float f;
+            float f1;
+            float f2;
+
             if (bakedquad.hasTintIndex()) {
-                bufferbuilder.putColorRGB_F4(red * brightness, green * brightness, blue * brightness);
+                f = red * 1f;
+                f1 = green * 1f;
+                f2 = blue * 1f;
             } else {
-                bufferbuilder.putColorRGB_F4(brightness, brightness, brightness);
+                f = 1f;
+                f1 = 1f;
+                f2 = 1f;
             }
 
-            Vec3i vec3i = bakedquad.getFace().getDirectionVec();
-            bufferbuilder.putNormal((float) vec3i.getX(), (float) vec3i.getY(), (float) vec3i.getZ());
-            tessellator.draw();
+            builder.addVertexData(matrixEntry, bakedquad, f, f1, f2, combinedLightsIn, combinedOverlayIn);
         }
-
-    }*/
+    }
 
     @Override
     public void render(RenderBlockTileEntity tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightsIn, int combinedOverlayIn) {
@@ -84,14 +98,14 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
+        RenderSystem.pushMatrix();
+        RenderSystem.enableBlend();
         //This blend function allows you to use a constant alpha, which is defined later
-        GlStateManager.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
+        RenderSystem.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
 
         //GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
         MiningProperties.BreakTypes breakType = tile.getBreakType();
-        GlStateManager.translated(x, y, z);
+        RenderSystem.translated(x, y, z);
 
         IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
         //Random random = new Random();
@@ -104,12 +118,12 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         float f2 = (float) (color & 255) / 255.0F;
 
         if (breakType == MiningProperties.BreakTypes.SHRINK) {
-            GlStateManager.translatef((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
-            GlStateManager.scalef(scale, scale, scale);
+            RenderSystem.translatef((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
+            RenderSystem.scalef(scale, scale, scale);
             GL14.glBlendColor(1F, 1F, 1F, 1f); //Set the alpha of the blocks we are rendering
             try {
                 for (Direction direction : Direction.values()) {
-                    //renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
+                    renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))), combinedLightsIn, combinedOverlayIn);
                 }
             } catch (Throwable t) {
                 Tessellator tessellator = Tessellator.getInstance();
@@ -126,11 +140,13 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             //scale = (scale < 0.1f) ? 0.1f : scale;
             scale = MathHelper.lerp(scale, 0.1f, 1.0f);
             GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
-            GlStateManager.depthMask(false);
+            RenderSystem.depthMask(false);
             try {
                 for (Direction direction : Direction.values()) {
                     if (!(tile.getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                        //renderModelBrightnessColorQuads(1f, f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
+                        renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))), combinedLightsIn, combinedOverlayIn);
+
+//                        renderModelBrightnessColorQuads(matrixStackIn.getLast(), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
                     }
                 }
             } catch (Throwable t) {
@@ -144,15 +160,15 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
                 }
             }
-            GlStateManager.depthMask(true);
+            RenderSystem.depthMask(true);
         }
 
 
         //Disable blend
         //GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
+        RenderSystem.disableBlend();
+        RenderSystem.popMatrix();
 
         /*if (UpgradeTools.containsUpgradeFromList(tile.getGadgetUpgrades(), Upgrade.FREEZING)) {
             for (BlockPos sourcePos : tile.findSources()) {
