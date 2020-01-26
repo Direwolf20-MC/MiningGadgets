@@ -7,6 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,9 +19,11 @@ import javax.annotation.Nullable;
 
 public class RenderBlock extends Block {
     public RenderBlock() {
-        // notSolid ensures it allows blocks to render behind it.
         super(
-                Properties.create(Material.IRON).hardnessAndResistance(2.0f).notSolid().doesNotBlockMovement().noDrops().variableOpacity()
+                Properties.create(Material.IRON)
+                        .hardnessAndResistance(2.0f)
+                        .doesNotBlockMovement()
+                        .noDrops()
         );
     }
 
@@ -69,5 +72,10 @@ public class RenderBlock extends Block {
     @OnlyIn(Dist.CLIENT)
     public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return 1.0f;
+    }
+
+    @Override
+    public boolean isSideInvisible(BlockState p_200122_1_, BlockState p_200122_2_, Direction p_200122_3_) {
+        return true;
     }
 }
