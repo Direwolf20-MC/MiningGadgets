@@ -7,7 +7,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.tileentity.TileEntity;
-//import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,10 +14,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
+//import net.minecraft.util.BlockRenderLayer;
+
 public class RenderBlock extends Block {
     public RenderBlock() {
+        // notSolid ensures it allows blocks to render behind it.
         super(
-                Properties.create(Material.IRON).hardnessAndResistance(2.0f)
+                Properties.create(Material.IRON).hardnessAndResistance(2.0f).notSolid().doesNotBlockMovement().noDrops().variableOpacity()
         );
     }
 
@@ -49,17 +51,6 @@ public class RenderBlock extends Block {
         // We still make effect blocks invisible because all effects (scaling block, transparent box) are dynamic so they has to be in the TER
         return BlockRenderType.INVISIBLE;
     }
-
-    /**
-     * Gets the render layer this block will render on. SOLID for solid blocks, CUTOUT or CUTOUT_MIPPED for on-off
-     * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
-     */
-    //TODO: Figure out how to do this in 1.15
-    /*@Override
-    public BlockRenderLayer getRenderLayer() {
-        // Since the effect block has no model rendering at all, which means we don't need blending, simply cutout is fine
-        return BlockRenderLayer.CUTOUT;
-    }*/
 
     /**
      * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.

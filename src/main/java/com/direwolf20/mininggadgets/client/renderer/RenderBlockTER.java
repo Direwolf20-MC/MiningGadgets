@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import org.lwjgl.opengl.GL14;
 
 import java.util.List;
@@ -34,7 +35,6 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         super(rendererDispatcherIn);
     }
 
-    //Todo reinstate
     private void renderModelBrightnessColorQuads(MatrixStack.Entry matrixEntry, IVertexBuilder builder, float red, float green, float blue, List<BakedQuad> listQuads, int combinedLightsIn, int combinedOverlayIn) {
 //        Tessellator tessellator = Tessellator.getInstance();
 //        BufferBuilder buffer = tessellator.getBuffer();
@@ -114,7 +114,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             matrixStackIn.scale(scale, scale, scale);
 
             for (Direction direction : Direction.values()) {
-                renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))), combinedLightsIn, combinedOverlayIn);
+                renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
             }
 
         } else if (breakType == MiningProperties.BreakTypes.FADE) {
@@ -126,7 +126,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             RenderSystem.depthMask(false);
             for (Direction direction : Direction.values()) {
                 if (!(tile.getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                    renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))), combinedLightsIn, combinedOverlayIn);
+                    renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
                 }
             }
 
