@@ -9,19 +9,24 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL14;
 
 import java.util.List;
 import java.util.Random;
+
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
@@ -71,106 +76,71 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
     @Override
     public void render(RenderBlockTileEntity tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightsIn, int combinedOverlayIn) {
-    //public void render(RenderBlockTileEntity tile, double x, double y, double z, float partialTicks, int destroyStage) {
-
-        double x = tile.getPos().getX();
-        double y = tile.getPos().getY();
-        double z = tile.getPos().getZ();
         int durability = tile.getDurability();
         int originalDurability = tile.getOriginalDurability();
         int prevDurability = tile.getPriorDurability();
         float nowScale = (float) (durability) / (float) originalDurability;
         float prevScale = (float) (prevDurability) / (float) originalDurability;
-        float scale = (float) (MathHelper.lerp(partialTicks, prevScale, nowScale));
+        float scale = (MathHelper.lerp(partialTicks, prevScale, nowScale));
+
         if (scale >= 1.0f)
             scale = 1f;
         if (scale <= 0)
             scale = 0;
-        float trans = (1 - scale) / 2;
 
         BlockState renderState = tile.getRenderBlock();
-
         // We're checking here as sometimes the tile can not have a render block as it's yet to be synced
         if( renderState == null )
             return;
 
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-        Minecraft mc = Minecraft.getInstance();
-        mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        Minecraft.getInstance().getTextureManager().bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
 
         RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
-        //This blend function allows you to use a constant alpha, which is defined later
-        RenderSystem.blendFunc(GL14.GL_CONSTANT_ALPHA, GL14.GL_ONE_MINUS_CONSTANT_ALPHA);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.CONSTANT_ALPHA, GlStateManager.DestFactor.ONE_MINUS_CONSTANT_ALPHA); // This blend function allows you to use a constant alpha, which is defined later
 
-        //GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
         MiningProperties.BreakTypes breakType = tile.getBreakType();
-        RenderSystem.translated(x, y, z);
-
         IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
-        //Random random = new Random();
+
         BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-
         int color = blockColors.getColor(renderState, tile.getWorld(), tile.getPos(), 0);
-
         float f = (float) (color >> 16 & 255) / 255.0F;
         float f1 = (float) (color >> 8 & 255) / 255.0F;
         float f2 = (float) (color & 255) / 255.0F;
-
+//
         if (breakType == MiningProperties.BreakTypes.SHRINK) {
-            RenderSystem.translatef((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
-            RenderSystem.scalef(scale, scale, scale);
-            GL14.glBlendColor(1F, 1F, 1F, 1f); //Set the alpha of the blocks we are rendering
-            try {
-                for (Direction direction : Direction.values()) {
+            matrixStackIn.translate((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
+            matrixStackIn.scale(scale, scale, scale);
+
+            for (Direction direction : Direction.values()) {
+                renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))), combinedLightsIn, combinedOverlayIn);
+            }
+
+        } else if (breakType == MiningProperties.BreakTypes.FADE) {
+            scale = MathHelper.lerp(scale, 0.1f, 1.0f);
+
+            // todo: not working
+            GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
+
+            RenderSystem.depthMask(false);
+            for (Direction direction : Direction.values()) {
+                if (!(tile.getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
                     renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))), combinedLightsIn, combinedOverlayIn);
                 }
-            } catch (Throwable t) {
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder bufferBuilder = tessellator.getBuffer();
-                try {
-                    // If the buffer is already not drawing then it'll throw
-                    // and IllegalStateException... Very rare
-                    bufferBuilder.finishDrawing();
-                } catch (IllegalStateException ex) {
-
-                }
             }
-        } else if (breakType == MiningProperties.BreakTypes.FADE) {
-            //scale = (scale < 0.1f) ? 0.1f : scale;
-            scale = MathHelper.lerp(scale, 0.1f, 1.0f);
-            GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
-            RenderSystem.depthMask(false);
-            try {
-                for (Direction direction : Direction.values()) {
-                    if (!(tile.getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                        renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))), combinedLightsIn, combinedOverlayIn);
 
-//                        renderModelBrightnessColorQuads(matrixStackIn.getLast(), f, f1, f2, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos()))));
-                    }
-                }
-            } catch (Throwable t) {
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder bufferBuilder = tessellator.getBuffer();
-                try {
-                    // If the buffer is already not drawing then it'll throw
-                    // and IllegalStateException... Very rare
-                    bufferBuilder.finishDrawing();
-                } catch (IllegalStateException ex) {
-
-                }
-            }
             RenderSystem.depthMask(true);
         }
 
-
-        //Disable blend
-        //GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f);
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
+        RenderSystem.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
         RenderSystem.popMatrix();
+    }
 
-        /*if (UpgradeTools.containsUpgradeFromList(tile.getGadgetUpgrades(), Upgrade.FREEZING)) {
+    // Unused?
+            /*if (UpgradeTools.containsUpgradeFromList(tile.getGadgetUpgrades(), Upgrade.FREEZING)) {
             for (BlockPos sourcePos : tile.findSources()) {
                 if (tile.getDurability() == 0 || tile.getDurability() == tile.getOriginalDurability() || (!(tile instanceof RenderBlockTileEntity))) {
                     extraRenderList.remove(sourcePos);
@@ -264,5 +234,4 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         //GlStateManager.depthMask(true);
 */
 
-    }
 }
