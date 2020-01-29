@@ -81,36 +81,6 @@ public class LaserParticle extends BreakingParticle {
     @Override
     public void renderParticle(IVertexBuilder builder, ActiveRenderInfo activeRenderInfo, float partialTicks) {
         super.renderParticle(builder, activeRenderInfo, partialTicks);
-
-        if (this.playerUUID == null || Minecraft.getInstance().world == null)
-            return;
-
-        PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(this.playerUUID);
-        if( player == null )
-            return;
-
-        Vec3d playerPos = player.getEyePosition(1.0f);
-
-        RenderSystem.pushMatrix();
-        RenderSystem.translated(-playerPos.x, -playerPos.y, -playerPos.z);
-        RenderSystem.translated(this.posX, this.posY, this.posZ);
-        RenderSystem.translated(0,1,0);
-
-        float thickness = 0.001f;
-        float distance = 0.001f;
-        float v = -player.world.getGameTime() * .2f;
-
-        builder.pos(0, -thickness, 0).tex(1, v).endVertex();
-        builder.pos(0, -thickness, distance).tex(1, v + distance * 1.5f).endVertex();
-        builder.pos(0, thickness, distance).tex(0, v + distance * 1.5f).endVertex();
-        builder.pos(0, thickness, 0).tex(0, v).endVertex();
-
-        builder.pos(0, thickness, 0).tex(0, v).endVertex();
-        builder.pos(0, thickness, distance).tex(0, v + distance * 1.5f).endVertex();
-        builder.pos(0, -thickness, distance).tex(1, v + distance * 1.5f).endVertex();
-        builder.pos(0, -thickness, 0).tex(1, v).endVertex();
-
-        RenderSystem.popMatrix();
     }
 
     public boolean particleToPlayer(PlayerEntity player) {
