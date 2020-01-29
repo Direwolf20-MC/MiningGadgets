@@ -118,12 +118,11 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         } else if (breakType == MiningProperties.BreakTypes.FADE) {
             scale = MathHelper.lerp(scale, 0.1f, 1.0f);
             // todo: not working
-
             RenderSystem.depthMask(false);
 
             for (Direction direction : Direction.values()) {
                 if (!(tile.getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                    renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, scale, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
+                    renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.translucent()), f, f1, f2, scale, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
                 }
             }
 
