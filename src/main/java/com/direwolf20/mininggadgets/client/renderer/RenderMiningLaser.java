@@ -10,6 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
@@ -77,7 +78,13 @@ public class RenderMiningLaser {
         Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 
         MatrixStack matrix = event.getMatrixStack();
-        matrix.translate(-view.getX(), -view.getY(), -view.getZ());
+        Matrix4f m4f = matrix.getLast().getMatrix();
+        String matrixString = m4f.toString();
+        String[] sp = matrixString.split(" ");
+        String[] sp2= sp[3].split("\n");
+        if (sp2[0].equals("0.0"))
+            matrix.translate(-view.getX(), -view.getY(), -view.getZ());
+
         matrix.translate(from.x, from.y, from.z);
 
         RenderSystem.pushMatrix();
