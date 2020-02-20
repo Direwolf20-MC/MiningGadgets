@@ -40,7 +40,7 @@ public class BlockOverlayRender {
         stack.translate(-view.getX(), -view.getY(), -view.getZ());
 
         RenderSystem.pushMatrix();
-        RenderSystem.multMatrix(stack.getLast().getPositionMatrix());
+        RenderSystem.multMatrix(stack.getLast().getMatrix());
 
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();

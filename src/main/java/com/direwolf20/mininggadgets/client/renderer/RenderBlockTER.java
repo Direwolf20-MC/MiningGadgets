@@ -112,7 +112,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             matrixStackIn.scale(scale, scale, scale);
 
             for (Direction direction : Direction.values()) {
-                renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, 1f, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
+                renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.getCutout()), f, f1, f2, 1f, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
             }
 
         } else if (breakType == MiningProperties.BreakTypes.FADE) {
@@ -122,7 +122,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 
             for (Direction direction : Direction.values()) {
                 if (!(tile.getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                    renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.translucent()), f, f1, f2, scale, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
+                    renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.getTranslucent()), f, f1, f2, scale, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
                 }
             }
 

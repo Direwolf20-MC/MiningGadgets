@@ -81,7 +81,7 @@ public class RenderMiningLaser {
         matrix.translate(from.x, from.y, from.z);
 
         RenderSystem.pushMatrix();
-        RenderSystem.multMatrix(matrix.getLast().getPositionMatrix());
+        RenderSystem.multMatrix(matrix.getLast().getMatrix());
 
         RenderSystem.enableColorMaterial();
         // This makes it so we don't clip into the world, we're effectively drawing on it
