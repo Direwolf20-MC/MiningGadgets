@@ -12,6 +12,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -39,12 +41,12 @@ public class RenderMiningLaser {
         int range = MiningProperties.getBeamRange(stack);
 
         Vec3d playerPos = player.getEyePosition(ticks);
-        Vec3d lookBlockPos = player.pick(range, 0.0F, false).getHitVec();
+        RayTraceResult trace = player.pick(range, 0.0F, false);
 
         // parse data from item
         float speedModifier = getSpeedModifier(stack);
 
-        drawLasers(event, playerPos, lookBlockPos, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
+        drawLasers(event, playerPos, trace, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
     }
 
     private static float getSpeedModifier(ItemStack stack) {
@@ -57,7 +59,7 @@ public class RenderMiningLaser {
         }
     }
 
-    private static void drawLasers(RenderWorldLastEvent event, Vec3d from, Vec3d to, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
+    private static void drawLasers(RenderWorldLastEvent event, Vec3d from, RayTraceResult trace, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
         Hand activeHand;
         if (player.getHeldItemMainhand().getItem() instanceof MiningGadget) {
             activeHand = Hand.MAIN_HAND;
@@ -69,7 +71,7 @@ public class RenderMiningLaser {
 
         ItemStack stack = player.getHeldItem(activeHand);
 
-        double distance = from.subtract(to).length();
+        double distance = from.subtract(trace.getHitVec()).length();
         long gameTime = player.world.getGameTime();
         double v = gameTime * speedModifier;
         float additiveThickness = (thickness * 3.5f) * calculateLaserFlickerModifier(gameTime);
@@ -78,14 +80,9 @@ public class RenderMiningLaser {
         Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 
         MatrixStack matrix = event.getMatrixStack();
-        Matrix4f m4f = matrix.getLast().getMatrix();
-        String matrixString = m4f.toString();
-        String[] sp = matrixString.split(" ");
-        String[] sp2= sp[3].split("\n");
-        if (sp2[0].equals("0.0"))
-            matrix.translate(-view.getX(), -view.getY(), -view.getZ());
-
-        matrix.translate(from.x, from.y, from.z);
+        matrix.translate(view.getX(), view.getY(), view.getZ());
+        if( trace.getType() == RayTraceResult.Type.MISS )
+            matrix.translate(-from.x, -from.y, -from.z);
 
         RenderSystem.pushMatrix();
         RenderSystem.multMatrix(matrix.getLast().getMatrix());
