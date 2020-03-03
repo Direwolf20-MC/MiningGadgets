@@ -60,6 +60,8 @@ public class BlockOverlayRender {
             }
         });
         matrix.pop();
+        RenderSystem.disableDepthTest();
+        buffer.finish(MyRenderType.BlockOverlay);
     }
 
     public static void render(Matrix4f  matrix, IVertexBuilder builder, BlockPos pos, Color color) {
