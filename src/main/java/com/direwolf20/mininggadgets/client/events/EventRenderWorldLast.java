@@ -24,8 +24,8 @@ public class EventRenderWorldLast {
         PlayerEntity myplayer = Minecraft.getInstance().player;
 
         ItemStack myItem = MiningGadget.getGadget(myplayer);
-        /*if (myItem.getItem() instanceof MiningGadget)
-            BlockOverlayRender.render(evt, myItem);*/
+        if (myItem.getItem() instanceof MiningGadget)
+            BlockOverlayRender.render(evt, myItem);
 
         for (PlayerEntity player : players) {
             if (player.getDistanceSq(myplayer) > 500)

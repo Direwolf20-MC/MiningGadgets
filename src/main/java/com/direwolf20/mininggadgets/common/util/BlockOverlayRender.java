@@ -37,6 +37,7 @@ public class BlockOverlayRender {
         Vec3d view = mc.gameRenderer.getActiveRenderInfo().getProjectedView();
 
         MatrixStack stack = event.getMatrixStack();
+        stack.push();
         stack.translate(-view.getX(), -view.getY(), -view.getZ());
 
         RenderSystem.pushMatrix();
@@ -71,6 +72,7 @@ public class BlockOverlayRender {
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();
         RenderSystem.popMatrix();
+        stack.pop();
     }
 
     public static void render(BlockPos pos, Tessellator tessellator, BufferBuilder buffer, Color color) {
