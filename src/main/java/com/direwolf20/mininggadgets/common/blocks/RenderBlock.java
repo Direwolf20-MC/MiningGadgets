@@ -22,7 +22,7 @@ public class RenderBlock extends Block {
         super(
                 Properties.create(Material.IRON)
                         .hardnessAndResistance(2.0f)
-                        .doesNotBlockMovement()
+                        .notSolid()
                         .noDrops()
         );
     }
