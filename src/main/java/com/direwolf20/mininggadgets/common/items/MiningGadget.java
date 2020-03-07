@@ -44,6 +44,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.event.world.BlockEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -134,15 +135,25 @@ public class MiningGadget extends Item {
             MiningProperties.setRange(tool, 1);
     }
 
-    public static boolean canMine(ItemStack tool, World world) {
+    public static boolean canMine(ItemStack tool) {
         IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
-        if (MiningProperties.getRange(tool) == 3) cost = cost * 9;
-        if (energy.getEnergyStored() <= cost)
+
+        if (MiningProperties.getRange(tool) == 3)
+            cost = cost * 9;
+
+        return energy.getEnergyStored() > cost;
+    }
+
+    public static boolean canMineBlock(ItemStack tool, World world, PlayerEntity player, BlockPos pos, BlockState state) {
+        if( !player.isAllowEdit() || !world.isBlockModifiable(player, pos) )
             return false;
 
+        BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, pos, state, player);
+        if( e.isCanceled() )
+            return false;
 
-        return true;
+        return canMine(tool);
     }
 
     @Override
@@ -176,7 +187,7 @@ public class MiningGadget extends Item {
         if (world.isRemote)
             return new ActionResult<>(ActionResultType.PASS, itemstack);
 
-        if (!canMine(itemstack, world))
+        if (!canMine(itemstack))
             return new ActionResult<>(ActionResultType.FAIL, itemstack);
 
         player.setActiveHand(hand);
@@ -283,7 +294,7 @@ public class MiningGadget extends Item {
                 BlockState state = world.getBlockState(coord);
                 if (!(state.getBlock() instanceof RenderBlock)) {
                     //if (!world.isRemote) {
-                    if (!canMine(stack, world)) {
+                    if (!canMineBlock(stack, world, (PlayerEntity) player, coord, state)) {
                         return;
                     }
                     List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);

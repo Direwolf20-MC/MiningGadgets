@@ -33,7 +33,7 @@ public class EventRenderWorldLast {
 
             ItemStack heldItem = MiningGadget.getGadget(player);
             if (player.isHandActive() && heldItem.getItem() instanceof MiningGadget) {
-                if (MiningGadget.canMine(heldItem, myplayer.world)) {
+                if (MiningGadget.canMine(heldItem)) {
                     RenderMiningLaser2.renderLaser(evt, player, Minecraft.getInstance().getRenderPartialTicks());
                 }
             }
