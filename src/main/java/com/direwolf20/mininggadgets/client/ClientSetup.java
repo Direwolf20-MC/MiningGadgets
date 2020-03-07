@@ -31,7 +31,8 @@ public final class ClientSetup {
      * Client Registry for renders
      */
     private static void registerRenderers() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(event ->
-                ClientRegistry.bindTileEntityRenderer(ModBlocks.RENDERBLOCK_TILE.get(), RenderBlockTER::new));
+        //FMLJavaModLoadingContext.get().getModEventBus().addListener(event ->
+                ClientRegistry.bindTileEntityRenderer(ModBlocks.RENDERBLOCK_TILE.get(), RenderBlockTER::new);
+                //);
     }
 }
