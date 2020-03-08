@@ -258,7 +258,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
-        tag.put("renderBlock", NBTUtil.writeBlockState(renderBlock));
+        if (renderBlock!= null)
+            tag.put("renderBlock", NBTUtil.writeBlockState(renderBlock));
         tag.putInt("originalDurability", originalDurability);
         tag.putInt("priorDurability", priorDurability);
         tag.putInt("durability", durability);
