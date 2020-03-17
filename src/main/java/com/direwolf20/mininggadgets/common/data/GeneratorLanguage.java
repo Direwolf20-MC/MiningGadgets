@@ -44,6 +44,20 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.BATTERY_2, "Upgrade: Battery, Tier 2");
         addItem(ModItems.BATTERY_3, "Upgrade: Battery, Tier 3");
 
+        // Upgrade tooltips :D
+        add("tooltop.mininggadgets.empty", "Used to craft other upgrades");
+        add("tooltop.mininggadgets.silk", "Applies the silk touch enchant to the Mining Gadget");
+        add("tooltop.mininggadgets.void_junk", "Voids blocks! (adds filtering too)");
+        add("tooltop.mininggadgets.magnet", "Deconstructs blocks right into your inventory");
+        add("tooltop.mininggadgets.three_by_three", "Allows for a 3x3 mining radius");
+        add("tooltop.mininggadgets.light_placer", "Places touches when ever the surroundings light level is lower than 8");
+        add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
+        add("tooltop.mininggadgets.heatsink", "");
+        add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
+        add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");
+        add("tooltop.mininggadgets.range", "Extends your range by 5 times with each tier");
+        add("tooltop.mininggadgets.efficiency", "Applies efficiency to the Mining Gadget");
+
         // Blocks
         addBlock(ModBlocks.MINERS_LIGHT, "Miner's Light");
         addBlock(ModBlocks.RENDER_BLOCK, "Render Block (Don't use)");
