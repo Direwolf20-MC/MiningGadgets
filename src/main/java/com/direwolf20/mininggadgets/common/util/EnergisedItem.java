@@ -29,17 +29,16 @@ public class EnergisedItem extends EnergyStorage {
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        int amount = super.receiveEnergy(maxReceive, simulate);
-        stack.getOrCreateTag().putInt("energy", this.energy);
-
-        return amount;
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        return 0;
     }
 
     @Override
-    public int getEnergyStored() {
-        int amount = super.getEnergyStored();
-        stack.getOrCreateTag().putInt("energy", amount);
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        int amount = super.receiveEnergy(maxReceive, simulate);
+
+        if( !simulate )
+            stack.getOrCreateTag().putInt("energy", this.energy);
 
         return amount;
     }
