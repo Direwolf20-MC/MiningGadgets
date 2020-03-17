@@ -47,7 +47,7 @@ public class UpgradeCard extends Item {
     }
 
     public UpgradeCard(Upgrade upgrade) {
-        super(new Properties().group(MiningGadgets.itemGroup).maxStackSize(1));
+        super(new Properties().group(MiningGadgets.itemGroup).maxStackSize(upgrade == Upgrade.EMPTY ? 64 : 1));
         this.upgrade = upgrade;
     }
 
