@@ -4,11 +4,14 @@ import com.direwolf20.mininggadgets.client.ClientSetup;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -62,6 +65,13 @@ public class MiningGadgets
 
         Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-client.toml"));
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
+    }
+
+    @SubscribeEvent
+    public void rightClickEvent(PlayerInteractEvent.RightClickBlock event) {
+        ItemStack stack = MiningGadget.getGadget(event.getPlayer());
+        if( stack.getItem() instanceof MiningGadget )
+            event.setCanceled(true);
     }
 
     private void setup(final FMLCommonSetupEvent event)
