@@ -125,7 +125,7 @@ public class RenderMiningLaser2 {
             hand = hand == Hand.MAIN_HAND ? Hand.OFF_HAND : Hand.MAIN_HAND;
         float startXOffset = -0.25f;
         float startYOffset = -.115f;
-        float startZOffset = 0.65f;// + (1 - player.getFovModifier());
+        float startZOffset = 0.65f + (1 - player.getFovModifier());
         if (hand == Hand.OFF_HAND) {
             startYOffset = -.120f;
             startXOffset = 0.25f;
