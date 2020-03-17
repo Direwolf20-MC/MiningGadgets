@@ -52,7 +52,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.three_by_three", "Allows for a 3x3 mining radius");
         add("tooltop.mininggadgets.light_placer", "Places touches when ever the surroundings light level is lower than 8");
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
-        add("tooltop.mininggadgets.heatsink", "");
+        add("tooltop.mininggadgets.heatsink", "Cools the laser instantly. Most useful when using haste underground.");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
         add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");
         add("tooltop.mininggadgets.range", "Extends your range by 5 times with each tier");
@@ -72,7 +72,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.item.show_upgrades","Hold %s to show upgrades");
         addPrefixed("tooltip.item.upgrades", "Current Upgrades:");
         addPrefixed("tooltip.item.upgrade_cost", "Upgrade Cost: %1$d");
-        addPrefixed("tooltip.item.use_cost", "Per Use Cost: %1$d");
+        addPrefixed("tooltip.item.use_cost", "+%1$d FE per use");
         addPrefixed("tooltip.item.battery_boost", "Battery Boost: %1$d");
         addPrefixed("tooltip.item.break_cost", "Per Block Cost: %1$d");
 

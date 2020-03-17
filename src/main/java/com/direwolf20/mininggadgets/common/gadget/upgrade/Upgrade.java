@@ -24,9 +24,9 @@ public enum Upgrade {
     SILK("silk", Config.UPGRADECOST_SILKTOUCH.get(), true),
     VOID_JUNK("void_junk", Config.UPGRADECOST_VOID.get()),
     MAGNET("magnet", Config.UPGRADECOST_MAGNET.get()),
+    FREEZING("freezing", 0),
     THREE_BY_THREE("three_by_three", 0, false),
     LIGHT_PLACER("light_placer", 0),
-    FREEZING("freezing", 0),
     HEATSINK("heatsink", Config.UPGRADECOST_HEATSINK.get(), false),
 
     // Tiered
