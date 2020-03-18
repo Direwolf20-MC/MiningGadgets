@@ -153,7 +153,6 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     @Override
     public void onClose() {
         super.onClose();
-        System.out.println(this.volume);
         PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
         PacketHandler.sendToServer(new PacketChangeVolume(this.volume));
     }
