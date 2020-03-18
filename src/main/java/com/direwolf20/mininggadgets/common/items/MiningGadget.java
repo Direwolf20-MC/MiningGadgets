@@ -279,10 +279,13 @@ public class MiningGadget extends Item {
     @OnlyIn(Dist.CLIENT)
     public void playLoopSound(LivingEntity player, ItemStack stack) {
         float volume = MiningProperties.getVolume(stack);
-        if (volume != 0.0f) {
-            if (laserLoopSound == null) {
-                laserLoopSound = new LaserLoopSound((PlayerEntity) player, volume);
-                Minecraft.getInstance().getSoundHandler().play(laserLoopSound);
+        PlayerEntity myplayer = Minecraft.getInstance().player;
+        if (myplayer.equals((PlayerEntity) player)) {
+            if (volume != 0.0f) {
+                if (laserLoopSound == null) {
+                    laserLoopSound = new LaserLoopSound((PlayerEntity) player, volume);
+                    Minecraft.getInstance().getSoundHandler().play(laserLoopSound);
+                }
             }
         }
 
