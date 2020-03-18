@@ -27,7 +27,7 @@ public class MiningProperties {
     private static final String BREAK_TYPE = "breakType";
     private static final String CAN_MINE = "canMine";
     private static final String PRECISION_MODE = "precisionMode";
-    private static final String MUTE = "mute";
+    private static final String VOLUME = "volume";
 
     public static final String KEY_FILTERS = "filters";
     public static final String COLOR_RED = "colorRed";
@@ -148,14 +148,14 @@ public class MiningProperties {
         return !compound.contains(PRECISION_MODE) ? setPrecisionMode(gadget, false) : compound.getBoolean(PRECISION_MODE);
     }
 
-    public static boolean setMute(ItemStack gadget, boolean muteIn) {
-        gadget.getOrCreateTag().putBoolean(MUTE, muteIn);
-        return muteIn;
+    public static float setVolume(ItemStack gadget, float volume) {
+        gadget.getOrCreateTag().putFloat(VOLUME, Math.max(0.0f, Math.min(1.0f, volume)));
+        return volume;
     }
 
-    public static boolean getMute(ItemStack gadget) {
+    public static float getVolume(ItemStack gadget) {
         CompoundNBT compound = gadget.getOrCreateTag();
-        return !compound.contains(MUTE) ? setMute(gadget, false) : compound.getBoolean(MUTE);
+        return !compound.contains(VOLUME) ? setVolume(gadget, 1.0f) : compound.getFloat(VOLUME);
     }
 
     /**

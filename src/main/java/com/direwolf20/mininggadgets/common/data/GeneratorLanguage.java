@@ -96,7 +96,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.screen.whitelist", "Whitelist active");
         addPrefixed("tooltip.screen.blacklist", "Blacklist active");
         addPrefixed("tooltip.screen.precision_mode", "Precision Mode: %1$d");
-        addPrefixed("tooltip.screen.mute", "Mute: %1$d");
+        addPrefixed("tooltip.screen.volume", "Volume");
 
     }
 

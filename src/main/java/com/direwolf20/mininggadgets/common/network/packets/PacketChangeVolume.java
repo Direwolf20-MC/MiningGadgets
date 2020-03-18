@@ -9,20 +9,23 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketToggleMute {
-    public PacketToggleMute() {
+public class PacketChangeVolume {
+    private float volume;
+
+    public PacketChangeVolume(float volume) {
+        this.volume = volume;
     }
 
-    public static void encode(PacketToggleMute msg, PacketBuffer buffer) {
-
+    public static void encode(PacketChangeVolume msg, PacketBuffer buffer) {
+        buffer.writeFloat(msg.volume);
     }
 
-    public static PacketToggleMute decode(PacketBuffer buffer) {
-        return new PacketToggleMute();
+    public static PacketChangeVolume decode(PacketBuffer buffer) {
+        return new PacketChangeVolume(buffer.readFloat());
     }
 
     public static class Handler {
-        public static void handle(PacketToggleMute msg, Supplier<NetworkEvent.Context> ctx) {
+        public static void handle(PacketChangeVolume msg, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
                 ServerPlayerEntity player = ctx.get().getSender();
                 if (player == null)
@@ -31,7 +34,7 @@ public class PacketToggleMute {
                 ItemStack stack = MiningGadget.getGadget(player);
 
                 // Active toggle feature
-                MiningProperties.setMute(stack, !MiningProperties.getMute(stack));
+                MiningProperties.setVolume(stack, msg.volume);
             });
 
             ctx.get().setPacketHandled(true);

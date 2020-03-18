@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
 
 public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private ItemStack gadget;
-    private Button sizeButton;
 
-    private int beamRange = 0;
+    private int beamRange;
+    private float volume;
     private int currentSize = 1;
     private boolean isWhitelist = true;
     private boolean isPrecision = true;
-    private boolean isMute = false;
     private Slider rangeSlider;
+    private Slider volumeSlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
 
     public MiningSettingScreen(ItemStack gadget) {
@@ -38,6 +38,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
         this.gadget = gadget;
         this.beamRange = MiningProperties.getBeamRange(gadget);
+        this.volume = MiningProperties.getVolume(gadget);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         }
 
         currentSize = MiningProperties.getRange(gadget);
-        sizeButton = new Button(baseX - 135, baseY - 50, 115, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.size", currentSize).getUnformattedComponentText(), (button) -> {
+        Button sizeButton = new Button(baseX - 135, baseY - 50, 115, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.size", currentSize).getUnformattedComponentText(), (button) -> {
             currentSize = currentSize == 1 ? 3 : 1;
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
             PacketHandler.sendToServer(new PacketChangeMiningSize());
@@ -87,12 +88,9 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
             PacketHandler.sendToServer(new PacketTogglePrecision());
         }));
 
-        //Mute Button
-        addButton(new Button(baseX - 135, baseY + 50, 115, 20, getTrans("tooltip.screen.mute", isMute), (button) -> {
-            isMute = !isMute;
-            button.setMessage(getTrans("tooltip.screen.mute", isMute));
-            PacketHandler.sendToServer(new PacketToggleMute());
-        }));
+        // volume slider
+        volumeSlider = new Slider(baseX - 135, baseY + 50, 115, 20, getTrans("tooltip.screen.volume") + ": ", "%", 0, 100, Math.min(100, volume * 100), false, true, s -> {}, this);
+        addButton(volumeSlider);
 
         // Don't add if we don't have voids
         if( containsVoid ) {
@@ -155,7 +153,9 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     @Override
     public void onClose() {
         super.onClose();
+        System.out.println(this.volume);
         PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
+        PacketHandler.sendToServer(new PacketChangeVolume(this.volume));
     }
 
     @Override
@@ -163,10 +163,14 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         //Future proofing for other potential sliders
         if (slider.equals(rangeSlider))
             this.beamRange = slider.getValueInt();
+
+        if (slider.equals(volumeSlider))
+            this.volume = slider.getValueInt() / 100f;
     }
 
     public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
         rangeSlider.dragging = false;
+        volumeSlider.dragging = false;
         return false;
     }
 
@@ -176,7 +180,10 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
             rangeSlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
             rangeSlider.updateSlider();
         }
-
+        if( volumeSlider.isMouseOver(mouseX, mouseY) ) {
+            volumeSlider.sliderValue += (1f * (delta > 0 ? 1 : -1));
+            volumeSlider.updateSlider();
+        }
         return false;
     }
 

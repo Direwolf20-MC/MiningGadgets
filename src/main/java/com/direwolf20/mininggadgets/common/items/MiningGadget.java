@@ -200,8 +200,9 @@ public class MiningGadget extends Item {
             return this.onItemShiftRightClick(world, player, hand, itemstack);
 
         if (world.isRemote) {
-            if (!MiningProperties.getMute(itemstack))
-                player.playSound(OurSounds.LASER_START.getSound(), 1f, 1f);
+            float volume = MiningProperties.getVolume(itemstack);
+            if (volume != 0.0f)
+                player.playSound(OurSounds.LASER_START.getSound(), volume, 1f);
             return new ActionResult<>(ActionResultType.PASS, itemstack);
         }
 
@@ -277,9 +278,10 @@ public class MiningGadget extends Item {
 
     @OnlyIn(Dist.CLIENT)
     public void playLoopSound(LivingEntity player, ItemStack stack) {
-        if (!MiningProperties.getMute(stack)) {
+        float volume = MiningProperties.getVolume(stack);
+        if (volume != 0.0f) {
             if (laserLoopSound == null) {
-                laserLoopSound = new LaserLoopSound((PlayerEntity) player);
+                laserLoopSound = new LaserLoopSound((PlayerEntity) player, volume);
                 Minecraft.getInstance().getSoundHandler().play(laserLoopSound);
             }
         }
@@ -430,8 +432,10 @@ public class MiningGadget extends Item {
         if (worldIn.isRemote) {
             if (laserLoopSound != null)
                 laserLoopSound = null;
-            if (!MiningProperties.getMute(stack))
-                entityLiving.playSound(OurSounds.LASER_END.getSound(), 1f, 1f);
+
+            float volume = MiningProperties.getVolume(stack);
+            if (volume != 0.0f)
+                entityLiving.playSound(OurSounds.LASER_END.getSound(), volume, 1f);
         }
 
         if (entityLiving instanceof PlayerEntity) {
