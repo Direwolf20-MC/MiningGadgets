@@ -29,6 +29,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private int currentSize = 1;
     private boolean isWhitelist = true;
     private boolean isPrecision = true;
+    private boolean isMute = false;
     private Slider rangeSlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
 
@@ -84,6 +85,13 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
             isPrecision = !isPrecision;
             button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
             PacketHandler.sendToServer(new PacketTogglePrecision());
+        }));
+
+        //Mute Button
+        addButton(new Button(baseX - 135, baseY + 50, 115, 20, getTrans("tooltip.screen.mute", isMute), (button) -> {
+            isMute = !isMute;
+            button.setMessage(getTrans("tooltip.screen.mute", isMute));
+            PacketHandler.sendToServer(new PacketToggleMute());
         }));
 
         // Don't add if we don't have voids
