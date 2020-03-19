@@ -363,8 +363,10 @@ public class MiningGadget extends Item {
                             //player.resetActiveHand();
                         }
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
-                        if (MiningProperties.getPrecisionMode(stack))
+                        if (MiningProperties.getPrecisionMode(stack)) {
                             MiningProperties.setCanMine(stack, false);
+                            player.resetActiveHand();
+                        }
                     }
                     te.setDurability(durability, stack);
                     //}
@@ -433,12 +435,13 @@ public class MiningGadget extends Item {
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
         if (worldIn.isRemote) {
-            if (laserLoopSound != null)
+            if (laserLoopSound != null) {
+                float volume = MiningProperties.getVolume(stack);
+                if (volume != 0.0f && !laserLoopSound.isDonePlaying()) {
+                    entityLiving.playSound(OurSounds.LASER_END.getSound(), volume, 1f);
+                }
                 laserLoopSound = null;
-
-            float volume = MiningProperties.getVolume(stack);
-            if (volume != 0.0f)
-                entityLiving.playSound(OurSounds.LASER_END.getSound(), volume, 1f);
+            }
         }
 
         if (entityLiving instanceof PlayerEntity) {
