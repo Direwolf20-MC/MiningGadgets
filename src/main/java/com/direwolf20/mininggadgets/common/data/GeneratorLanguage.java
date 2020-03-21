@@ -52,7 +52,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.three_by_three", "Allows for a 3x3 mining radius");
         add("tooltop.mininggadgets.light_placer", "Places touches when ever the surroundings light level is lower than 8");
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
-        add("tooltop.mininggadgets.heatsink", "Cools the laser instantly. Most useful when using haste underground.");
+        add("tooltop.mininggadgets.heatsink", "DISABLED - No longer necessary");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
         add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");
         add("tooltop.mininggadgets.range", "Extends your range by 5 times with each tier");
