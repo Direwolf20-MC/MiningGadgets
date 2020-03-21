@@ -67,7 +67,7 @@ public class MiningGadget extends Item {
     //private static int energyPerItem = 15;
 
     public MiningGadget() {
-        super(new Item.Properties().maxStackSize(1).group(MiningGadgets.itemGroup).setTEISR( () -> () -> getRenderer()));
+        super(new Item.Properties().maxStackSize(1).group(MiningGadgets.itemGroup).setTEISR( () -> this::getRenderer));
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
