@@ -468,6 +468,6 @@ public class MiningGadget extends Item {
     @OnlyIn(Dist.CLIENT)
     public static ItemStackTileEntityRenderer getRenderer()
     {
-                return new RenderMiningGadget();
+            return new RenderMiningGadget();
     }
 }
