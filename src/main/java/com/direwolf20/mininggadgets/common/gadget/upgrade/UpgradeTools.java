@@ -78,6 +78,7 @@ public class UpgradeTools {
         for (int i = 0; i < upgrades.size(); i++) {
             CompoundNBT tag = upgrades.getCompound(i);
 
+            // Skip unknowns
             Upgrade type = getUpgradeByName(tag.getString(KEY_UPGRADE));
             if( type == null )
                 continue;

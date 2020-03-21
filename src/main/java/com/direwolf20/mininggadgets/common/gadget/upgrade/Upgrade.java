@@ -24,9 +24,9 @@ public enum Upgrade {
     SILK("silk", Config.UPGRADECOST_SILKTOUCH.get(), true),
     VOID_JUNK("void_junk", Config.UPGRADECOST_VOID.get()),
     MAGNET("magnet", Config.UPGRADECOST_MAGNET.get()),
+    FREEZING("freezing", 0),
     THREE_BY_THREE("three_by_three", 0, false),
     LIGHT_PLACER("light_placer", 0),
-    FREEZING("freezing", 0),
     HEATSINK("heatsink", Config.UPGRADECOST_HEATSINK.get(), false),
 
     // Tiered
@@ -55,14 +55,16 @@ public enum Upgrade {
     private int costPerBlock;
     private boolean active = true;
     private boolean isToggleable;
+    private String tooltop;
 
     Upgrade(String name, int tier, int costPerBlock, boolean isToggleable) {
         this.name = name;
         this.tier = tier;
         this.costPerBlock = costPerBlock;
-        this.card = new UpgradeCard(this);
+        this.card = new UpgradeCard(this, name.equals("empty") ? 64 : 1);
         this.baseName = tier == -1 ? name : name.substring(0, name.lastIndexOf('_'));
         this.isToggleable = isToggleable;
+        this.tooltop = "tooltop.mininggadgets." + this.baseName;
     }
 
     Upgrade(String name, int tier, int costPerBlock) {
@@ -121,5 +123,9 @@ public enum Upgrade {
 
     public boolean isToggleable() {
         return isToggleable;
+    }
+
+    public String getTooltop() {
+        return tooltop;
     }
 }

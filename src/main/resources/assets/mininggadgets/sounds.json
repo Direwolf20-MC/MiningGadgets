@@ -1,0 +1,29 @@
+{
+   "mining_laser_loop": {
+      "category": "item",
+      "sounds": [
+         {
+            "name": "mininggadgets:mining_laser_loop",
+            "stream": false
+         }
+      ]
+   },
+   "mining_laser_end1": {
+      "category": "item",
+      "sounds": [
+         {
+            "name": "mininggadgets:mining_laser_end2",
+            "stream": false
+         }
+      ]
+   },
+   "mining_laser_start1": {
+      "category": "item",
+      "sounds": [
+         {
+            "name": "mininggadgets:mining_laser_start2",
+            "stream": false
+         }
+      ]
+   }
+}

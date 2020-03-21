@@ -1,20 +1,23 @@
 package com.direwolf20.mininggadgets.common.util;
 
+import com.direwolf20.mininggadgets.client.renderer.MyRenderType;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -22,8 +25,10 @@ import java.util.List;
 
 public class BlockOverlayRender {
 
-    public static void render(ItemStack item) {
+    public static void render(RenderWorldLastEvent event, ItemStack item) {
         final Minecraft mc = Minecraft.getInstance();
+
+        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
 
         int range = MiningProperties.getBeamRange(item);
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE, range);
@@ -32,84 +37,72 @@ public class BlockOverlayRender {
         }
 
         List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.world, MiningProperties.getRange(item));
+        Vec3d view = mc.gameRenderer.getActiveRenderInfo().getProjectedView();
 
-        Vec3d playerPos = new Vec3d(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
+        MatrixStack matrix = event.getMatrixStack();
+        matrix.push();
+        matrix.translate(-view.getX(), -view.getY(), -view.getZ());
 
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture();
-
-        GlStateManager.translated(-playerPos.getX(), -playerPos.getY(), -playerPos.getZ());
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-
+        IVertexBuilder builder;
+        builder = buffer.getBuffer(MyRenderType.BlockOverlay);
         coords.forEach(e -> {
             if (mc.world.getBlockState(e).getBlock() != ModBlocks.RENDER_BLOCK.get()) {
-                GlStateManager.pushMatrix();
-                GlStateManager.translatef(e.getX(), e.getY(), e.getZ());
-                GlStateManager.translatef(-0.005f, -0.005f, -0.005f);
-                GlStateManager.scalef(1.01f, 1.01f, 1.01f);
-                GlStateManager.rotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-//              Removed as we'd have to build the tool and check all the upgrades etc on a single tick. Todo: cache most of it?
-//                if ( UpgradeTools.containsActiveUpgrade(item, Upgrade.VOID_JUNK) ) {
-//
-//                    BlockOverlayRender.render(e, tessellator, buffer, Color.RED);
-//                }
-//                else
-                    BlockOverlayRender.render(e, tessellator, buffer, Color.GREEN);
-                GlStateManager.popMatrix();
+
+                matrix.push();
+                matrix.translate(e.getX(), e.getY(), e.getZ());
+                matrix.translate(-0.005f, -0.005f, -0.005f);
+                matrix.scale(1.01f, 1.01f, 1.01f);
+                matrix.rotate(Vector3f.YP.rotationDegrees(-90.0F));
+
+                Matrix4f positionMatrix = matrix.getLast().getMatrix();
+                BlockOverlayRender.render(positionMatrix, builder, e, Color.GREEN);
+                matrix.pop();
             }
         });
-
-        GlStateManager.disableBlend();
-        GlStateManager.enableTexture();
-        GlStateManager.popMatrix();
+        matrix.pop();
+        RenderSystem.disableDepthTest();
+        buffer.finish(MyRenderType.BlockOverlay);
     }
 
-    public static void render(BlockPos pos, Tessellator tessellator, BufferBuilder buffer, Color color) {
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-
-        double maxX = pos.getX() + 1, maxY = pos.getY() + 1, maxZ = pos.getZ() + 1;
+    public static void render(Matrix4f  matrix, IVertexBuilder builder, BlockPos pos, Color color) {
         float red = color.getRed() / 255f, green = color.getGreen() / 255f, blue = color.getBlue() / 255f, alpha = .125f;
 
-        double startX = 0, startY = 0, startZ = -1, endX = 1, endY = 1, endZ = 0;
+        float startX = 0, startY = 0, startZ = -1, endX = 1, endY = 1, endZ = 0;
 
-        buffer.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        //down
+        builder.pos(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
 
         //up
-        buffer.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
 
         //east
-        buffer.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
 
         //west
-        buffer.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
 
         //south
-        buffer.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
 
         //north
-        buffer.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        tessellator.draw();
+        builder.pos(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
     }
 }

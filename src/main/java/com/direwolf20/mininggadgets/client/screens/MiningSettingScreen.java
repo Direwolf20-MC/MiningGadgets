@@ -14,22 +14,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.config.GuiSlider;
+import net.minecraftforge.fml.client.gui.widget.Slider;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
+public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private ItemStack gadget;
-    private Button sizeButton;
 
-    private int beamRange = 0;
+    private int beamRange;
+    private float volume;
     private int currentSize = 1;
     private boolean isWhitelist = true;
     private boolean isPrecision = true;
-    private GuiSlider rangeSlider;
+    private Slider rangeSlider;
+    private Slider volumeSlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
 
     public MiningSettingScreen(ItemStack gadget) {
@@ -37,6 +38,7 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
 
         this.gadget = gadget;
         this.beamRange = MiningProperties.getBeamRange(gadget);
+        this.volume = MiningProperties.getVolume(gadget);
     }
 
     @Override
@@ -65,13 +67,13 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
         }
 
         currentSize = MiningProperties.getRange(gadget);
-        sizeButton = new Button(baseX - 135, baseY - 50, 115, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.size", currentSize).getUnformattedComponentText(), (button) -> {
+        Button sizeButton = new Button(baseX - 135, baseY - 50, 115, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.size", currentSize).getUnformattedComponentText(), (button) -> {
             currentSize = currentSize == 1 ? 3 : 1;
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
             PacketHandler.sendToServer(new PacketChangeMiningSize());
         });
 
-        rangeSlider = new GuiSlider(baseX - 135, baseY - 25, 115, 20, getTrans("tooltip.screen.range") + ": ", "", 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this);
+        rangeSlider = new Slider(baseX - 135, baseY - 25, 115, 20, getTrans("tooltip.screen.range") + ": ", "", 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this);
 
         addButton(sizeButton);
         addButton(rangeSlider);
@@ -85,6 +87,10 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
             button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
             PacketHandler.sendToServer(new PacketTogglePrecision());
         }));
+
+        // volume slider
+        volumeSlider = new Slider(baseX - 135, baseY + 50, 115, 20, getTrans("tooltip.screen.volume") + ": ", "%", 0, 100, Math.min(100, volume * 100), false, true, s -> {}, this);
+        addButton(volumeSlider);
 
         // Don't add if we don't have voids
         if( containsVoid ) {
@@ -148,17 +154,35 @@ public class MiningSettingScreen extends Screen implements GuiSlider.ISlider {
     public void onClose() {
         super.onClose();
         PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
+        PacketHandler.sendToServer(new PacketChangeVolume(this.volume));
     }
 
     @Override
-    public void onChangeSliderValue(GuiSlider slider) {
+    public void onChangeSliderValue(Slider slider) {
         //Future proofing for other potential sliders
         if (slider.equals(rangeSlider))
             this.beamRange = slider.getValueInt();
+
+        if (slider.equals(volumeSlider))
+            this.volume = slider.getValueInt() / 100f;
     }
 
     public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
         rangeSlider.dragging = false;
+        volumeSlider.dragging = false;
+        return false;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if( rangeSlider.isMouseOver(mouseX, mouseY) ) {
+            rangeSlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
+            rangeSlider.updateSlider();
+        }
+        if( volumeSlider.isMouseOver(mouseX, mouseY) ) {
+            volumeSlider.sliderValue += (1f * (delta > 0 ? 1 : -1));
+            volumeSlider.updateSlider();
+        }
         return false;
     }
 

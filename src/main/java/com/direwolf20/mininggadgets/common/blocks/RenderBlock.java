@@ -7,7 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,10 +15,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
+//import net.minecraft.util.BlockRenderLayer;
+
 public class RenderBlock extends Block {
     public RenderBlock() {
         super(
-                Properties.create(Material.IRON).hardnessAndResistance(2.0f)
+                Properties.create(Material.IRON)
+                        .hardnessAndResistance(2.0f)
+                        .notSolid()
+                        .noDrops()
         );
     }
 
@@ -51,16 +56,6 @@ public class RenderBlock extends Block {
     }
 
     /**
-     * Gets the render layer this block will render on. SOLID for solid blocks, CUTOUT or CUTOUT_MIPPED for on-off
-     * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
-     */
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        // Since the effect block has no model rendering at all, which means we don't need blending, simply cutout is fine
-        return BlockRenderLayer.CUTOUT;
-    }
-
-    /**
      * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
      */
     @Override
@@ -75,7 +70,12 @@ public class RenderBlock extends Block {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public float func_220080_a(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return 1.0f;
+    }
+
+    @Override
+    public boolean isSideInvisible(BlockState p_200122_1_, BlockState p_200122_2_, Direction p_200122_3_) {
+        return true;
     }
 }

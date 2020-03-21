@@ -5,6 +5,7 @@ import com.direwolf20.mininggadgets.client.renderer.MiningGadgetModel;
 import com.direwolf20.mininggadgets.client.renderer.RenderBlockTER;
 import com.direwolf20.mininggadgets.client.screens.FilterScreen;
 import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
+import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
@@ -45,8 +46,9 @@ public final class ClientSetup {
      * Client Registry for renders
      */
     private static void registerRenderers() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(event ->
-                ClientRegistry.bindTileEntitySpecialRenderer(RenderBlockTileEntity.class, new RenderBlockTER()));
+        //FMLJavaModLoadingContext.get().getModEventBus().addListener(event ->
+                ClientRegistry.bindTileEntityRenderer(ModBlocks.RENDERBLOCK_TILE.get(), RenderBlockTER::new);
+                //);
     }
 
 
