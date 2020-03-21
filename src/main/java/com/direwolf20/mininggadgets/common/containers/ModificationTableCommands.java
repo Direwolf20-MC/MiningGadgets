@@ -18,8 +18,8 @@ import java.util.List;
 public class ModificationTableCommands {
     public static boolean insertButton(ModificationTableContainer container, ItemStack upgrade) {
         Slot laserSlot = container.inventorySlots.get(0);
-//        Slot upgradeSlot = container.inventorySlots.get(1);
         ItemStack laser = laserSlot.getStack();
+
         if (laser.getItem() instanceof MiningGadget && upgrade.getItem() instanceof UpgradeCard) {
             Upgrade card = ((UpgradeCard) upgrade.getItem()).getUpgrade();
             if (card == Upgrade.EMPTY)
@@ -54,9 +54,11 @@ public class ModificationTableCommands {
                     laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(power.getPower()));
                 });
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName, boolean isShiftHeld) {
