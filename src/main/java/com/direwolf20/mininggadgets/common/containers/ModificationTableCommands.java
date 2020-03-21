@@ -24,11 +24,13 @@ public class ModificationTableCommands {
             Upgrade card = ((UpgradeCard) upgrade.getItem()).getUpgrade();
             if (card == Upgrade.EMPTY)
                 return false; //Don't allow inserting empty cards.
+
             List<Upgrade> upgrades = UpgradeTools.getUpgrades(laser);
 
             // Fortune has to be done slightly differently as it requires us to check
             // against all fortune tiers and not just it's existence.
             boolean hasFortune = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.FORTUNE_1);
+            boolean hasSilk = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.SILK);
 
             // Did we just insert a Range upgrade?
             if (card.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
@@ -38,13 +40,11 @@ public class ModificationTableCommands {
                 MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
             }
 
-            // Reject fortune and silk upgrades when combined together.
-            if ((hasFortune && card == Upgrade.SILK) ||
-                    (upgrades.contains(Upgrade.SILK) && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName())))
-                return false;
-
             if (UpgradeTools.containsUpgrade(laser, card))
                 return false;
+
+            if (hasFortune && card.getBaseName().equals(Upgrade.SILK.getBaseName()) || hasSilk && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName()))
+                ((UpgradeCard) upgrade.getItem()).getUpgrade().setEnabled(false);
 
             MiningGadget.applyUpgrade(laser, (UpgradeCard) upgrade.getItem());
 

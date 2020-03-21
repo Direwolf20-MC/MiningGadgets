@@ -128,4 +128,13 @@ public enum Upgrade {
     public String getTooltop() {
         return tooltop;
     }
+
+    /**
+     * Compares only the base name of the upgrade
+     *
+     * @param upgrade upgrade to compare against
+     */
+    public boolean lazyIs(Upgrade upgrade) {
+       return this.getBaseName().equals(upgrade.getBaseName());
+    }
 }
