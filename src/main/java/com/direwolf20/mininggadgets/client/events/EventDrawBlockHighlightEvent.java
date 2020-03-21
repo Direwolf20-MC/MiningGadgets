@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT)
 public class EventDrawBlockHighlightEvent {
+
     @SubscribeEvent
     static void drawBlockHighlightEvent(DrawHighlightEvent evt) {
         Vec3d vec = evt.getTarget().getHitVec();
