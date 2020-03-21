@@ -65,8 +65,8 @@ public class UpgradeTools {
             String name = compound.getString(KEY_UPGRADE);
             boolean enabled = compound.getBoolean(KEY_ENABLED);
 
-            if( (name.contains(Upgrade.FORTUNE_1.getBaseName()) && enabled && upgrade.getBaseName().equals(Upgrade.SILK.getBaseName() ))
-                            || (name.equals(Upgrade.SILK.getBaseName()) && enabled && upgrade.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName()) ))
+            if( (name.contains(Upgrade.FORTUNE_1.getBaseName()) && enabled && upgrade.lazyIs(Upgrade.SILK) )
+                            || (name.equals(Upgrade.SILK.getBaseName()) && enabled && upgrade.lazyIs(Upgrade.FORTUNE_1) ))
                 compound.putBoolean(KEY_ENABLED, false);
 
             if( name.equals(upgrade.getName()) )

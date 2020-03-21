@@ -7,7 +7,7 @@ import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.*;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.ItemStack;
@@ -18,7 +18,9 @@ import net.minecraftforge.fml.client.gui.widget.Slider;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MiningSettingScreen extends Screen implements Slider.ISlider {
@@ -32,6 +34,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private Slider rangeSlider;
     private Slider volumeSlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
+    private HashMap<Upgrade, ToggleButton> upgradeButtons = new HashMap<>();
 
     public MiningSettingScreen(ItemStack gadget) {
         super(new StringTextComponent("title"));
@@ -56,7 +59,9 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         // Remove 6 from x to center it as the padding on the right pushes off center... (I'm a ui nerd)
         int index = 0, x = baseX + 10, y = baseY - (containsVoid ? 20 : 50);
         for (Upgrade upgrade : toggleableList) {
-            addButton(new ToggleButton(x + (index * 30), y, UpgradeTools.getName(upgrade), new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send)));
+            ToggleButton btn = new ToggleButton(x + (index * 30), y, UpgradeTools.getName(upgrade), new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send));
+            addButton(btn);
+            upgradeButtons.put(upgrade, btn);
 
             // Spaces the upgrades
             index ++;
@@ -112,11 +117,24 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
     private boolean toggleUpgrade(Upgrade upgrade, boolean update) {
         // When the button is clicked we toggle
-        if( update )
+        if( update ) {
+            this.updateButtons(upgrade);
             PacketHandler.sendToServer(new PacketUpdateUpgrade(upgrade.getName()));
+        }
 
         // When we're just init the gui, we check if it's on or off.
         return upgrade.isEnabled();
+    }
+
+    private void updateButtons(Upgrade upgrade) {
+        for(Map.Entry<Upgrade, ToggleButton> btn : this.upgradeButtons.entrySet()) {
+            Upgrade btnUpgrade = btn.getKey();
+
+            if( (btnUpgrade.lazyIs(Upgrade.FORTUNE_1) && btn.getValue().isEnabled() && upgrade.lazyIs(Upgrade.SILK) )
+                    || ((btnUpgrade.lazyIs(Upgrade.SILK)) && btn.getValue().isEnabled() && upgrade.lazyIs(Upgrade.FORTUNE_1)) ) {
+                this.upgradeButtons.get(btn.getKey()).setEnabled(false);
+            }
+        }
     }
 
     @Override
@@ -200,17 +218,17 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
         @Override
         public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
-            GlStateManager.disableTexture();
-            GlStateManager.color4f(.4f, .4f, .4f, 1f);
+            RenderSystem.disableTexture();
+            RenderSystem.color4f(.4f, .4f, .4f, 1f);
             this.blit(this.x, this.y, 0, 0, this.width, this.height);
 
             if( this.isWhitelist )
-                GlStateManager.color4f(1f, 1f, 1f, 1f);
+                RenderSystem.color4f(1f, 1f, 1f, 1f);
             else
-                GlStateManager.color4f(0f, 0f, 0f, 1f);
+                RenderSystem.color4f(0f, 0f, 0f, 1f);
 
             this.blit(this.x + 2, this.y + 2, 0, 0, this.width-4, this.height-4);
-            GlStateManager.enableTexture();
+            RenderSystem.enableTexture();
         }
 
         public void setWhitelist(boolean whitelist) {

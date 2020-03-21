@@ -54,7 +54,15 @@ public class ToggleButton extends Widget {
 
     @Override
     public void onClick(double p_onClick_1_, double p_onClick_3_) {
-        this.onPress.test(true);
         this.enabled = !this.enabled;
+        this.onPress.test(true);
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }
