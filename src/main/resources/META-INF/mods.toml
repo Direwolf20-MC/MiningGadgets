@@ -17,7 +17,7 @@ description='''Mining is better with lasers.'''
 [[dependencies.mininggadgets]]
     modId="forge"
     mandatory=true
-    versionRange="[28,)"
+    versionRange="[30,)"
     ordering="NONE"
     side="BOTH"
 
@@ -25,6 +25,6 @@ description='''Mining is better with lasers.'''
 [[dependencies.mininggadgets]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.4]"
+    versionRange="[1.15.2]"
     ordering="NONE"
     side="BOTH"

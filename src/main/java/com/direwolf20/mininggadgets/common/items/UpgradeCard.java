@@ -42,12 +42,14 @@ public class UpgradeCard extends Item {
                     tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.battery_boost", MiscTools.tidyValue(e.getPower())).applyTextStyle(TextFormatting.AQUA));
                 });
             }
+
+            tooltip.add(new TranslationTextComponent(this.upgrade.getTooltop()).applyTextStyle(TextFormatting.GRAY));
         }
 
     }
 
-    public UpgradeCard(Upgrade upgrade) {
-        super(new Properties().group(MiningGadgets.itemGroup).maxStackSize(1));
+    public UpgradeCard(Upgrade upgrade, int maxStack) {
+        super(new Properties().group(MiningGadgets.itemGroup).maxStackSize(maxStack));
         this.upgrade = upgrade;
     }
 

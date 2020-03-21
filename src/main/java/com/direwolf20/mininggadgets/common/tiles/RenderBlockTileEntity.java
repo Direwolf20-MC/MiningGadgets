@@ -73,9 +73,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         this.breakType = breakType;
     }
 
-    public void justSetDurability(int dur) {
-        priorDurability = durability;
-        durability = dur;
+    public void justSetDurability(int durability) {
+        priorDurability = this.durability;
+        this.durability = durability;
         //System.out.println("Got:"+ " Prior: " + priorDurability + " Dur: " + durability);
     }
 
@@ -258,12 +258,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
-        tag.put("renderBlock", NBTUtil.writeBlockState(renderBlock));
+        if (renderBlock!= null)
+            tag.put("renderBlock", NBTUtil.writeBlockState(renderBlock));
         tag.putInt("originalDurability", originalDurability);
         tag.putInt("priorDurability", priorDurability);
         tag.putInt("durability", durability);
         tag.putInt("ticksSinceMine", ticksSinceMine);
-        tag.putUniqueId("playerUUID", playerUUID);
+        if (!playerUUID.equals(null))
+            tag.putUniqueId("playerUUID", playerUUID);
         tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
         tag.putByte("breakType", (byte) breakType.ordinal());
         tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
@@ -273,62 +275,65 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void removeBlock() {
-        if (!world.isRemote) {
-            PlayerEntity player = world.getPlayerByUuid(playerUUID);
-            if (player == null) return;
-            int silk = 0;
-            int fortune = 0;
+        if(world == null || world.isRemote)
+            return;
 
-            ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
+        PlayerEntity player = world.getPlayerByUuid(playerUUID);
+        if (player == null)
+            return;
 
-            // If silk is in the upgrades, apply it without a tier.
-            if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
-                tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-                silk = 1;
+        int silk = 0;
+        int fortune = 0;
+
+        ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
+
+        // If silk is in the upgrades, apply it without a tier.
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+            tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+            silk = 1;
+        }
+
+        // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
+            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+            if (upgrade.isPresent()) {
+                fortune = upgrade.get().getTier();
+                tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
             }
+        }
 
-            // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-            if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
-                Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
-                if (upgrade.isPresent()) {
-                    fortune = upgrade.get().getTier();
-                    tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
-                }
-            }
+        List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
 
-            List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
-
-            if ( blockAllowed ) {
-                int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
-                boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
-                for (ItemStack drop : drops) {
-                    if (drop != null) {
-                        if (magnetMode) {
-                            if (!player.addItemStackToInventory(drop)) {
-                                Block.spawnAsEntity(world, pos, drop);
-                            }
-                        } else {
+        if ( blockAllowed ) {
+            int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
+            boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
+            for (ItemStack drop : drops) {
+                if (drop != null) {
+                    if (magnetMode) {
+                        if (!player.addItemStackToInventory(drop)) {
                             Block.spawnAsEntity(world, pos, drop);
                         }
+                    } else {
+                        Block.spawnAsEntity(world, pos, drop);
                     }
                 }
-                if (magnetMode) {
-                    if (exp > 0)
-                        player.giveExperiencePoints(exp);
-                } else {
-                    if (exp > 0)
-                        renderBlock.getBlock().dropXpOnBlockBreak(world, pos, exp);
-                    //world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
-                }
             }
-
-            world.removeTileEntity(this.pos);
-            world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+            if (magnetMode) {
+                if (exp > 0)
+                    player.giveExperiencePoints(exp);
+            } else {
+                if (exp > 0)
+                    renderBlock.getBlock().dropXpOnBlockBreak(world, pos, exp);
+                //world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
+            }
         }
+
+        world.removeTileEntity(this.pos);
+        world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
     }
 
     private void resetBlock() {
-        if (!getWorld().isRemote) {
+        if (!getWorld().isRemote && getWorld() != null) {
             if (renderBlock != null)
                 world.setBlockState(this.pos, renderBlock);
             else

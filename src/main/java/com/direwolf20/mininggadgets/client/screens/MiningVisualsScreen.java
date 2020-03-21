@@ -9,11 +9,11 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.config.GuiSlider;
+import net.minecraftforge.fml.client.gui.widget.Slider;
 
 import java.awt.*;
 
-public class MiningVisualsScreen extends Screen implements GuiSlider.ISlider {
+public class MiningVisualsScreen extends Screen implements Slider.ISlider {
     private ItemStack gadget;
     private Button blockBreakButton;
     private int red;
@@ -22,12 +22,12 @@ public class MiningVisualsScreen extends Screen implements GuiSlider.ISlider {
     private int red_inner;
     private int green_inner;
     private int blue_inner;
-    private GuiSlider sliderRedInner;
-    private GuiSlider sliderGreenInner;
-    private GuiSlider sliderBlueInner;
-    private GuiSlider sliderRedOuter;
-    private GuiSlider sliderGreenOuter;
-    private GuiSlider sliderBlueOuter;
+    private Slider sliderRedInner;
+    private Slider sliderGreenInner;
+    private Slider sliderBlueInner;
+    private Slider sliderRedOuter;
+    private Slider sliderGreenOuter;
+    private Slider sliderBlueOuter;
 
     public MiningVisualsScreen(ItemStack gadget) {
         super(new StringTextComponent("title"));
@@ -58,18 +58,18 @@ public class MiningVisualsScreen extends Screen implements GuiSlider.ISlider {
         });
         addButton(blockBreakButton);
 
-        sliderRedInner = new GuiSlider(baseX - (150), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.red, false, true, s -> {
+        sliderRedInner = new Slider(baseX - (150), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.red, false, true, s -> {
         }, this);
-        sliderGreenInner = new GuiSlider(baseX - (150), baseY + 5, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.green, false, true, s -> {
+        sliderGreenInner = new Slider(baseX - (150), baseY + 5, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.green, false, true, s -> {
         }, this);
-        sliderBlueInner = new GuiSlider(baseX - (150), baseY + 35, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.blue, false, true, s -> {
+        sliderBlueInner = new Slider(baseX - (150), baseY + 35, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.blue, false, true, s -> {
         }, this);
 
-        sliderRedOuter = new GuiSlider(baseX + (25), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.red_inner, false, true, s -> {
+        sliderRedOuter = new Slider(baseX + (25), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.red_inner, false, true, s -> {
         }, this);
-        sliderGreenOuter = new GuiSlider(baseX + (25), baseY + 5, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.green_inner, false, true, s -> {
+        sliderGreenOuter = new Slider(baseX + (25), baseY + 5, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.green_inner, false, true, s -> {
         }, this);
-        sliderBlueOuter = new GuiSlider(baseX + (25), baseY + 35, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.blue_inner, false, true, s -> {
+        sliderBlueOuter = new Slider(baseX + (25), baseY + 35, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.blue_inner, false, true, s -> {
         }, this);
 
         addButton(sliderRedInner);
@@ -102,7 +102,7 @@ public class MiningVisualsScreen extends Screen implements GuiSlider.ISlider {
     }
 
     @Override
-    public void onChangeSliderValue(GuiSlider slider) {
+    public void onChangeSliderValue(Slider slider) {
         if (slider.equals(sliderRedInner)) {
             this.red = slider.getValueInt();
         } else if (slider.equals(sliderGreenInner)) {

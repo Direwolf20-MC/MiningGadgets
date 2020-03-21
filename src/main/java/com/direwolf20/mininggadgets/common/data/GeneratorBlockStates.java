@@ -19,7 +19,7 @@ public class GeneratorBlockStates extends BlockStateProvider {
         ResourceLocation side = modLoc("block/modificationtable_side");
         // Sorry for the formatting on this one, it's because we have to define all the sides :(
         getVariantBuilder(ModBlocks.MODIFICATION_TABLE.get()).forAllStates(state ->
-                ConfiguredModel.builder().modelFile(cube(
+                ConfiguredModel.builder().modelFile(models().cube(
                         ModBlocks.MODIFICATION_TABLE.get().getRegistryName().getPath(),
                         modLoc("block/modificationtable_bottom"),
                         modLoc("block/modificationtable_top"),
