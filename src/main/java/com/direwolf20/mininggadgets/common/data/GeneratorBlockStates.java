@@ -30,6 +30,7 @@ public class GeneratorBlockStates extends BlockStateProvider {
         // Render block
         buildCubeAll(ModBlocks.RENDER_BLOCK.get());
         buildCubeAll(ModBlocks.MINERS_LIGHT.get());
+        buildCubeAll(ModBlocks.QUARRY.get());
     }
 
     private void buildCubeAll(Block block) {

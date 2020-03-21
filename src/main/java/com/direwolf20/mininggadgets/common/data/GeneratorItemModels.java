@@ -25,6 +25,7 @@ public class GeneratorItemModels extends ItemModelProvider {
         // Our block items
         registerBlockModel(ModBlocks.MODIFICATION_TABLE.get());
         registerBlockModel(ModBlocks.MINERS_LIGHT.get());
+        registerBlockModel(ModBlocks.QUARRY.get());
     }
 
     private void registerBlockModel(Block block) {
