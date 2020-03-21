@@ -56,7 +56,7 @@ public class ModificationTableContainer extends Container {
 
     private void setupContainerSlots() {
         this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new WatchedSlot(h, 0,  -16, 59, this::updateUpgradeCache));
+            addSlot(new WatchedSlot(h, 0,  -16, 84, this::updateUpgradeCache));
         });
     }
 
@@ -113,8 +113,8 @@ public class ModificationTableContainer extends Container {
         if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             itemstack = stack.copy();
-            if (index < 1) {
-                if (!this.mergeItemStack(stack, 1, 38, true)) {
+            if (index == 0) {
+                if (!this.mergeItemStack(stack, 1, this.getInventory().size(), true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onSlotChange(stack, itemstack);
