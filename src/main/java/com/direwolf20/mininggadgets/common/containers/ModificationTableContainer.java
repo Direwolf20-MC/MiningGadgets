@@ -57,7 +57,6 @@ public class ModificationTableContainer extends Container {
     private void setupContainerSlots() {
         this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
             addSlot(new WatchedSlot(h, 0,  -16, 59, this::updateUpgradeCache));
-//            addSlot(new SlotItemHandler(h, 1, -16, 8));
         });
     }
 

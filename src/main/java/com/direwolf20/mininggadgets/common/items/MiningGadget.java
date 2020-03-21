@@ -43,6 +43,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -163,9 +164,8 @@ public class MiningGadget extends Item {
     public static boolean canMineBlock(ItemStack tool, World world, PlayerEntity player, BlockPos pos, BlockState state) {
         if (!player.isAllowEdit() || !world.isBlockModifiable(player, pos))
             return false;
-
-        BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, pos, state, player);
-        if (e.isCanceled())
+        
+        if(MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, state, player)))
             return false;
 
         return canMine(tool);
