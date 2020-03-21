@@ -202,7 +202,7 @@ public class MiningGadget extends Item {
         if (world.isRemote) {
             float volume = MiningProperties.getVolume(itemstack);
             if (volume != 0.0f)
-                player.playSound(OurSounds.LASER_START.getSound(), volume, 1f);
+                player.playSound(OurSounds.LASER_START.getSound(), volume * 0.5f, 1f);
             return new ActionResult<>(ActionResultType.PASS, itemstack);
         }
 
@@ -438,7 +438,7 @@ public class MiningGadget extends Item {
             if (laserLoopSound != null) {
                 float volume = MiningProperties.getVolume(stack);
                 if (volume != 0.0f && !laserLoopSound.isDonePlaying()) {
-                    entityLiving.playSound(OurSounds.LASER_END.getSound(), volume, 1f);
+                    entityLiving.playSound(OurSounds.LASER_END.getSound(), volume* 0.5f, 1f);
                 }
                 laserLoopSound = null;
             }
