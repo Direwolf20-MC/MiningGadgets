@@ -42,12 +42,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -273,6 +273,7 @@ public class MiningGadget extends Item {
         world.addParticle(data, laserPos.x, laserPos.y, laserPos.z, 0.025, 0.025f, 0.025);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void playLoopSound(LivingEntity player, ItemStack stack) {
         float volume = MiningProperties.getVolume(stack);
         PlayerEntity myplayer = Minecraft.getInstance().player;
@@ -291,8 +292,7 @@ public class MiningGadget extends Item {
         //Server and Client side
         World world = player.world;
         if (world.isRemote) {
-            // Message for @Direwolf20: Don't use @sideOnly it's a hack, use DistExecutor instead :+1:
-            DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> this.playLoopSound(player, stack));
+            this.playLoopSound(player, stack);
         }
 
         if (!MiningProperties.getCanMine(stack))
