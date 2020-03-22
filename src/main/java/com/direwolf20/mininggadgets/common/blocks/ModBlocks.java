@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.common.blocks;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
+import com.direwolf20.mininggadgets.common.tiles.QuarryBlockTileEntity;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntityType;
@@ -32,4 +33,7 @@ public class ModBlocks {
 
     public static final RegistryObject<TileEntityType<ModificationTableTileEntity>> MODIFICATIONTABLE_TILE =
             TILES_ENTITIES.register("modificationtable", () -> TileEntityType.Builder.create(ModificationTableTileEntity::new, ModBlocks.MODIFICATION_TABLE.get()).build(null));
+
+    public static final RegistryObject<TileEntityType<QuarryBlockTileEntity>> QUARRY_TILE =
+            TILES_ENTITIES.register("quarry", () -> TileEntityType.Builder.create(QuarryBlockTileEntity::new, ModBlocks.QUARRY.get()).build(null));
 }
