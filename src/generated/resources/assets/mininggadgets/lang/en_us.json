@@ -63,7 +63,7 @@
   "tooltop.mininggadgets.fortune": "Applies fortune to the Mining Gadget",
   "tooltop.mininggadgets.freezing": "Freezes water and stops lava in it's place!",
   "tooltop.mininggadgets.heatsink": "DISABLED - No longer necessary",
-  "tooltop.mininggadgets.light_placer": "Places touches when ever the surroundings light level is lower than 8",
+  "tooltop.mininggadgets.light_placer": "Places touches whenever the surroundings light level is lower than 8",
   "tooltop.mininggadgets.magnet": "Deconstructs blocks right into your inventory",
   "tooltop.mininggadgets.range": "Extends your range by 5 times with each tier",
   "tooltop.mininggadgets.silk": "Applies the silk touch enchant to the Mining Gadget",
