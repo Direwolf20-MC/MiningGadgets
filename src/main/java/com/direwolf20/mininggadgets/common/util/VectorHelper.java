@@ -25,7 +25,7 @@ public class VectorHelper {
 
         double rayTraceRange = range;
         Vec3d end = new Vec3d(player.getPosX() + look.x * rayTraceRange, player.getPosY() + player.getEyeHeight() + look.y * rayTraceRange, player.getPosZ() + look.z * rayTraceRange);
-        RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.OUTLINE, rayTraceFluid, player);
+        RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, rayTraceFluid, player);
         BlockRayTraceResult result = world.rayTraceBlocks(context);
         return result;
     }
