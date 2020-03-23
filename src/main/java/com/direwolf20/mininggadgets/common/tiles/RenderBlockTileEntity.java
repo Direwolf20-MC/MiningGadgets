@@ -10,6 +10,7 @@ import com.direwolf20.mininggadgets.common.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SilverfishBlock;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -326,6 +327,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                     renderBlock.getBlock().dropXpOnBlockBreak(world, pos, exp);
                 //world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
             }
+
+            if( renderBlock.getBlock() instanceof SilverfishBlock )
+                renderBlock.spawnAdditionalDrops(world, pos, tempTool);
         }
 
         world.removeTileEntity(this.pos);
