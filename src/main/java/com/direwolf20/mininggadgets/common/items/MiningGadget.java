@@ -308,8 +308,11 @@ public class MiningGadget extends Item {
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
-                if (player instanceof PlayerEntity)
-                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
+                if (player instanceof PlayerEntity) {
+                    int delay = MiningProperties.getFreezeDelay(stack);
+                    if( delay == 0 || count % delay == 0 )
+                        spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
+                }
             }
         }
 

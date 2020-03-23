@@ -100,7 +100,9 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.screen.blacklist", "Blacklist active");
         addPrefixed("tooltip.screen.precision_mode", "Precision Mode: %1$d");
         addPrefixed("tooltip.screen.volume", "Volume");
-
+        addPrefixed("tooltip.screen.freeze_delay", "Freeze Delay");
+        addPrefixed("tooltip.screen.ticks", "ticks");
+        addPrefixed("tooltip.screen.delay_explain", "Controls how often a freeze particle is spawned\nby default it is one particle every tick, to reduce\nthe amount of particles add more delay");
     }
 
     /**
