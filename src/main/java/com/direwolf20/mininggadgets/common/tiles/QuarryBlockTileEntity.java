@@ -24,11 +24,12 @@ import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.QUARRY_TILE;
 
 public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEntity {
 
-    public ArrayList<BlockPos> adjacentStorage;
+    public ArrayList<BlockPos> adjacentStorage = new ArrayList<>();
     public boolean needScanAdjacent;
     private BlockPos startPos;
     private BlockPos endPos;
     private BlockPos currentPos;
+    private boolean lastWasAir = false;
     int tick;
 
     public QuarryBlockTileEntity() {
@@ -36,23 +37,19 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         needScanAdjacent = true;
     }
 
-    public void addToAdjacentStorage(BlockPos pos) {
-        adjacentStorage.add(pos);
-    }
-
-    public void removeFromAdjacentStorage(BlockPos pos) {
-        adjacentStorage.remove(pos);
-    }
-
     public void scanAdjacentStorage() {
-        adjacentStorage = new ArrayList<BlockPos>();
+        adjacentStorage.clear();
+        if( world == null )
+            return;
+
         for (Direction direction : Direction.values()) {
             BlockPos adjacentPos = this.pos.offset(direction);
-            BlockState adjacentState = world.getBlockState(adjacentPos);
-            if (adjacentState.getBlock().equals(Blocks.CHEST)) { //TODO Look for any inventory
-                adjacentStorage.add(this.pos.offset(direction));
-            }
+            TileEntity tile = world.getTileEntity(adjacentPos);
+
+            if( tile != null )
+                tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(e -> adjacentStorage.add(this.pos.offset(direction)));
         }
+
         needScanAdjacent = false;
     }
 
@@ -93,35 +90,22 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         if (world == null || world.isRemote)
             return;
 
-        int silk = 0;
-        int fortune = 0;
+// apparent this isn't something you can do... We need a way of setting the placer as the player
+// Don't mine if we cant
+//        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
+//        MinecraftForge.EVENT_BUS.post(event);
+//        if( event.isCanceled() )
+//            return;
 
         ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
-
-        // If silk is in the upgrades, apply it without a tier.
-        //if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
-        //    tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-        silk = 1;
-        //}
-
-        // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-        //if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
-        //    Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
-        //    if (upgrade.isPresent()) {
-        //        fortune = upgrade.get().getTier();
         tempTool.addEnchantment(Enchantments.FORTUNE, 3);
-        //    }
-        // }
 
         LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld) world)).withRandom(world.rand).withParameter(LootParameters.POSITION, pos).withParameter(LootParameters.TOOL, tempTool);
         List<ItemStack> drops = state.getDrops(lootcontext$builder);
 
-        //if ( blockAllowed ) {
-        //    int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
-        //    boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
         for (ItemStack drop : drops) {
             if( !drop.isEmpty() )
-                insertIntoAdjacentInventory(drop);
+                System.out.println(insertIntoAdjacentInventory(drop));
         }
         //   }
         //   if (magnetMode) {
@@ -145,11 +129,11 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
             TileEntity tile = world.getTileEntity(pos);
 
             if (tile != null) {
-//                tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(e -> e).orElse(new EmptyHandler());
                 tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent((cap) -> {
                     ItemHandlerHelper.insertItemStacked(cap, stack, false);
                 });
-                if (stack.isEmpty()) return stack;
+                if (stack.isEmpty())
+                    return ItemStack.EMPTY;
             }
         }
         return stack;
@@ -175,6 +159,9 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         BlockState state = world.getBlockState(getCurrentPos());
         if (!state.getMaterial().equals(Material.AIR) && state.getBlockHardness(world, getCurrentPos()) >= 0) {
             removeBlock(state, getCurrentPos());
+            lastWasAir = false;
+        } else {
+            lastWasAir = true;
         }
         setNextPos();
     }
@@ -188,7 +175,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 if (startPos == null) setStartPos();
                 if (endPos == null) setEndPos();
                 tick++;
-                if (tick % 20 == 0) {
+                if (tick % 20 == 0 || lastWasAir) {
                     tick = 0;
                     mineCurrentPos();
                 }
