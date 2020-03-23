@@ -63,6 +63,9 @@ public class GeneratorLanguage extends LanguageProvider {
         addBlock(ModBlocks.RENDER_BLOCK, "Render Block (Don't use)");
         addBlock(ModBlocks.MODIFICATION_TABLE, "Modification Table");
 
+        // Fixes oneProbe? Weird
+        add("block.mininggadgets.renderblock.name", "What ever it wants to be!");
+
         addPrefixed("gadget.range_change", "Range Change: %1$d x %1$d");
         addPrefixed("gadget.energy", "Energy: %d/%d");
 
