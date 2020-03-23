@@ -308,8 +308,11 @@ public class MiningGadget extends Item {
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
-                if (player instanceof PlayerEntity)
-                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
+                if (player instanceof PlayerEntity) {
+                    int delay = MiningProperties.getFreezeDelay(stack);
+                    if( delay == 0 || count % delay == 0 )
+                        spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
+                }
             }
         }
 
@@ -356,9 +359,6 @@ public class MiningGadget extends Item {
                 else*/
                     durability = durability - 1;
                     if (durability <= 0) {
-                        if (!UpgradeTools.containsUpgrade(stack, Upgrade.HEATSINK)) {
-                            //player.resetActiveHand();
-                        }
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                         if (MiningProperties.getPrecisionMode(stack)) {
                             MiningProperties.setCanMine(stack, false);
@@ -458,5 +458,9 @@ public class MiningGadget extends Item {
             }
         }
         return heldItem;
+    }
+
+    public static boolean isHolding(PlayerEntity entity) {
+        return getGadget(entity).getItem() instanceof MiningGadget;
     }
 }

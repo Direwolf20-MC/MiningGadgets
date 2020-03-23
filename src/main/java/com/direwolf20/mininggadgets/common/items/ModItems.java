@@ -23,7 +23,7 @@ public class ModItems {
 
     // Block items
     public static final RegistryObject<Item> MODIFICATION_TABLE_ITEM = ITEMS.register("modificationtable", () -> new BlockItem(ModBlocks.MODIFICATION_TABLE.get(), ITEM_GROUP));
-    public static final RegistryObject<Item> MINERS_LIGHT_ITEM = ITEMS.register("minerslight", () -> new BlockItem(ModBlocks.MINERS_LIGHT.get(), ITEM_GROUP));
+    public static final RegistryObject<Item> MINERS_LIGHT_ITEM = ITEMS.register("minerslight", () -> new BlockItem(ModBlocks.MINERS_LIGHT.get(), ITEM_GROUP.maxStackSize(1)));
     public static final RegistryObject<Item> QUARRY_ITEM = ITEMS.register("quarry", () -> new BlockItem(ModBlocks.QUARRY.get(), ITEM_GROUP));
 
     /**
@@ -37,7 +37,6 @@ public class ModItems {
     public static final RegistryObject<Item> THREE_BY_THREE =   UPGRADE_ITEMS.register("upgrade_three_by_three", Upgrade.THREE_BY_THREE::getCard);
     public static final RegistryObject<Item> LIGHT_PLACER =     UPGRADE_ITEMS.register("upgrade_light_placer", Upgrade.LIGHT_PLACER::getCard);
     public static final RegistryObject<Item> FREEZING =         UPGRADE_ITEMS.register("upgrade_freezing", Upgrade.FREEZING::getCard);
-    public static final RegistryObject<Item> HEATSINK =         UPGRADE_ITEMS.register("upgrade_heatsink", Upgrade.HEATSINK::getCard);
     public static final RegistryObject<Item> FORTUNE_1 =        UPGRADE_ITEMS.register("upgrade_fortune_1", Upgrade.FORTUNE_1::getCard);
     public static final RegistryObject<Item> FORTUNE_2 =        UPGRADE_ITEMS.register("upgrade_fortune_2", Upgrade.FORTUNE_2::getCard);
     public static final RegistryObject<Item> FORTUNE_3 =        UPGRADE_ITEMS.register("upgrade_fortune_3", Upgrade.FORTUNE_3::getCard);

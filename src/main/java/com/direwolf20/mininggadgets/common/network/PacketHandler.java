@@ -41,6 +41,7 @@ public class PacketHandler {
         registerMessage(PacketToggleFilters.class,      PacketToggleFilters::encode,        PacketToggleFilters::decode,        PacketToggleFilters.Handler::handle);
         registerMessage(PacketTogglePrecision.class,    PacketTogglePrecision::encode,      PacketTogglePrecision::decode,      PacketTogglePrecision.Handler::handle);
         registerMessage(PacketChangeVolume.class,       PacketChangeVolume::encode,         PacketChangeVolume::decode,         PacketChangeVolume.Handler::handle);
+        registerMessage(PacketChangeFreezeDelay.class,  PacketChangeFreezeDelay::encode,    PacketChangeFreezeDelay::decode,    PacketChangeFreezeDelay.Handler::handle);
 
         //Client Side
         registerMessage(PacketDurabilitySync.class,     PacketDurabilitySync::encode,       PacketDurabilitySync::decode,       PacketDurabilitySync.Handler::handle);

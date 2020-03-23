@@ -28,7 +28,6 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.MAGNET, "Upgrade: Magnet");
         addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
-        addItem(ModItems.HEATSINK, "Upgrade: HeatSink");
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
         addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
         addItem(ModItems.FORTUNE_3, "Upgrade: Fortune, Tier 3");
@@ -50,9 +49,8 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.void_junk", "Voids blocks! (adds filtering too)");
         add("tooltop.mininggadgets.magnet", "Deconstructs blocks right into your inventory");
         add("tooltop.mininggadgets.three_by_three", "Allows for a 3x3 mining radius");
-        add("tooltop.mininggadgets.light_placer", "Places touches when ever the surroundings light level is lower than 8");
+        add("tooltop.mininggadgets.light_placer", "Places touches whenever the surroundings light level is lower than 8");
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
-        add("tooltop.mininggadgets.heatsink", "DISABLED - No longer necessary");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
         add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");
         add("tooltop.mininggadgets.range", "Extends your range by 5 times with each tier");
@@ -62,6 +60,9 @@ public class GeneratorLanguage extends LanguageProvider {
         addBlock(ModBlocks.MINERS_LIGHT, "Miner's Light");
         addBlock(ModBlocks.RENDER_BLOCK, "Render Block (Don't use)");
         addBlock(ModBlocks.MODIFICATION_TABLE, "Modification Table");
+
+        // Fixes oneProbe? Weird
+        add("block.mininggadgets.renderblock.name", "What ever it wants to be!");
 
         addPrefixed("gadget.range_change", "Range Change: %1$d x %1$d");
         addPrefixed("gadget.energy", "Energy: %d/%d");
@@ -97,7 +98,9 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.screen.blacklist", "Blacklist active");
         addPrefixed("tooltip.screen.precision_mode", "Precision Mode: %1$d");
         addPrefixed("tooltip.screen.volume", "Volume");
-
+        addPrefixed("tooltip.screen.freeze_delay", "Freeze Delay");
+        addPrefixed("tooltip.screen.ticks", "ticks");
+        addPrefixed("tooltip.screen.delay_explain", "Controls how often a freeze particle is spawned\nby default it is one particle every tick, to reduce\nthe amount of particles add more delay");
     }
 
     /**

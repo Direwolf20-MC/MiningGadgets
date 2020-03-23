@@ -9,7 +9,9 @@ import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
@@ -17,24 +19,26 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.widget.Slider;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+// todo: refactor and clean up
 public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private ItemStack gadget;
 
     private int beamRange;
+    private int freezeDelay;
     private float volume;
     private int currentSize = 1;
     private boolean isWhitelist = true;
     private boolean isPrecision = true;
     private Slider rangeSlider;
     private Slider volumeSlider;
+    private Slider freezeDelaySlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
     private HashMap<Upgrade, ToggleButton> upgradeButtons = new HashMap<>();
+    private boolean containsFreeze = false;
 
     public MiningSettingScreen(ItemStack gadget) {
         super(new StringTextComponent("title"));
@@ -42,22 +46,29 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         this.gadget = gadget;
         this.beamRange = MiningProperties.getBeamRange(gadget);
         this.volume = MiningProperties.getVolume(gadget);
+        this.freezeDelay = MiningProperties.getFreezeDelay(gadget);
     }
 
     @Override
     protected void init() {
+        List<Widget> leftWidgets = new ArrayList<>();
+
         int baseX = width / 2, baseY = height / 2;
 
         // Filters out the non-toggleable options
         toggleableList.clear();
         toggleableList = UpgradeTools.getUpgrades(this.gadget).stream().filter(Upgrade::isToggleable).collect(Collectors.toList());
+        containsFreeze = UpgradeTools.containsUpgradeFromList(toggleableList, Upgrade.FREEZING);
         boolean containsVoid = UpgradeTools.containsUpgradeFromList(toggleableList, Upgrade.VOID_JUNK);
 
         isWhitelist = MiningProperties.getWhiteList(gadget);
         isPrecision = MiningProperties.getPrecisionMode(gadget);
 
+        int top = baseY - (containsFreeze ? 80 : 60);
+
+        // Right size
         // Remove 6 from x to center it as the padding on the right pushes off center... (I'm a ui nerd)
-        int index = 0, x = baseX + 10, y = baseY - (containsVoid ? 20 : 50);
+        int index = 0, x = baseX + 10, y = top + (containsVoid ? 45 : 20);
         for (Upgrade upgrade : toggleableList) {
             ToggleButton btn = new ToggleButton(x + (index * 30), y, UpgradeTools.getName(upgrade), new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send));
             addButton(btn);
@@ -71,48 +82,59 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
             }
         }
 
-        currentSize = MiningProperties.getRange(gadget);
-        Button sizeButton = new Button(baseX - 135, baseY - 50, 115, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.size", currentSize).getUnformattedComponentText(), (button) -> {
-            currentSize = currentSize == 1 ? 3 : 1;
-            button.setMessage(getTrans("tooltip.screen.size", currentSize));
-            PacketHandler.sendToServer(new PacketChangeMiningSize());
-        });
-
-        rangeSlider = new Slider(baseX - 135, baseY - 25, 115, 20, getTrans("tooltip.screen.range") + ": ", "", 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this);
-
-        addButton(sizeButton);
-        addButton(rangeSlider);
-        addButton(new Button(baseX - 135, baseY, 115, 20, getTrans("tooltip.screen.visuals_menu"), (button) -> {
-            ModScreens.openVisualSettingsScreen(gadget);
-        }));
-
-        //Precision Mode
-        addButton(new Button(baseX - 135, baseY + 25, 115, 20, getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
-            isPrecision = !isPrecision;
-            button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
-            PacketHandler.sendToServer(new PacketTogglePrecision());
-        }));
-
-        // volume slider
-        volumeSlider = new Slider(baseX - 135, baseY + 50, 115, 20, getTrans("tooltip.screen.volume") + ": ", "%", 0, 100, Math.min(100, volume * 100), false, true, s -> {}, this);
-        addButton(volumeSlider);
-
         // Don't add if we don't have voids
         if( containsVoid ) {
-            addButton(new Button(baseX + 10, baseY - 50, 95, 20, getTrans("tooltip.screen.edit_filters"), (button) -> {
+            addButton(new Button(baseX + 10, top + 20, 95, 20, getTrans("tooltip.screen.edit_filters"), (button) -> {
                 PacketHandler.sendToServer(new PacketOpenFilterContainer());
             }));
 
-            addButton(new WhitelistButton(baseX + 10 + (115 - 20), baseY - 50, 20, 20, isWhitelist, (button) -> {
+            addButton(new WhitelistButton(baseX + 10 + (115 - 20), top + 20, 20, 20, isWhitelist, (button) -> {
                 isWhitelist = !isWhitelist;
                 ((WhitelistButton) button).setWhitelist(isWhitelist);
                 PacketHandler.sendToServer(new PacketToggleFilters());
             }));
         }
 
+        // Left size
+        currentSize = MiningProperties.getRange(gadget);
+
+        Button sizeButton;
+        leftWidgets.add(sizeButton = new Button(baseX - 135, 0, 125, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.size", currentSize).getUnformattedComponentText(), (button) -> {
+            currentSize = currentSize == 1 ? 3 : 1;
+            button.setMessage(getTrans("tooltip.screen.size", currentSize));
+            PacketHandler.sendToServer(new PacketChangeMiningSize());
+        }));
+
+        leftWidgets.add(rangeSlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range") + ": ", "", 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this));
+
+        leftWidgets.add(new Button(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.visuals_menu"), (button) -> {
+            ModScreens.openVisualSettingsScreen(gadget);
+        }));
+
+        //Precision Mode
+        leftWidgets.add(new Button(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
+            isPrecision = !isPrecision;
+            button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
+            PacketHandler.sendToServer(new PacketTogglePrecision());
+        }));
+
+        // volume slider
+        leftWidgets.add(volumeSlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume") + ": ", "%", 0, 100, Math.min(100, volume * 100), false, true, s -> {}, this));
+
+        // Freeze delay
+        if( containsFreeze )
+            leftWidgets.add(freezeDelaySlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay") + ": ", " " + getTrans("tooltip.screen.ticks"), 0, 10, MiningProperties.getFreezeDelay(gadget), false, true, s -> {}, this));
+
         // Button logic
         if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) )
             sizeButton.active = false;
+
+        // Lay the buttons out, too lazy to figure out the math every damn time.
+        // Ordered by where you add them.
+        for(int i = 0; i < leftWidgets.size(); i ++) {
+            leftWidgets.get(i).y = (top + 20) + (i * 25);
+            addButton(leftWidgets.get(i));
+        }
     }
 
     private boolean toggleUpgrade(Upgrade upgrade, boolean update) {
@@ -142,20 +164,28 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
 
-        drawString(getMinecraft().fontRenderer, getTrans("tooltip.screen.mining_gadget"), (width / 2) - 135, (height / 2) - 70, Color.WHITE.getRGB());
-        drawString(getMinecraft().fontRenderer, getTrans("tooltip.screen.toggle_upgrades"), (width / 2) + 10, (height / 2) - 70, Color.WHITE.getRGB());
+        int top = (height / 2) - (containsFreeze ? 80 : 60);
+
+        drawString(getMinecraft().fontRenderer, getTrans("tooltip.screen.mining_gadget"), (width / 2) - 135, top, Color.WHITE.getRGB());
+        drawString(getMinecraft().fontRenderer, getTrans("tooltip.screen.toggle_upgrades"), (width / 2) + 10, top, Color.WHITE.getRGB());
 
         if( toggleableList.size() == 0 )
-            drawString(getMinecraft().fontRenderer, getTrans("tooltip.screen.no_upgrades"), (width / 2) + 10, (height / 2) - 50, Color.GRAY.getRGB());
+            drawString(getMinecraft().fontRenderer, getTrans("tooltip.screen.no_upgrades"), (width / 2) + 10, top + 20, Color.GRAY.getRGB());
 
         this.children.forEach(e -> {
-            if( !(e instanceof ToggleButton) && !(e instanceof WhitelistButton) )
+            if( !(e instanceof ToggleButton) && !(e instanceof WhitelistButton) && !e.equals(freezeDelaySlider) )
                 return;
 
             if( e instanceof WhitelistButton ) {
                 if( e.isMouseOver(mouseX, mouseY) )
                     renderTooltip(isWhitelist ? getTrans("tooltip.screen.whitelist") : getTrans("tooltip.screen.blacklist"), mouseX, mouseY);
+            } else if( e.equals(freezeDelaySlider) ) {
+                if( e.isMouseOver(mouseX, mouseY) ) {
+                    assert e instanceof Slider;
+                    renderTooltip(Arrays.asList(getTrans("tooltip.screen.delay_explain").split("\n")), ((Slider)e).x - 8, ((Slider)e).y + 40);
+                }
             } else {
+                assert e instanceof ToggleButton;
                 ToggleButton btn = ((ToggleButton) e);
                 if (btn.isMouseOver(mouseX, mouseY))
                     renderTooltip(btn.getTooltip(), mouseX, mouseY);
@@ -170,9 +200,22 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
     @Override
     public void onClose() {
-        super.onClose();
         PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
         PacketHandler.sendToServer(new PacketChangeVolume(this.volume));
+        PacketHandler.sendToServer(new PacketChangeFreezeDelay(this.freezeDelay));
+
+        super.onClose();
+    }
+
+    @Override
+    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+        InputMappings.Input mouseKey = InputMappings.getInputByCode(p_keyPressed_1_, p_keyPressed_2_);
+        if (p_keyPressed_1_ == 256 || minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
+            onClose();
+            return true;
+        }
+
+        return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
     }
 
     @Override
@@ -181,6 +224,9 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         if (slider.equals(rangeSlider))
             this.beamRange = slider.getValueInt();
 
+        if (slider.equals(freezeDelaySlider))
+            this.freezeDelay = slider.getValueInt();
+
         if (slider.equals(volumeSlider))
             this.volume = slider.getValueInt() / 100f;
     }
@@ -188,6 +234,8 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
         rangeSlider.dragging = false;
         volumeSlider.dragging = false;
+        if( freezeDelaySlider != null )
+            freezeDelaySlider.dragging = false;
         return false;
     }
 
@@ -196,6 +244,10 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         if( rangeSlider.isMouseOver(mouseX, mouseY) ) {
             rangeSlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
             rangeSlider.updateSlider();
+        }
+        if( freezeDelaySlider.isMouseOver(mouseX, mouseY) ) {
+            freezeDelaySlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
+            freezeDelaySlider.updateSlider();
         }
         if( volumeSlider.isMouseOver(mouseX, mouseY) ) {
             volumeSlider.sliderValue += (1f * (delta > 0 ? 1 : -1));

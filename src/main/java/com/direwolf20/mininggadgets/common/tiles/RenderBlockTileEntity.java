@@ -7,10 +7,12 @@ import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
@@ -19,6 +21,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -26,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -310,8 +314,13 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             for (ItemStack drop : drops) {
                 if (drop != null) {
                     if (magnetMode) {
-                        if (!player.addItemStackToInventory(drop)) {
-                            Block.spawnAsEntity(world, pos, drop);
+                        int wasPickedUp = ForgeEventFactory.onItemPickup(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), drop), player);
+                        // 1  = someone allowed the event meaning it's handled,
+                        // -1 = someone blocked the event and thus we shouldn't drop it nor insert it
+                        // 0  = no body captured the event and we should handle it by hand.
+                        if( wasPickedUp == 0 ) {
+                            if (!player.addItemStackToInventory(drop))
+                                Block.spawnAsEntity(world, pos, drop);
                         }
                     } else {
                         Block.spawnAsEntity(world, pos, drop);
@@ -324,16 +333,27 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             } else {
                 if (exp > 0)
                     renderBlock.getBlock().dropXpOnBlockBreak(world, pos, exp);
-                //world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
             }
+
+            renderBlock.spawnAdditionalDrops(world, pos, tempTool); // Fixes silver fish basically...
         }
 
         world.removeTileEntity(this.pos);
         world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+
+        // Add to the break stats
+        player.addStat(Stats.BLOCK_MINED.get(renderBlock.getBlock()));
+
+        // Handle special cases
+        if(SpecialBlockActions.getRegister().containsKey(renderBlock.getBlock()))
+            SpecialBlockActions.getRegister().get(renderBlock.getBlock()).accept(world, pos, renderBlock);
     }
 
     private void resetBlock() {
-        if (!getWorld().isRemote && getWorld() != null) {
+        if(world == null)
+            return;
+
+        if (!world.isRemote) {
             if (renderBlock != null)
                 world.setBlockState(this.pos, renderBlock);
             else

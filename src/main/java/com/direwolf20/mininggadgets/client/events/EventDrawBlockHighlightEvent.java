@@ -1,10 +1,8 @@
 package com.direwolf20.mininggadgets.client.events;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,8 +13,10 @@ public class EventDrawBlockHighlightEvent {
 
     @SubscribeEvent
     static void drawBlockHighlightEvent(DrawHighlightEvent evt) {
-        Vec3d vec = evt.getTarget().getHitVec();
-        if (Minecraft.getInstance().world.getBlockState(new BlockPos(vec.x, vec.y, vec.z)).getBlock() instanceof RenderBlock)
+        if( Minecraft.getInstance().player == null )
+            return;
+
+        if(MiningGadget.isHolding(Minecraft.getInstance().player))
             evt.setCanceled(true);
     }
 }

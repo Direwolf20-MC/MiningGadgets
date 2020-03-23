@@ -28,6 +28,7 @@ public class MiningProperties {
     private static final String CAN_MINE = "canMine";
     private static final String PRECISION_MODE = "precisionMode";
     private static final String VOLUME = "volume";
+    private static final String FREEZE_PARTICLE_DELAY = "freeze_particle_delay";
 
     public static final String KEY_FILTERS = "filters";
     public static final String COLOR_RED = "colorRed";
@@ -156,6 +157,16 @@ public class MiningProperties {
     public static float getVolume(ItemStack gadget) {
         CompoundNBT compound = gadget.getOrCreateTag();
         return !compound.contains(VOLUME) ? setVolume(gadget, 1.0f) : compound.getFloat(VOLUME);
+    }
+
+    public static int setFreezeDelay(ItemStack gadget, int volume) {
+        gadget.getOrCreateTag().putInt(FREEZE_PARTICLE_DELAY, Math.max(0, Math.min(10, volume)));
+        return volume;
+    }
+
+    public static int getFreezeDelay(ItemStack gadget) {
+        CompoundNBT compound = gadget.getOrCreateTag();
+        return !compound.contains(FREEZE_PARTICLE_DELAY) ? setFreezeDelay(gadget, 0) : compound.getInt(FREEZE_PARTICLE_DELAY);
     }
 
     /**

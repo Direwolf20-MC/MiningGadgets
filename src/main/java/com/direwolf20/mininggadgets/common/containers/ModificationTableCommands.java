@@ -61,7 +61,7 @@ public class ModificationTableCommands {
         return false;
     }
 
-    public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName, boolean isShiftHeld) {
+    public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName) {
         Slot laserSlot = container.inventorySlots.get(0);
         ItemStack laser = laserSlot.getStack();
 
@@ -76,11 +76,10 @@ public class ModificationTableCommands {
                 return;
 
             UpgradeTools.removeUpgrade(laser, upgrade);
-            if (isShiftHeld) {
-                boolean success = player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
-                if (!success) {
-                    player.dropItem(new ItemStack(upgrade.getCard(), 1), true);
-                }
+
+            boolean success = player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
+            if (!success) {
+                player.dropItem(new ItemStack(upgrade.getCard(), 1), true);
             }
 
             if (upgrade == Upgrade.THREE_BY_THREE)
