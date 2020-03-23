@@ -7,7 +7,6 @@ import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
@@ -114,7 +113,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
             if( !isMouseOver(mouseX, mouseY) || this.upgrade == null )
                 return false;
 
-            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length(), Screen.hasShiftDown()));
+            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
