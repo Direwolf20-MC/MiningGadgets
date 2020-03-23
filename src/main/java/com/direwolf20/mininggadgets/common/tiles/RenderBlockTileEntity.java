@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -311,8 +313,13 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             for (ItemStack drop : drops) {
                 if (drop != null) {
                     if (magnetMode) {
-                        if (!player.addItemStackToInventory(drop)) {
-                            Block.spawnAsEntity(world, pos, drop);
+                        int wasPickedUp = ForgeEventFactory.onItemPickup(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), drop), player);
+                        // 1  = someone allowed the event meaning it's handled,
+                        // -1 = someone blocked the event and thus we shouldn't drop it nor insert it
+                        // 0  = no body captured the event and we should handle it by hand.
+                        if( wasPickedUp == 0 ) {
+                            if (!player.addItemStackToInventory(drop))
+                                Block.spawnAsEntity(world, pos, drop);
                         }
                     } else {
                         Block.spawnAsEntity(world, pos, drop);
