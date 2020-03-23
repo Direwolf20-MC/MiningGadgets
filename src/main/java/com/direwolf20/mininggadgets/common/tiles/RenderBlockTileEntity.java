@@ -21,6 +21,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -339,6 +340,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
         world.removeTileEntity(this.pos);
         world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+
+        // Add to the break stats
+        player.addStat(Stats.BLOCK_MINED.get(renderBlock.getBlock()));
 
         // Handle special cases
         if(SpecialBlockActions.getRegister().containsKey(renderBlock.getBlock()))
