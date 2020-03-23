@@ -16,20 +16,21 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import java.util.List;
 
 public class ModificationTableCommands {
-    public static void insertButton(ModificationTableContainer container) {
+    public static boolean insertButton(ModificationTableContainer container, ItemStack upgrade) {
         Slot laserSlot = container.inventorySlots.get(0);
-        Slot upgradeSlot = container.inventorySlots.get(1);
         ItemStack laser = laserSlot.getStack();
-        ItemStack upgradeCard = upgradeSlot.getStack();
-        if (laser.getItem() instanceof MiningGadget && upgradeCard.getItem() instanceof UpgradeCard) {
-            Upgrade card = ((UpgradeCard) upgradeCard.getItem()).getUpgrade();
+
+        if (laser.getItem() instanceof MiningGadget && upgrade.getItem() instanceof UpgradeCard) {
+            Upgrade card = ((UpgradeCard) upgrade.getItem()).getUpgrade();
             if (card == Upgrade.EMPTY)
-                return; //Don't allow inserting empty cards.
+                return false; //Don't allow inserting empty cards.
+
             List<Upgrade> upgrades = UpgradeTools.getUpgrades(laser);
 
             // Fortune has to be done slightly differently as it requires us to check
             // against all fortune tiers and not just it's existence.
             boolean hasFortune = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.FORTUNE_1);
+            boolean hasSilk = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.SILK);
 
             // Did we just insert a Range upgrade?
             if (card.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
@@ -39,15 +40,13 @@ public class ModificationTableCommands {
                 MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
             }
 
-            // Reject fortune and silk upgrades when combined together.
-            if ((hasFortune && card == Upgrade.SILK) ||
-                    (upgrades.contains(Upgrade.SILK) && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName())))
-                return;
-
             if (UpgradeTools.containsUpgrade(laser, card))
-                return;
+                return false;
 
-            MiningGadget.applyUpgrade(laser, (UpgradeCard) upgradeCard.getItem());
+            if (hasFortune && card.getBaseName().equals(Upgrade.SILK.getBaseName()) || hasSilk && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName()))
+                ((UpgradeCard) upgrade.getItem()).getUpgrade().setEnabled(false);
+
+            MiningGadget.applyUpgrade(laser, (UpgradeCard) upgrade.getItem());
 
             // Did we just insert a battery upgrade?
             if(card.getBaseName().equals(Upgrade.BATTERY_1.getBaseName())) {
@@ -55,18 +54,18 @@ public class ModificationTableCommands {
                     laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(power.getPower()));
                 });
             }
-            container.putStackInSlot(1, ItemStack.EMPTY);
+
+            return true;
         }
+
+        return false;
     }
 
-    public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName, boolean isShiftHeld) {
+    public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName) {
         Slot laserSlot = container.inventorySlots.get(0);
-        Slot upgradeSlot = container.inventorySlots.get(1);
-
         ItemStack laser = laserSlot.getStack();
-        ItemStack upgradeCard = upgradeSlot.getStack();
 
-        if (!(laser.getItem() instanceof MiningGadget) || !upgradeCard.isEmpty())
+        if (!(laser.getItem() instanceof MiningGadget))
             return;
 
         if (!UpgradeTools.containsUpgrades(laser))
@@ -77,14 +76,11 @@ public class ModificationTableCommands {
                 return;
 
             UpgradeTools.removeUpgrade(laser, upgrade);
-            if (isShiftHeld) {
-                boolean success = player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
-                if (!success) {
-                    container.putStackInSlot(1, new ItemStack(upgrade.getCard(), 1));
-                }
+
+            boolean success = player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
+            if (!success) {
+                player.dropItem(new ItemStack(upgrade.getCard(), 1), true);
             }
-            else
-                container.putStackInSlot(1, new ItemStack(upgrade.getCard(), 1));
 
             if (upgrade == Upgrade.THREE_BY_THREE)
                 MiningProperties.setRange(laser, 1);

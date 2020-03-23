@@ -28,7 +28,6 @@ public class Config {
     public static ForgeConfigSpec.IntValue UPGRADECOST_SILKTOUCH;
     public static ForgeConfigSpec.IntValue UPGRADECOST_MAGNET;
     public static ForgeConfigSpec.IntValue UPGRADECOST_VOID;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_HEATSINK;
     public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE1;
     public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE2;
     public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE3;
@@ -76,8 +75,6 @@ public class Config {
                 .defineInRange("upgradeMagnet", 25, 0, Integer.MAX_VALUE);
         UPGRADECOST_VOID = COMMON_BUILDER.comment("Cost per block for Void Junk upgrade")
                 .defineInRange("upgradeVoid", 10, 0, Integer.MAX_VALUE);
-        UPGRADECOST_HEATSINK = COMMON_BUILDER.comment("Cost per block for Heatsink upgrade")
-                .defineInRange("upgradeHeatsink", 50, 0, Integer.MAX_VALUE);
         UPGRADECOST_FORTUNE1 = COMMON_BUILDER.comment("Cost per block for Fortune 1 upgrade")
                 .defineInRange("upgradeFortune1", 30, 0, Integer.MAX_VALUE);
         UPGRADECOST_FORTUNE2 = COMMON_BUILDER.comment("Cost per block for Fortune 2 upgrade")

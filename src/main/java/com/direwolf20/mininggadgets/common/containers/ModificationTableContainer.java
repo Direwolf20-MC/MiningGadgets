@@ -42,7 +42,6 @@ public class ModificationTableContainer extends Container {
 
     public ModificationTableContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
         super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
-
         this.tileEntity = world.getTileEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);
 
@@ -57,8 +56,7 @@ public class ModificationTableContainer extends Container {
 
     private void setupContainerSlots() {
         this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new WatchedSlot(h, 0,  -16, 59, this::updateUpgradeCache));
-            addSlot(new SlotItemHandler(h, 1, -16, 8));
+            addSlot(new WatchedSlot(h, 0,  -16, 84, this::updateUpgradeCache));
         });
     }
 
@@ -115,8 +113,8 @@ public class ModificationTableContainer extends Container {
         if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             itemstack = stack.copy();
-            if (index <= 1) {
-                if (!this.mergeItemStack(stack, 2, 38, true)) {
+            if (index == 0) {
+                if (!this.mergeItemStack(stack, 1, this.getInventory().size(), true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onSlotChange(stack, itemstack);
@@ -126,14 +124,20 @@ public class ModificationTableContainer extends Container {
                         return ItemStack.EMPTY;
                     }
                 } else if (stack.getItem() instanceof UpgradeCard) {
-                    if (!this.mergeItemStack(stack, 1, 2, false)) {
-                        return ItemStack.EMPTY;
+                    // Push the item right into the modification table.
+                    if( ModificationTableCommands.insertButton(this, stack) ) {
+                        int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+                        int remove = maxSize - itemstack.getCount();
+                        stack.shrink(remove == 0 ? 1 : remove);
+                        updateUpgradeCache(0);
                     }
+                    else
+                        return ItemStack.EMPTY;
                 } else if (index < 29) {
                     if (!this.mergeItemStack(stack, 29, 38, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 38 && !this.mergeItemStack(stack, 2, 29, false)) {
+                } else if (index < 38 && !this.mergeItemStack(stack, 1, 29, false)) {
                     return ItemStack.EMPTY;
                 }
             }

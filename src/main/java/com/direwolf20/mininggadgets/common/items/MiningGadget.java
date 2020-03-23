@@ -43,6 +43,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -115,8 +116,8 @@ public class MiningGadget extends Item {
                     .applyTextStyle(TextFormatting.GRAY));
         } else {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).applyTextStyle(TextFormatting.RED));
-            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").applyTextStyle(TextFormatting.AQUA));
             if (!(upgrades.isEmpty())) {
+                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").applyTextStyle(TextFormatting.AQUA));
                 for (Upgrade upgrade : upgrades) {
                     tooltip.add(new StringTextComponent(" - " +
                             I18n.format(upgrade.getLocal())
@@ -164,8 +165,7 @@ public class MiningGadget extends Item {
         if (!player.isAllowEdit() || !world.isBlockModifiable(player, pos))
             return false;
 
-        BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, pos, state, player);
-        if (e.isCanceled())
+        if(MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, state, player)))
             return false;
 
         return canMine(tool);
@@ -217,12 +217,9 @@ public class MiningGadget extends Item {
         // Debug code for free energy
         //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
 
-//        if (UpgradeTools.containsUpgrade(itemstack, Upgrade.THREE_BY_THREE)) {
-//            changeRange(itemstack);
-//            player.sendStatusMessage(new StringTextComponent(TextFormatting.AQUA + new TranslationTextComponent("mininggadgets.gadget.range_change", MiningProperties.getRange(itemstack)).getUnformattedComponentText()), true);
-//        }
         if (!world.isRemote)
             MiningProperties.setCanMine(itemstack, true);
+
         if (world.isRemote)
             ModScreens.openGadgetSettingsScreen(itemstack);
 
@@ -280,7 +277,7 @@ public class MiningGadget extends Item {
     public void playLoopSound(LivingEntity player, ItemStack stack) {
         float volume = MiningProperties.getVolume(stack);
         PlayerEntity myplayer = Minecraft.getInstance().player;
-        if (myplayer.equals((PlayerEntity) player)) {
+        if (myplayer.equals(player)) {
             if (volume != 0.0f) {
                 if (laserLoopSound == null) {
                     laserLoopSound = new LaserLoopSound((PlayerEntity) player, volume);
@@ -288,7 +285,6 @@ public class MiningGadget extends Item {
                 }
             }
         }
-
     }
 
     @Override
@@ -296,7 +292,7 @@ public class MiningGadget extends Item {
         //Server and Client side
         World world = player.world;
         if (world.isRemote) {
-            playLoopSound(player, stack);
+            this.playLoopSound(player, stack);
         }
 
         if (!MiningProperties.getCanMine(stack))
@@ -312,11 +308,15 @@ public class MiningGadget extends Item {
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
-                if (player instanceof PlayerEntity)
-                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
+                if (player instanceof PlayerEntity) {
+                    int delay = MiningProperties.getFreezeDelay(stack);
+                    if( delay == 0 || count % delay == 0 )
+                        spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
+                }
             }
         }
-        //Server Side
+
+        // Server Side
         if (!world.isRemote) {
             // As all upgrade types with tiers contain the same name, we can check for a single
             // type in the enum and produce a result that we can then pull the tier from
@@ -359,9 +359,6 @@ public class MiningGadget extends Item {
                 else*/
                     durability = durability - 1;
                     if (durability <= 0) {
-                        if (!UpgradeTools.containsUpgrade(stack, Upgrade.HEATSINK)) {
-                            //player.resetActiveHand();
-                        }
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                         if (MiningProperties.getPrecisionMode(stack)) {
                             MiningProperties.setCanMine(stack, false);
@@ -390,8 +387,6 @@ public class MiningGadget extends Item {
                 world.setBlockState(pos, ModBlocks.MINERS_LIGHT.get().getDefaultState());
                 stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
             }
-        } else {
-
         }
     }
 
@@ -444,23 +439,11 @@ public class MiningGadget extends Item {
             }
         }
 
-        if (entityLiving instanceof PlayerEntity) {
+        if (entityLiving instanceof PlayerEntity)
             entityLiving.resetActiveHand();
-        }
+
         if (!worldIn.isRemote)
             MiningProperties.setCanMine(stack, true);
-        /*if (!(worldIn.isRemote)) {
-            BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) entityLiving, RayTraceContext.FluidMode.NONE);
-            if (lookingAt == null || (worldIn.getBlockState(VectorHelper.getLookingAt((PlayerEntity) entityLiving, stack).getPos()) == Blocks.AIR.getDefaultState()))
-                return;
-
-            List<BlockPos> coords = getMinableBlocks(stack, lookingAt, (PlayerEntity) entityLiving);
-            for (BlockPos coord : coords) {
-                TileEntity te = worldIn.getTileEntity(coord);
-                if (te instanceof RenderBlockTileEntity)
-                    ((RenderBlockTileEntity) te).markDirtyClient();
-            }
-        }*/
     }
 
     /*
@@ -475,5 +458,9 @@ public class MiningGadget extends Item {
             }
         }
         return heldItem;
+    }
+
+    public static boolean isHolding(PlayerEntity entity) {
+        return getGadget(entity).getItem() instanceof MiningGadget;
     }
 }

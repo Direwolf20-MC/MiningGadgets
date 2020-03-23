@@ -1,18 +1,20 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
+import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.particles.ParticleTypes;
-//import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 import java.util.Random;
+
+//import net.minecraft.util.BlockRenderLayer;
 
 public class MinersLight extends Block {
 
@@ -36,19 +38,10 @@ public class MinersLight extends Block {
         return BlockRenderType.INVISIBLE;
     }
 
-    /**
-     * Gets the render layer this block will render on. SOLID for solid blocks, CUTOUT or CUTOUT_MIPPED for on-off
-     * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
-     */
-
-
-
-    //TODO: Figure out how to do this in 1.15
-    /*@Override
-    public BlockRenderLayer getRenderLayer() {
-        // Since the effect block has no model rendering at all, which means we don't need blending, simply cutout is fine
-        return BlockRenderLayer.CUTOUT;
-    }*/
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return VoxelShapes.empty();
+    }
 
     /**
      * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
@@ -68,7 +61,7 @@ public class MinersLight extends Block {
         double d0 = (double) pos.getX() + 0.5D;
         double d1 = (double) pos.getY() + 0.5D;
         double d2 = (double) pos.getZ() + 0.5D;
-        worldIn.addParticle(ParticleTypes.HAPPY_VILLAGER, d0, d1, d2, 0.0D, 0.0D, 0.0D);
+        worldIn.addParticle(ModParticles.LIGHT_PARTICLE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
         //worldIn.addParticle(ParticleTypes.FLAME, d0, d1, d2, 0.0D, 0.0D, 0.0D);
     }
 

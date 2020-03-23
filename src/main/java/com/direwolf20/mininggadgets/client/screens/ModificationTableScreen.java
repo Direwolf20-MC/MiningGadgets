@@ -1,15 +1,12 @@
 package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.client.screens.widget.DireButton;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
-import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
@@ -21,9 +18,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.gui.ScrollPanel;
 
 public class ModificationTableScreen extends ContainerScreen<ModificationTableContainer> {
-
-    private DireButton buttonInsert;
-
     private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
     private BlockPos tePos;
     private ModificationTableContainer container;
@@ -42,9 +36,6 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         super.render(mouseX, mouseY, partialTicks);
 
         this.scrollingUpgrades.render(mouseX, mouseY, partialTicks);
-        if( this.buttonInsert.isHovered() )
-            renderTooltip(I18n.format("mininggadgets.tooltip.single.insert"), mouseX, mouseY);
-
         this.renderHoveredToolTip(mouseX, mouseY);
     }
 
@@ -54,7 +45,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         getMinecraft().getTextureManager().bindTexture(GUI);
         int relX = (this.width - this.xSize) / 2;
         int relY = (this.height - this.ySize) / 2;
@@ -67,9 +58,6 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
         this.scrollingUpgrades = new ScrollingUpgrades(Minecraft.getInstance(), this.xSize - 14, 72, guiTop + 7, guiLeft + 7, this);
         this.children.add(this.scrollingUpgrades);
-
-        buttonInsert = new DireButton(guiLeft + (-17), guiTop + 28, 18, 12, "->", (button) -> PacketHandler.sendToServer(new PacketInsertUpgrade(tePos)));
-        addButton(buttonInsert);
    }
 
     private static class ScrollingUpgrades extends ScrollPanel {
@@ -125,7 +113,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
             if( !isMouseOver(mouseX, mouseY) || this.upgrade == null )
                 return false;
 
-            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length(), Screen.hasShiftDown()));
+            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
             return super.mouseClicked(mouseX, mouseY, button);
         }
 

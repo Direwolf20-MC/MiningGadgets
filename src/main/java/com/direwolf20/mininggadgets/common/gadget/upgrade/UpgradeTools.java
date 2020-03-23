@@ -62,7 +62,14 @@ public class UpgradeTools {
 
         list.forEach( e -> {
             CompoundNBT compound = (CompoundNBT) e;
-            if( compound.getString(KEY_UPGRADE).equals(upgrade.getName()) )
+            String name = compound.getString(KEY_UPGRADE);
+            boolean enabled = compound.getBoolean(KEY_ENABLED);
+
+            if( (name.contains(Upgrade.FORTUNE_1.getBaseName()) && enabled && upgrade.lazyIs(Upgrade.SILK) )
+                            || (name.equals(Upgrade.SILK.getBaseName()) && enabled && upgrade.lazyIs(Upgrade.FORTUNE_1) ))
+                compound.putBoolean(KEY_ENABLED, false);
+
+            if( name.equals(upgrade.getName()) )
                 compound.putBoolean(KEY_ENABLED, !compound.getBoolean(KEY_ENABLED));
         });
     }
@@ -78,6 +85,7 @@ public class UpgradeTools {
         for (int i = 0; i < upgrades.size(); i++) {
             CompoundNBT tag = upgrades.getCompound(i);
 
+            // Skip unknowns
             Upgrade type = getUpgradeByName(tag.getString(KEY_UPGRADE));
             if( type == null )
                 continue;

@@ -6,6 +6,7 @@ import com.direwolf20.mininggadgets.common.network.packets.PacketChangeBreakType
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeColor;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -99,6 +100,17 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
     public void onClose() {
         super.onClose();
         PacketHandler.sendToServer(new PacketChangeColor(this.red, this.green, this.blue, this.red_inner, this.green_inner, this.blue_inner));
+    }
+
+    @Override
+    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+        InputMappings.Input mouseKey = InputMappings.getInputByCode(p_keyPressed_1_, p_keyPressed_2_);
+        if (p_keyPressed_1_ == 256 || minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
+            onClose();
+            return true;
+        }
+
+        return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
     }
 
     @Override
