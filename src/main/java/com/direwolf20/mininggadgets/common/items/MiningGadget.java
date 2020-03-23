@@ -459,4 +459,8 @@ public class MiningGadget extends Item {
         }
         return heldItem;
     }
+
+    public static boolean isHolding(PlayerEntity entity) {
+        return getGadget(entity).getItem() instanceof MiningGadget;
+    }
 }
