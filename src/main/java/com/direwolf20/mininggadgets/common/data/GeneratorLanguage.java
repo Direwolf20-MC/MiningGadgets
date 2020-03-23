@@ -28,7 +28,6 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.MAGNET, "Upgrade: Magnet");
         addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
-        addItem(ModItems.HEATSINK, "Upgrade: HeatSink");
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
         addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
         addItem(ModItems.FORTUNE_3, "Upgrade: Fortune, Tier 3");
@@ -52,7 +51,6 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.three_by_three", "Allows for a 3x3 mining radius");
         add("tooltop.mininggadgets.light_placer", "Places touches whenever the surroundings light level is lower than 8");
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
-        add("tooltop.mininggadgets.heatsink", "DISABLED - No longer necessary");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
         add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");
         add("tooltop.mininggadgets.range", "Extends your range by 5 times with each tier");

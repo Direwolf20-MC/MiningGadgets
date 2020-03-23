@@ -359,9 +359,6 @@ public class MiningGadget extends Item {
                 else*/
                     durability = durability - 1;
                     if (durability <= 0) {
-                        if (!UpgradeTools.containsUpgrade(stack, Upgrade.HEATSINK)) {
-                            //player.resetActiveHand();
-                        }
                         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                         if (MiningProperties.getPrecisionMode(stack)) {
                             MiningProperties.setCanMine(stack, false);
