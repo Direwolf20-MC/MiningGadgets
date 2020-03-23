@@ -120,9 +120,8 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         //    int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
         //    boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
         for (ItemStack drop : drops) {
-            if (drop != null) {
+            if( !drop.isEmpty() )
                 insertIntoAdjacentInventory(drop);
-            }
         }
         //   }
         //   if (magnetMode) {
@@ -142,8 +141,12 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     public ItemStack insertIntoAdjacentInventory(ItemStack stack) {
         boolean success = false;
         for (BlockPos pos : adjacentStorage) {
-            if (world.getTileEntity(pos) != null) {
-                getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent((cap) -> {
+            assert world != null;
+            TileEntity tile = world.getTileEntity(pos);
+
+            if (tile != null) {
+//                tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(e -> e).orElse(new EmptyHandler());
+                tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent((cap) -> {
                     ItemHandlerHelper.insertItemStacked(cap, stack, false);
                 });
                 if (stack.isEmpty()) return stack;
@@ -170,11 +173,12 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void mineCurrentPos() {
         BlockState state = world.getBlockState(getCurrentPos());
-        if (!state.getBlock().getMaterial(state).equals(Material.AIR)) {
+        if (!state.getMaterial().equals(Material.AIR) && state.getBlockHardness(world, getCurrentPos()) >= 0) {
             removeBlock(state, getCurrentPos());
         }
         setNextPos();
     }
+
 
     @Override
     public void tick() {
