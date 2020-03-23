@@ -4,8 +4,6 @@ import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -24,9 +22,6 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 
 import java.util.List;
 import java.util.Random;
-
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
 

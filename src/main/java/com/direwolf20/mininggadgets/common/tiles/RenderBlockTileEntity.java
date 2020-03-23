@@ -7,10 +7,10 @@ import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SilverfishBlock;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -325,19 +325,24 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             } else {
                 if (exp > 0)
                     renderBlock.getBlock().dropXpOnBlockBreak(world, pos, exp);
-                //world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
             }
 
-            if( renderBlock.getBlock() instanceof SilverfishBlock )
-                renderBlock.spawnAdditionalDrops(world, pos, tempTool);
+            renderBlock.spawnAdditionalDrops(world, pos, tempTool); // Fixes silver fish basically...
         }
 
         world.removeTileEntity(this.pos);
         world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+
+        // Handle special cases
+        if(SpecialBlockActions.getRegister().containsKey(renderBlock.getBlock()))
+            SpecialBlockActions.getRegister().get(renderBlock.getBlock()).accept(world, pos, renderBlock);
     }
 
     private void resetBlock() {
-        if (!getWorld().isRemote && getWorld() != null) {
+        if(world == null)
+            return;
+
+        if (!world.isRemote) {
             if (renderBlock != null)
                 world.setBlockState(this.pos, renderBlock);
             else
