@@ -1,8 +1,8 @@
 package com.direwolf20.mininggadgets.common.items;
 
-import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;

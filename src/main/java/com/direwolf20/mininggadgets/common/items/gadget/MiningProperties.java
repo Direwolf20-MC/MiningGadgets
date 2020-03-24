@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.gadget;
+package com.direwolf20.mininggadgets.common.items.gadget;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -47,7 +47,7 @@ public class MiningProperties {
 
     public static short getColor(ItemStack gadget, String color) {
         CompoundNBT compound = gadget.getOrCreateTag();
-        if (color == COLOR_RED || color.contains("Inner")) {
+        if (color.equals(COLOR_RED) || color.contains("Inner")) {
             return !compound.contains(color) ? setColor(gadget, (short) 255, color) : compound.getShort(color);
         } else {
             return !compound.contains(color) ? setColor(gadget, (short) 0, color) : compound.getShort(color);

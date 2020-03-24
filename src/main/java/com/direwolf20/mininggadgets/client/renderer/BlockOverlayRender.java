@@ -1,9 +1,9 @@
-package com.direwolf20.mininggadgets.common.util;
+package com.direwolf20.mininggadgets.client.renderer;
 
-import com.direwolf20.mininggadgets.client.renderer.MyRenderType;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
-import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningCollect;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
+import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;

@@ -1,7 +1,6 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
-import com.direwolf20.mininggadgets.MiningGadgets;
-import net.minecraft.client.Minecraft;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;

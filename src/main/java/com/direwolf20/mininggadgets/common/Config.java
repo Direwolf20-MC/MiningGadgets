@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets;
+package com.direwolf20.mininggadgets.common;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;

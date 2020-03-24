@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.data;
 
-import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import net.minecraft.data.DataGenerator;

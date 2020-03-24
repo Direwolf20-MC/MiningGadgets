@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.client.screens;
 
-import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeBreakType;
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeColor;

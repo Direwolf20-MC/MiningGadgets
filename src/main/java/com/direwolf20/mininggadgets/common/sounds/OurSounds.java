@@ -1,7 +1,6 @@
 package com.direwolf20.mininggadgets.common.sounds;
 
-import com.direwolf20.mininggadgets.MiningGadgets;
-import com.direwolf20.mininggadgets.client.ClientSetup;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;

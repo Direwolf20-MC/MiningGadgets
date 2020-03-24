@@ -1,8 +1,8 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.client.Minecraft;

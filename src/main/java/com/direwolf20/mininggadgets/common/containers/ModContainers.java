@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.containers;
 
-import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.client.ClientSetup;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;

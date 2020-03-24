@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.client;
 
-import com.direwolf20.mininggadgets.Config;
-import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.Config;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import mezz.jei.api.IModPlugin;

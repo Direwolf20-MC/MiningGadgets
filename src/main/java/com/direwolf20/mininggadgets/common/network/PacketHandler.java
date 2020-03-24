@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.network;
 
-import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.network.packets.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

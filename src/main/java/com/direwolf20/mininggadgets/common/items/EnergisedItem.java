@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.util;
+package com.direwolf20.mininggadgets.common.items;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.energy.EnergyStorage;
