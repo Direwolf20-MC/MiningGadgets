@@ -1,11 +1,11 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.common.blocks.MarkerBlock;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -25,6 +25,7 @@ public class ModItems {
     public static final RegistryObject<Item> MODIFICATION_TABLE_ITEM = ITEMS.register("modificationtable", () -> new BlockItem(ModBlocks.MODIFICATION_TABLE.get(), ITEM_GROUP));
     public static final RegistryObject<Item> MINERS_LIGHT_ITEM = ITEMS.register("minerslight", () -> new BlockItem(ModBlocks.MINERS_LIGHT.get(), ITEM_GROUP.maxStackSize(1)));
     public static final RegistryObject<Item> QUARRY_ITEM = ITEMS.register("quarry", () -> new BlockItem(ModBlocks.QUARRY.get(), ITEM_GROUP));
+    public static final RegistryObject<Item> MARKER_ITEM = ITEMS.register("quarry_marker", MarkerBlock.MarkerBlockItem::new);
 
     /**
      * Upgrades are a bit ugly.. Soz

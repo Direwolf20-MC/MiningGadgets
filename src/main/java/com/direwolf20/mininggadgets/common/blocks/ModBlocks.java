@@ -23,7 +23,8 @@ public class ModBlocks {
     public static final RegistryObject<Block> RENDER_BLOCK = BLOCKS.register("renderblock", RenderBlock::new);
     public static final RegistryObject<Block> MINERS_LIGHT = BLOCKS.register("minerslight", MinersLight::new);
     public static final RegistryObject<Block> MODIFICATION_TABLE = BLOCKS.register("modificationtable", ModificationTable::new);
-    public static final RegistryObject<Block> QUARRY = BLOCKS.register("quarry", Quarry::new);
+    public static final RegistryObject<Block> QUARRY = BLOCKS.register("quarry", QuarryBlock::new);
+    public static final RegistryObject<Block> MARKER_BLOCK = BLOCKS.register("marker", MarkerBlock::new);
 
     /**
      * TileEntity Registers to the above deferred registers to be loaded in from the mods main class.

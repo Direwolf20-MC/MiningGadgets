@@ -27,8 +27,8 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public ArrayList<BlockPos> adjacentStorage = new ArrayList<>();
     public boolean needScanAdjacent;
-    private BlockPos startPos;
-    private BlockPos endPos;
+    private BlockPos startPos = BlockPos.ZERO;
+    private BlockPos endPos = BlockPos.ZERO;
     private BlockPos currentPos;
     private boolean lastWasAir = false;
     int tick;
@@ -68,12 +68,13 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         return world.getStrongPower(this.pos) > 0;
     }
 
-    public void setStartPos() {
-        startPos = this.pos.offset(Direction.NORTH).up(); //ToDo determine how we'll set the boundary
+    public void setStartPos(BlockPos pos) {
+        // We don't care about Y so we'll zero it out
+        startPos = new BlockPos(pos.getX(), 0, pos.getZ()); //this.pos.offset(Direction.NORTH).up(); //ToDo determine how we'll set the boundary
     }
 
-    public void setEndPos() {
-        endPos = this.pos.offset(Direction.SOUTH, 10).offset(Direction.EAST, 10).down(this.pos.getY()); //ToDo determine how we'll set the boundary
+    public void setEndPos(BlockPos pos) {
+        endPos = new BlockPos(pos.getX(), 0, pos.getZ()); //this.pos.offset(Direction.SOUTH, 10).offset(Direction.EAST, 10).down(this.pos.getY()); //ToDo determine how we'll set the boundary
     }
 
     public BlockPos getCurrentPos() {
@@ -169,14 +170,14 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         setNextPos();
     }
 
-
     @Override
     public void tick() {
         if (!world.isRemote) {
             if (needScanAdjacent) scanAdjacentStorage();
             if (isPowered()) {
-                if (startPos == null) setStartPos();
-                if (endPos == null) setEndPos();
+                if (!hasValidArea())
+                    return;
+
                 tick++;
                 if (tick % 20 == 0 || lastWasAir) {
                     tick = 0;
@@ -184,5 +185,17 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 }
             }
         }
+    }
+
+    public boolean hasValidArea() {
+        return startPos != BlockPos.ZERO && endPos != BlockPos.ZERO;
+    }
+
+    public BlockPos getStartPos() {
+        return startPos;
+    }
+
+    public BlockPos getEndPos() {
+        return endPos;
     }
 }
