@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.client.particles;
 
-import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticle;
 import com.direwolf20.mininggadgets.client.particles.lightparticle.LightParticleType;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleType;

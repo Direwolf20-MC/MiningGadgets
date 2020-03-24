@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.gadget;
+package com.direwolf20.mininggadgets.common.items.gadget;
 
 import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
