@@ -19,6 +19,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.QUARRY_TILE;
 
@@ -123,18 +124,20 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public ItemStack insertIntoAdjacentInventory(ItemStack stack) {
-        boolean success = false;
+        AtomicInteger success = new AtomicInteger(0);
         for (BlockPos pos : adjacentStorage) {
             assert world != null;
             TileEntity tile = world.getTileEntity(pos);
 
             if (tile != null) {
                 tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent((cap) -> {
-                    ItemHandlerHelper.insertItemStacked(cap, stack, false);
+                    ItemStack tempstack = ItemHandlerHelper.insertItemStacked(cap, stack, false);
+                    if (tempstack.isEmpty())
+                        success.getAndIncrement();
                 });
-                if (stack.isEmpty())
-                    return ItemStack.EMPTY;
             }
+            if (success.get() > 0)
+                return ItemStack.EMPTY;
         }
         return stack;
     }
@@ -157,7 +160,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void mineCurrentPos() {
         BlockState state = world.getBlockState(getCurrentPos());
-        if (!state.getMaterial().equals(Material.AIR) && state.getBlockHardness(world, getCurrentPos()) >= 0) {
+        if (!state.getMaterial().equals(Material.AIR) && state.getBlockHardness(world, getCurrentPos()) >= 0 && world.getTileEntity(getCurrentPos()) == null) {
             removeBlock(state, getCurrentPos());
             lastWasAir = false;
         } else {
