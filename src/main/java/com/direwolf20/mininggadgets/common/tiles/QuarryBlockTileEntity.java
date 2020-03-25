@@ -218,10 +218,10 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         int z = getCurrentPos().getZ();
         if (y != 0) {
             setCurrentPos(currentPos.down());
-        } else if (x < endPos.getX()) {
-            setCurrentPos(new BlockPos(x + 1, startPos.getY(), z));
-        } else if (z < endPos.getZ()) {
-            setCurrentPos(new BlockPos(startPos.getX(), startPos.getY(), z + 1));
+        } else if (x != endPos.getX()) {
+            setCurrentPos(new BlockPos(endPos.getX() > startPos.getX() ? x + 1 : x - 1, startPos.getY(), z));
+        } else if (z != endPos.getZ()) {
+            setCurrentPos(new BlockPos(startPos.getX(), startPos.getY(), endPos.getZ() > startPos.getZ() ? z + 1 : z - 1));
         } else {
             currentPos = endPos;
         }
