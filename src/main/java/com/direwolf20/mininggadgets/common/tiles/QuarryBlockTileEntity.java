@@ -98,7 +98,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 break;
             }
         }
-        for (int z = thisPos.getZ() - 64; z < thisPos.getX() + 64; z++) {
+        for (int z = thisPos.getZ() - 64; z < thisPos.getZ() + 64; z++) {
             if (world.getBlockState(new BlockPos(thisPos.getX(), thisPos.getY(), z)).getBlock().equals(ModBlocks.MARKER_BLOCK.get())) {
                 zMarker = z;
                 break;
