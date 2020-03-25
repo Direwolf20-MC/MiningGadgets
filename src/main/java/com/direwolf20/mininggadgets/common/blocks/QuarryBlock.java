@@ -5,13 +5,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
@@ -50,15 +51,15 @@ public class QuarryBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        TileEntity tile = worldIn.getTileEntity(pos);
-        if( tile == null || player.getHeldItem(handIn) != ItemStack.EMPTY )
-            return ActionResultType.FAIL;
-
-        QuarryBlockTileEntity te = (QuarryBlockTileEntity) tile;
-        if( !te.hasValidArea() ) {
-            // todo: lang file
-            player.sendMessage(new StringTextComponent("No valid area defined, use markers to define this blocks start and end locations"));
-            return ActionResultType.FAIL;
+        if (!worldIn.isRemote) { //serverOnly
+            QuarryBlockTileEntity tile = (QuarryBlockTileEntity) worldIn.getTileEntity(pos);
+            if (player.isShiftKeyDown()) {
+                if (tile.findMarkers()) {
+                    player.sendStatusMessage(new TranslationTextComponent("quarry_marker_pos", tile.getStartPos(), tile.getEndPos()).setStyle(new Style().setColor(TextFormatting.AQUA)), true);
+                } else {
+                    player.sendStatusMessage(new TranslationTextComponent("quarry_marker_failed").setStyle(new Style().setColor(TextFormatting.RED)), true);
+                }
+            }
         }
 
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);

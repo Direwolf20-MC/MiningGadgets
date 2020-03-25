@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
+import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -26,12 +27,15 @@ import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.QUARRY_TILE;
 public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEntity {
 
     public ArrayList<BlockPos> adjacentStorage = new ArrayList<>();
-    public boolean needScanAdjacent;
+    private boolean needScanAdjacent;
+    private boolean needScanMarker;
     private BlockPos startPos = BlockPos.ZERO;
     private BlockPos endPos = BlockPos.ZERO;
     private BlockPos currentPos;
     private boolean lastWasAir = false;
+    private boolean isDone;
     int tick;
+
 
     public QuarryBlockTileEntity() {
         super(QUARRY_TILE.get());
@@ -40,14 +44,14 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void scanAdjacentStorage() {
         adjacentStorage.clear();
-        if( world == null )
+        if (world == null)
             return;
 
         for (Direction direction : Direction.values()) {
             BlockPos adjacentPos = this.pos.offset(direction);
             TileEntity tile = world.getTileEntity(adjacentPos);
 
-            if( tile != null )
+            if (tile != null)
                 tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(e -> adjacentStorage.add(this.pos.offset(direction)));
         }
 
@@ -68,9 +72,53 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         return world.getStrongPower(this.pos) > 0;
     }
 
+    public boolean findMarkers() {
+        BlockPos thisPos = this.getPos();
+        int xMarker = 0, zMarker = 0;
+        for (int x = thisPos.getX() - 64; x < thisPos.getX() + 64; x++) {
+            if (world.getBlockState(new BlockPos(x, thisPos.getY(), thisPos.getZ())).getBlock().equals(ModBlocks.MARKER_BLOCK.get())) {
+                xMarker = x;
+                break;
+            }
+        }
+        for (int z = thisPos.getZ() - 64; z < thisPos.getX() + 64; z++) {
+            if (world.getBlockState(new BlockPos(thisPos.getX(), thisPos.getY(), z)).getBlock().equals(ModBlocks.MARKER_BLOCK.get())) {
+                zMarker = z;
+                break;
+            }
+        }
+        if (xMarker != 0 && zMarker != 0) {
+            int startX = 0, startZ = 0, endX = 0, endZ = 0;
+            if (xMarker < thisPos.getX()) {
+                startX = thisPos.getX() - 1;
+                endX = xMarker + 1;
+            } else {
+                startX = thisPos.getX() + 1;
+                endX = xMarker - 1;
+            }
+            if (zMarker < thisPos.getZ()) {
+                startZ = thisPos.getZ() - 1;
+                endZ = zMarker + 1;
+            } else {
+                startZ = thisPos.getZ() + 1;
+                endZ = zMarker - 1;
+            }
+            setStartPos(new BlockPos(startX, thisPos.getY(), startZ));
+            setEndPos(new BlockPos(endX, thisPos.getY(), endZ));
+            setCurrentPos(BlockPos.ZERO);
+            isDone = false;
+            System.out.println("New Coords: " + getStartPos() + ":" + getEndPos() + ":" + getCurrentPos());
+            return true;
+        } else {
+            setStartPos(BlockPos.ZERO);
+            setEndPos(BlockPos.ZERO);
+            return false;
+        }
+    }
+
     public void setStartPos(BlockPos pos) {
         // We don't care about Y so we'll zero it out
-        startPos = new BlockPos(pos.getX(), 0, pos.getZ()); //this.pos.offset(Direction.NORTH).up(); //ToDo determine how we'll set the boundary
+        startPos = new BlockPos(pos.getX(), pos.getY(), pos.getZ()); //this.pos.offset(Direction.NORTH).up(); //ToDo determine how we'll set the boundary
     }
 
     public void setEndPos(BlockPos pos) {
@@ -78,8 +126,8 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public BlockPos getCurrentPos() {
-        if (currentPos == null) {
-            setCurrentPos(startPos);
+        if (currentPos == null || currentPos == BlockPos.ZERO) {
+            setCurrentPos(getStartPos());
         }
         return currentPos;
     }
@@ -106,7 +154,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         List<ItemStack> drops = state.getDrops(lootcontext$builder);
 
         for (ItemStack drop : drops) {
-            if( !drop.isEmpty() )
+            if (!drop.isEmpty())
                 System.out.println(insertIntoAdjacentInventory(drop));
         }
         //   }
@@ -144,6 +192,10 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public void setNextPos() {
+        if (currentPos == endPos) {
+            isDone = true;
+            return;
+        }
         int x = getCurrentPos().getX();
         int y = getCurrentPos().getY();
         int z = getCurrentPos().getZ();
@@ -174,12 +226,10 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     public void tick() {
         if (!world.isRemote) {
             if (needScanAdjacent) scanAdjacentStorage();
-            if (isPowered()) {
-                if (!hasValidArea())
-                    return;
-
+            if (needScanMarker) findMarkers();
+            if (isPowered() && !isDone) {
                 tick++;
-                if (tick % 20 == 0 || lastWasAir) {
+                if (tick % 1 == 0 || lastWasAir) {
                     tick = 0;
                     mineCurrentPos();
                 }
