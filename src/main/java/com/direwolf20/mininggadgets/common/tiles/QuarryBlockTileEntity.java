@@ -153,9 +153,9 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         currentPos = pos;
     }
 
-    private void removeBlock(BlockState state, BlockPos pos) {
+    private boolean removeBlock(BlockState state, BlockPos pos) {
         if (world == null || world.isRemote)
-            return;
+            return false;
 
 // apparent this isn't something you can do... We need a way of setting the placer as the player
 // Don't mine if we cant
@@ -172,7 +172,9 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
         for (ItemStack drop : drops) {
             if (!drop.isEmpty())
-                System.out.println(insertIntoAdjacentInventory(drop));
+                drop = insertIntoAdjacentInventory(drop);
+            if (!drop.isEmpty())
+                return false;
         }
         //   }
         //   if (magnetMode) {
@@ -187,6 +189,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
         world.removeTileEntity(pos);
         world.setBlockState(pos, Blocks.AIR.getDefaultState());
+        return true;
     }
 
     public ItemStack insertIntoAdjacentInventory(ItemStack stack) {
@@ -230,13 +233,18 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void mineCurrentPos() {
         BlockState state = world.getBlockState(getCurrentPos());
+        boolean success;
         if (!state.getMaterial().equals(Material.AIR) && state.getBlockHardness(world, getCurrentPos()) >= 0 && world.getTileEntity(getCurrentPos()) == null) {
-            removeBlock(state, getCurrentPos());
+            success = removeBlock(state, getCurrentPos());
             lastWasAir = false;
         } else {
             lastWasAir = true;
+            success = true;
         }
-        setNextPos();
+        if (success)
+            setNextPos();
+        //else
+        //    isDone = true; //TODO: Decide how to reactivate a stalled miner (Short of trying every tick!). Also visual indication that its stuck.
     }
 
     @Override
@@ -252,10 +260,6 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 }
             }
         }
-    }
-
-    public boolean hasValidArea() {
-        return startPos != BlockPos.ZERO && endPos != BlockPos.ZERO;
     }
 
     public BlockPos getStartPos() {
