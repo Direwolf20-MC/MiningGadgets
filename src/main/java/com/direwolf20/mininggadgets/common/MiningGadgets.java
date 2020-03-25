@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.common;
 
 import com.direwolf20.mininggadgets.client.ClientEvents;
 import com.direwolf20.mininggadgets.client.ClientSetup;
+import com.direwolf20.mininggadgets.client.ModRenders;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
@@ -83,6 +84,8 @@ public class MiningGadgets
     private void setupClient(final FMLClientSetupEvent event) {
         // Register the container screens.
         ClientSetup.setup();
+        //Register the Marker block as a Mipmap
+        ModRenders.register();
     }
 
     public static Logger getLogger() {
