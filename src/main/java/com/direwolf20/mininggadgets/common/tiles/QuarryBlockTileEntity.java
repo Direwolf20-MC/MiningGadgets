@@ -8,6 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -61,10 +62,26 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
+        needScanAdjacent = tag.getBoolean("needScanAdjacent");
+        needScanMarker = tag.getBoolean("needScanMarker");
+        startPos = NBTUtil.readBlockPos(tag.getCompound("startPos"));
+        endPos = NBTUtil.readBlockPos(tag.getCompound("endPos"));
+        currentPos = NBTUtil.readBlockPos(tag.getCompound("currentPos"));
+        lastWasAir = tag.getBoolean("lastWasAir");
+        isDone = tag.getBoolean("isDone");
+        tick = tag.getInt("tick");
     }
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
+        tag.putBoolean("needScanAdjacent", needScanAdjacent);
+        tag.putBoolean("needScanMarker", needScanMarker);
+        tag.put("startPos", NBTUtil.writeBlockPos(startPos));
+        tag.put("endPos", NBTUtil.writeBlockPos(endPos));
+        tag.put("currentPos", NBTUtil.writeBlockPos(currentPos));
+        tag.putBoolean("lastWasAir", lastWasAir);
+        tag.putBoolean("isDone", isDone);
+        tag.putInt("tick", tick);
         return super.write(tag);
     }
 
