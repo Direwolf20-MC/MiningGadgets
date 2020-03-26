@@ -1,7 +1,9 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -277,11 +279,62 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         System.out.println(currentPos);
     }
 
+    private float getHardness(int efficiency) {
+        float hardness = 0;
+        float toolSpeed = 8;
+        if (efficiency > 0) {
+            toolSpeed = toolSpeed + ((efficiency * efficiency + 1));
+        }
+        BlockState state = this.world.getBlockState(currentPos);
+        hardness = state.getBlockHardness(world, currentPos);
+        return (hardness);
+    }
+
     public void mineCurrentPos() {
         BlockState state = world.getBlockState(getCurrentPos());
-        boolean success;
-        if (!state.getMaterial().equals(Material.AIR) && state.getBlockHardness(world, getCurrentPos()) >= 0 && world.getTileEntity(getCurrentPos()) == null) {
-            success = removeBlock(state, getCurrentPos());
+        boolean success = false;
+        if (!state.getMaterial().equals(Material.AIR) && state.getBlockHardness(world, getCurrentPos()) >= 0 && (world.getTileEntity(getCurrentPos()) == null || world.getTileEntity(getCurrentPos()) instanceof RenderBlockTileEntity)) {
+            if (!(state.getBlock() instanceof RenderBlock)) {
+                int efficiency = 0;
+                //if (UpgradeTools.containsActiveUpgrade((stack), Upgrade.EFFICIENCY_1))
+                //    efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
+
+                float hardness = getHardness(efficiency);
+                hardness = (float) Math.floor(hardness) * 10;
+                if (hardness == 0) hardness = 1;
+                //List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
+                world.setBlockState(currentPos, ModBlocks.RENDER_BLOCK.get().getDefaultState());
+                RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(currentPos);
+                te.setRenderBlock(state);
+                //te.setBreakType(MiningProperties.getBreakType(stack));
+                te.setBreakType(MiningProperties.BreakTypes.SHRINK);
+                //te.setGadgetUpgrades(gadgetUpgrades);
+                //te.setGadgetFilters(MiningProperties.getFiltersAsList(stack));
+                //te.setGadgetIsWhitelist(MiningProperties.getWhiteList(stack));
+                te.setPriorDurability((int) hardness + 1);
+                te.setOriginalDurability((int) hardness + 1);
+                te.setDurability((int) hardness, new ItemStack(ModItems.MININGGADGET.get()));
+                //te.setPlayer((PlayerEntity) player); //TODO Used for block break particles, gotta change that
+                te.setBlockAllowed();
+            } else {
+                //if (!world.isRemote) {
+                RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(currentPos);
+                int durability = te.getDurability();
+                System.out.println(durability);
+                BlockState originalState = te.getRenderBlock();
+                //System.out.println(durability);
+                /*if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
+                    durability = durability - 2;
+                else*/
+                durability = durability - 1;
+                te.setDurability(durability, new ItemStack(ModItems.MININGGADGET.get()));
+                if (durability <= 0) {
+                    success = removeBlock(originalState, getCurrentPos());
+                    //stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false)); //TODO: Replace with energy cost on TE
+                }
+
+                //}
+            }
             lastWasAir = false;
         } else {
             lastWasAir = true;

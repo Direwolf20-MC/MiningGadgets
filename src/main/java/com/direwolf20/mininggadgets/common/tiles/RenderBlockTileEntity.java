@@ -1,12 +1,12 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
-import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
+import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
+import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -262,26 +262,29 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
-        if (renderBlock!= null)
+        if (renderBlock != null)
             tag.put("renderBlock", NBTUtil.writeBlockState(renderBlock));
         tag.putInt("originalDurability", originalDurability);
         tag.putInt("priorDurability", priorDurability);
         tag.putInt("durability", durability);
         tag.putInt("ticksSinceMine", ticksSinceMine);
-        if (!playerUUID.equals(null))
+        if (playerUUID != (null))
             tag.putUniqueId("playerUUID", playerUUID);
-        tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
-        tag.putByte("breakType", (byte) breakType.ordinal());
-        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
+        if (gadgetUpgrades != null)
+            tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
+        if (breakType != null)
+            tag.putByte("breakType", (byte) breakType.ordinal());
+        if (gadgetFilters != null)
+            tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
         tag.putBoolean("gadgetIsWhitelist", isGadgetIsWhitelist());
         tag.putBoolean("blockAllowed", blockAllowed);
         return super.write(tag);
     }
 
     private void removeBlock() {
-        if(world == null || world.isRemote)
+        if (world == null || world.isRemote)
             return;
-
+        if (playerUUID == null) return;
         PlayerEntity player = world.getPlayerByUuid(playerUUID);
         if (player == null)
             return;
