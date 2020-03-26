@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
@@ -50,8 +49,7 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
     public void render(QuarryBlockTileEntity tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightsIn, int combinedOverlayIn) {
         if (tile.getMarkerX().equals(BlockPos.ZERO) || tile.getMarkerZ().equals(BlockPos.ZERO)) return;
         IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        IVertexBuilder builder = bufferIn.getBuffer(MyRenderType.OVERLAY_LINES);
-        Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        IVertexBuilder builder = buffer.getBuffer(MyRenderType.OVERLAY_LINES);
 
         matrixStackIn.push();
         matrixStackIn.translate(.5, .5, .5);
@@ -78,4 +76,8 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
                 .endVertex();
     }
 
+    @Override
+    public boolean isGlobalRenderer(QuarryBlockTileEntity te) {
+        return true;
+    }
 }
