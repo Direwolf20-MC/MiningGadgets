@@ -20,7 +20,7 @@ public class ModificationTableCommands {
         Slot laserSlot = container.inventorySlots.get(0);
         ItemStack laser = laserSlot.getStack();
 
-        if (laser.getItem() instanceof MiningGadget && upgrade.getItem() instanceof UpgradeCard) {
+        if (MiningGadget.is(laser) && upgrade.getItem() instanceof UpgradeCard) {
             Upgrade card = ((UpgradeCard) upgrade.getItem()).getUpgrade();
             if (card == Upgrade.EMPTY)
                 return false; //Don't allow inserting empty cards.
@@ -65,7 +65,7 @@ public class ModificationTableCommands {
         Slot laserSlot = container.inventorySlots.get(0);
         ItemStack laser = laserSlot.getStack();
 
-        if (!(laser.getItem() instanceof MiningGadget))
+        if (!MiningGadget.is(laser))
             return;
 
         if (!UpgradeTools.containsUpgrades(laser))

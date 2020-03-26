@@ -167,7 +167,7 @@ public class LaserParticle extends BreakingParticle {
             //If the particle is less than 5 ticks old, rapidly move the particles towards the player's look position
             //This is what clumps them together early on. Comment this out if you wanna see the difference without.
             ItemStack heldItem = MiningGadget.getGadget(player);
-            if (heldItem.getItem() instanceof MiningGadget && MiningProperties.getRange(heldItem) > 1) {
+            if (MiningProperties.getRange(heldItem) > 1) {
                 if (age < 5) {
                     int compressionFactor = 7;
                     moveX = moveX * ((1 - Math.abs(look.x)) * compressionFactor);

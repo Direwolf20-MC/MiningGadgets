@@ -463,4 +463,9 @@ public class MiningGadget extends Item {
     public static boolean isHolding(PlayerEntity entity) {
         return getGadget(entity).getItem() instanceof MiningGadget;
     }
+
+    // Same as above but allows for not calling getGadget
+    public static boolean is(ItemStack stack) {
+        return stack.getItem() instanceof MiningGadget;
+    }
 }

@@ -20,7 +20,7 @@ public class MiningGadgetsJEI implements IModPlugin {
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         registration.registerSubtypeInterpreter(ModItems.MININGGADGET.get(), itemStack -> {
-            if(!(itemStack.getItem() instanceof MiningGadget))
+            if(!MiningGadget.is(itemStack))
                 return ISubtypeInterpreter.NONE;
 
             double energy = itemStack.getOrCreateTag().getDouble("energy");

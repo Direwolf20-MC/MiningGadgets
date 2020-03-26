@@ -67,7 +67,7 @@ public class FilterContainer extends Container {
             ItemStack currentStack = slot.getStack();
 
             // Stop our items at the very least :P
-            if( currentStack.getItem() instanceof MiningGadget || currentStack.getItem() instanceof UpgradeCard)
+            if( MiningGadget.is(currentStack) || currentStack.getItem() instanceof UpgradeCard)
                 return itemstack;
 
             if( currentStack.isEmpty() )
