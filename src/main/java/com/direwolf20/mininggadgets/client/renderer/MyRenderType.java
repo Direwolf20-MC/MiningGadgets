@@ -77,4 +77,16 @@ public class MyRenderType extends RenderType {
                     .cull(CULL_ENABLED)
                     .writeMask(COLOR_WRITE)
                     .build(false));
+
+    public static final RenderType OVERLAY_LINES = makeType("overlay_lines",
+            DefaultVertexFormats.POSITION_COLOR, GL11.GL_LINES, 256,
+            RenderType.State.getBuilder().line(THICK_LINES)
+                    .layer(PROJECTION_LAYERING)
+                    .transparency(TRANSLUCENT_TRANSPARENCY)
+                    .texture(NO_TEXTURE)
+                    .depthTest(DEPTH_LEQUAL)
+                    .cull(CULL_DISABLED)
+                    .lightmap(LIGHTMAP_DISABLED)
+                    .writeMask(COLOR_DEPTH_WRITE)
+                    .build(false));
 }
