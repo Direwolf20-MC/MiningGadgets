@@ -53,10 +53,16 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
         Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 
         matrixStackIn.push();
-
+        matrixStackIn.translate(.5, .5, .5);
         matrixStackIn.translate(-tile.getPos().getX(), -tile.getPos().getY(), -tile.getPos().getZ());
         Matrix4f positionMatrix = matrixStackIn.getLast().getMatrix();
-        drawLasers(builder, positionMatrix, tile.getPos(), tile.getPos().up(2), 1f, 0f, 0f, 1f);
+        BlockPos markerX = tile.getMarkerX();
+        BlockPos markerZ = tile.getMarkerZ();
+        BlockPos corner = new BlockPos(markerX.getX(), markerX.getY(), markerZ.getZ());
+        drawLasers(builder, positionMatrix, tile.getPos(), markerX, 1f, 0f, 0f, 1f);
+        drawLasers(builder, positionMatrix, tile.getPos(), markerZ, 1f, 0f, 0f, 1f);
+        drawLasers(builder, positionMatrix, markerX, corner, 1f, 0f, 0f, 1f);
+        drawLasers(builder, positionMatrix, markerZ, corner, 1f, 0f, 0f, 1f);
 
         matrixStackIn.pop();
         buffer.finish(MyRenderType.OVERLAY_LINES);

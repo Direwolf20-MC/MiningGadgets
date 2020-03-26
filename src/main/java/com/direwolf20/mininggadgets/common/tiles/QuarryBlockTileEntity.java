@@ -9,6 +9,8 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -32,6 +34,8 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     private boolean needScanMarker;
     private BlockPos startPos = BlockPos.ZERO;
     private BlockPos endPos = BlockPos.ZERO;
+    private BlockPos markerX = BlockPos.ZERO;
+    private BlockPos markerZ = BlockPos.ZERO;
     private BlockPos currentPos;
     private boolean lastWasAir = false;
     private boolean isDone;
@@ -66,6 +70,8 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         needScanMarker = tag.getBoolean("needScanMarker");
         startPos = NBTUtil.readBlockPos(tag.getCompound("startPos"));
         endPos = NBTUtil.readBlockPos(tag.getCompound("endPos"));
+        markerX = NBTUtil.readBlockPos(tag.getCompound("markerX"));
+        markerZ = NBTUtil.readBlockPos(tag.getCompound("markerZ"));
         currentPos = NBTUtil.readBlockPos(tag.getCompound("currentPos"));
         lastWasAir = tag.getBoolean("lastWasAir");
         isDone = tag.getBoolean("isDone");
@@ -78,11 +84,34 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putBoolean("needScanMarker", needScanMarker);
         tag.put("startPos", NBTUtil.writeBlockPos(startPos));
         tag.put("endPos", NBTUtil.writeBlockPos(endPos));
+        tag.put("markerX", NBTUtil.writeBlockPos(markerX));
+        tag.put("markerZ", NBTUtil.writeBlockPos(markerZ));
         tag.put("currentPos", NBTUtil.writeBlockPos(currentPos));
         tag.putBoolean("lastWasAir", lastWasAir);
         tag.putBoolean("isDone", isDone);
         tag.putInt("tick", tick);
         return super.write(tag);
+    }
+
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        // Vanilla uses the type parameter to indicate which type of tile entity (command block, skull, or beacon?) is receiving the packet, but it seems like Forge has overridden this behavior
+        return new SUpdateTileEntityPacket(pos, 0, getUpdateTag());
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundNBT tag) {
+        read(tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
     public boolean isPowered() {
@@ -95,12 +124,14 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         for (int x = thisPos.getX() - 64; x < thisPos.getX() + 64; x++) {
             if (world.getBlockState(new BlockPos(x, thisPos.getY(), thisPos.getZ())).getBlock().equals(ModBlocks.MARKER_BLOCK.get())) {
                 xMarker = x;
+                markerX = new BlockPos(x, thisPos.getY(), thisPos.getZ());
                 break;
             }
         }
         for (int z = thisPos.getZ() - 64; z < thisPos.getZ() + 64; z++) {
             if (world.getBlockState(new BlockPos(thisPos.getX(), thisPos.getY(), z)).getBlock().equals(ModBlocks.MARKER_BLOCK.get())) {
                 zMarker = z;
+                markerZ = new BlockPos(thisPos.getX(), thisPos.getY(), z);
                 break;
             }
         }
@@ -268,5 +299,13 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public BlockPos getEndPos() {
         return endPos;
+    }
+
+    public BlockPos getMarkerX() {
+        return markerX;
+    }
+
+    public BlockPos getMarkerZ() {
+        return markerZ;
     }
 }
