@@ -63,9 +63,9 @@ public class MiningGadgets
 
     @SubscribeEvent
     public void rightClickEvent(PlayerInteractEvent.RightClickBlock event) {
-//        ItemStack stack = MiningGadget.getGadget(event.getPlayer());
-//        if( stack.getItem() instanceof MiningGadget )
-//            event.setCanceled(true);
+        ItemStack stack = MiningGadget.getGadget(event.getPlayer());
+        if( stack.getItem() instanceof MiningGadget )
+            event.setCanceled(true);
     }
 
     private void setup(final FMLCommonSetupEvent event)
