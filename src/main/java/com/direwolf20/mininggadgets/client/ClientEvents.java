@@ -29,7 +29,7 @@ public class ClientEvents {
         PlayerEntity myplayer = Minecraft.getInstance().player;
 
         ItemStack myItem = MiningGadget.getGadget(myplayer);
-        if (myItem.getItem() instanceof MiningGadget)
+        if (MiningGadget.is(myItem))
             BlockOverlayRender.render(evt, myItem);
 
         for (PlayerEntity player : players) {
@@ -37,7 +37,7 @@ public class ClientEvents {
                 continue;
 
             ItemStack heldItem = MiningGadget.getGadget(player);
-            if (player.isHandActive() && heldItem.getItem() instanceof MiningGadget) {
+            if (player.isHandActive() && MiningGadget.is(heldItem)) {
                 if (MiningGadget.canMine(heldItem)) {
                     RenderMiningLaser2.renderLaser(evt, player, Minecraft.getInstance().getRenderPartialTicks());
                 }

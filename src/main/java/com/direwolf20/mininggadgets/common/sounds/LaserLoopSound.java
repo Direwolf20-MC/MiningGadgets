@@ -29,8 +29,7 @@ public class LaserLoopSound extends TickableSound {
     }
 
     public void tick() {
-        ItemStack heldItem = MiningGadget.getGadget(player);
-        if (!(this.player.isHandActive() && heldItem.getItem() instanceof MiningGadget)) {
+        if (!(this.player.isHandActive() && MiningGadget.isHolding(this.player))) {
             this.donePlaying = true;
         } else {
 //            PlayerEntity myplayer = Minecraft.getInstance().player;

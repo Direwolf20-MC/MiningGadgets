@@ -62,7 +62,7 @@ public class ModificationTableContainer extends Container {
 
     private void updateUpgradeCache(int index) {
         ItemStack stack = this.getSlot(index).getStack();
-        if( (stack.isEmpty() && !upgradesCache.isEmpty()) || !(stack.getItem() instanceof MiningGadget) ) {
+        if( (stack.isEmpty() && !upgradesCache.isEmpty()) || !MiningGadget.is(stack) ) {
             upgradesCache.clear();
             return;
         }
@@ -119,7 +119,7 @@ public class ModificationTableContainer extends Container {
                 }
                 slot.onSlotChange(stack, itemstack);
             } else {
-                if (stack.getItem() instanceof MiningGadget) {
+                if (MiningGadget.is(stack)) {
                     if (!this.mergeItemStack(stack, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }

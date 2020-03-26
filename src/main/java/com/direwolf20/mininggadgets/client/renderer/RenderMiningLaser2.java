@@ -57,9 +57,9 @@ public class RenderMiningLaser2 {
 
     private static void drawLasers(RenderWorldLastEvent event, Vec3d from, RayTraceResult trace, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
         Hand activeHand;
-        if (player.getHeldItemMainhand().getItem() instanceof MiningGadget) {
+        if (MiningGadget.is(player.getHeldItemMainhand())) {
             activeHand = Hand.MAIN_HAND;
-        } else if (player.getHeldItemOffhand().getItem() instanceof MiningGadget) {
+        } else if (MiningGadget.is(player.getHeldItemOffhand())) {
             activeHand = Hand.OFF_HAND;
         } else {
             return;

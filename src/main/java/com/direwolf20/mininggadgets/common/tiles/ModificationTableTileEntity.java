@@ -58,7 +58,7 @@ public class ModificationTableTileEntity extends TileEntity implements INamedCon
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                if (slot == 0 && stack.getItem() instanceof MiningGadget) return true;
+                if (slot == 0 && MiningGadget.is(stack)) return true;
                 if (slot == 1 && stack.getItem() instanceof UpgradeCard) return true;
                 return false;
             }
