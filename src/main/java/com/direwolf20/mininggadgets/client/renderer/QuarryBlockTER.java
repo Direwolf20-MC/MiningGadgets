@@ -48,6 +48,7 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
 
     @Override
     public void render(QuarryBlockTileEntity tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightsIn, int combinedOverlayIn) {
+        if (tile.getMarkerX().equals(BlockPos.ZERO) || tile.getMarkerZ().equals(BlockPos.ZERO)) return;
         IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         IVertexBuilder builder = bufferIn.getBuffer(MyRenderType.OVERLAY_LINES);
         Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();

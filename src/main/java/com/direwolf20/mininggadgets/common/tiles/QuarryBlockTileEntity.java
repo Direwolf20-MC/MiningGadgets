@@ -36,7 +36,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     private BlockPos endPos = BlockPos.ZERO;
     private BlockPos markerX = BlockPos.ZERO;
     private BlockPos markerZ = BlockPos.ZERO;
-    private BlockPos currentPos;
+    private BlockPos currentPos = BlockPos.ZERO;
     private boolean lastWasAir = false;
     private boolean isDone;
     int tick;
@@ -91,6 +91,14 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putBoolean("isDone", isDone);
         tag.putInt("tick", tick);
         return super.write(tag);
+    }
+
+    public void markDirtyClient() {
+        markDirty();
+        if (getWorld() != null) {
+            BlockState state = getWorld().getBlockState(getPos());
+            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
+        }
     }
 
     @Override
@@ -156,10 +164,15 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
             setCurrentPos(BlockPos.ZERO);
             isDone = false;
             System.out.println("New Coords: " + getStartPos() + ":" + getEndPos() + ":" + getCurrentPos());
+            markDirtyClient();
             return true;
         } else {
             setStartPos(BlockPos.ZERO);
             setEndPos(BlockPos.ZERO);
+            setCurrentPos(BlockPos.ZERO);
+            markerX = BlockPos.ZERO;
+            markerZ = BlockPos.ZERO;
+            markDirtyClient();
             return false;
         }
     }
