@@ -1,6 +1,5 @@
 package com.direwolf20.mininggadgets.client.screens;
 
-import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.QuarryContainer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -10,7 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 
 public class QuarryScreen extends ContainerScreen<QuarryContainer> {
-    private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
+    private static final ResourceLocation GUI = new ResourceLocation("textures/gui/container/generic_54.png");
+
     private BlockPos tePos;
     private QuarryContainer container;
 

@@ -21,7 +21,7 @@ public class QuarryContainer extends Container {
     private IItemHandler playerInventory;
 
     public QuarryContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
-        super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
+        super(ModContainers.QUARRY_CONTAINER.get(), windowId);
 
         this.tileEntity = Minecraft.getInstance().world.getTileEntity(extraData.readBlockPos());
         this.playerInventory = new InvWrapper(playerInventory);
@@ -31,7 +31,7 @@ public class QuarryContainer extends Container {
     }
 
     public QuarryContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
-        super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
+        super(ModContainers.QUARRY_CONTAINER.get(), windowId);
         this.tileEntity = world.getTileEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);
 

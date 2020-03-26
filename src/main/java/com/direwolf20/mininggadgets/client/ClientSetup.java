@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.client.renderer.QuarryBlockTER;
 import com.direwolf20.mininggadgets.client.renderer.RenderBlockTER;
 import com.direwolf20.mininggadgets.client.screens.FilterScreen;
 import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
+import com.direwolf20.mininggadgets.client.screens.QuarryScreen;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import net.minecraft.client.gui.ScreenManager;
@@ -23,6 +24,7 @@ public final class ClientSetup {
      */
     private static void registerContainerScreens() {
         ScreenManager.registerFactory(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), ModificationTableScreen::new);
+        ScreenManager.registerFactory(ModContainers.QUARRY_CONTAINER.get(), QuarryScreen::new);
         ScreenManager.registerFactory(ModContainers.FILTER_CONTAINER.get(), FilterScreen::new);
     }
 
