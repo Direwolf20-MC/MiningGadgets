@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -15,6 +16,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
@@ -58,6 +60,10 @@ public class QuarryBlock extends Block {
                     player.sendStatusMessage(new TranslationTextComponent("quarry_marker_pos", tile.getStartPos(), tile.getEndPos()).setStyle(new Style().setColor(TextFormatting.AQUA)), true);
                 } else {
                     player.sendStatusMessage(new TranslationTextComponent("quarry_marker_failed").setStyle(new Style().setColor(TextFormatting.RED)), true);
+                }
+            } else {
+                if (tile != null) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getPos());
                 }
             }
         }

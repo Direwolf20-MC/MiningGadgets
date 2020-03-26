@@ -2,12 +2,17 @@ package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
+import com.direwolf20.mininggadgets.common.containers.QuarryContainer;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -18,6 +23,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameters;
@@ -25,13 +32,14 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.QUARRY_TILE;
 
-public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEntity {
+public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
 
     public ArrayList<BlockPos> adjacentStorage = new ArrayList<>();
     private boolean needScanAdjacent;
@@ -361,6 +369,12 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
+    @Nullable
+    @Override
+    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        return new QuarryContainer(i, world, pos, playerInventory);
+    }
+
     public BlockPos getStartPos() {
         return startPos;
     }
@@ -381,5 +395,10 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(pos, getEndPos());
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new StringTextComponent("Quarry");
     }
 }

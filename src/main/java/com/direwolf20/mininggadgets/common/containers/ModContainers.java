@@ -18,6 +18,9 @@ public class ModContainers {
     public static final RegistryObject<ContainerType<ModificationTableContainer>> MODIFICATIONTABLE_CONTAINER
             = CONTAINERS.register("modificationtable", () -> IForgeContainerType.create(ModificationTableContainer::new));
 
+    public static final RegistryObject<ContainerType<QuarryContainer>> QUARRY_CONTAINER
+            = CONTAINERS.register("quarry_container", () -> IForgeContainerType.create(QuarryContainer::new));
+
     public static final RegistryObject<ContainerType<FilterContainer>> FILTER_CONTAINER
             = CONTAINERS.register("filter_container", () -> IForgeContainerType.create(FilterContainer::new));
 }
