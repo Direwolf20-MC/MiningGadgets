@@ -94,25 +94,18 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
         matrixStackIn.translate(0.6, 3.5, 0.45);
         matrixStackIn.translate(diffX, 0, diffZ);
 
-        //matrixStackIn.translate(-tile.getPos().getX(), -tile.getPos().getY(), -tile.getPos().getZ());
         Matrix4f positionMatrix2 = matrixStackIn.getLast().getMatrix();
         long gameTime = tile.getWorld().getGameTime();
         double v = gameTime;
-        MatrixStack.Entry matrixstack$entry = matrixStackIn.getLast();
-        Matrix3f matrixNormal = matrixstack$entry.getNormal();
         IVertexBuilder builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
-        drawMiningLaser(builder2, positionMatrix2, matrixNormal, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 0.7f, 0.01f, 0.5, 1);
+        drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 0.7f, 0.01f, 0.5, 1);
         builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
-        drawMiningLaser(builder2, positionMatrix2, matrixNormal, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 1f, 0.05f, v, v + 2 * 1.5);
+        drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 1f, 0.05f, v, v + 2 * 1.5);
         builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
-        drawMiningLaser(builder2, positionMatrix2, matrixNormal, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 1f, 1f, 1f, 0.01f, v, v + 2 * 1.5);
-
-        //drawLasers(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0,-3,0), 1f, 0f, 0f, 1f);
-        //drawLasers(builder, positionMatrix, markerX, corner, 1f, 0f, 0f, 1f);
-        //drawLasers(builder, positionMatrix, markerZ, corner, 1f, 0f, 0f, 1f);
+        drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 1f, 1f, 1f, 0.01f, v, v + 2 * 1.5);
 
         matrixStackIn.pop();
-        buffer.finish(MyRenderType.OVERLAY_LINES);
+        //buffer.finish(MyRenderType.OVERLAY_LINES);
     }
 
     private static void drawLasers(IVertexBuilder builder, Matrix4f positionMatrix, BlockPos from, BlockPos to, float r, float g, float b, float thickness) {
@@ -124,7 +117,7 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
                 .endVertex();
     }
 
-    private static void drawMiningLaser(IVertexBuilder builder, Matrix4f positionMatrix, Matrix3f matrixNormalIn, BlockPos from, BlockPos to, float r, float g, float b, float alpha, float thickness, double v1, double v2) {
+    private static void drawMiningLaser(IVertexBuilder builder, Matrix4f positionMatrix, BlockPos from, BlockPos to, float r, float g, float b, float alpha, float thickness, double v1, double v2) {
         builder.pos(positionMatrix, from.getX() - thickness, from.getY(), from.getZ())
                 .color(r, g, b, alpha)
                 .tex(0, (float) v1)
@@ -174,25 +167,6 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
-        /*Vector3f vector3f = new Vector3f(0.0f, 1.0f, 0.0f);
-        vector3f.transform(matrixNormalIn);
-        Vector4f vec1 = new Vector4f(-thickness, -1, -thickness, 1.0F);
-        vec1.transform(positionMatrix);
-        Vector4f vec2 = new Vector4f((float) -thickness, (float) -4.5, (float) -thickness, 1.0F);
-        vec2.transform(positionMatrix);
-        Vector4f vec3 = new Vector4f((float) thickness, (float) -4.5, (float) thickness, 1.0F);
-        vec3.transform(positionMatrix);
-        Vector4f vec4 = new Vector4f(thickness, -1, thickness, 1.0F);
-        vec4.transform(positionMatrix);
-        builder.addVertex(vec1.getX(), vec4.getY(), vec4.getZ(), r, g, b, 1f, 0, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.getX(), vector3f.getY(), vector3f.getZ());
-        builder.addVertex(vec2.getX(), vec3.getY(), vec3.getZ(), r, g, b, 1f, 0, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.getX(), vector3f.getY(), vector3f.getZ());
-        builder.addVertex(vec3.getX(), vec2.getY(), vec2.getZ(), r, g, b, 1f, 1, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.getX(), vector3f.getY(), vector3f.getZ());
-        builder.addVertex(vec4.getX(), vec1.getY(), vec1.getZ(), r, g, b, 1f, 1, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.getX(), vector3f.getY(), vector3f.getZ());
-        builder.addVertex(vec1.getX(), vec4.getY(), vec4.getZ(), r, g, b, 1f, 0, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.getX(), vector3f.getY(), vector3f.getZ());
-        builder.addVertex(vec2.getX(), vec3.getY(), vec3.getZ(), r, g, b, 1f, 0, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.getX(), vector3f.getY(), vector3f.getZ());
-        builder.addVertex(vec3.getX(), vec2.getY(), vec2.getZ(), r, g, b, 1f, 1, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.getX(), vector3f.getY(), vector3f.getZ());
-        builder.addVertex(vec4.getX(), vec1.getY(), vec1.getZ(), r, g, b, 1f, 1, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.getX(), vector3f.getY(), vector3f.getZ());
-*/
     }
 
     @Override
