@@ -285,6 +285,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
             currentPos = endPos;
         }
         System.out.println(currentPos);
+        markDirtyClient();
     }
 
     private float getHardness(int efficiency) {
@@ -301,7 +302,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     public void mineCurrentPos() {
         BlockState state = world.getBlockState(getCurrentPos());
         boolean success = false;
-        if (!state.getMaterial().equals(Material.AIR) && state.getBlockHardness(world, getCurrentPos()) >= 0 && (world.getTileEntity(getCurrentPos()) == null || world.getTileEntity(getCurrentPos()) instanceof RenderBlockTileEntity)) {
+        if (!state.getMaterial().equals(Material.AIR) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, getCurrentPos()) >= 0 && (world.getTileEntity(getCurrentPos()) == null || world.getTileEntity(getCurrentPos()) instanceof RenderBlockTileEntity)) {
             if (!(state.getBlock() instanceof RenderBlock)) {
                 int efficiency = 0;
                 //if (UpgradeTools.containsActiveUpgrade((stack), Upgrade.EFFICIENCY_1))
@@ -394,7 +395,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     @Nonnull
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return new AxisAlignedBB(pos, getEndPos());
+        return new AxisAlignedBB(pos.up(10), getEndPos());
     }
 
     @Override
