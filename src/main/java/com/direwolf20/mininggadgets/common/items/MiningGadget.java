@@ -249,7 +249,7 @@ public class MiningGadget extends Item {
         Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec(); // or getLook(partialTicks)
         int range = MiningProperties.getBeamRange(stack);
-        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
+        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, range);
         Vec3d lookingAt = lookAt.getHitVec();
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
@@ -300,8 +300,8 @@ public class MiningGadget extends Item {
 
 
         int range = MiningProperties.getBeamRange(stack);
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, range);
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, range).getPos()) == Blocks.AIR.getDefaultState()))
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, range);
+        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, range).getPos()) == Blocks.AIR.getDefaultState()))
             return;
 
         List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));

@@ -1,7 +1,6 @@
 package com.direwolf20.mininggadgets.common.util;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
@@ -12,18 +11,14 @@ import net.minecraft.world.World;
  *           this means that we can use COLLIDER so it traces through non-collidable objects
  */
 public class VectorHelper {
-    public static BlockRayTraceResult getLookingAt(PlayerEntity player, ItemStack tool, int range) {
-        return getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
-    }
-
-    public static BlockRayTraceResult getLookingAt(PlayerEntity player, RayTraceContext.FluidMode rayTraceFluid, int range) {
+    public static BlockRayTraceResult getLookingAt(PlayerEntity player, int range) {
         World world = player.world;
 
         Vec3d look = player.getLookVec();
         Vec3d start = new Vec3d(player.getPosX(), player.getPosY() + player.getEyeHeight(), player.getPosZ());
 
         Vec3d end = new Vec3d(player.getPosX() + look.x * (double) range, player.getPosY() + player.getEyeHeight() + look.y * (double) range, player.getPosZ() + look.z * (double) range);
-        RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, rayTraceFluid, player);
+        RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, player);
         return world.rayTraceBlocks(context);
     }
 }

@@ -1,10 +1,11 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -28,7 +29,7 @@ public class RenderMiningLaser2 {
     private final static ResourceLocation laserBeam2 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser2.png");
     private final static ResourceLocation laserBeamGlow = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser_glow.png");
 
-    public static void renderLaser(RenderWorldLastEvent event, PlayerEntity player, float ticks) {
+    public static void renderLaser(IRenderTypeBuffer.Impl buffer, Vec3d view, RenderWorldLastEvent event, PlayerEntity player, float ticks) {
         ItemStack stack = MiningGadget.getGadget(player);
 
         if (!MiningProperties.getCanMine(stack))
@@ -37,12 +38,12 @@ public class RenderMiningLaser2 {
         int range = MiningProperties.getBeamRange(stack);
 
         Vec3d playerPos = player.getEyePosition(ticks);
-        RayTraceResult trace = player.pick(range, 0.0F, false);
+        RayTraceResult trace = VectorHelper.getLookingAt(player, range); //player.pick(range, 0.0F, false);
 
         // parse data from item
         float speedModifier = getSpeedModifier(stack);
 
-        drawLasers(event, playerPos, trace, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
+        drawLasers(buffer, view, event, playerPos, trace, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
     }
 
     private static float getSpeedModifier(ItemStack stack) {
@@ -55,7 +56,7 @@ public class RenderMiningLaser2 {
         }
     }
 
-    private static void drawLasers(RenderWorldLastEvent event, Vec3d from, RayTraceResult trace, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
+    private static void drawLasers(IRenderTypeBuffer.Impl buffer, Vec3d view, RenderWorldLastEvent event, Vec3d from, RayTraceResult trace, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, PlayerEntity player, float ticks, float speedModifier) {
         Hand activeHand;
         if (MiningGadget.is(player.getHeldItemMainhand())) {
             activeHand = Hand.MAIN_HAND;
@@ -76,12 +77,10 @@ public class RenderMiningLaser2 {
         float beam2g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f;
         float beam2b =MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
 
-        Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
-        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-
         MatrixStack matrix = event.getMatrixStack();
 
         matrix.push();
+        RenderSystem.enableDepthTest();
 
         matrix.translate(-view.getX(), -view.getY(), -view.getZ());
         matrix.translate(from.x, from.y, from.z);
@@ -95,17 +94,19 @@ public class RenderMiningLaser2 {
         //additive laser beam
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
         drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, additiveThickness, activeHand, distance, 0.5, 1, ticks, r,g,b,0.7f);
+        buffer.finish(MyRenderType.LASER_MAIN_ADDITIVE);
 
         //main laser, colored part
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
         drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness, activeHand, distance, v, v + distance * 1.5, ticks, r,g,b,1f);
+        buffer.finish(MyRenderType.LASER_MAIN_BEAM);
 
-        //core
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
         drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness/2, activeHand, distance, v, v + distance * 1.5, ticks, beam2r,beam2g,beam2b,1f);
-        matrix.pop();
+        buffer.finish(MyRenderType.LASER_MAIN_CORE);
+
         RenderSystem.disableDepthTest();
-        buffer.finish();
+        matrix.pop();
     }
 
     private static float calculateLaserFlickerModifier(long gameTime) {

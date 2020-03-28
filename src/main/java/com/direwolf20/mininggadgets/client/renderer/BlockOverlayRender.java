@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -24,22 +23,20 @@ import java.util.List;
 
 public class BlockOverlayRender {
 
-    public static void render(RenderWorldLastEvent event, ItemStack item) {
+    public static void render(IRenderTypeBuffer.Impl buffer, Vec3d view, RenderWorldLastEvent event, ItemStack item) {
         final Minecraft mc = Minecraft.getInstance();
 
-        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-
         int range = MiningProperties.getBeamRange(item);
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE, range);
-        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item, range).getPos()) == Blocks.AIR.getDefaultState()) {
+        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, range);
+        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, range).getPos()) == Blocks.AIR.getDefaultState()) {
             return;
         }
 
         List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.world, MiningProperties.getRange(item));
-        Vec3d view = mc.gameRenderer.getActiveRenderInfo().getProjectedView();
 
         MatrixStack matrix = event.getMatrixStack();
         matrix.push();
+        RenderSystem.enableDepthTest();
         matrix.translate(-view.getX(), -view.getY(), -view.getZ());
 
         IVertexBuilder builder;
@@ -58,9 +55,10 @@ public class BlockOverlayRender {
                 matrix.pop();
             }
         });
-        matrix.pop();
-        RenderSystem.disableDepthTest();
+
         buffer.finish(MyRenderType.BlockOverlay);
+        RenderSystem.disableDepthTest();
+        matrix.pop();
     }
 
     public static void render(Matrix4f  matrix, IVertexBuilder builder, BlockPos pos, Color color) {
