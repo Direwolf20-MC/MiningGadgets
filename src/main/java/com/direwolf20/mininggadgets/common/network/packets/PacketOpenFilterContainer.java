@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.common.network.packets;
 
 import com.direwolf20.mininggadgets.common.containers.FilterContainer;
-import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;

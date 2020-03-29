@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.util;
 
-public class MiscTools {
+public class MagicHelpers {
     public static String tidyValue(float value) {
         if (value < 1000)
             return String.valueOf(value);

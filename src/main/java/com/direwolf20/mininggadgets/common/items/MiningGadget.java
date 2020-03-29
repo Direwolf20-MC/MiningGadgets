@@ -1,20 +1,20 @@
 package com.direwolf20.mininggadgets.common.items;
 
-import com.direwolf20.mininggadgets.Config;
-import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.Config;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
-import com.direwolf20.mininggadgets.common.gadget.MiningCollect;
-import com.direwolf20.mininggadgets.common.gadget.MiningProperties;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.gadget.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningCollect;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.sounds.LaserLoopSound;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import com.direwolf20.mininggadgets.common.util.MiscTools;
+import com.direwolf20.mininggadgets.common.util.MagicHelpers;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -129,8 +129,8 @@ public class MiningGadget extends Item {
         stack.getCapability(CapabilityEnergy.ENERGY, null)
                 .ifPresent(energy -> tooltip.add(
                         new TranslationTextComponent("mininggadgets.gadget.energy",
-                                MiscTools.tidyValue(energy.getEnergyStored()),
-                                MiscTools.tidyValue(energy.getMaxEnergyStored())).applyTextStyles(TextFormatting.GREEN)));
+                                MagicHelpers.tidyValue(energy.getEnergyStored()),
+                                MagicHelpers.tidyValue(energy.getMaxEnergyStored())).applyTextStyles(TextFormatting.GREEN)));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.capabilities;
 
-import com.direwolf20.mininggadgets.common.util.EnergisedItem;
+import com.direwolf20.mininggadgets.common.items.EnergisedItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;

@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
-import com.direwolf20.mininggadgets.MiningGadgets;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.block.Block;
