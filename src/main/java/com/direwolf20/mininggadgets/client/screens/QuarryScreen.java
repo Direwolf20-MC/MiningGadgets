@@ -19,7 +19,7 @@ public class QuarryScreen extends ContainerScreen<QuarryContainer> {
 
     public QuarryScreen(QuarryContainer container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        this.tePos = container.getTE().getPos();
+        this.tePos = container.tileEntity.getPos();
     }
 
     @Override

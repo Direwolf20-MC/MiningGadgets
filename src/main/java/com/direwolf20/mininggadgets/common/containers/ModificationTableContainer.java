@@ -20,7 +20,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class ModificationTableContainer extends MinerAcceptingContainer {
 
-    private TileEntity tileEntity;
+    public TileEntity tileEntity;
     private IItemHandler playerInventory;
 
     public ModificationTableContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
@@ -44,15 +44,11 @@ public class ModificationTableContainer extends MinerAcceptingContainer {
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(getTE().getWorld(), tileEntity.getPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
+        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
     }
 
     private void setupContainerSlots() {
-        this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> setupMinerSlot(h, 0,  -16, 84));
-    }
-
-    public TileEntity getTE() {
-        return this.tileEntity;
+        this.tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> setupMinerSlot(h, 0,  -16, 84));
     }
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {

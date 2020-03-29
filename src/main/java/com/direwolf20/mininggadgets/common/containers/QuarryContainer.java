@@ -18,7 +18,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class QuarryContainer extends MinerAcceptingContainer {
-    private TileEntity tileEntity;
+    public TileEntity tileEntity;
     private IItemHandler playerInventory;
 
     public QuarryContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
@@ -42,16 +42,12 @@ public class QuarryContainer extends MinerAcceptingContainer {
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(getTE().getWorld(), tileEntity.getPos()), playerIn, ModBlocks.QUARRY.get());
+        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerIn, ModBlocks.QUARRY.get());
     }
 
     private void setupContainerSlots() {
-        this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h ->
+        this.tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h ->
                 this.setupMinerSlot(h, 0, 28, 62));
-    }
-
-    public TileEntity getTE() {
-        return this.tileEntity;
     }
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {

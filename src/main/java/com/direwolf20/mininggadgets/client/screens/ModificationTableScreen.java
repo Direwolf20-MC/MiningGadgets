@@ -20,7 +20,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
     public ModificationTableScreen(ModificationTableContainer container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        this.tePos = container.getTE().getPos();
+        this.tePos = container.tileEntity.getPos();
     }
 
     @Override
