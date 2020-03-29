@@ -38,6 +38,8 @@ public class UpgradeScrollingList extends ScrollPanel {
 
     @Override
     protected void drawPanel(int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY) {
+        int perRow = width / 22;
+
         Upgrade currentUpgrade = null;
         int x = (entryRight - this.width) + 3;
         int y = relativeY;
@@ -51,7 +53,7 @@ public class UpgradeScrollingList extends ScrollPanel {
 
             x += 22;
             index ++;
-            if( index % 7 == 0 ) {
+            if( index % perRow == 0 ) {
                 y += 20;
                 x = (entryRight - this.width) + 3;
             }

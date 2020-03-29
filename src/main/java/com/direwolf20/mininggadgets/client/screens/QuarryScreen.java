@@ -30,6 +30,7 @@ public class QuarryScreen extends ContainerScreen<QuarryContainer> {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
 
+        this.list.render(mouseX, mouseY, partialTicks);
         List<Upgrade> upgradesCache = this.container.getUpgradesCache();
         if( upgradesCache.size() > 0 )
             drawCenteredString(Minecraft.getInstance().fontRenderer, "Cache Created with " + upgradesCache.size() + " upgrades", 0, 0, 0xfff);
@@ -54,7 +55,7 @@ public class QuarryScreen extends ContainerScreen<QuarryContainer> {
     public void init() {
         super.init();
 
-        this.list = new UpgradeScrollingList(Minecraft.getInstance(), this.xSize - 14, 72, guiTop + 7, guiLeft + 7, this, upgrade -> {});
+        this.list = new UpgradeScrollingList(Minecraft.getInstance(), this.xSize - 57, 72, guiTop + 7, guiLeft + 50, this, upgrade -> {});
 
         this.children.add(this.list);
    }
