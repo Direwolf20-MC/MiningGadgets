@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.tiles.QuarryBlockTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -51,6 +52,7 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
 
     @Override
     public void render(QuarryBlockTileEntity tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightsIn, int combinedOverlayIn) {
+
         if (tile.getMarkerX().equals(BlockPos.ZERO) || tile.getMarkerZ().equals(BlockPos.ZERO)) return;
         IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         IVertexBuilder builder = buffer.getBuffer(MyRenderType.OVERLAY_LINES);
@@ -91,21 +93,28 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
         matrixStackIn.pop();
 
         matrixStackIn.push();
+        RenderSystem.enableDepthTest();
         matrixStackIn.translate(0.6, 3.5, 0.45);
         matrixStackIn.translate(diffX, 0, diffZ);
 
         Matrix4f positionMatrix2 = matrixStackIn.getLast().getMatrix();
         long gameTime = tile.getWorld().getGameTime();
         double v = gameTime;
+
         IVertexBuilder builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
         drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 0.7f, 0.01f, 0.5, 1);
+        buffer.finish(MyRenderType.LASER_MAIN_ADDITIVE);
+
         builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
         drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 1f, 0.05f, v, v + 2 * 1.5);
+        buffer.finish(MyRenderType.LASER_MAIN_BEAM);
+
         builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
         drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 1f, 1f, 1f, 0.01f, v, v + 2 * 1.5);
+        buffer.finish(MyRenderType.LASER_MAIN_CORE);
 
+        RenderSystem.disableDepthTest();
         matrixStackIn.pop();
-        //buffer.finish(MyRenderType.OVERLAY_LINES);
     }
 
     private static void drawLasers(IVertexBuilder builder, Matrix4f positionMatrix, BlockPos from, BlockPos to, float r, float g, float b, float thickness) {

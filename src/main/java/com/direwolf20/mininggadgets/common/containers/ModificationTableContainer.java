@@ -1,14 +1,11 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -21,14 +18,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ModificationTableContainer extends Container {
+public class ModificationTableContainer extends MinerAcceptingContainer {
 
     private TileEntity tileEntity;
     private IItemHandler playerInventory;
-    private List<Upgrade> upgradesCache = new ArrayList<>();
 
     public ModificationTableContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
         super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
@@ -55,25 +48,7 @@ public class ModificationTableContainer extends Container {
     }
 
     private void setupContainerSlots() {
-        this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new WatchedSlot(h, 0,  -16, 84, this::updateUpgradeCache));
-        });
-    }
-
-    private void updateUpgradeCache(int index) {
-        ItemStack stack = this.getSlot(index).getStack();
-        if( (stack.isEmpty() && !upgradesCache.isEmpty()) || !MiningGadget.is(stack) ) {
-            upgradesCache.clear();
-            return;
-        }
-
-        // Purge and set cache
-        upgradesCache.clear();
-        upgradesCache = UpgradeTools.getUpgrades(stack);
-    }
-
-    public List<Upgrade> getUpgradesCache() {
-        return upgradesCache;
+        this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> setupMinerSlot(h, 0,  -16, 84));
     }
 
     public TileEntity getTE() {

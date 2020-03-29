@@ -4,7 +4,6 @@ import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -16,7 +15,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-public class QuarryContainer extends Container {
+public class QuarryContainer extends MinerAcceptingContainer {
     private TileEntity tileEntity;
     private IItemHandler playerInventory;
 
@@ -46,7 +45,8 @@ public class QuarryContainer extends Container {
 
     private void setupContainerSlots() {
         this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-//            addSlot(new WatchedSlot(h, 0,  -16, 84, this::updateUpgradeCache));
+            this.setupMinerSlot(h, 0, -16, 84);
+            addSlot(new SlotItemHandler(h, 1, -16, 50));
         });
     }
 
