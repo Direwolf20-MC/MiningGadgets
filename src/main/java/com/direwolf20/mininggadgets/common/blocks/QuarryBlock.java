@@ -70,4 +70,13 @@ public class QuarryBlock extends Block {
 
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
+
+    @Override
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (newState.getBlock() != this) {
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            ModBlocks.dropInventoryOnReplace(tileEntity, worldIn, pos);
+            super.onReplaced(state, worldIn, pos, newState, isMoving);
+        }
+    }
 }

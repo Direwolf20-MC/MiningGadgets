@@ -29,10 +29,10 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameters;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -49,7 +49,9 @@ import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.QUARRY_TILE;
 public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
 
     public ArrayList<BlockPos> adjacentStorage = new ArrayList<>();
-    public LazyOptional<IItemHandler> inventory = LazyOptional.of(() -> new ItemStackHandler(2) {
+
+    public LazyOptional<EnergyStorage> energy   = LazyOptional.of(() -> new EnergyStorage(1000000));
+    public LazyOptional<IItemHandler> inventory = LazyOptional.of(() -> new ItemStackHandler(1) {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
@@ -58,7 +60,6 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
             if (slot == 0 && MiningGadget.is(stack)) return true;
-            if (slot == 1 && ForgeHooks.getBurnTime(stack) > 0) return true;
             return false;
         }
     });
@@ -73,7 +74,6 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
     private boolean lastWasAir = false;
     private boolean isDone;
     int tick;
-
 
     public QuarryBlockTileEntity() {
         super(QUARRY_TILE.get());

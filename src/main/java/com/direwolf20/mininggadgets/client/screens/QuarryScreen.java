@@ -3,7 +3,6 @@ package com.direwolf20.mininggadgets.client.screens;
 import com.direwolf20.mininggadgets.client.screens.widget.UpgradeScrollingList;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.QuarryContainer;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -11,8 +10,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-
-import java.util.List;
 
 public class QuarryScreen extends ContainerScreen<QuarryContainer> {
     private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/quarry_screen.png");
@@ -31,12 +28,6 @@ public class QuarryScreen extends ContainerScreen<QuarryContainer> {
         super.render(mouseX, mouseY, partialTicks);
 
         this.list.render(mouseX, mouseY, partialTicks);
-        List<Upgrade> upgradesCache = this.container.getUpgradesCache();
-        if( upgradesCache.size() > 0 )
-            drawCenteredString(Minecraft.getInstance().fontRenderer, "Cache Created with " + upgradesCache.size() + " upgrades", 0, 0, 0xfff);
-        else
-            drawCenteredString(Minecraft.getInstance().fontRenderer, "No upgrades found :cry:", 0, 0, 0xfff);
-
         this.renderHoveredToolTip(mouseX, mouseY);
     }
 

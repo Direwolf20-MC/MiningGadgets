@@ -46,10 +46,8 @@ public class QuarryContainer extends MinerAcceptingContainer {
     }
 
     private void setupContainerSlots() {
-        this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            this.setupMinerSlot(h, 0, 28, 62);
-            addSlot(new SlotItemHandler(h, 1, 28, 40));
-        });
+        this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h ->
+                this.setupMinerSlot(h, 0, 28, 62));
     }
 
     public TileEntity getTE() {
@@ -89,21 +87,21 @@ public class QuarryContainer extends MinerAcceptingContainer {
         if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             itemstack = stack.copy();
-            if (index < 1) {
-                if (!this.mergeItemStack(stack, 2, this.getInventory().size(), true)) {
+            if (index == 0) {
+                if (!this.mergeItemStack(stack, 1, this.getInventory().size(), true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onSlotChange(stack, itemstack);
             } else {
                 if (stack.getItem() instanceof MiningGadget) {
-                    if (!this.mergeItemStack(stack, 0, 2, false)) {
+                    if (!this.mergeItemStack(stack, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (index < 29) {
                     if (!this.mergeItemStack(stack, 29, 38, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 38 && !this.mergeItemStack(stack, 2, 29, false)) {
+                } else if (index < 38 && !this.mergeItemStack(stack, 1, 29, false)) {
                     return ItemStack.EMPTY;
                 }
             }
