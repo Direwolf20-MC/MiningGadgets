@@ -1,7 +1,7 @@
 # Mining Gadgets Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [1.15.2, 1.3.4] - ?
+## [1.15.2, 1.3.5] - 2020-03-29
 ### Added
 - Support for all (if they respect events) items that pick up items (dank storage, pocket storage, etc)
 - Added the `E` key as a way to get out the Mining Gadget shift-click screen 
