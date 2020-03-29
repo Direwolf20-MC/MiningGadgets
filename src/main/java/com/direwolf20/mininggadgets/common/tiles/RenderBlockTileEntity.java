@@ -1,18 +1,16 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
-import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
+import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
+import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -131,12 +129,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 double randomX = rand.nextDouble();
                 double randomY = rand.nextDouble();
                 double randomZ = rand.nextDouble();
-                BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-                int color = blockColors.getColor(renderBlock, this.getWorld(), this.getPos(), 0);
-                float f = (float) (color >> 16 & 255) / 255.0F;
-                float f1 = (float) (color >> 8 & 255) / 255.0F;
-                float f2 = (float) (color & 255) / 255.0F;
-                LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, f,f1,f2, 200);
+
+                LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, 1f, 1f, 1f, 200);
                 getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
             }
         }

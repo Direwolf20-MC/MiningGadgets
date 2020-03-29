@@ -72,7 +72,6 @@ public class MiningGadgets
     {
         PacketHandler.register();
         MinecraftForge.EVENT_BUS.register(ServerTickHandler.class);
-        MinecraftForge.EVENT_BUS.register(ClientEvents.class);
     }
 
     /**
@@ -83,6 +82,7 @@ public class MiningGadgets
     private void setupClient(final FMLClientSetupEvent event) {
         // Register the container screens.
         ClientSetup.setup();
+        MinecraftForge.EVENT_BUS.register(ClientEvents.class);
     }
 
     public static Logger getLogger() {
