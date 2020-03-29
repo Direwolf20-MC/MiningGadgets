@@ -88,6 +88,7 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
         IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, tile.getWorld(), null);
         itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, true, matrixStackIn, buffer, LightTexture.packLight(15, 15), combinedOverlayIn, ibakedmodel);
 
+        IVertexBuilder builder2;
         matrixStackIn.pop();
 
         matrixStackIn.push();
@@ -97,13 +98,18 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
         Matrix4f positionMatrix2 = matrixStackIn.getLast().getMatrix();
         long gameTime = tile.getWorld().getGameTime();
         double v = gameTime;
-        IVertexBuilder builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
+
+        buffer.finish();
+        
+        builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
         drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 0.7f, 0.01f, 0.5, 1);
+
         builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
         drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 1f, 0.05f, v, v + 2 * 1.5);
+
         builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
         drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 1f, 1f, 1f, 0.01f, v, v + 2 * 1.5);
-
+        buffer.finish();
         matrixStackIn.pop();
         //buffer.finish(MyRenderType.OVERLAY_LINES);
     }
