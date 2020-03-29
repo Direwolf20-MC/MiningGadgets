@@ -51,9 +51,9 @@ public class LaserParticle extends BreakingParticle {
         motionY = ySpeed;
         motionZ = zSpeed;
 
-        particleRed = f;
-        particleGreen = f1;
-        particleBlue = f2;
+        particleRed = red;
+        particleGreen = green;
+        particleBlue = blue;
         particleGravity = 0;
         particleScale *= size;
         originalSize = particleScale;
