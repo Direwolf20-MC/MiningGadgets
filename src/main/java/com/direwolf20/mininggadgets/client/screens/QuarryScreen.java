@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.client.screens;
 
+import com.direwolf20.mininggadgets.client.screens.widget.UpgradeScrollingList;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.QuarryContainer;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
@@ -17,12 +18,11 @@ public class QuarryScreen extends ContainerScreen<QuarryContainer> {
     private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/quarry_screen.png");
 
     private BlockPos tePos;
-    private QuarryContainer container;
+    private UpgradeScrollingList list;
 
     public QuarryScreen(QuarryContainer container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.tePos = container.getTE().getPos();
-        this.container = container;
     }
 
     @Override
@@ -53,5 +53,9 @@ public class QuarryScreen extends ContainerScreen<QuarryContainer> {
     @Override
     public void init() {
         super.init();
+
+        this.list = new UpgradeScrollingList(Minecraft.getInstance(), this.xSize - 14, 72, guiTop + 7, guiLeft + 7, this, upgrade -> {});
+
+        this.children.add(this.list);
    }
 }
