@@ -23,7 +23,6 @@ public class MiningProperties {
     private static final String KEY_MAX_BEAM_RANGE = "maxBeamRange";
     private static final String KEY_WHITELIST = "isWhitelist";
     private static final String KEY_RANGE = "range";
-    private static final String KEY_SPEED = "speed";
     private static final String BREAK_TYPE = "breakType";
     private static final String CAN_MINE = "canMine";
     private static final String PRECISION_MODE = "precisionMode";
@@ -77,16 +76,6 @@ public class MiningProperties {
     public static BreakTypes getBreakType(ItemStack gadget) {
         CompoundNBT compound = gadget.getOrCreateTag();
         return !compound.contains(BREAK_TYPE) ? setBreakType(gadget, BreakTypes.SHRINK) : BreakTypes.values()[compound.getByte(BREAK_TYPE)];
-    }
-
-    public static int setSpeed(ItemStack gadget, int speed) {
-        gadget.getOrCreateTag().putInt(KEY_SPEED, speed);
-        return speed;
-    }
-
-    public static int getSpeed(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_SPEED) ? setSpeed(gadget, 1) : compound.getInt(KEY_SPEED);
     }
 
     public static int setRange(ItemStack gadget, int range) {
@@ -198,13 +187,12 @@ public class MiningProperties {
 
     public static CompoundNBT serializeItemStackList(List<ItemStack> stacks) {
         ListNBT nbtTagList = new ListNBT();
-        for (int i = 0; i < stacks.size(); i++)
-        {
-            if (stacks.get(i).isEmpty())
+        for (ItemStack stack : stacks) {
+            if (stack.isEmpty())
                 continue;
 
             CompoundNBT itemTag = new CompoundNBT();
-            stacks.get(i).write(itemTag);
+            stack.write(itemTag);
             nbtTagList.add(itemTag);
         }
 
