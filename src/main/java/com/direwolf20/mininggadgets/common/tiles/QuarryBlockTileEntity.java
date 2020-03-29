@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.common.tiles;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.containers.QuarryContainer;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import net.minecraft.block.BlockState;
@@ -28,8 +29,14 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameters;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,6 +49,20 @@ import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.QUARRY_TILE;
 public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
 
     public ArrayList<BlockPos> adjacentStorage = new ArrayList<>();
+    public LazyOptional<IItemHandler> inventory = LazyOptional.of(() -> new ItemStackHandler(2) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            if (slot == 0 && MiningGadget.is(stack)) return true;
+            if (slot == 1 && ForgeHooks.getBurnTime(stack) > 0) return true;
+            return false;
+        }
+    });
+
     private boolean needScanAdjacent;
     private boolean needScanMarker;
     private BlockPos startPos = BlockPos.ZERO;
@@ -88,6 +109,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         lastWasAir = tag.getBoolean("lastWasAir");
         isDone = tag.getBoolean("isDone");
         tick = tag.getInt("tick");
+        inventory.ifPresent(h -> ((INBTSerializable<CompoundNBT>) h).deserializeNBT(tag.getCompound("inventory")));
     }
 
     @Override
@@ -102,6 +124,10 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putBoolean("lastWasAir", lastWasAir);
         tag.putBoolean("isDone", isDone);
         tag.putInt("tick", tick);
+        inventory.ifPresent(h -> {
+            CompoundNBT compound = ((INBTSerializable<CompoundNBT>) h).serializeNBT();
+            tag.put("inventory", compound);
+        });
         return super.write(tag);
     }
 
@@ -368,6 +394,15 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 }
             }
         }
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return inventory.cast();
+        }
+        return super.getCapability(cap, side);
     }
 
     @Nullable

@@ -1,9 +1,11 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -45,8 +47,8 @@ public class QuarryContainer extends MinerAcceptingContainer {
 
     private void setupContainerSlots() {
         this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            this.setupMinerSlot(h, 0, -16, 84);
-            addSlot(new SlotItemHandler(h, 1, -16, 50));
+            this.setupMinerSlot(h, 0, 28, 62);
+            addSlot(new SlotItemHandler(h, 1, 28, 40));
         });
     }
 
@@ -83,43 +85,41 @@ public class QuarryContainer extends MinerAcceptingContainer {
     @Override
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-//        Slot slot = this.inventorySlots.get(index);
-//        if (slot != null && slot.getHasStack()) {
-//            ItemStack stack = slot.getStack();
-//            itemstack = stack.copy();
-//            if (index == 0) {
-//                if (!this.mergeItemStack(stack, 1, this.getInventory().size(), true)) {
-//                    return ItemStack.EMPTY;
-//                }
-//                slot.onSlotChange(stack, itemstack);
-//            } else {
-//                if (stack.getItem() instanceof MiningGadget) {
-//                    if (!this.mergeItemStack(stack, 0, 1, false)) {
-//                        return ItemStack.EMPTY;
-//                    }
-//                } else if (stack.getItem() instanceof UpgradeCard) {
-//                    return ItemStack.EMPTY;
-//                } else if (index < 29) {
-//                    if (!this.mergeItemStack(stack, 29, 38, false)) {
-//                        return ItemStack.EMPTY;
-//                    }
-//                } else if (index < 38 && !this.mergeItemStack(stack, 1, 29, false)) {
-//                    return ItemStack.EMPTY;
-//                }
-//            }
-//
-//            if (stack.isEmpty()) {
-//                slot.putStack(ItemStack.EMPTY);
-//            } else {
-//                slot.onSlotChanged();
-//            }
-//
-//            if (stack.getCount() == itemstack.getCount()) {
-//                return ItemStack.EMPTY;
-//            }
-//
-//            slot.onTake(playerIn, stack);
-//        }
+        Slot slot = this.inventorySlots.get(index);
+        if (slot != null && slot.getHasStack()) {
+            ItemStack stack = slot.getStack();
+            itemstack = stack.copy();
+            if (index < 1) {
+                if (!this.mergeItemStack(stack, 2, this.getInventory().size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+                slot.onSlotChange(stack, itemstack);
+            } else {
+                if (stack.getItem() instanceof MiningGadget) {
+                    if (!this.mergeItemStack(stack, 0, 2, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index < 29) {
+                    if (!this.mergeItemStack(stack, 29, 38, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index < 38 && !this.mergeItemStack(stack, 2, 29, false)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+
+            if (stack.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
+            } else {
+                slot.onSlotChanged();
+            }
+
+            if (stack.getCount() == itemstack.getCount()) {
+                return ItemStack.EMPTY;
+            }
+
+            slot.onTake(playerIn, stack);
+        }
 
         return itemstack;
     }
