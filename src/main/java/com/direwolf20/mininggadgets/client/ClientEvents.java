@@ -49,5 +49,8 @@ public class ClientEvents {
                 }
             }
         }
+
+        RenderMiningLaser2.renderQuarryLaser(myplayer, evt);
+
     }
 }

@@ -70,9 +70,4 @@ public class QuarryBlock extends Block {
 
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
-
-    @Override
-    public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return 0;
-    }
 }
