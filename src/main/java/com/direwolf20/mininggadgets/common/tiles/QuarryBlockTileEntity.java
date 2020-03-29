@@ -309,7 +309,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 //    efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
                 float hardness = getHardness(efficiency);
-                hardness = (float) Math.floor(hardness) * 10;
+                hardness = (float) Math.floor(hardness) * 1;
                 if (hardness == 0) hardness = 1;
                 //List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                 world.setBlockState(currentPos, ModBlocks.RENDER_BLOCK.get().getDefaultState());

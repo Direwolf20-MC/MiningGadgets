@@ -1,10 +1,12 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.tiles.QuarryBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -15,13 +17,19 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+
+import java.util.Map;
 
 public class RenderMiningLaser2 {
 
@@ -75,7 +83,7 @@ public class RenderMiningLaser2 {
 
         float beam2r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f;
         float beam2g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f;
-        float beam2b =MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
+        float beam2b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
 
         MatrixStack matrix = event.getMatrixStack();
 
@@ -93,16 +101,16 @@ public class RenderMiningLaser2 {
 
         //additive laser beam
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
-        drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, additiveThickness, activeHand, distance, 0.5, 1, ticks, r,g,b,0.7f);
+        drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, additiveThickness, activeHand, distance, 0.5, 1, ticks, r, g, b, 0.7f);
         buffer.finish(MyRenderType.LASER_MAIN_ADDITIVE);
 
         //main laser, colored part
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
-        drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness, activeHand, distance, v, v + distance * 1.5, ticks, r,g,b,1f);
+        drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness, activeHand, distance, v, v + distance * 1.5, ticks, r, g, b, 1f);
         buffer.finish(MyRenderType.LASER_MAIN_BEAM);
 
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
-        drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness/2, activeHand, distance, v, v + distance * 1.5, ticks, beam2r,beam2g,beam2b,1f);
+        drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness / 2, activeHand, distance, v, v + distance * 1.5, ticks, beam2r, beam2g, beam2b, 1f);
         buffer.finish(MyRenderType.LASER_MAIN_CORE);
 
         RenderSystem.disableDepthTest();
@@ -118,7 +126,7 @@ public class RenderMiningLaser2 {
         vector3f.transform(matrixNormalIn);
         ClientPlayerEntity player = Minecraft.getInstance().player;
         // Support for hand sides remembering to take into account of Skin options
-        if( Minecraft.getInstance().gameSettings.mainHand != HandSide.RIGHT )
+        if (Minecraft.getInstance().gameSettings.mainHand != HandSide.RIGHT)
             hand = hand == Hand.MAIN_HAND ? Hand.OFF_HAND : Hand.MAIN_HAND;
         float startXOffset = -0.25f;
         float startYOffset = -.115f;
@@ -164,4 +172,23 @@ public class RenderMiningLaser2 {
         }
     }
 
+    public static void renderQuarryLaser(PlayerEntity player, RenderWorldLastEvent evt) {
+        //Search a radius chunk area around the player for quarries, and draw their lasers here because clouds.
+        World world = player.world;
+        int radius = 2;
+        BlockPos playerPos = player.getPosition();
+        Chunk playerChunk = world.getChunkAt(playerPos);
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                Chunk testChunk = world.getChunk(playerChunk.getPos().x + x, playerChunk.getPos().z + z);
+                Map<BlockPos, TileEntity> teMap = testChunk.getTileEntityMap();
+                for (Map.Entry<BlockPos, TileEntity> entry : teMap.entrySet()) {
+                    if (world.getBlockState(entry.getKey()).getBlock().equals(ModBlocks.QUARRY.get())) {
+                        QuarryBlockTER.drawAllMiningLasers((QuarryBlockTileEntity) entry.getValue(), evt.getMatrixStack());
+                    }
+                }
+            }
+        }
+    }
 }
+

@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
@@ -88,29 +89,11 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
         IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, tile.getWorld(), null);
         itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, true, matrixStackIn, buffer, LightTexture.packLight(15, 15), combinedOverlayIn, ibakedmodel);
 
-        IVertexBuilder builder2;
+
         matrixStackIn.pop();
 
-        matrixStackIn.push();
-        matrixStackIn.translate(0.6, 3.5, 0.45);
-        matrixStackIn.translate(diffX, 0, diffZ);
+        //drawAllMiningLasers(tile, matrixStackIn);
 
-        Matrix4f positionMatrix2 = matrixStackIn.getLast().getMatrix();
-        long gameTime = tile.getWorld().getGameTime();
-        double v = gameTime;
-
-        buffer.finish();
-        
-        builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
-        drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 0.7f, 0.01f, 0.5, 1);
-
-        builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
-        drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 1f, 0.05f, v, v + 2 * 1.5);
-
-        builder2 = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
-        drawMiningLaser(builder2, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 1f, 1f, 1f, 0.01f, v, v + 2 * 1.5);
-        buffer.finish();
-        matrixStackIn.pop();
         //buffer.finish(MyRenderType.OVERLAY_LINES);
     }
 
@@ -123,53 +106,90 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
                 .endVertex();
     }
 
-    private static void drawMiningLaser(IVertexBuilder builder, Matrix4f positionMatrix, BlockPos from, BlockPos to, float r, float g, float b, float alpha, float thickness, double v1, double v2) {
+    public static void drawAllMiningLasers(QuarryBlockTileEntity tile, MatrixStack matrixStackIn) {
+        int diffX = tile.getCurrentPos().getX() - tile.getPos().getX();
+        int diffY = tile.getCurrentPos().getY() - tile.getPos().getY();
+        int diffZ = tile.getCurrentPos().getZ() - tile.getPos().getZ();
+        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        IVertexBuilder builder;
+        matrixStackIn.push();
+
+        //Translate the matrix away from the player view, and back to the tile entity.
+        Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        matrixStackIn.translate(-view.getX(), -view.getY(), -view.getZ());
+        matrixStackIn.translate(tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());
+
+        matrixStackIn.translate(0.6, 3.5, 0.45);
+        matrixStackIn.translate(diffX, 0, diffZ);
+
+        Matrix4f positionMatrix2 = matrixStackIn.getLast().getMatrix();
+        long gameTime = tile.getWorld().getGameTime();
+        double v = gameTime * 0.04;
+
+        //We draw twice otherwise its invisible from one side
+        builder = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
+        //drawMiningLaser(builder, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 0.7f, 0.1f, 0.5, 1);
+        //drawMiningLaser(builder, positionMatrix2, new BlockPos(0, diffY - 2.5, 0), BlockPos.ZERO.down(1),1f, 0f, 0f, 0.7f, 0.1f, 0.5, 1);
+
+        builder = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
+        drawMiningLaser(builder, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 1f, 0.1f, v, v + diffY * 1.5);
+        drawMiningLaser(builder, positionMatrix2, new BlockPos(0, diffY - 2.5, 0), BlockPos.ZERO.down(1), 1f, 0f, 0f, 1f, 0.1f, v, v + diffY * 1.5);
+
+        builder = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
+        drawMiningLaser(builder, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 1f, 1f, 1f, 0.05f, v, v + diffY - 2.5 * 1.5);
+        drawMiningLaser(builder, positionMatrix2, new BlockPos(0, diffY - 2.5, 0), BlockPos.ZERO.down(1), 1f, 1f, 1f, 1f, 0.05f, v, v + diffY - 2.5 * 1.5);
+
+        buffer.finish();
+        matrixStackIn.pop();
+    }
+
+    public static void drawMiningLaser(IVertexBuilder builder, Matrix4f positionMatrix, BlockPos from, BlockPos to, float r, float g, float b, float alpha, float thickness, double v1, double v2) {
         builder.pos(positionMatrix, from.getX() - thickness, from.getY(), from.getZ())
                 .color(r, g, b, alpha)
-                .tex(0, (float) v1)
+                .tex(1, (float) v1)
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
         builder.pos(positionMatrix, (float) to.getX() - thickness, (float) to.getY(), (float) to.getZ())
                 .color(r, g, b, alpha)
-                .tex(0, (float) v2)
+                .tex(1, (float) v2)
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
         builder.pos(positionMatrix, (float) to.getX() + thickness, (float) to.getY(), (float) to.getZ())
                 .color(r, g, b, alpha)
-                .tex(1, (float) v2)
+                .tex(0, (float) v2)
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
         builder.pos(positionMatrix, from.getX() + thickness, from.getY(), from.getZ())
                 .color(r, g, b, alpha)
-                .tex(1, (float) v1)
+                .tex(0, (float) v1)
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
 
         builder.pos(positionMatrix, from.getX(), from.getY(), from.getZ() - thickness)
                 .color(r, g, b, alpha)
-                .tex(0, (float) v1)
+                .tex(1, (float) v1)
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
         builder.pos(positionMatrix, (float) to.getX(), (float) to.getY(), (float) to.getZ() - thickness)
                 .color(r, g, b, alpha)
-                .tex(0, (float) v2)
+                .tex(1, (float) v2)
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
         builder.pos(positionMatrix, (float) to.getX(), (float) to.getY(), (float) to.getZ() + thickness)
                 .color(r, g, b, alpha)
-                .tex(1, (float) v2)
+                .tex(0, (float) v2)
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
         builder.pos(positionMatrix, from.getX(), from.getY(), from.getZ() + thickness)
                 .color(r, g, b, alpha)
-                .tex(1, (float) v1)
+                .tex(0, (float) v1)
                 .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(15728880)
                 .endVertex();
