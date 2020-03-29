@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
-import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
@@ -50,9 +50,10 @@ public class LaserParticle extends BreakingParticle {
         motionX = xSpeed;
         motionY = ySpeed;
         motionZ = zSpeed;
-        particleRed = red;
-        particleGreen = green;
-        particleBlue = blue;
+
+        particleRed = f;
+        particleGreen = f1;
+        particleBlue = f2;
         particleGravity = 0;
         particleScale *= size;
         originalSize = particleScale;
