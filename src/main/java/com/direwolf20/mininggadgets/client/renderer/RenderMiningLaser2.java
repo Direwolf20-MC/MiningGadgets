@@ -185,6 +185,7 @@ public class RenderMiningLaser2 {
                 for (Map.Entry<BlockPos, TileEntity> entry : teMap.entrySet()) {
                     if (world.getBlockState(entry.getKey()).getBlock().equals(ModBlocks.QUARRY.get())) {
                         QuarryBlockTER.drawAllMiningLasers((QuarryBlockTileEntity) entry.getValue(), evt.getMatrixStack());
+
                     }
                 }
             }
