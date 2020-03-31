@@ -31,6 +31,7 @@ public class LaserParticle extends BreakingParticle {
     private BlockState blockState;
     private UUID playerUUID;
     BlockPos quarryPos;
+    boolean quarry = false;
     private double sourceX;
     private double sourceY;
     private double sourceZ;
@@ -72,8 +73,10 @@ public class LaserParticle extends BreakingParticle {
         if (te != null) {
             playerUUID = te.getPlayerUUID();
             quarryPos = te.getQuarryPos();
-            if (quarryPos != null)
+            if (quarryPos != null) {
                 maxAge = maxAge * 20;
+                quarry = true;
+            }
             voiding = !te.getBlockAllowed();
         }
         sourceX = d;
@@ -138,7 +141,7 @@ public class LaserParticle extends BreakingParticle {
             laserPos = playerPos.add(right);
             laserPos = laserPos.add(forward);
             laserPos = laserPos.add(down);
-        } else if (this.quarryPos != null) {
+        } else if (quarry) {
             look = new Vec3d(0.01, -1, 0);
             QuarryBlockTileEntity te = (QuarryBlockTileEntity) world.getTileEntity(quarryPos);
             heldItem = te.getMiningGadget();
@@ -166,7 +169,7 @@ public class LaserParticle extends BreakingParticle {
             speedModifier++;
             //Basically we want it to get faster the longer its been around, up to a limit
             int speedAdjust = (30 - speedModifier) <= 0 ? 1 : (30 - speedModifier);
-            if (quarryPos != null) speedAdjust = 10;
+            if (quarry) speedAdjust = 10;
             //Get the distance between the laser (endpoint) and current particle position
             double distance = laserPos.distanceTo(partPos);
             //Remove the particle from the game if its really close to the laser endpoint.
@@ -176,13 +179,13 @@ public class LaserParticle extends BreakingParticle {
             //Apply the spinning effect, but only if the particle has been around for a bit, and slow the spin it gets closer to player.
             if (age > 5) {
                 float spinSpeed = MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.1f, 0.05f);
-                if (quarryPos != null) {
+                if (quarry) {
                     spinSpeed = spinSpeed * 4;
                 }
                 targetDirection = targetDirection.add(targetDirection.crossProduct(look).scale(spinSpeed).mul(3, 3, 3));
             }
             //Change particle size as it gets closer to player.
-            if (quarryPos == null)
+            if (!quarry)
                 this.particleScale = particleScale * MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.05f, 0.85f);
             //Calculate where the particle's next position should be.
             moveX = (targetDirection.getX()) / speedAdjust;
