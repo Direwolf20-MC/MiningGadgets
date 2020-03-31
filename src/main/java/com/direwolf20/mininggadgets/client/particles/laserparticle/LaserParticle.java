@@ -1,7 +1,8 @@
 package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
-import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
+import com.direwolf20.mininggadgets.common.tiles.QuarryBlockTileEntity;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
@@ -29,6 +30,7 @@ public class LaserParticle extends BreakingParticle {
     private float f5;
     private BlockState blockState;
     private UUID playerUUID;
+    BlockPos quarryPos;
     private double sourceX;
     private double sourceY;
     private double sourceZ;
@@ -69,6 +71,9 @@ public class LaserParticle extends BreakingParticle {
         RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(new BlockPos(this.posX, this.posY, this.posZ));
         if (te != null) {
             playerUUID = te.getPlayerUUID();
+            quarryPos = te.getQuarryPos();
+            if (quarryPos != null)
+                maxAge = maxAge * 20;
             voiding = !te.getBlockAllowed();
         }
         sourceX = d;
@@ -82,7 +87,7 @@ public class LaserParticle extends BreakingParticle {
         super.renderParticle(builder, activeRenderInfo, partialTicks);
     }
 
-    public boolean particleToPlayer(PlayerEntity player) {
+    public boolean particleToPlayer() {
         boolean partToPlayer = false;
         //if (player.isHandActive()) partToPlayer = true;
         BlockPos sourcePos = new BlockPos(sourceX, sourceY, sourceZ);
@@ -105,34 +110,48 @@ public class LaserParticle extends BreakingParticle {
         double moveZ;
         //this.particleScale = 0.5f;
         //double getPartScale = this.getScale(0);
+        Vec3d look;
+        Vec3d playerPos;
+        ItemStack heldItem;
+        Vec3d laserPos;
+        if (this.playerUUID != null && !this.playerUUID.equals(UUID.fromString("00000000-0000-0000-0000-000000000000"))) {
+            //Some calculations for the particle motion
+            PlayerEntity player = world.getPlayerByUuid(this.playerUUID);
+            if (player == null) {
+                this.setExpired();
+                return;
+            }
+            playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
+            look = player.getLookVec(); // or getLook(partialTicks)
+            heldItem = MiningGadget.getGadget(player);
+            //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
+            Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
+            Vec3d forward = look;
+            Vec3d down = right.crossProduct(forward);
 
-        if (this.playerUUID == null) {
+            //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
+            right = right.scale(0.65f);
+            forward = forward.scale(0.85f);
+            down = down.scale(-0.35);
+
+            //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
+            laserPos = playerPos.add(right);
+            laserPos = laserPos.add(forward);
+            laserPos = laserPos.add(down);
+        } else if (this.quarryPos != null) {
+            look = new Vec3d(0.01, -1, 0);
+            QuarryBlockTileEntity te = (QuarryBlockTileEntity) world.getTileEntity(quarryPos);
+            heldItem = te.getMiningGadget();
+            int diffX = te.getCurrentPos().getX() - te.getPos().getX();
+            int diffY = te.getCurrentPos().getY() - te.getPos().getY();
+            int diffZ = te.getCurrentPos().getZ() - te.getPos().getZ();
+            playerPos = new Vec3d(te.getPos().getX() + 0.6 + diffX, te.getPos().getY() + 1.5, te.getPos().getZ() + 0.45 + diffZ);
+            laserPos = playerPos.add(new Vec3d(0, 1, 0));
+        } else {
             this.setExpired();
             return;
         }
-        //Some calculations for the particle motion
-        PlayerEntity player = world.getPlayerByUuid(this.playerUUID);
-        if (player == null) {
-            this.setExpired();
-            return;
-        }
-        Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         Vec3d blockPos = new Vec3d(sourceX, sourceY, sourceZ);
-        Vec3d look = player.getLookVec(); // or getLook(partialTicks)
-        //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
-        Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
-        Vec3d forward = look;
-        Vec3d down = right.crossProduct(forward);
-
-        //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
-        right = right.scale(0.65f);
-        forward = forward.scale(0.85f);
-        down = down.scale(-0.35);
-
-        //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
-        Vec3d laserPos = playerPos.add(right);
-        laserPos = laserPos.add(forward);
-        laserPos = laserPos.add(down);
 
         //Get the current position of the particle, and figure out the vector of where it's going
         Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
@@ -142,11 +161,12 @@ public class LaserParticle extends BreakingParticle {
         double totalDistance = blockPos.distanceTo(laserPos);
 
         //Figure out if the particles are flowing TO the player, or BACK to the blocks
-        if (particleToPlayer(player)) {
+        if (particleToPlayer()) {
             //This is like age, how many ticks the thing has been around, but we reset it when we send particles back to their source so can't use age.
             speedModifier++;
             //Basically we want it to get faster the longer its been around, up to a limit
             int speedAdjust = (30 - speedModifier) <= 0 ? 1 : (30 - speedModifier);
+            if (quarryPos != null) speedAdjust = 10;
             //Get the distance between the laser (endpoint) and current particle position
             double distance = laserPos.distanceTo(partPos);
             //Remove the particle from the game if its really close to the laser endpoint.
@@ -156,17 +176,21 @@ public class LaserParticle extends BreakingParticle {
             //Apply the spinning effect, but only if the particle has been around for a bit, and slow the spin it gets closer to player.
             if (age > 5) {
                 float spinSpeed = MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.1f, 0.05f);
+                if (quarryPos != null) {
+                    spinSpeed = spinSpeed * 4;
+                }
                 targetDirection = targetDirection.add(targetDirection.crossProduct(look).scale(spinSpeed).mul(3, 3, 3));
             }
             //Change particle size as it gets closer to player.
-            this.particleScale = particleScale * MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.05f, 0.85f);
+            if (quarryPos == null)
+                this.particleScale = particleScale * MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.05f, 0.85f);
             //Calculate where the particle's next position should be.
             moveX = (targetDirection.getX()) / speedAdjust;
             moveY = (targetDirection.getY()) / speedAdjust;
             moveZ = (targetDirection.getZ()) / speedAdjust;
+            //System.out.println(this.age +":"+moveY);
             //If the particle is less than 5 ticks old, rapidly move the particles towards the player's look position
             //This is what clumps them together early on. Comment this out if you wanna see the difference without.
-            ItemStack heldItem = MiningGadget.getGadget(player);
             if (MiningProperties.getRange(heldItem) > 1) {
                 if (age < 5) {
                     int compressionFactor = 7;

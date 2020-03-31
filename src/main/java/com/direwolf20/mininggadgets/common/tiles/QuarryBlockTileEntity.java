@@ -6,6 +6,8 @@ import com.direwolf20.mininggadgets.common.containers.QuarryContainer;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -331,6 +333,8 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void mineCurrentPos() {
         BlockState state = world.getBlockState(getCurrentPos());
+        ItemStack stack = getMiningGadget();
+        if (stack.isEmpty()) return;
         boolean success = false;
         if (!state.getMaterial().equals(Material.AIR) && !state.getMaterial().isLiquid() && state.getBlockHardness(world, getCurrentPos()) >= 0 && (world.getTileEntity(getCurrentPos()) == null || world.getTileEntity(getCurrentPos()) instanceof RenderBlockTileEntity)) {
             if (!(state.getBlock() instanceof RenderBlock)) {
@@ -339,17 +343,19 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 //    efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
                 float hardness = getHardness(efficiency);
-                hardness = (float) Math.floor(hardness) * 1;
+                hardness = (float) Math.floor(hardness) * 1000;
                 if (hardness == 0) hardness = 1;
                 //List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                 world.setBlockState(currentPos, ModBlocks.RENDER_BLOCK.get().getDefaultState());
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(currentPos);
                 te.setRenderBlock(state);
-                //te.setBreakType(MiningProperties.getBreakType(stack));
+                te.setQuarryPos(this.getPos());
+                te.setBreakType(MiningProperties.getBreakType(stack));
                 te.setBreakType(MiningProperties.BreakTypes.SHRINK);
-                //te.setGadgetUpgrades(gadgetUpgrades);
-                //te.setGadgetFilters(MiningProperties.getFiltersAsList(stack));
-                //te.setGadgetIsWhitelist(MiningProperties.getWhiteList(stack));
+                List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
+                te.setGadgetUpgrades(gadgetUpgrades);
+                te.setGadgetFilters(MiningProperties.getFiltersAsList(stack));
+                te.setGadgetIsWhitelist(MiningProperties.getWhiteList(stack));
                 te.setPriorDurability((int) hardness + 1);
                 te.setOriginalDurability((int) hardness + 1);
                 te.setDurability((int) hardness, new ItemStack(ModItems.MININGGADGET.get()));

@@ -4,7 +4,7 @@ import net.minecraft.particles.ParticleType;
 
 public class LaserParticleType extends ParticleType<LaserParticleData> {
     public LaserParticleType() {
-        super(false, LaserParticleData.DESERIALIZER);
+        super(true, LaserParticleData.DESERIALIZER);
     }
 
 

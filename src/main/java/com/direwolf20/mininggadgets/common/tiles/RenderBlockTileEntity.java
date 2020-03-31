@@ -58,6 +58,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private int totalAge;
     private MiningProperties.BreakTypes breakType;
     private boolean blockAllowed;
+    private BlockPos quarryPos;
 
     public RenderBlockTileEntity() {
         super(RENDERBLOCK_TILE.get());
@@ -65,6 +66,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     public void setRenderBlock(BlockState state) {
         renderBlock = state;
+    }
+
+    public BlockPos getQuarryPos() {
+        return quarryPos;
+    }
+
+    public void setQuarryPos(BlockPos quarryPos) {
+        this.quarryPos = quarryPos;
     }
 
     public BlockState getRenderBlock() {
@@ -265,6 +274,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"));
         gadgetIsWhitelist = tag.getBoolean("gadgetIsWhitelist");
         blockAllowed = tag.getBoolean("blockAllowed");
+        quarryPos = NBTUtil.readBlockPos(tag.getCompound("quarryPos"));
     }
 
     @Override
@@ -285,6 +295,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
         tag.putBoolean("gadgetIsWhitelist", isGadgetIsWhitelist());
         tag.putBoolean("blockAllowed", blockAllowed);
+        tag.put("quarryPos", NBTUtil.writeBlockPos(quarryPos));
         return super.write(tag);
     }
 
