@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.QuarryBlockTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -142,18 +143,24 @@ public class QuarryBlockTER extends TileEntityRenderer<QuarryBlockTileEntity> {
         long gameTime = tile.getWorld().getGameTime();
         double v = gameTime * 0.04;
 
+        ItemStack stack = tile.getMiningGadget();
         //We draw twice otherwise its invisible from one side
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
         //drawMiningLaser(builder, positionMatrix2, BlockPos.ZERO.down(1), new BlockPos(0, diffY - 2.5, 0), 1f, 0f, 0f, 0.7f, 0.1f, 0.5, 1);
         //drawMiningLaser(builder, positionMatrix2, new BlockPos(0, diffY - 2.5, 0), BlockPos.ZERO.down(1),1f, 0f, 0f, 0.7f, 0.1f, 0.5, 1);
-
+        float r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f;
+        float g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f;
+        float b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f;
+        float ir = MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f;
+        float ig = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f;
+        float ib = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
-        drawMiningLaser(builder, positionMatrix2, new Vec3f(0, -1, 0), new Vec3f(0, diffY - 2.5f, 0), 1f, 0f, 0f, 1f, 0.1f, v, v + diffY * 1.5);
-        drawMiningLaser(builder, positionMatrix2, new Vec3f(0, diffY - 2.5f, 0), new Vec3f(0, -1, 0), 1f, 0f, 0f, 1f, 0.1f, v, v + diffY * 1.5);
+        drawMiningLaser(builder, positionMatrix2, new Vec3f(0, -1, 0), new Vec3f(0, diffY - 2.5f, 0), r, g, b, 1f, 0.1f, v, v + diffY * 1.5);
+        drawMiningLaser(builder, positionMatrix2, new Vec3f(0, diffY - 2.5f, 0), new Vec3f(0, -1, 0), r, g, b, 1f, 0.1f, v, v + diffY * 1.5);
 
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
-        drawMiningLaser(builder, positionMatrix2, new Vec3f(0, -1, 0), new Vec3f(0, diffY - 2.5f, 0), 1f, 1f, 1f, 1f, 0.05f, v, v + diffY - 2.5 * 1.5);
-        drawMiningLaser(builder, positionMatrix2, new Vec3f(0, diffY - 2.5f, 0), new Vec3f(0, -1, 0), 1f, 1f, 1f, 1f, 0.05f, v, v + diffY - 2.5 * 1.5);
+        drawMiningLaser(builder, positionMatrix2, new Vec3f(0, -1, 0), new Vec3f(0, diffY - 2.5f, 0), ir, ig, ib, 1f, 0.05f, v, v + diffY - 2.5 * 1.5);
+        drawMiningLaser(builder, positionMatrix2, new Vec3f(0, diffY - 2.5f, 0), new Vec3f(0, -1, 0), ir, ig, ib, 1f, 0.05f, v, v + diffY - 2.5 * 1.5);
 
         buffer.finish();
         matrixStackIn.pop();

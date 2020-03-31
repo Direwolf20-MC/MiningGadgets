@@ -96,6 +96,10 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
         needScanAdjacent = false;
     }
 
+    public ItemStack getMiningGadget() {
+        return inventory.map(e -> e.getStackInSlot(0)).orElse(ItemStack.EMPTY);
+    }
+
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
