@@ -280,7 +280,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void removeBlock() {
-        if(world == null || world.isRemote)
+        if (world == null || world.isRemote || playerUUID == null || playerUUID.equals(null))
             return;
 
         PlayerEntity player = world.getPlayerByUuid(playerUUID);
