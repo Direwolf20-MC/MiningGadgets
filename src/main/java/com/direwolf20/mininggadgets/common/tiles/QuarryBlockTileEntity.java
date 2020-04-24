@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
+import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.containers.QuarryContainer;
@@ -14,6 +15,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
@@ -26,6 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -44,6 +48,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.QUARRY_TILE;
@@ -51,8 +57,8 @@ import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.QUARRY_TILE;
 public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
 
     public ArrayList<BlockPos> adjacentStorage = new ArrayList<>();
-
-    public LazyOptional<EnergyStorage> energy   = LazyOptional.of(() -> new EnergyStorage(1000000));
+    private Random rand = new Random();
+    public LazyOptional<EnergyStorage> energy = LazyOptional.of(() -> new EnergyStorage(1000000));
     public LazyOptional<IItemHandler> inventory = LazyOptional.of(() -> new ItemStackHandler(1) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -251,9 +257,24 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
 //        MinecraftForge.EVENT_BUS.post(event);
 //        if( event.isCanceled() )
 //            return;
+        List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(getMiningGadget());
+        int silk = 0;
+        int fortune = 0;
 
         ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
-        tempTool.addEnchantment(Enchantments.FORTUNE, 3);
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+            tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+            silk = 1;
+        }
+
+        // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
+            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+            if (upgrade.isPresent()) {
+                fortune = upgrade.get().getTier();
+                tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
+            }
+        }
 
         LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld) world)).withRandom(world.rand).withParameter(LootParameters.POSITION, pos).withParameter(LootParameters.TOOL, tempTool);
         List<ItemStack> drops = state.getDrops(lootcontext$builder);
@@ -264,20 +285,41 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
             if (!drop.isEmpty())
                 return false;
         }
-        //   }
-        //   if (magnetMode) {
-        //       if (exp > 0)
-        //           player.giveExperiencePoints(exp);
-        //   } else {
-        //       if (exp > 0)
-        //           renderBlock.getBlock().dropXpOnBlockBreak(world, pos, exp);
-        //world.addEntity(new ExperienceOrbEntity(world, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, exp));
-        //}
-//}
+
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
+            RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(pos);
+            if (te != null) {
+                te.freeze(getMiningGadget());
+            }
+        }
 
         world.removeTileEntity(pos);
         world.setBlockState(pos, Blocks.AIR.getDefaultState());
         return true;
+    }
+
+    private void spawnFreezeParticle(BlockPos sourcePos) {
+        float randomPartSize = 0.05f + (0.125f - 0.05f) * rand.nextFloat();
+        double randomTX = rand.nextDouble();
+        double randomTY = rand.nextDouble();
+        double randomTZ = rand.nextDouble();
+        double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+        Vec3d laserPos = new Vec3d(pos.getX(), pos.getY() + 4, pos.getZ());
+        PlayerParticleData data = PlayerParticleData.playerparticle("ice", sourcePos.getX() + randomTX, sourcePos.getY() + randomTY, sourcePos.getZ() + randomTZ, randomPartSize, 1f, 1f, 1f, 120, true);
+        //Change the below laserPos to lookingAt to have it emit from the laser gun itself
+        this.getWorld().addParticle(data, laserPos.x, laserPos.y, laserPos.z, 0.025, 0.025f, 0.025);
+    }
+
+    public List<BlockPos> findSources(BlockPos coord) {
+        List<BlockPos> sources = new ArrayList<>();
+        for (Direction side : Direction.values()) {
+            BlockPos sidePos = coord.offset(side);
+            IFluidState state = world.getFluidState(sidePos);
+            if ((state.getFluid().isEquivalentTo(Fluids.LAVA) || state.getFluid().isEquivalentTo(Fluids.WATER)))
+                if (!sources.contains(sidePos))
+                    sources.add(sidePos);
+        }
+        return sources;
     }
 
     public ItemStack insertIntoAdjacentInventory(ItemStack stack) {
@@ -343,7 +385,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 //    efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
                 float hardness = getHardness(efficiency);
-                hardness = (float) Math.floor(hardness) * 10;
+                hardness = (float) Math.floor(hardness) * 500;
                 if (hardness == 0) hardness = 1;
                 //List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
                 world.setBlockState(currentPos, ModBlocks.RENDER_BLOCK.get().getDefaultState());
@@ -365,7 +407,7 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 //if (!world.isRemote) {
                 RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(currentPos);
                 int durability = te.getDurability();
-                System.out.println(durability);
+                //System.out.println(durability);
                 BlockState originalState = te.getRenderBlock();
                 //System.out.println(durability);
                 /*if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
@@ -379,6 +421,11 @@ public class QuarryBlockTileEntity extends TileEntity implements ITickableTileEn
                 }
 
                 //}
+            }
+            if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
+                for (BlockPos sourcePos : findSources(getCurrentPos())) {
+                    spawnFreezeParticle(sourcePos);
+                }
             }
             lastWasAir = false;
         } else {

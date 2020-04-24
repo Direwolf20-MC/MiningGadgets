@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 
 public class PlayerParticleType extends ParticleType<PlayerParticleData> {
     public PlayerParticleType() {
-        super(false, PlayerParticleData.DESERIALIZER);
+        super(true, PlayerParticleData.DESERIALIZER);
     }
 
     public static class FACTORY implements IParticleFactory<PlayerParticleData> {

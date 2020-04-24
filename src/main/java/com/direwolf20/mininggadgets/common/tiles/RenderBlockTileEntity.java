@@ -113,7 +113,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
-    private void freeze(ItemStack stack) {
+    public void freeze(ItemStack stack) {
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
             IFluidState state = world.getFluidState(sidePos);
@@ -296,7 +296,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
         tag.putBoolean("gadgetIsWhitelist", isGadgetIsWhitelist());
         tag.putBoolean("blockAllowed", blockAllowed);
-        tag.put("quarryPos", NBTUtil.writeBlockPos(quarryPos));
+        if (quarryPos != null)
+            tag.put("quarryPos", NBTUtil.writeBlockPos(quarryPos));
         return super.write(tag);
     }
 
