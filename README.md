@@ -9,7 +9,7 @@
 <p data-comment="this fakes a line break">&zwnj;</p>
 
 # Mining Gadgets
-*Because Mining with Lasers is cool*! Mining Gadgets as a single gadget called the `Mining Gadget` to the game which can be upgraded to do way more things than just mine. It can be upgraded to freeze water whilst mining, turn lava to stone whilst mining and loads more. It's core purpose is to be a balanced and effective way to mine large areas in short amounts of time whilst also, of course, shorting super cool __LASERS__!
+*Because Mining with Lasers is cool*! Mining Gadgets is based on single gadget called the `Mining Gadget` which can be upgraded to do way more things than just mine. It can be upgraded to freeze water whilst mining, turn lava to stone whilst mining and loads more. It's core purpose is to be a balanced and effective way to mine large areas in short amounts of time whilst also, of course, shooting super cool __LASERS__!
 
 ## Features
 - __LASERS__!
