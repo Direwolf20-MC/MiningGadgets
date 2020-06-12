@@ -1,4 +1,4 @@
-<p align="center" style="padding: 3em;"><img width="650" src=".github/assets/mininggadgets-logo-transparent.png" /></p>
+<p align="center"><img width="650" src=".github/assets/mininggadgets-logo-transparent.png" /></p>
 <h1 align="center" style="margin-top: 20px; border-bottom: 0;">Mining Gadgets</h1>
 <p align="center">Sometimes you want a quick change of pace when it comes to mining. Pickaxes. Drills. Bores. Robots. Quarries. These are all great options. Now you can use lasers too if you want.</p>
 <p align="center">
@@ -34,6 +34,8 @@ To upgrade the Gadget you'll need to craft a __Modification Table__ and which wi
 ### Modify the power requires
 Check the config file in your `mcdir/config/` folder. You can change the upgrades 'Power per Operation' requirements as well as the Gadgets 'Power per Block Mined'.
 
+---
+
 *Whilst you're here, also check out my other mod [Building Gadgets](https://minecraft.curseforge.com/projects/building-gadgets) it goes really well with this one 😀*
 
 ## Credit
@@ -44,4 +46,5 @@ Check the config file in your `mcdir/config/` folder. You can change the upgrade
 - [Rorax](https://twitter.com/Rosespikes) `Original Laser texture`
 - [Forge Devs](https://minecraftforge.net) `CPW and Lex for making Forge the best API ever!!` [*support them*](https://www.patreon.com/LexManos)
 
+## License 
 [License MIT](LICENSE.txt)
