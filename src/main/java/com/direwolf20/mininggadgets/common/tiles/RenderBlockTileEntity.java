@@ -227,14 +227,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         return write(new CompoundNBT());
     }
 
-    @Override
+    /*@Override
     public void handleUpdateTag(CompoundNBT tag) {
         read(tag);
-    }
+    }*/ //TODO Figure out if this is still necessary
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        read(pkt.getNbtCompound());
+        read(this.getBlockState(), pkt.getNbtCompound());
     }
 
     public void markDirtyClient() {
