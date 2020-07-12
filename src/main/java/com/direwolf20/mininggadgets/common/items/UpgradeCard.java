@@ -26,7 +26,7 @@ public class UpgradeCard extends Item {
             Upgrade upgrade = ((UpgradeCard) stack.getItem()).upgrade;
             int cost = upgrade.getCostPerBlock();
             if (cost > 0)
-                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrade_cost", cost).func_240699_a_(TextFormatting.AQUA));
+                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrade_cost", cost).mergeStyle(TextFormatting.AQUA));
 
             cost = 0;
             if (upgrade == Upgrade.LIGHT_PLACER)
@@ -34,15 +34,15 @@ public class UpgradeCard extends Item {
             if (upgrade == Upgrade.FREEZING)
                 cost = Config.UPGRADECOST_FREEZE.get();
             if (cost > 0)
-                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.use_cost", cost).func_240699_a_(TextFormatting.AQUA));
+                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.use_cost", cost).mergeStyle(TextFormatting.AQUA));
 
             if( upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()) ) {
                 UpgradeBatteryLevels.getBatteryByLevel(upgrade.getTier()).ifPresent(e -> {
-                    tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.battery_boost", MagicHelpers.tidyValue(e.getPower())).func_240699_a_(TextFormatting.AQUA));
+                    tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.battery_boost", MagicHelpers.tidyValue(e.getPower())).mergeStyle(TextFormatting.AQUA));
                 });
             }
 
-            tooltip.add(new TranslationTextComponent(this.upgrade.getTooltop()).func_240699_a_(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent(this.upgrade.getTooltop()).mergeStyle(TextFormatting.GRAY));
         }
 
     }
