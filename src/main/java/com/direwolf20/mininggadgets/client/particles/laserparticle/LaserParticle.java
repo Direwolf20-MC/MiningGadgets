@@ -9,13 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.BreakingParticle;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.UUID;
 
@@ -36,14 +36,14 @@ public class LaserParticle extends BreakingParticle {
     private boolean voiding = false;
     private float originalSize;
 
-    public LaserParticle(World world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
+    public LaserParticle(ClientWorld world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul, BlockState blockState) {
         this(world, d, d1, d2, xSpeed, ySpeed, zSpeed, size, red, green, blue, depthTest, maxAgeMul);
         this.blockState = blockState;
         this.setSprite(Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getTexture(blockState));
     }
 
-    public LaserParticle(World world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
+    public LaserParticle(ClientWorld world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul) {
         super(world, d, d1, d2, ItemStack.EMPTY);
         // super applies wiggle to motion so set it here instead
@@ -117,13 +117,13 @@ public class LaserParticle extends BreakingParticle {
             this.setExpired();
             return;
         }
-        Vec3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
-        Vec3d blockPos = new Vec3d(sourceX, sourceY, sourceZ);
-        Vec3d look = player.getLookVec(); // or getLook(partialTicks)
+        Vector3d playerPos = player.getPositionVec().add(0, player.getEyeHeight(), 0);
+        Vector3d blockPos = new Vector3d(sourceX, sourceY, sourceZ);
+        Vector3d look = player.getLookVec(); // or getLook(partialTicks)
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
-        Vec3d right = new Vec3d(-look.z, 0, look.x).normalize();
-        Vec3d forward = look;
-        Vec3d down = right.crossProduct(forward);
+        Vector3d right = new Vector3d(-look.z, 0, look.x).normalize();
+        Vector3d forward = look;
+        Vector3d down = right.crossProduct(forward);
 
         //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
         right = right.scale(0.65f);
@@ -131,13 +131,13 @@ public class LaserParticle extends BreakingParticle {
         down = down.scale(-0.35);
 
         //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
-        Vec3d laserPos = playerPos.add(right);
+        Vector3d laserPos = playerPos.add(right);
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
 
         //Get the current position of the particle, and figure out the vector of where it's going
-        Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
-        Vec3d targetDirection = new Vec3d(laserPos.getX() - this.posX, laserPos.getY() - this.posY, laserPos.getZ() - this.posZ);
+        Vector3d partPos = new Vector3d(this.posX, this.posY, this.posZ);
+        Vector3d targetDirection = new Vector3d(laserPos.getX() - this.posX, laserPos.getY() - this.posY, laserPos.getZ() - this.posZ);
 
         //The total distance between the laser's endpoint and the block(s) we're mining
         double totalDistance = blockPos.distanceTo(laserPos);
