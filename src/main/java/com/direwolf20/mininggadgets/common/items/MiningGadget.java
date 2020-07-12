@@ -117,7 +117,7 @@ public class MiningGadget extends Item {
 
         if (!InputMappings.isKeyDown(mc.getMainWindow().getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode())) {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
-                    ForgeI18n.parseFormat(mc.gameSettings.keyBindSneak.getTranslationKey()).toLowerCase())
+                    new TranslationTextComponent(mc.gameSettings.keyBindSneak.getTranslationKey()).getString().toLowerCase())
                     .mergeStyle(TextFormatting.GRAY));
         } else {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).mergeStyle(TextFormatting.RED));
