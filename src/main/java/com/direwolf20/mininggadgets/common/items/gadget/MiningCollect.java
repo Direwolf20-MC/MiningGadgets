@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -65,12 +66,13 @@ public class MiningCollect {
         if(state.getBlock() instanceof RenderBlock)
             return true;
 
+        // TODO: 12/07/2020 Reimplement when we find a replacement (1.16 port phase)
         // Reject, if the dimension blocks the player from mining the block
-        if(!world.getDimension().canMineBlock(player, pos))
-           return false;
+//        if(!world.canMineBlock(player, pos))
+//           return false;
 
         // Reject fluids and air (supports waterlogged blocks too)
-        if ((!state.getFluidState().isEmpty() && !state.has(BlockStateProperties.WATERLOGGED)) || world.isAirBlock(pos))
+        if ((!state.getFluidState().isEmpty() && !state.hasProperty(BlockStateProperties.WATERLOGGED)) || world.isAirBlock(pos))
             return false;
 
         // Rejects any blocks with a hardness less than 0

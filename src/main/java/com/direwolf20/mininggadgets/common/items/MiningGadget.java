@@ -52,6 +52,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.ForgeI18n;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -116,16 +117,16 @@ public class MiningGadget extends Item {
 
         if (!InputMappings.isKeyDown(mc.getMainWindow().getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode())) {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
-                    mc.gameSettings.keyBindSneak.getLocalizedName().toLowerCase())
-                    .applyTextStyle(TextFormatting.GRAY));
+                    ForgeI18n.parseFormat(mc.gameSettings.keyBindSneak.getTranslationKey()).toLowerCase())
+                    .mergeStyle(TextFormatting.GRAY));
         } else {
-            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).applyTextStyle(TextFormatting.RED));
+            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).mergeStyle(TextFormatting.RED));
             if (!(upgrades.isEmpty())) {
-                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").applyTextStyle(TextFormatting.AQUA));
+                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").mergeStyle(TextFormatting.AQUA));
                 for (Upgrade upgrade : upgrades) {
                     tooltip.add(new StringTextComponent(" - " +
                             I18n.format(upgrade.getLocal())
-                    ).applyTextStyle(TextFormatting.GRAY));
+                    ).mergeStyle(TextFormatting.GRAY));
                 }
             }
         }
@@ -134,7 +135,7 @@ public class MiningGadget extends Item {
                 .ifPresent(energy -> tooltip.add(
                         new TranslationTextComponent("mininggadgets.gadget.energy",
                                 MagicHelpers.tidyValue(energy.getEnergyStored()),
-                                MagicHelpers.tidyValue(energy.getMaxEnergyStored())).applyTextStyles(TextFormatting.GREEN)));
+                                MagicHelpers.tidyValue(energy.getMaxEnergyStored())).mergeStyle(TextFormatting.GREEN)));
     }
 
     @Override

@@ -24,13 +24,10 @@ public class RenderBlock extends Block {
                         .hardnessAndResistance(2.0f)
                         .notSolid()
                         .noDrops()
+                        .setOpaque((a, b, c) -> false) // @mcp: setOpaque seems to replace isNormalBlock
         );
     }
 
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
 
     @Override
     public boolean hasTileEntity(BlockState state) {
