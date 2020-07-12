@@ -5,6 +5,9 @@ import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ForgeI18n;
 
@@ -208,7 +211,7 @@ public class UpgradeTools {
      * @param upgrade the upgrade Enum
      * @return A formatted string of the Upgrade without it's `Upgrade:` prefix
      */
-    public static String getName(Upgrade upgrade) {
-        return ForgeI18n.parseMessage(upgrade.getLocal()).replace(ForgeI18n.parseMessage(upgrade.getLocalReplacement()), "");
+    public static ITextComponent getName(Upgrade upgrade) {
+        return new StringTextComponent(ForgeI18n.parseMessage(upgrade.getLocal()).replace(ForgeI18n.parseMessage(upgrade.getLocalReplacement()), ""));
     }
 }

@@ -5,6 +5,7 @@ import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.gui.ScrollPanel;
 
 public class ModificationTableScreen extends ContainerScreen<ModificationTableContainer> {
@@ -31,25 +33,25 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(stack);
+        super.render(stack, mouseX, mouseY, partialTicks);
 
-        this.scrollingUpgrades.render(mouseX, mouseY, partialTicks);
-        this.renderHoveredToolTip(mouseX, mouseY);
+        this.scrollingUpgrades.render(stack, mouseX, mouseY, partialTicks);
+        this.func_230459_a_(stack, mouseX, mouseY); // @mcp: func_230459_a_ = renderHoveredToolTip
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void func_230451_b_(MatrixStack stack, int mouseX, int mouseY) { // @mcp: func_230451_b_ = drawGuiContainerForegroundLayer
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void func_230450_a_(MatrixStack stack, float partialTicks, int mouseX, int mouseY) { // @mcp: func_230450_a_ = drawGuiContainerBackgroundLayer
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         getMinecraft().getTextureManager().bindTexture(GUI);
         int relX = (this.width - this.xSize) / 2;
         int relY = (this.height - this.ySize) / 2;
-        this.blit(relX - 23, relY, 0, 0, this.xSize + 23, this.ySize);
+        this.blit(stack, relX - 23, relY, 0, 0, this.xSize + 23, this.ySize);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         }
 
         @Override
-        protected void drawPanel(int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY) {
+        protected void drawPanel(MatrixStack mStack, int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY) {
             Upgrade currentUpgrade = null;
             int x = (entryRight - this.width) + 3;
             int y = relativeY;
@@ -118,11 +120,11 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float partialTicks) {
-            super.render(mouseX, mouseY, partialTicks);
+        public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+            super.render(stack, mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                this.parent.renderTooltip(I18n.format(this.upgrade.getLocal()), mouseX, mouseY);
+                this.parent.renderTooltip(stack, new TranslationTextComponent(this.upgrade.getLocal()), mouseX, mouseY);
         }
     }
 }

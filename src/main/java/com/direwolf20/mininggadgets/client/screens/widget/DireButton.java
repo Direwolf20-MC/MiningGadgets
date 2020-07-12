@@ -1,19 +1,21 @@
 package com.direwolf20.mininggadgets.client.screens.widget;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.ITextComponent;
 
 public class DireButton extends Button {
 
-    public DireButton(int x, int y, int widthIn, int heightIn, String buttonText, IPressable action) {
+    public DireButton(int x, int y, int widthIn, int heightIn, ITextComponent buttonText, IPressable action) {
         super(x, y, widthIn, heightIn, buttonText, action);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             FontRenderer fontrenderer = Minecraft.getInstance().fontRenderer;
             Minecraft.getInstance().getTextureManager().bindTexture(WIDGETS_LOCATION);
@@ -22,13 +24,13 @@ public class DireButton extends Button {
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param, GlStateManager.SourceFactor.ONE.param, GlStateManager.DestFactor.ZERO.param);
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
-            this.blit(this.x, this.y, 0, 46, this.width / 2, this.height);
-            this.blit(this.x + this.width / 2, this.y, 200 - this.width / 2, 46, this.width / 2, this.height);
+            this.blit(stack, this.x, this.y, 0, 46, this.width / 2, this.height);
+            this.blit(stack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46, this.width / 2, this.height);
 
 
             int bottomToDraw = 2;
-            this.blit(this.x, this.y + this.height - bottomToDraw, 0, 66 - bottomToDraw, this.width / 2, bottomToDraw);
-            this.blit(this.x + this.width / 2, this.y + this.height - bottomToDraw, 200 - this.width / 2, 66 - bottomToDraw, this.width / 2, bottomToDraw);
+            this.blit(stack, this.x, this.y + this.height - bottomToDraw, 0, 66 - bottomToDraw, this.width / 2, bottomToDraw);
+            this.blit(stack, this.x + this.width / 2, this.y + this.height - bottomToDraw, 200 - this.width / 2, 66 - bottomToDraw, this.width / 2, bottomToDraw);
 
             int j = 14737632;
 
@@ -40,7 +42,7 @@ public class DireButton extends Button {
                 j = 16777120;
             }
 
-            this.drawCenteredString(fontrenderer, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 7) / 2, j);
+            this.drawCenteredString(stack, fontrenderer, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 7) / 2, j);
         }
     }
 }

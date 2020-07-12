@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeBreakType;
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeColor;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.util.InputMappings;
@@ -44,33 +45,36 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
     @Override
     protected void init() {
         int baseX = width / 2, baseY = height / 2;
-        String buttonText;
+
+        TranslationTextComponent buttonText;
         if (MiningProperties.getBreakType(gadget) == MiningProperties.BreakTypes.SHRINK)
-            buttonText = new TranslationTextComponent("mininggadgets.tooltip.screen.shrink").getUnformattedComponentText();
+            buttonText = new TranslationTextComponent("mininggadgets.tooltip.screen.shrink");
         else
-            buttonText = new TranslationTextComponent("mininggadgets.tooltip.screen.fade").getUnformattedComponentText();
+            buttonText = new TranslationTextComponent("mininggadgets.tooltip.screen.fade");
+
         blockBreakButton = new Button(baseX - (150 / 2), baseY - 50, 150, 20, buttonText, (button) -> {
-            if (blockBreakButton.getMessage().contains("Shrink"))
-                button.setMessage(new TranslationTextComponent("mininggadgets.tooltip.screen.fade").getUnformattedComponentText());
+            if (blockBreakButton.getMessage().getString().contains("Shrink"))
+                button.setMessage(new TranslationTextComponent("mininggadgets.tooltip.screen.fade"));
             else
-                button.setMessage(new TranslationTextComponent("mininggadgets.tooltip.screen.shrink").getUnformattedComponentText());
+                button.setMessage(new TranslationTextComponent("mininggadgets.tooltip.screen.shrink"));
 
             PacketHandler.sendToServer(new PacketChangeBreakType());
         });
+
         addButton(blockBreakButton);
 
-        sliderRedInner = new Slider(baseX - (150), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.red, false, true, s -> {
+        sliderRedInner = new Slider(baseX - (150), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red_outer").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.red, false, true, s -> {
         }, this);
-        sliderGreenInner = new Slider(baseX - (150), baseY + 5, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.green, false, true, s -> {
+        sliderGreenInner = new Slider(baseX - (150), baseY + 5, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green_outer").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.green, false, true, s -> {
         }, this);
-        sliderBlueInner = new Slider(baseX - (150), baseY + 35, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue_outer").getUnformattedComponentText() + ": ", "", 0, 255, this.blue, false, true, s -> {
+        sliderBlueInner = new Slider(baseX - (150), baseY + 35, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue_outer").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.blue, false, true, s -> {
         }, this);
 
-        sliderRedOuter = new Slider(baseX + (25), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.red_inner, false, true, s -> {
+        sliderRedOuter = new Slider(baseX + (25), baseY - 25, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red_inner").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.red_inner, false, true, s -> {
         }, this);
-        sliderGreenOuter = new Slider(baseX + (25), baseY + 5, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.green_inner, false, true, s -> {
+        sliderGreenOuter = new Slider(baseX + (25), baseY + 5, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green_inner").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.green_inner, false, true, s -> {
         }, this);
-        sliderBlueOuter = new Slider(baseX + (25), baseY + 35, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue_inner").getUnformattedComponentText() + ": ", "", 0, 255, this.blue_inner, false, true, s -> {
+        sliderBlueOuter = new Slider(baseX + (25), baseY + 35, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue_inner").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.blue_inner, false, true, s -> {
         }, this);
 
         addButton(sliderRedInner);
@@ -82,11 +86,11 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(stack);
+        super.render(stack, mouseX, mouseY, partialTicks);
 
-        drawCenteredString(getMinecraft().fontRenderer, new TranslationTextComponent("mininggadgets.tooltip.screen.visual_settings").getUnformattedComponentText(), (width / 2), (height / 2) - 70, Color.WHITE.getRGB());
+        drawCenteredString(stack, getMinecraft().fontRenderer, new TranslationTextComponent("mininggadgets.tooltip.screen.visual_settings").getUnformattedComponentText(), (width / 2), (height / 2) - 70, Color.WHITE.getRGB());
         //drawCenteredString(getMinecraft().fontRenderer, "Toggle Upgrades", (width / 2), (height / 2) + 20, Color.WHITE.getRGB());
 
     }
