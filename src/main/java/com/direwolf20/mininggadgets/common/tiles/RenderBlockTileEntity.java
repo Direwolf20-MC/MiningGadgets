@@ -269,7 +269,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("priorDurability", priorDurability);
         tag.putInt("durability", durability);
         tag.putInt("ticksSinceMine", ticksSinceMine);
-        if (!playerUUID.equals(null))
+        if (playerUUID != null)
             tag.putUniqueId("playerUUID", playerUUID);
         tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
         tag.putByte("breakType", (byte) breakType.ordinal());
@@ -280,7 +280,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void removeBlock() {
-        if(world == null || world.isRemote)
+        if (world == null || world.isRemote || playerUUID == null || playerUUID.equals(null))
             return;
 
         PlayerEntity player = world.getPlayerByUuid(playerUUID);
