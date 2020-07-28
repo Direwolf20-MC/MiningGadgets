@@ -12,6 +12,7 @@ logoFile="mininggadgets-logo.png"
 credits="CPW and Lex for making Forge the best API ever!!"
 authors="Direwolf20"
 description='''Mining is better with lasers.'''
+license='MIT (https://github.com/Direwolf20-MC/MiningGadgets/blob/master/LICENSE.txt)'
 
 #forge
 [[dependencies.mininggadgets]]
