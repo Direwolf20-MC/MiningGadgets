@@ -32,14 +32,14 @@ public class FilterScreen extends ContainerScreen<FilterContainer> {
         this.func_230459_a_(stack, mouseX, mouseY); // @mcp: func_230459_a_ = renderHoveredToolTip
     }
 
-    @Override // @mcp: func_230451_b_ = drawGuiContainerForegroundLayer
-    protected void func_230451_b_(MatrixStack stack, int mouseX, int mouseY) {
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
         font.drawString(stack, new TranslationTextComponent("mininggadgets.tooltip.single.filters").getString(), 8, 6, 4210752);
         font.drawString(stack, this.playerInventory.getDisplayName().getString(), 8, (this.ySize - 96 + 3), 4210752);
     }
 
-    @Override // @mcp: func_230450_a_ = drawGuiContainerBackgroundLayer
-    protected void func_230450_a_(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+    @Override
+    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         getMinecraft().getTextureManager().bindTexture(TEXTURE);
         int x = (this.width - this.xSize) / 2;

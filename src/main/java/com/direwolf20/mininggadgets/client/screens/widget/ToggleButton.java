@@ -5,13 +5,12 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 
 import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -48,8 +47,8 @@ public class ToggleButton extends Widget {
         blit(stack, this.x +2, this.y + 5, 0, 0, 16, 16, 16, 16);
     }
 
-    public List<ITextComponent> getTooltip() {
-        return Arrays.asList(this.getMessage(), new StringTextComponent("Enabled: " + this.enabled).mergeStyle(this.enabled ? TextFormatting.GREEN : TextFormatting.RED));
+    public List<IReorderingProcessor> getTooltip() {
+        return LanguageMap.getInstance().func_244260_a(Arrays.asList(this.getMessage(), new StringTextComponent("Enabled: " + this.enabled).mergeStyle(this.enabled ? TextFormatting.GREEN : TextFormatting.RED)));
     }
 
     @Override

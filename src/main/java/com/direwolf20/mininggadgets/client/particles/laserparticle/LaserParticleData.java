@@ -55,7 +55,7 @@ public class LaserParticleData implements IParticleData {
 
     @Override
     public void write(PacketBuffer buf) {
-        buf.writeVarInt(Block.BLOCK_STATE_IDS.get(state));
+        buf.writeVarInt(Block.BLOCK_STATE_IDS.getId(state));
         buf.writeFloat(size);
         buf.writeFloat(r);
         buf.writeFloat(g);

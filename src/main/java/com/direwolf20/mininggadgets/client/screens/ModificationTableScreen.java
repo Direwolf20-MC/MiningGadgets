@@ -42,11 +42,11 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack stack, int mouseX, int mouseY) { // @mcp: func_230451_b_ = drawGuiContainerForegroundLayer
+    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
     }
 
     @Override
-    protected void func_230450_a_(MatrixStack stack, float partialTicks, int mouseX, int mouseY) { // @mcp: func_230450_a_ = drawGuiContainerBackgroundLayer
+    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         getMinecraft().getTextureManager().bindTexture(GUI);
         int relX = (this.width - this.xSize) / 2;
