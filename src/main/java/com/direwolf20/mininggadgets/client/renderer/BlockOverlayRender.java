@@ -10,13 +10,13 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
@@ -36,7 +36,7 @@ public class BlockOverlayRender {
         }
 
         List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.world, MiningProperties.getRange(item));
-        Vec3d view = mc.gameRenderer.getActiveRenderInfo().getProjectedView();
+        Vector3d view = mc.gameRenderer.getActiveRenderInfo().getProjectedView();
 
         MatrixStack matrix = event.getMatrixStack();
         matrix.push();
@@ -63,7 +63,7 @@ public class BlockOverlayRender {
         buffer.finish(MyRenderType.BlockOverlay);
     }
 
-    public static void render(Matrix4f  matrix, IVertexBuilder builder, BlockPos pos, Color color) {
+    public static void render(Matrix4f matrix, IVertexBuilder builder, BlockPos pos, Color color) {
         float red = color.getRed() / 255f, green = color.getGreen() / 255f, blue = color.getBlue() / 255f, alpha = .125f;
 
         float startX = 0, startY = 0, startZ = -1, endX = 1, endY = 1, endZ = 0;

@@ -6,10 +6,10 @@ import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.particle.SpriteTexturedParticle;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Random;
 
@@ -32,7 +32,7 @@ public class PlayerParticle extends SpriteTexturedParticle {
     public static final ResourceLocation lightParticle = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/lightparticle.png");
 
 
-    public PlayerParticle(World world, double sourceX, double sourceY, double sourceZ, double targetX, double targetY, double targetZ, double xSpeed, double ySpeed, double zSpeed,
+    public PlayerParticle(ClientWorld world, double sourceX, double sourceY, double sourceZ, double targetX, double targetY, double targetZ, double xSpeed, double ySpeed, double zSpeed,
                           float size, float red, float green, float blue, boolean collide, float maxAge, String particleType, IAnimatedSprite sprite) {
         super(world, sourceX, sourceY, sourceZ);
         motionX = xSpeed;
@@ -92,12 +92,12 @@ public class PlayerParticle extends SpriteTexturedParticle {
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
 
-        Vec3d sourcePos = new Vec3d(sourceX, sourceY, sourceZ);
-        Vec3d targetPos = new Vec3d(targetX, targetY, targetZ);
+        Vector3d sourcePos = new Vector3d(sourceX, sourceY, sourceZ);
+        Vector3d targetPos = new Vector3d(targetX, targetY, targetZ);
 
         //Get the current position of the particle, and figure out the vector of where it's going
-        Vec3d partPos = new Vec3d(this.posX, this.posY, this.posZ);
-        Vec3d targetDirection = new Vec3d(targetPos.getX() - this.posX, targetPos.getY() - this.posY, targetPos.getZ() - this.posZ);
+        Vector3d partPos = new Vector3d(this.posX, this.posY, this.posZ);
+        Vector3d targetDirection = new Vector3d(targetPos.getX() - this.posX, targetPos.getY() - this.posY, targetPos.getZ() - this.posZ);
 
         //The total distance between the particle and target
         double totalDistance = targetPos.distanceTo(partPos);

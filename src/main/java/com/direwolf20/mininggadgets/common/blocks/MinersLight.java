@@ -22,7 +22,11 @@ public class MinersLight extends Block {
 
     public MinersLight() {
         super(
-                Block.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().hardnessAndResistance(0.0f).lightValue(14)
+                Block.Properties
+                        .create(Material.MISCELLANEOUS)
+                        .doesNotBlockMovement()
+                        .hardnessAndResistance(0.0f)
+                        .setLightLevel(e -> 14)
         );
     }
 

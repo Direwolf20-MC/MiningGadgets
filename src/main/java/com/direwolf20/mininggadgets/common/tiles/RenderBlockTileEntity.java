@@ -14,8 +14,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -105,7 +105,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private void freeze(ItemStack stack) {
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
-            IFluidState state = world.getFluidState(sidePos);
+            FluidState state = world.getFluidState(sidePos);
             int freezeCost = Config.UPGRADECOST_FREEZE.get() * -1;
             if (state.getFluid().isEquivalentTo(Fluids.LAVA) && state.getFluid().isSource(state)) {
                 world.setBlockState(sidePos, Blocks.OBSIDIAN.getDefaultState());
@@ -227,14 +227,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         return write(new CompoundNBT());
     }
 
-    @Override
+    /*@Override
     public void handleUpdateTag(CompoundNBT tag) {
         read(tag);
-    }
+    }*/ //TODO Figure out if this is still necessary
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        read(pkt.getNbtCompound());
+        read(this.getBlockState(), pkt.getNbtCompound());
     }
 
     public void markDirtyClient() {
@@ -246,8 +246,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     @Override
-    public void read(CompoundNBT tag) {
-        super.read(tag);
+    public void read(BlockState state, CompoundNBT tag) {
+        super.read(state, tag);
         renderBlock = NBTUtil.readBlockState(tag.getCompound("renderBlock"));
         originalDurability = tag.getInt("originalDurability");
         priorDurability = tag.getInt("priorDurability");
