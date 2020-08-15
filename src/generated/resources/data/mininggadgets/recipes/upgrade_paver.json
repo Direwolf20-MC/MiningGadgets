@@ -2,12 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "rgr",
-    "gug",
+    "cuc",
     "lpw"
   ],
   "key": {
     "r": {
       "tag": "forge:dusts/redstone"
+    },
+    "c": {
+      "tag": "forge:cobblestone"
     },
     "u": {
       "item": "mininggadgets:upgrade_empty"
