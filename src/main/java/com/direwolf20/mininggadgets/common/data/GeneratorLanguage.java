@@ -77,6 +77,8 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.item.battery_boost", "Battery Boost: %1$d");
         addPrefixed("tooltip.item.break_cost", "Per Block Cost: %1$d");
 
+        addPrefixed("text.shift_click", "Shift click in and out of the GUI");
+
         // Screen Buttons and text
         addPrefixed("tooltip.screen.size", "Size: %1$d x %1$d");
         addPrefixed("tooltip.screen.range", "Range");

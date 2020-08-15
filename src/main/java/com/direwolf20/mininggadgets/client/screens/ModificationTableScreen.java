@@ -47,7 +47,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         stack.push();
         stack.translate(xSize / 2f, guiTop - 70, 0);
         stack.scale(.8f, .8f, .8f);
-        drawCenteredString(stack, font,"Shift click in and out of the GUI", 0, 0, 0xFFFFFF);
+        drawCenteredString(stack, font,new TranslationTextComponent(String.format("%s.%s", MiningGadgets.MOD_ID, "text.shift_click")), 0, 0, 0xFFFFFF);
         stack.pop();
     }
 
