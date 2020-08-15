@@ -104,7 +104,7 @@ public class RenderMiningLaser2 {
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
         drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness/2, activeHand, distance, v, v + distance * 1.5, ticks, beam2r,beam2g,beam2b,1f);
         matrix.pop();
-        RenderSystem.disableDepthTest();
+//        RenderSystem.disableDepthTest();
         buffer.finish();
     }
 
