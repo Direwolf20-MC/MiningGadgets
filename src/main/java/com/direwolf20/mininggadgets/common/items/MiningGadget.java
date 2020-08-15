@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.items;
 
+import com.direwolf20.mininggadgets.client.OurKeys;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.Config;
@@ -53,6 +54,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.ForgeI18n;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -225,8 +227,11 @@ public class MiningGadget extends Item {
         if (!world.isRemote)
             MiningProperties.setCanMine(itemstack, true);
 
-        if (world.isRemote)
-            ModScreens.openGadgetSettingsScreen(itemstack);
+        if (world.isRemote) {
+            if (OurKeys.shiftClickGuiBinding.getKey() == InputMappings.INPUT_INVALID) {
+                ModScreens.openGadgetSettingsScreen(itemstack);
+            }
+        }
 
         return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }

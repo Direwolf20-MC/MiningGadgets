@@ -28,6 +28,7 @@
   "itemGroup.mininggadgets": "Mining Gadgets",
   "mininggadgets.gadget.energy": "Energy: %d/%d",
   "mininggadgets.gadget.range_change": "Range Change: %1$d x %1$d",
+  "mininggadgets.text.open_gui": "Open Mining Gadget Settings",
   "mininggadgets.text.shift_click": "Shift click in and out of the GUI",
   "mininggadgets.tooltip.item.battery_boost": "Battery Boost: %1$d",
   "mininggadgets.tooltip.item.break_cost": "Per Block Cost: %1$d",

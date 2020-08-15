@@ -78,6 +78,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.item.break_cost", "Per Block Cost: %1$d");
 
         addPrefixed("text.shift_click", "Shift click in and out of the GUI");
+        addPrefixed("text.open_gui", "Open Mining Gadget Settings");
 
         // Screen Buttons and text
         addPrefixed("tooltip.screen.size", "Size: %1$d x %1$d");
