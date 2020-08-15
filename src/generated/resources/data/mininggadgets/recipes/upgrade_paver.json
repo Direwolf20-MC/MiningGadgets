@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "rgr",
+    "gug",
+    "lpw"
+  ],
+  "key": {
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_empty"
+    },
+    "g": {
+      "tag": "forge:nuggets/gold"
+    },
+    "l": {
+      "item": "minecraft:lava_bucket"
+    },
+    "p": {
+      "item": "minecraft:piston"
+    },
+    "w": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "result": {
+    "item": "mininggadgets:upgrade_paver"
+  }
+}

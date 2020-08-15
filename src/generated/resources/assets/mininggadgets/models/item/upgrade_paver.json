@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "mininggadgets:item/upgrade_paver"
+  }
+}

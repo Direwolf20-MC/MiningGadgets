@@ -30,6 +30,8 @@ public enum Upgrade {
     FREEZING("freezing", () -> 0),
     THREE_BY_THREE("three_by_three", () -> 0, false),
     LIGHT_PLACER("light_placer", () -> 0),
+    PAVER("paver", () -> 10),
+    
     // Tiered
     FORTUNE_1("fortune_1", 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
     FORTUNE_2("fortune_2", 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),

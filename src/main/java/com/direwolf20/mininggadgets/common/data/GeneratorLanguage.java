@@ -27,6 +27,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.LIGHT_PLACER, "Upgrade: Light Placer");
         addItem(ModItems.MAGNET, "Upgrade: Magnet");
         addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
+        addItem(ModItems.PAVER, "Upgrade: Paver");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
         addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
@@ -55,6 +56,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");
         add("tooltop.mininggadgets.range", "Extends your range by 5 times with each tier");
         add("tooltop.mininggadgets.efficiency", "Applies efficiency to the Mining Gadget");
+        add("tooltop.mininggadgets.paver", "Creates a path for you as you mine");
 
         // Blocks
         addBlock(ModBlocks.MINERS_LIGHT, "Miner's Light");
