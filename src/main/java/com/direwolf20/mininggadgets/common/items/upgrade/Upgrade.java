@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.common.items.upgrade;
 import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
+import net.minecraft.item.ItemStack;
 
 /**
  * The upgrade enum will serve as a single point of truth for all of the upgrades that are
@@ -54,12 +55,14 @@ public enum Upgrade {
     private boolean active = true;
     private boolean isToggleable;
     private String tooltop;
+    private ItemStack upgradeStack;
 
     Upgrade(String name, int tier, int costPerBlock, boolean isToggleable) {
         this.name = name;
         this.tier = tier;
         this.costPerBlock = costPerBlock;
         this.card = new UpgradeCard(this, name.equals("empty") ? 64 : 1);
+        this.upgradeStack = new ItemStack(this.card);
         this.baseName = tier == -1 ? name : name.substring(0, name.lastIndexOf('_'));
         this.isToggleable = isToggleable;
         this.tooltop = "tooltop.mininggadgets." + this.baseName;
@@ -83,6 +86,10 @@ public enum Upgrade {
 
     public UpgradeCard getCard() {
         return card;
+    }
+
+    public ItemStack getStack() {
+        return upgradeStack;
     }
 
     public int getTier() {

@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -43,6 +44,11 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
     @Override
     protected void func_230451_b_(MatrixStack stack, int mouseX, int mouseY) { // @mcp: func_230451_b_ = drawGuiContainerForegroundLayer
+        stack.push();
+        stack.translate(xSize / 2f, guiTop - 70, 0);
+        stack.scale(.8f, .8f, .8f);
+        drawCenteredString(stack, font,"Shift click in and out of the GUI", 0, 0, 0xFFFFFF);
+        stack.pop();
     }
 
     @Override
@@ -124,7 +130,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
             super.render(stack, mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                this.parent.renderTooltip(stack, new TranslationTextComponent(this.upgrade.getLocal()), mouseX, mouseY);
+                this.parent.renderTooltip(stack, this.upgrade.getStack().getTooltip(this.parent.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL), mouseX, mouseY);
         }
     }
 }
