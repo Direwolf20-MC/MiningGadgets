@@ -79,7 +79,8 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.item.battery_boost", "Battery Boost: %1$d");
         addPrefixed("tooltip.item.break_cost", "Per Block Cost: %1$d");
 
-        addPrefixed("text.shift_click", "Shift click in and out of the GUI");
+        addPrefixed("text.modification_table", "Modification Table");
+        addPrefixed("text.empty_table_helper", "Shift click to insert from your slots\nor drop upgrade onto this screen.\n\nClick upgrade to remove.");
         addPrefixed("text.open_gui", "Open Mining Gadget Settings");
 
         // Screen Buttons and text

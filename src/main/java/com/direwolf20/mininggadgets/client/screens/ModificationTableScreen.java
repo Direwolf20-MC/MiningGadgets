@@ -19,8 +19,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.gui.ScrollPanel;
+import net.minecraftforge.fml.ForgeI18n;
 
 public class ModificationTableScreen extends ContainerScreen<ModificationTableContainer> {
     private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
@@ -48,11 +50,23 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
     @Override
     protected void func_230451_b_(MatrixStack stack, int mouseX, int mouseY) { // @mcp: func_230451_b_ = drawGuiContainerForegroundLayer
-        stack.push();
-        stack.translate(xSize / 2f, guiTop - 70, 0);
-        stack.scale(.8f, .8f, .8f);
-        drawCenteredString(stack, font,new TranslationTextComponent(String.format("%s.%s", MiningGadgets.MOD_ID, "text.shift_click")), 0, 0, 0xFFFFFF);
-        stack.pop();
+        drawCenteredString(stack, font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), xSize / 2, guiTop - 70, 0xFFFFFF);
+
+        if (this.container.getUpgradesCache().size() == 0) {
+            String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
+            String[] parts = string.split("\n");
+            for (int i = 0; i < parts.length; i++) {
+                drawScaledCenteredString(stack, guiLeft - this.xSize + 40, guiTop - 35 + (i * font.FONT_HEIGHT), .8f, parts[i], 0xFFFFFF);
+            }
+        }
+    }
+
+    private void drawScaledCenteredString(MatrixStack matrices, int x, int y, float scale, String textComponent, int color) {
+        matrices.push();
+        matrices.translate(x, y, 0);
+        matrices.scale(scale, scale, scale);
+        drawString(matrices, font, textComponent, 0, 0, color);
+        matrices.pop();
     }
 
     @Override
