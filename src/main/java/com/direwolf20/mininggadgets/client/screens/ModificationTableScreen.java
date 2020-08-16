@@ -2,9 +2,11 @@ package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
+import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
+import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -24,6 +26,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
     private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
     private BlockPos tePos;
     private ModificationTableContainer container;
+    private PlayerInventory playerInventory;
     private ScrollingUpgrades scrollingUpgrades;
 
 
@@ -31,6 +34,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         super(container, inv, name);
         this.tePos = container.getTE().getPos();
         this.container = container;
+        this.playerInventory = inv;
     }
 
     @Override
@@ -67,6 +71,19 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         this.scrollingUpgrades = new ScrollingUpgrades(Minecraft.getInstance(), this.xSize - 14, 72, guiTop + 7, guiLeft + 7, this);
         this.children.add(this.scrollingUpgrades);
    }
+
+    @Override
+    public boolean mouseClicked(double mouseXIn, double mouseYIn, int p_231044_5_) {
+        ItemStack heldStack = this.playerInventory.getItemStack();
+        if (!heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
+            if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
+                // Send packet to remove the item from the inventory and add it to the table
+                PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
+                playerInventory.setItemStack(ItemStack.EMPTY);
+            }
+        }
+        return super.mouseClicked(mouseXIn, mouseYIn, p_231044_5_);
+    }
 
     private static class ScrollingUpgrades extends ScrollPanel {
         ModificationTableScreen parent;
