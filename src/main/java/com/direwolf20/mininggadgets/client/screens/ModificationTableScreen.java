@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
@@ -93,7 +94,8 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
     @Override
     public boolean mouseClicked(double mouseXIn, double mouseYIn, int p_231044_5_) {
         ItemStack heldStack = this.playerInventory.getItemStack();
-        if (!heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
+        ItemStack gadget = this.container.inventorySlots.get(0).getStack();
+        if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
             if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
                 // Send packet to remove the item from the inventory and add it to the table
                 PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
