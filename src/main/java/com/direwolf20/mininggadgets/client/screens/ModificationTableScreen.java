@@ -46,19 +46,23 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
         this.scrollingUpgrades.render(stack, mouseX, mouseY, partialTicks);
         this.func_230459_a_(stack, mouseX, mouseY); // @mcp: func_230459_a_ = renderHoveredToolTip
-    }
 
-    @Override
-    protected void func_230451_b_(MatrixStack stack, int mouseX, int mouseY) { // @mcp: func_230451_b_ = drawGuiContainerForegroundLayer
-        drawCenteredString(stack, font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), xSize / 2, guiTop - 70, 0xFFFFFF);
+        int relX = (this.width) / 2;
+        int relY = (this.height) / 2;
+
+        drawCenteredString(stack, font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 105, 0xFFFFFF);
 
         if (this.container.getUpgradesCache().size() == 0) {
             String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
             String[] parts = string.split("\n");
             for (int i = 0; i < parts.length; i++) {
-                drawScaledCenteredString(stack, guiLeft - this.xSize + 40, guiTop - 35 + (i * font.FONT_HEIGHT), .8f, parts[i], 0xFFFFFF);
+                drawScaledCenteredString(stack, (relX + 17) - (font.getStringWidth(parts[0]) / 2), (relY - 68) + (i * font.FONT_HEIGHT), .8f, parts[i], 0xFFFFFF);
             }
         }
+    }
+
+    @Override
+    protected void func_230451_b_(MatrixStack stack, int mouseX, int mouseY) { // @mcp: func_230451_b_ = drawGuiContainerForegroundLayer
     }
 
     private void drawScaledCenteredString(MatrixStack matrices, int x, int y, float scale, String textComponent, int color) {
