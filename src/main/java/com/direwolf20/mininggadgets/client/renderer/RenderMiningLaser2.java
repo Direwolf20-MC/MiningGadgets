@@ -6,7 +6,6 @@ import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -67,7 +66,7 @@ public class RenderMiningLaser2 {
 
         IVertexBuilder builder;
         ItemStack stack = player.getHeldItem(activeHand);
-        double distance = from.subtract(trace.getHitVec()).length();
+        double distance = Math.max(1, from.subtract(trace.getHitVec()).length());
         long gameTime = player.world.getGameTime();
         double v = gameTime * speedModifier;
         float additiveThickness = (thickness * 3.5f) * calculateLaserFlickerModifier(gameTime);
@@ -104,7 +103,7 @@ public class RenderMiningLaser2 {
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
         drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness/2, activeHand, distance, v, v + distance * 1.5, ticks, beam2r,beam2g,beam2b,1f);
         matrix.pop();
-        RenderSystem.disableDepthTest();
+//        RenderSystem.disableDepthTest();
         buffer.finish();
     }
 
@@ -128,8 +127,8 @@ public class RenderMiningLaser2 {
         }
         float f = (MathHelper.lerp(ticks, player.prevRotationPitch, player.rotationPitch) - MathHelper.lerp(ticks, player.prevRenderArmPitch, player.renderArmPitch));
         float f1 = (MathHelper.lerp(ticks, player.prevRotationYaw, player.rotationYaw) - MathHelper.lerp(ticks, player.prevRenderArmYaw, player.renderArmYaw));
-        startXOffset = startXOffset + (f1 / 100000000);
-        startYOffset = startYOffset + (f / 100000000);
+        startXOffset = startXOffset + (f1 / 750);
+        startYOffset = startYOffset + (f / 750);
 
         Vector4f vec1 = new Vector4f(startXOffset, -thickness + startYOffset, startZOffset, 1.0F);
         vec1.transform(positionMatrix);

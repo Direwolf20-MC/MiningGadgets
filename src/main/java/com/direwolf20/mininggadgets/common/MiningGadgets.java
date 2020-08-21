@@ -2,12 +2,15 @@ package com.direwolf20.mininggadgets.common;
 
 import com.direwolf20.mininggadgets.client.ClientEvents;
 import com.direwolf20.mininggadgets.client.ClientSetup;
+import com.direwolf20.mininggadgets.client.OurKeys;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -15,6 +18,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -23,6 +27,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
 
 @Mod(MiningGadgets.MOD_ID)
 public class MiningGadgets
@@ -82,6 +87,7 @@ public class MiningGadgets
     private void setupClient(final FMLClientSetupEvent event) {
         // Register the container screens.
         ClientSetup.setup();
+        OurKeys.register();
         MinecraftForge.EVENT_BUS.register(ClientEvents.class);
     }
 

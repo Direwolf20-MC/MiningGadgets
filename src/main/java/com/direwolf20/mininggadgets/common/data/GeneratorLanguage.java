@@ -27,6 +27,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.LIGHT_PLACER, "Upgrade: Light Placer");
         addItem(ModItems.MAGNET, "Upgrade: Magnet");
         addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
+        addItem(ModItems.PAVER, "Upgrade: Paver");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
         addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
@@ -55,6 +56,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");
         add("tooltop.mininggadgets.range", "Extends your range by 5 times with each tier");
         add("tooltop.mininggadgets.efficiency", "Applies efficiency to the Mining Gadget");
+        add("tooltop.mininggadgets.paver", "Creates a path for you as you mine");
 
         // Blocks
         addBlock(ModBlocks.MINERS_LIGHT, "Miner's Light");
@@ -77,6 +79,10 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.item.battery_boost", "Battery Boost: %1$d");
         addPrefixed("tooltip.item.break_cost", "Per Block Cost: %1$d");
 
+        addPrefixed("text.modification_table", "Modification Table");
+        addPrefixed("text.empty_table_helper", "Shift click to insert from your slots\nor drop upgrade onto this screen.\n\nClick upgrade to remove.");
+        addPrefixed("text.open_gui", "Open Mining Gadget Settings");
+
         // Screen Buttons and text
         addPrefixed("tooltip.screen.size", "Size: %1$d x %1$d");
         addPrefixed("tooltip.screen.range", "Range");
@@ -84,12 +90,13 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.screen.mining_gadget", "Gadget Settings");
         addPrefixed("tooltip.screen.shrink", "Shrink Blocks");
         addPrefixed("tooltip.screen.fade", "Fade Blocks");
-        addPrefixed("tooltip.screen.red_inner", "Red Inner");
-        addPrefixed("tooltip.screen.green_inner", "Green Inner");
-        addPrefixed("tooltip.screen.blue_inner", "Blue Inner");
-        addPrefixed("tooltip.screen.red_outer", "Red Outer");
-        addPrefixed("tooltip.screen.green_outer", "Green Outer");
-        addPrefixed("tooltip.screen.blue_outer", "Blue Outer");
+        addPrefixed("tooltip.screen.red", "Red");
+        addPrefixed("tooltip.screen.green", "Green");
+        addPrefixed("tooltip.screen.blue", "Blue");
+        addPrefixed("tooltip.screen.block_break_style", "Breaking Style");
+        addPrefixed("tooltip.screen.outer_color", "Outer glow color");
+        addPrefixed("tooltip.screen.inner_color", "Inner beam color");
+        addPrefixed("tooltip.screen.beam_preview", "Beam preview");
         addPrefixed("tooltip.screen.visual_settings", "Visual Settings");
         addPrefixed("tooltip.screen.toggle_upgrades", "Toggle Upgrades");
         addPrefixed("tooltip.screen.edit_filters", "Edit Filters");

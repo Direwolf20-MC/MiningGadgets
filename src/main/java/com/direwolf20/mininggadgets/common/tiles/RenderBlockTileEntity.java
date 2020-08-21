@@ -47,7 +47,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private int durability;
     private UUID playerUUID;
     private int originalDurability;
-    private Random rand = new Random();
+    private final Random rand = new Random();
     private int ticksSinceMine = 0;
     private List<Upgrade> gadgetUpgrades;
     private List<ItemStack> gadgetFilters;
@@ -61,12 +61,35 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         super(RENDERBLOCK_TILE.get());
     }
 
-    public void setRenderBlock(BlockState state) {
-        renderBlock = state;
+    public static boolean blockAllowed(List<ItemStack> drops, List<ItemStack> filters, boolean isWhiteList) {
+        boolean blockAllowed = false;
+        for (ItemStack dropStack : drops) {
+            if (filters.size() == 0)
+                return true;
+
+            boolean contains = false;
+            for (ItemStack filter : filters) {
+                if (dropStack.isItemEqual(filter)) {
+                    contains = true;
+                    break;
+                }
+            }
+
+            blockAllowed = (isWhiteList && contains) || (!isWhiteList && !contains);
+
+            if (blockAllowed)
+                break;
+        }
+
+        return blockAllowed;
     }
 
     public BlockState getRenderBlock() {
         return renderBlock;
+    }
+
+    public void setRenderBlock(BlockState state) {
+        renderBlock = state;
     }
 
     public MiningProperties.BreakTypes getBreakType() {
@@ -149,18 +172,18 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public PlayerEntity getPlayer() {
-        if( getWorld() == null )
+        if (getWorld() == null)
             return null;
 
         return this.getWorld().getPlayerByUuid(playerUUID);
     }
 
-    public UUID getPlayerUUID() {
-        return this.playerUUID;
-    }
-
     public void setPlayer(PlayerEntity player) {
         this.playerUUID = player.getUniqueID();
+    }
+
+    public UUID getPlayerUUID() {
+        return this.playerUUID;
     }
 
     public int getTicksSinceMine() {
@@ -222,15 +245,15 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         return new SUpdateTileEntityPacket(pos, 0, getUpdateTag());
     }
 
-    @Override
-    public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
-    }
-
     /*@Override
     public void handleUpdateTag(CompoundNBT tag) {
         read(tag);
     }*/ //TODO Figure out if this is still necessary
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
+    }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
@@ -263,7 +286,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
-        if (renderBlock!= null)
+        if (renderBlock != null)
             tag.put("renderBlock", NBTUtil.writeBlockState(renderBlock));
         tag.putInt("originalDurability", originalDurability);
         tag.putInt("priorDurability", priorDurability);
@@ -280,7 +303,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void removeBlock() {
-        if (world == null || world.isRemote || playerUUID == null || playerUUID.equals(null))
+        if (world == null || world.isRemote || playerUUID == null)
             return;
 
         PlayerEntity player = world.getPlayerByUuid(playerUUID);
@@ -309,7 +332,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
         List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
 
-        if ( blockAllowed ) {
+        if (blockAllowed) {
             int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
             boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
@@ -319,7 +342,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                         // 1  = someone allowed the event meaning it's handled,
                         // -1 = someone blocked the event and thus we shouldn't drop it nor insert it
                         // 0  = no body captured the event and we should handle it by hand.
-                        if( wasPickedUp == 0 ) {
+                        if (wasPickedUp == 0) {
                             if (!player.addItemStackToInventory(drop))
                                 Block.spawnAsEntity(world, pos, drop);
                         }
@@ -339,19 +362,27 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             renderBlock.spawnAdditionalDrops(world, pos, tempTool); // Fixes silver fish basically...
         }
 
+        BlockState underState = world.getBlockState(this.pos.down());
+
         world.removeTileEntity(this.pos);
         world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+
+        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
+            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
+                world.setBlockState(this.pos.down(), Blocks.COBBLESTONE.getDefaultState());
+            }
+        }
 
         // Add to the break stats
         player.addStat(Stats.BLOCK_MINED.get(renderBlock.getBlock()));
 
         // Handle special cases
-        if(SpecialBlockActions.getRegister().containsKey(renderBlock.getBlock()))
+        if (SpecialBlockActions.getRegister().containsKey(renderBlock.getBlock()))
             SpecialBlockActions.getRegister().get(renderBlock.getBlock()).accept(world, pos, renderBlock);
     }
 
     private void resetBlock() {
-        if(world == null)
+        if (world == null)
             return;
 
         if (!world.isRemote) {
@@ -390,7 +421,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             }
 
 
-
         }
         //Server Only
         if (!world.isRemote) {
@@ -411,29 +441,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             }
             ticksSinceMine++;
         }
-    }
-
-    public static boolean blockAllowed(List<ItemStack> drops, List<ItemStack> filters, boolean isWhiteList) {
-        boolean blockAllowed = false;
-        for (ItemStack dropStack : drops) {
-            if( filters.size() == 0 )
-                return true;
-
-            boolean contains = false;
-            for (ItemStack filter: filters) {
-                if( dropStack.isItemEqual(filter) ) {
-                    contains = true;
-                    break;
-                }
-            }
-
-            blockAllowed = (isWhiteList && contains) || (!isWhiteList && !contains);
-
-            if( blockAllowed )
-                break;
-        }
-
-        return blockAllowed;
     }
 
     public void setBlockAllowed() {
