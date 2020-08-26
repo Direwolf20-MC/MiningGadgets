@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
       "model": "mininggadgets:block/modificationtable"
+    },
+    "facing=south": {
+      "model": "mininggadgets:block/modificationtable",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "mininggadgets:block/modificationtable",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "mininggadgets:block/modificationtable",
+      "y": 90
     }
   }
 }
