@@ -41,10 +41,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -113,7 +110,9 @@ public class MiningGadget extends Item {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         Minecraft mc = Minecraft.getInstance();
 
-        if (!InputMappings.isKeyDown(mc.getMainWindow().getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode())) {
+        boolean sneakPressed = InputMappings.isKeyDown(mc.getMainWindow().getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode());
+
+        if (!sneakPressed) {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
                     new TranslationTextComponent(mc.gameSettings.keyBindSneak.getTranslationKey()).getString().toLowerCase())
                     .mergeStyle(TextFormatting.GRAY));
@@ -130,10 +129,12 @@ public class MiningGadget extends Item {
         }
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
-                .ifPresent(energy -> tooltip.add(
-                        new TranslationTextComponent("mininggadgets.gadget.energy",
-                                MagicHelpers.tidyValue(energy.getEnergyStored()),
-                                MagicHelpers.tidyValue(energy.getMaxEnergyStored())).mergeStyle(TextFormatting.GREEN)));
+                .ifPresent(energy -> {
+                    TranslationTextComponent energyText = !sneakPressed
+                            ? new TranslationTextComponent("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
+                            : new TranslationTextComponent("mininggadgets.gadget.energy", String.format("%,d", energy.getEnergyStored()), String.format("%,d", energy.getMaxEnergyStored()));
+                    tooltip.add(energyText.mergeStyle(TextFormatting.GREEN));
+                });
     }
 
     @Override
