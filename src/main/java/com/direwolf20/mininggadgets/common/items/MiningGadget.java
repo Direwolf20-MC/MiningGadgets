@@ -164,7 +164,7 @@ public class MiningGadget extends Item {
         if (MiningProperties.getRange(tool) == 3)
             cost = cost * 9;
 
-        return energy.getEnergyStored() > cost;
+        return energy.getEnergyStored() >= cost;
     }
 
     public static boolean canMineBlock(ItemStack tool, World world, PlayerEntity player, BlockPos pos, BlockState state) {
@@ -386,8 +386,11 @@ public class MiningGadget extends Item {
                 pos = lookingAt.getPos().offset(side).offset(right);
 
             if (world.getLight(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
-                world.setBlockState(pos, ModBlocks.MINERS_LIGHT.get().getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
+                int energy = stack.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+                if (energy > Config.UPGRADECOST_LIGHT.get()) {
+                    world.setBlockState(pos, ModBlocks.MINERS_LIGHT.get().getDefaultState());
+                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
+                }
             }
         }
     }
