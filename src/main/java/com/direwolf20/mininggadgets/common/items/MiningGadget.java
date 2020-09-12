@@ -94,20 +94,16 @@ public class MiningGadget extends Item {
 
     @Override
     public double getDurabilityForDisplay(ItemStack stack) {
-        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
-        if (energy == null)
-            return 0;
-
-        return 1D - (energy.getEnergyStored() / (double) energy.getMaxEnergyStored());
+        return stack.getCapability(CapabilityEnergy.ENERGY, null)
+                .map(e -> 1D - (e.getEnergyStored() / (double) e.getMaxEnergyStored()))
+                .orElse(0D);
     }
 
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack) {
-        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
-        if (energy == null)
-            return super.getRGBDurabilityForDisplay(stack);
-
-        return MathHelper.hsvToRGB(Math.max(0.0F, (float) energy.getEnergyStored() / (float) energy.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F);
+        return stack.getCapability(CapabilityEnergy.ENERGY)
+                .map(e -> MathHelper.hsvToRGB(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
+                .orElse(super.getRGBDurabilityForDisplay(stack));
     }
 
     @Override
@@ -205,7 +201,7 @@ public class MiningGadget extends Item {
         // Only perform the shift action
         if (player.isSneaking()) {
             ActionResult<ItemStack> shiftResult = this.onItemShiftRightClick(world, player, hand, itemstack);
-            if (shiftResult.getType() != ActionResultType.PASS) {
+            if (shiftResult.getType() == ActionResultType.SUCCESS) {
                 return shiftResult;
             }
         }
