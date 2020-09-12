@@ -14,12 +14,13 @@ import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.fml.client.gui.widget.Slider;
 
 import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -185,8 +186,8 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
                     assert e instanceof Slider;
 
                     // This is a bit silly, not going to lie
-                    List<StringTextComponent> helpText = Arrays.stream(getTrans("tooltip.screen.delay_explain").getString().split("\n")).map(StringTextComponent::new).collect(Collectors.toList());
-                    renderTooltip(stack, helpText, ((Slider)e).x - 8, ((Slider)e).y + 40);
+                    List<ITextProperties> helpText = Arrays.stream(getTrans("tooltip.screen.delay_explain").getString().split("\n")).map(StringTextComponent::new).collect(Collectors.toList());
+                    renderTooltip(stack, LanguageMap.getInstance().func_244260_a(helpText), ((Slider)e).x - 8, ((Slider)e).y + 40);
                 }
             } else {
                 assert e instanceof ToggleButton;
@@ -215,7 +216,8 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
         InputMappings.Input mouseKey = InputMappings.getInputByCode(p_keyPressed_1_, p_keyPressed_2_);
         if (p_keyPressed_1_ == 256 || minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
-            onClose();
+            closeScreen();
+
             return true;
         }
 

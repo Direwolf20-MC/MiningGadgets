@@ -2,6 +2,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## 1.16.2
+### [1.5.1] - 2020-09-12
+> note: Lots has been ported up from `1.16.1` since our first `1.16.2 ` release see:
+> https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md#142---2020-09-12 and
+> https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md#141---2020-08-21 for more info
+
+#### Changed
+- Re-ported to 1.16.2... :+1:
+
 ### [1.5.0] - 2020-08-14
 
 #### Changed

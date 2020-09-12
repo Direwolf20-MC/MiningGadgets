@@ -371,10 +371,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                     player.giveExperiencePoints(exp);
             } else {
                 if (exp > 0)
-                    renderBlock.getBlock().dropXpOnBlockBreak(world, pos, exp);
+                    renderBlock.getBlock().dropXpOnBlockBreak((ServerWorld) world, pos, exp);
             }
 
-            renderBlock.spawnAdditionalDrops(world, pos, tempTool); // Fixes silver fish basically...
+            renderBlock.spawnAdditionalDrops((ServerWorld) world, pos, tempTool); // Fixes silver fish basically...
         }
 
         BlockState underState = world.getBlockState(this.pos.down());

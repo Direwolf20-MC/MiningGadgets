@@ -5,9 +5,9 @@ import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class GeneratorItemModels extends ItemModelProvider {
     public GeneratorItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper) {
