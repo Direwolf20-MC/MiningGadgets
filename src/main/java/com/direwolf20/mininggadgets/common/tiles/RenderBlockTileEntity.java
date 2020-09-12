@@ -26,9 +26,11 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.List;
@@ -126,21 +128,34 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void freeze(ItemStack stack) {
+        int freezeCost = Config.UPGRADECOST_FREEZE.get() * -1;
+        int energy = stack.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+
+        if (energy == 0) {
+            return;
+        }
+
         for (Direction side : Direction.values()) {
             BlockPos sidePos = pos.offset(side);
             FluidState state = world.getFluidState(sidePos);
-            int freezeCost = Config.UPGRADECOST_FREEZE.get() * -1;
             if (state.getFluid().isEquivalentTo(Fluids.LAVA) && state.getFluid().isSource(state)) {
-                world.setBlockState(sidePos, Blocks.OBSIDIAN.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
+                energy -= this.replaceBlockWithAlternative(world, sidePos, Blocks.OBSIDIAN.getDefaultState(), stack, freezeCost, energy);
             } else if (state.getFluid().isEquivalentTo(Fluids.WATER) && state.getFluid().isSource(state)) {
-                world.setBlockState(sidePos, Blocks.PACKED_ICE.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
+                energy -= this.replaceBlockWithAlternative(world, sidePos, Blocks.PACKED_ICE.getDefaultState(), stack, freezeCost, energy);
             } else if ((state.getFluid().isEquivalentTo(Fluids.WATER) || state.getFluid().isEquivalentTo(Fluids.LAVA)) && !state.getFluid().isSource(state)) {
-                world.setBlockState(sidePos, Blocks.COBBLESTONE.getDefaultState());
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(freezeCost, false));
+                energy -= this.replaceBlockWithAlternative(world, sidePos, Blocks.COBBLESTONE.getDefaultState(), stack, freezeCost, energy);
             }
         }
+    }
+
+    private int replaceBlockWithAlternative(World world, BlockPos pos, BlockState state, ItemStack stack, int costOfOperation, int remainingEnergy) {
+        if (remainingEnergy < costOfOperation) {
+            return 0;
+        }
+
+        stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(costOfOperation, false));
+        world.setBlockState(pos, state);
+        return costOfOperation;
     }
 
     public void spawnParticle() {

@@ -1,12 +1,9 @@
 {
-  "parent": "minecraft:block/cube",
+  "parent": "minecraft:block/orientable_with_bottom",
   "textures": {
-    "down": "mininggadgets:block/modificationtable_bottom",
-    "up": "mininggadgets:block/modificationtable_top",
-    "north": "mininggadgets:block/modificationtable_side",
-    "south": "mininggadgets:block/modificationtable_side",
-    "east": "mininggadgets:block/modificationtable_side",
-    "west": "mininggadgets:block/modificationtable_side",
-    "particle": "mininggadgets:block/modificationtable_side"
+    "side": "mininggadgets:block/modificationtable_side",
+    "front": "mininggadgets:block/modificationtable_front",
+    "bottom": "mininggadgets:block/modificationtable_bottom",
+    "top": "mininggadgets:block/modificationtable_top"
   }
 }
