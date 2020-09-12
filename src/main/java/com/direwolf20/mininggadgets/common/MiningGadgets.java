@@ -2,15 +2,19 @@ package com.direwolf20.mininggadgets.common;
 
 import com.direwolf20.mininggadgets.client.ClientEvents;
 import com.direwolf20.mininggadgets.client.ClientSetup;
+import com.direwolf20.mininggadgets.client.OurKeys;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
+import net.minecraft.block.*;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -64,8 +68,27 @@ public class MiningGadgets
     @SubscribeEvent
     public void rightClickEvent(PlayerInteractEvent.RightClickBlock event) {
         ItemStack stack = MiningGadget.getGadget(event.getPlayer());
-        if( stack.getItem() instanceof MiningGadget )
-            event.setCanceled(true);
+        if( stack.getItem() instanceof MiningGadget ) {
+            if (this.stackIsAnnoying(event.getPlayer().getHeldItemMainhand()) ||
+                    this.stackIsAnnoying(event.getPlayer().getHeldItemOffhand())) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    /**
+     * I've tried to identity annoying offhand items that can be placed whilst mining.
+     * I assume some level of logic so we assume that you'd have that item in your offhand
+     * whilst using the gadget.
+     */
+    private boolean stackIsAnnoying(ItemStack stack) {
+        // This should never happen but I like casting safety
+        if (!(stack.getItem() instanceof BlockItem))
+            return false;
+
+        Block block = ((BlockItem) stack.getItem()).getBlock();
+        return block instanceof TorchBlock || block instanceof LanternBlock || block.equals(Blocks.GLOWSTONE)
+                || block instanceof RedstoneLampBlock || block instanceof EndRodBlock;
     }
 
     private void setup(final FMLCommonSetupEvent event)
@@ -82,6 +105,7 @@ public class MiningGadgets
     private void setupClient(final FMLClientSetupEvent event) {
         // Register the container screens.
         ClientSetup.setup();
+        OurKeys.register();
         MinecraftForge.EVENT_BUS.register(ClientEvents.class);
     }
 

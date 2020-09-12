@@ -276,5 +276,19 @@ public class GeneratorRecipes extends RecipeProvider {
                 .patternLine("ror")
                 .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
                 .build(consumer);
+
+        ShapedRecipeBuilder.shapedRecipe(PAVER.get())
+                .key('r', Tags.Items.DUSTS_REDSTONE)
+                .key('c', Tags.Items.COBBLESTONE)
+                .key('u', UPGRADE_EMPTY.get())
+                .key('g', Tags.Items.NUGGETS_GOLD)
+                .key('l', Items.LAVA_BUCKET)
+                .key('p', Blocks.PISTON)
+                .key('w', Items.WATER_BUCKET)
+                .patternLine("rgr")
+                .patternLine("cuc")
+                .patternLine("lpw")
+                .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
+                .build(consumer);
     }
 }

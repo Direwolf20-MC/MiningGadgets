@@ -42,7 +42,7 @@ public class UpgradeCard extends Item {
                 });
             }
 
-            tooltip.add(new TranslationTextComponent(this.upgrade.getTooltop()).mergeStyle(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent(this.upgrade.getToolTip()).mergeStyle(TextFormatting.GRAY));
         }
 
     }

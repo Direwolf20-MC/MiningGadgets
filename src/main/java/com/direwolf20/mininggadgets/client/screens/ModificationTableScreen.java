@@ -2,27 +2,34 @@ package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
+import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.gui.ScrollPanel;
+import net.minecraftforge.fml.ForgeI18n;
 
 public class ModificationTableScreen extends ContainerScreen<ModificationTableContainer> {
     private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
     private BlockPos tePos;
     private ModificationTableContainer container;
+    private PlayerInventory playerInventory;
     private ScrollingUpgrades scrollingUpgrades;
 
 
@@ -30,6 +37,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         super(container, inv, name);
         this.tePos = container.getTE().getPos();
         this.container = container;
+        this.playerInventory = inv;
     }
 
     @Override
@@ -39,10 +47,31 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
         this.scrollingUpgrades.render(stack, mouseX, mouseY, partialTicks);
         this.func_230459_a_(stack, mouseX, mouseY); // @mcp: func_230459_a_ = renderHoveredToolTip
+
+        int relX = (this.width) / 2;
+        int relY = (this.height) / 2;
+
+        drawCenteredString(stack, font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 105, 0xFFFFFF);
+
+        if (this.container.getUpgradesCache().size() == 0) {
+            String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
+            String[] parts = string.split("\n");
+            for (int i = 0; i < parts.length; i++) {
+                drawScaledCenteredString(stack, (relX + 17) - (font.getStringWidth(parts[0]) / 2), (relY - 68) + (i * font.FONT_HEIGHT), .8f, parts[i], 0xFFFFFF);
+            }
+        }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
+    }
+
+    private void drawScaledCenteredString(MatrixStack matrices, int x, int y, float scale, String textComponent, int color) {
+        matrices.push();
+        matrices.translate(x, y, 0);
+        matrices.scale(scale, scale, scale);
+        drawString(matrices, font, textComponent, 0, 0, color);
+        matrices.pop();
     }
 
     @Override
@@ -61,6 +90,20 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         this.scrollingUpgrades = new ScrollingUpgrades(Minecraft.getInstance(), this.xSize - 14, 72, guiTop + 7, guiLeft + 7, this);
         this.children.add(this.scrollingUpgrades);
    }
+
+    @Override
+    public boolean mouseClicked(double mouseXIn, double mouseYIn, int p_231044_5_) {
+        ItemStack heldStack = this.playerInventory.getItemStack();
+        ItemStack gadget = this.container.inventorySlots.get(0).getStack();
+        if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
+            if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
+                // Send packet to remove the item from the inventory and add it to the table
+                PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
+                playerInventory.setItemStack(ItemStack.EMPTY);
+            }
+        }
+        return super.mouseClicked(mouseXIn, mouseYIn, p_231044_5_);
+    }
 
     private static class ScrollingUpgrades extends ScrollPanel {
         ModificationTableScreen parent;
@@ -124,7 +167,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
             super.render(stack, mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                this.parent.renderTooltip(stack, new TranslationTextComponent(this.upgrade.getLocal()), mouseX, mouseY);
+                this.parent.renderTooltip(stack, this.upgrade.getStack().getTooltip(this.parent.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL), mouseX, mouseY);
         }
     }
 }

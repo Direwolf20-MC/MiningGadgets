@@ -2,12 +2,15 @@ package com.direwolf20.mininggadgets.client;
 
 import com.direwolf20.mininggadgets.client.renderer.BlockOverlayRender;
 import com.direwolf20.mininggadgets.client.renderer.RenderMiningLaser2;
+import com.direwolf20.mininggadgets.client.screens.ModScreens;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.DrawHighlightEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -42,6 +45,22 @@ public class ClientEvents {
                     RenderMiningLaser2.renderLaser(evt, player, Minecraft.getInstance().getRenderPartialTicks());
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    static void keyPressed(InputEvent.KeyInputEvent event) {
+        if (OurKeys.shiftClickGuiBinding.isPressed() && Minecraft.getInstance().currentScreen == null) {
+            if (Minecraft.getInstance().player == null) {
+                return;
+            }
+
+            ItemStack gadget = MiningGadget.getGadget(Minecraft.getInstance().player);
+            if (gadget.isEmpty()) {
+                return;
+            }
+
+            ModScreens.openGadgetSettingsScreen(gadget);
         }
     }
 }

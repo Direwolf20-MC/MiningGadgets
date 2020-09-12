@@ -134,7 +134,7 @@ public class ModificationTableContainer extends Container {
                     else
                         return ItemStack.EMPTY;
                 } else if (index < 29) {
-                    if (!this.mergeItemStack(stack, 29, 38, false)) {
+                    if (!this.mergeItemStack(stack, 29, 37, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (index < 38 && !this.mergeItemStack(stack, 1, 29, false)) {
