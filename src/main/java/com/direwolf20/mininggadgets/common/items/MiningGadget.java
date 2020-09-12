@@ -206,12 +206,8 @@ public class MiningGadget extends Item {
         ItemStack itemstack = player.getHeldItem(hand);
 
         // Only perform the shift action
-        if (player.isSneaking()) {
-            ActionResult<ItemStack> shiftResult = this.onItemShiftRightClick(world, player, hand, itemstack);
-            if (shiftResult.getType() == ActionResultType.SUCCESS) {
-                return shiftResult;
-            }
-        }
+        if (player.isSneaking())
+            return this.onItemShiftRightClick(world, player, hand, itemstack);
 
         if (world.isRemote) {
             float volume = MiningProperties.getVolume(itemstack);
@@ -231,17 +227,16 @@ public class MiningGadget extends Item {
         // Debug code for free energy
         //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(1500000000, false));
 
-        if (!world.isRemote) {
+        if (!world.isRemote)
             MiningProperties.setCanMine(itemstack, true);
-            return ActionResult.resultPass(itemstack);
+
+        if (world.isRemote) {
+            if (OurKeys.shiftClickGuiBinding.getKey() == InputMappings.INPUT_INVALID) {
+                ModScreens.openGadgetSettingsScreen(itemstack);
+            }
         }
 
-        if (OurKeys.shiftClickGuiBinding.getKey() == InputMappings.INPUT_INVALID) {
-            ModScreens.openGadgetSettingsScreen(itemstack);
-            return ActionResult.resultSuccess(itemstack);
-        }
-
-        return ActionResult.resultPass(itemstack);
+        return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
     }
 
     public List<BlockPos> findSources(World world, List<BlockPos> coords) {
