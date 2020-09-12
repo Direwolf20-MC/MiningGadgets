@@ -9,6 +9,8 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import java.util.Objects;
+
 public class GeneratorBlockStates extends BlockStateProvider {
     public GeneratorBlockStates(DataGenerator gen, ExistingFileHelper exFileHelper) {
         super(gen, MiningGadgets.MOD_ID, exFileHelper);
@@ -16,16 +18,13 @@ public class GeneratorBlockStates extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        ResourceLocation side = modLoc("block/modificationtable_side");
-        // Sorry for the formatting on this one, it's because we have to define all the sides :(
-        getVariantBuilder(ModBlocks.MODIFICATION_TABLE.get()).forAllStates(state ->
-                ConfiguredModel.builder().modelFile(models().cube(
-                        ModBlocks.MODIFICATION_TABLE.get().getRegistryName().getPath(),
-                        modLoc("block/modificationtable_bottom"),
-                        modLoc("block/modificationtable_top"),
-                        side, side, side, side
-                ).texture("particle", side)).build()
-        );
+        horizontalBlock(ModBlocks.MODIFICATION_TABLE.get(), models().orientableWithBottom(
+                Objects.requireNonNull(ModBlocks.MODIFICATION_TABLE.get().getRegistryName()).getPath(),
+                modLoc("block/modificationtable_side"),
+                modLoc("block/modificationtable_front"),
+                modLoc("block/modificationtable_bottom"),
+                modLoc("block/modificationtable_top")
+        ).texture("particle", modLoc("block/modificationtable_side")));
 
         // Render block
         buildCubeAll(ModBlocks.RENDER_BLOCK.get());

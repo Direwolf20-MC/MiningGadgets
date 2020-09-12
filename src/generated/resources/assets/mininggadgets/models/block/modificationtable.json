@@ -4,6 +4,7 @@
     "side": "mininggadgets:block/modificationtable_side",
     "front": "mininggadgets:block/modificationtable_front",
     "bottom": "mininggadgets:block/modificationtable_bottom",
-    "top": "mininggadgets:block/modificationtable_top"
+    "top": "mininggadgets:block/modificationtable_top",
+    "particle": "mininggadgets:block/modificationtable_side"
   }
 }
