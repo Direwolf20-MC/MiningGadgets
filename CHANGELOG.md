@@ -8,7 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated to 1.16 :+1:
 
 ## 1.16.1
-### [1.4.1] - unreleased
+### [1.4.2] - 2020-09-12
+#### Added
+- A new render for when the Item is in your hand thanks to [ItsTheBdoge](https://github.com/ItsTheBdoge) :heart:
+- Added `hold shift` for full energy reading aka: `1M/1M FE` to `1,000,000/1,000,000 FE` It's nice! :D
+- Updated Modification table textures a bit
+
+#### Changed
+- You can now use right click on TileEntities with the Gadget in your hand again. The blocker on this operation has been modified to only apply to things you might have in your offhand like torches. It's not perfect, but the perfect option requires a PR to Forge...
+
+#### Fixed
+- Fixed the Mining Gadget going into negative energy due to a issue with freezing upgrade 
+
+### [1.4.1] - 2020-08-21
 #### Added
 - Added a (disabled by default) key binding to open the Gadgets settings screen. (When enabled, it will disable the shift right click action)
 - Added a Laser Beam preview to the Mining Gadget Visual Screen
