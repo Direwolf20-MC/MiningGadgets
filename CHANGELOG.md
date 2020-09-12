@@ -3,32 +3,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## 1.16.2
 ### [1.5.1] - 2020-09-12
-> note: most features below have been ported up from `1.16.1`
-
-#### Added
-- A new render for when the Item is in your hand thanks to [ItsTheBdoge](https://github.com/ItsTheBdoge) :heart:
-- Added `hold shift` for full energy reading aka: `1M/1M FE` to `1,000,000/1,000,000 FE` It's nice! :D
-- Updated Modification table textures a bit
-- Added a (disabled by default) key binding to open the Gadgets settings screen. (When enabled, it will disable the shift right click action)
-- Added a Laser Beam preview to the Mining Gadget Visual Screen
-- Added `Paver` upgrade which will place cobble (cost of 10FE per block) to create a path as you mine to cover up any holes. It will not place above your player's height, and we plan on changing it from cobble :D 
-- Modification table can now have upgrades dropped into it's upgrade area (pick up and drop down)
-- Modification table now has an `empty state` to show helper text on how to use the table.
-- Modification table now has a title :eyes:
+> note: Lots has been ported up from `1.16.1` since our first `1.16.2 ` release see:
+> https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md#142---2020-09-12 and
+> https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md#141---2020-08-21 for more info
 
 #### Changed
 - Re-ported to 1.16.2... :+1:
-- You can now use right click on TileEntities with the Gadget in your hand again. The blocker on this operation has been modified to only apply to things you might have in your offhand like torches. It's not perfect, but the perfect option requires a PR to Forge...
-- Improved the look of the Mining Gadget Visual Screen
-- The modification table will now show the full tooltip for you upgrades
-- Bumped forge version
-
-#### Fixed
-- Fixed the Mining Gadget going into negative energy due to a issue with freezing upgrade 
-- [#98] Config changes did not affect upgrade costs.
-- Fixed client crash on shift clicking items to the Modification Table
-- Fixed laser rendering through walls when another player is using the gadget
-
 
 ### [1.5.0] - 2020-08-14
 
