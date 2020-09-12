@@ -46,6 +46,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -66,7 +67,12 @@ public class MiningGadget extends Item {
     //private static int energyPerItem = 15;
 
     public MiningGadget() {
-        super(new Item.Properties().maxStackSize(1).group(MiningGadgets.itemGroup));
+        super(new Item.Properties()
+                .maxStackSize(1)
+                .group(MiningGadgets.itemGroup)
+                .addToolType(ToolType.PICKAXE, 3)
+                .setNoRepair());
+
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
