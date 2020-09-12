@@ -9,8 +9,8 @@ import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.block.*;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,7 +18,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -27,7 +26,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.glfw.GLFW;
 
 @Mod(MiningGadgets.MOD_ID)
 public class MiningGadgets
@@ -69,8 +67,27 @@ public class MiningGadgets
     @SubscribeEvent
     public void rightClickEvent(PlayerInteractEvent.RightClickBlock event) {
         ItemStack stack = MiningGadget.getGadget(event.getPlayer());
-        if( stack.getItem() instanceof MiningGadget )
-            event.setCanceled(true);
+        if( stack.getItem() instanceof MiningGadget ) {
+            if (this.stackIsAnnoying(event.getPlayer().getHeldItemMainhand()) ||
+                    this.stackIsAnnoying(event.getPlayer().getHeldItemOffhand())) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    /**
+     * I've tried to identity annoying offhand items that can be placed whilst mining.
+     * I assume some level of logic so we assume that you'd have that item in your offhand
+     * whilst using the gadget.
+     */
+    private boolean stackIsAnnoying(ItemStack stack) {
+        // This should never happen but I like casting safety
+        if (!(stack.getItem() instanceof BlockItem))
+            return false;
+
+        Block block = ((BlockItem) stack.getItem()).getBlock();
+        return block instanceof TorchBlock || block instanceof LanternBlock || block.equals(Blocks.GLOWSTONE)
+                || block instanceof RedstoneLampBlock || block instanceof EndRodBlock;
     }
 
     private void setup(final FMLCommonSetupEvent event)
