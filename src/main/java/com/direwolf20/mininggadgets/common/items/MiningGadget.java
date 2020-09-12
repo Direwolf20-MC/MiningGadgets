@@ -208,10 +208,16 @@ public class MiningGadget extends Item {
 //                return ActionResult.resultPass(itemstack);
             }
 
-            if (OurKeys.shiftClickGuiBinding.getKey() == InputMappings.INPUT_INVALID) {
-                ModScreens.openGadgetSettingsScreen(itemstack);
-                return ActionResult.resultPass(itemstack);
+            if (world.isRemote) {
+                if (OurKeys.shiftClickGuiBinding.getKey() == InputMappings.INPUT_INVALID) {
+                    ModScreens.openGadgetSettingsScreen(itemstack);
+                    return ActionResult.resultPass(itemstack);
+                }
             }
+
+            // INTENTIONALLY LEFT IN. I DON'T HAVE THE TIME TO FIX THIS ISSUE ATM
+            // @todo: migrate keybinding setting onto gadget so I can set a tag on the item
+            return ActionResult.resultPass(itemstack);
         }
 
         if (world.isRemote) {
