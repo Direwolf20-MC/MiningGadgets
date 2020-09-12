@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[33,)"
+loaderVersion="[34,)"
 issueTrackerURL="https://github.com/Direwolf20-MC/MiningGadgets"
 license="MIT (https://github.com/Direwolf20-MC/MiningGadgets/blob/master/LICENSE.txt)"
 
@@ -18,7 +18,7 @@ description='''Mining is better with lasers.'''
 [[dependencies.mininggadgets]]
     modId="forge"
     mandatory=true
-    versionRange="[33,)"
+    versionRange="[34,)"
     ordering="NONE"
     side="BOTH"
 
@@ -26,6 +26,6 @@ description='''Mining is better with lasers.'''
 [[dependencies.mininggadgets]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.2]"
+    versionRange="[1.16.3]"
     ordering="NONE"
     side="BOTH"
