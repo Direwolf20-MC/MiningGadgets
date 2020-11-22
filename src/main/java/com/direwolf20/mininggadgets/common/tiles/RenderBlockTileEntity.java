@@ -382,11 +382,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         world.removeTileEntity(this.pos);
         world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
 
-        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
-            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
-                world.setBlockState(this.pos.down(), Blocks.COBBLESTONE.getDefaultState());
-            }
-        }
+//        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
+//            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
+//                world.setBlockState(this.pos.down(), Blocks.COBBLESTONE.getDefaultState());
+//            }
+//        }
 
         // Add to the break stats
         player.addStat(Stats.BLOCK_MINED.get(renderBlock.getBlock()));
