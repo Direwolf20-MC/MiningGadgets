@@ -1,6 +1,23 @@
 # Mining Gadgets Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## 1.16.4
+### [1.7.1] - 2020-11-23
+
+#### Changed
+- Removed Paver upgrade as it was half done, it'll be re-added later on [#119](https://github.com/Direwolf20-MC/MiningGadgets/issues/119)
+
+#### Fixed
+- Fixed crashing when another mod blocks our render block [#120](https://github.com/Direwolf20-MC/MiningGadgets/issues/120)
+- Added bypass to right click event to allow mining redstone when close [#114](https://github.com/Direwolf20-MC/MiningGadgets/issues/114)
+- Fixed a client crashing when scrolling on an un-upgraded gadgets settings screen [#113](https://github.com/Direwolf20-MC/MiningGadgets/issues/113)
+- Fixed a compatibility issue with IE when right clicking to charge the gadget [#105](https://github.com/Direwolf20-MC/MiningGadgets/issues/105)
+- Finally fixed the issue with 'invalid key' on custom button binds [#108](https://github.com/Direwolf20-MC/MiningGadgets/issues/108) [#101](https://github.com/Direwolf20-MC/MiningGadgets/issues/101)
+- Fixed a lot of issues related to the filter screen voiding blocks, messing with sorter mods and more. [#123](https://github.com/Direwolf20-MC/MiningGadgets/issues/123)
+
+## [1.7.0] - 2020-11-14
+- Updated to 1.6.4
+
 ## 1.16.3
 ### [1.6.0] - 2020-09-12
 > note: Lots has been ported up from `1.16.1` since our first `1.16.2 ` release see:

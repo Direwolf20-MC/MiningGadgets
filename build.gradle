@@ -104,6 +104,9 @@ repositories {
     maven {
         url 'https://www.dogforce-games.com/maven/'
     }
+    maven {
+        url 'https://www.cursemaven.com'
+    }
 }
 
 dependencies {
@@ -115,6 +118,8 @@ dependencies {
     //JEI
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+
+//    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"

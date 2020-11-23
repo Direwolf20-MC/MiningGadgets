@@ -4,11 +4,10 @@ import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.FurnaceContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -26,37 +25,31 @@ public class FilterContainer extends Container {
     }
 
     private void setup(InvWrapper playerInventory, IItemHandler ghostInventory) {
-        int index = 0;
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 9; y ++) {
-                addSlot(new GhostSlot(ghostInventory, index , 8 + (18 * y), 18 + (x * 18)));
-                index ++;
+        int index = 0, x = 8, y = 143;
+
+        // Build the players inventory first, building from bottom to top, right to left. The (i>0) magic handles the
+        // space between the hotbar inventory and the players remaining inventory.
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 9; j++) {
+                addSlot(new SlotItemHandler(playerInventory, index, x + (j * 18), (y - (i > 0 ? 4 : 0)) - (i * 18)));
+                index++;
             }
         }
 
-        // Player inventory
-        addSlotBox(playerInventory, 9, 8, 85, 9, 18, 3, 18);
-        addSlotRange(playerInventory, 0, 8, 143, 9, 18);
-    }
-
-    private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
-        for (int i = 0; i < amount; i++) {
-            addSlot(new SlotItemHandler(handler, index, x, y));
-            x += dx;
-            index++;
-        }
-        return index;
-    }
-
-    private void addSlotBox(IItemHandler handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
-        for (int j = 0; j < verAmount; j++) {
-            index = addSlotRange(handler, index, x, y, horAmount, dx);
-            y += dy;
+        // Build the filter slots, this time building from top to bottom, left to right. Starting at index 0
+        index = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                addSlot(new GhostSlot(ghostInventory, index, 8 + (18 * j), 18 + (i * 18)));
+                index++;
+            }
         }
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) { return true; }
+    public boolean canInteractWith(PlayerEntity playerIn) {
+        return true;
+    }
 
     @Override
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
@@ -67,27 +60,43 @@ public class FilterContainer extends Container {
             ItemStack currentStack = slot.getStack();
 
             // Stop our items at the very least :P
-            if( currentStack.getItem() instanceof MiningGadget || currentStack.getItem() instanceof UpgradeCard)
+            if (currentStack.getItem() instanceof MiningGadget || currentStack.getItem() instanceof UpgradeCard)
                 return itemstack;
 
-            if( currentStack.isEmpty() )
+            if (currentStack.isEmpty())
                 return itemstack;
 
             // Find the first empty slot number
             int slotNumber = -1;
-            for( int i = 0; i <= 26; i ++ ) {
-                if( this.inventorySlots.get(i).getStack().isEmpty() ) {
+            for (int i = 36; i <= 62; i++) {
+                if (this.inventorySlots.get(i).getStack().isEmpty()) {
                     slotNumber = i;
                     break;
+                } else {
+                    if (this.inventorySlots.get(i).getStack().getItem() == currentStack.getItem()) {
+                        break;
+                    }
                 }
             }
 
-            if( slotNumber == -1 )
+            if (slotNumber == -1)
                 return itemstack;
 
             this.inventorySlots.get(slotNumber).putStack(currentStack.copy().split(1));
         }
 
         return itemstack;
+    }
+
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        if ((slotId < this.inventorySlots.size()
+                && slotId >= 0
+                && this.inventorySlots.get(slotId).getStack().getItem() instanceof MiningGadget)
+                || clickTypeIn == ClickType.SWAP) {
+            return ItemStack.EMPTY;
+        }
+
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 }
