@@ -20,7 +20,10 @@ import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.ControlsScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.InputMappings;
@@ -105,6 +108,7 @@ public class MiningGadget extends Item {
                 .orElse(super.getRGBDurabilityForDisplay(stack));
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         super.addInformation(stack, world, tooltip, flag);
@@ -112,11 +116,15 @@ public class MiningGadget extends Item {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         Minecraft mc = Minecraft.getInstance();
 
-        boolean sneakPressed = InputMappings.isKeyDown(mc.getMainWindow().getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode());
+        if (world == null || mc.player == null) {
+            return;
+        }
+
+        boolean sneakPressed = Screen.hasShiftDown();
 
         if (!sneakPressed) {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
-                    new TranslationTextComponent(mc.gameSettings.keyBindSneak.getTranslationKey()).getString().toLowerCase())
+                    "shift")
                     .mergeStyle(TextFormatting.GRAY));
         } else {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).mergeStyle(TextFormatting.RED));

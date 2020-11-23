@@ -72,7 +72,7 @@ public class GeneratorLanguage extends LanguageProvider {
         // Tooltips?
         addPrefixed("tooltip.single.insert", "Insert");
         addPrefixed("tooltip.single.filters", "Filters");
-        addPrefixed("tooltip.item.show_upgrades","Hold %s to show upgrades");
+        addPrefixed("tooltip.item.show_upgrades","Hold shift to show upgrades");
         addPrefixed("tooltip.item.upgrades", "Current Upgrades:");
         addPrefixed("tooltip.item.upgrade_cost", "Upgrade Cost: %1$d");
         addPrefixed("tooltip.item.use_cost", "+%1$d FE per use");
