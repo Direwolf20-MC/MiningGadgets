@@ -260,10 +260,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         return new SUpdateTileEntityPacket(pos, 0, getUpdateTag());
     }
 
-    /*@Override
-    public void handleUpdateTag(CompoundNBT tag) {
-        read(tag);
-    }*/ //TODO Figure out if this is still necessary
+    @Override
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        read(state, tag);
+    }
 
     @Override
     public CompoundNBT getUpdateTag() {
@@ -377,16 +377,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             renderBlock.spawnAdditionalDrops((ServerWorld) world, pos, tempTool); // Fixes silver fish basically...
         }
 
-        BlockState underState = world.getBlockState(this.pos.down());
+//        BlockState underState = world.getBlockState(this.pos.down());
 
         world.removeTileEntity(this.pos);
         world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
 
-        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
-            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
-                world.setBlockState(this.pos.down(), Blocks.COBBLESTONE.getDefaultState());
-            }
-        }
+//        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
+//            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
+//                world.setBlockState(this.pos.down(), Blocks.COBBLESTONE.getDefaultState());
+//            }
+//        }
 
         // Add to the break stats
         player.addStat(Stats.BLOCK_MINED.get(renderBlock.getBlock()));

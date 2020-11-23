@@ -30,7 +30,7 @@
   "mininggadgets.gadget.range_change": "Изменение диапазона: %1$d x %1$d",
   "mininggadgets.tooltip.item.battery_boost": "Усиление аккумулятора: %1$d",
   "mininggadgets.tooltip.item.break_cost": "Стоимость за блок: %1$d",
-  "mininggadgets.tooltip.item.show_upgrades": "Удерживайте %s чтоб посмотреть улучшения",
+  "mininggadgets.tooltip.item.show_upgrades": "Удерживайте сдвиг чтоб посмотреть улучшения",
   "mininggadgets.tooltip.item.upgrade_cost": "Стоимость улучшения: %1$d",
   "mininggadgets.tooltip.item.upgrades": "Текущие улучшения:",
   "mininggadgets.tooltip.item.use_cost": "+%1$d FE за использование",

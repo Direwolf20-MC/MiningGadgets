@@ -27,7 +27,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.LIGHT_PLACER, "Upgrade: Light Placer");
         addItem(ModItems.MAGNET, "Upgrade: Magnet");
         addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
-        addItem(ModItems.PAVER, "Upgrade: Paver");
+//        addItem(ModItems.PAVER, "Upgrade: Paver");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
         addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
@@ -72,7 +72,7 @@ public class GeneratorLanguage extends LanguageProvider {
         // Tooltips?
         addPrefixed("tooltip.single.insert", "Insert");
         addPrefixed("tooltip.single.filters", "Filters");
-        addPrefixed("tooltip.item.show_upgrades","Hold %s to show upgrades");
+        addPrefixed("tooltip.item.show_upgrades","Hold shift to show upgrades");
         addPrefixed("tooltip.item.upgrades", "Current Upgrades:");
         addPrefixed("tooltip.item.upgrade_cost", "Upgrade Cost: %1$d");
         addPrefixed("tooltip.item.use_cost", "+%1$d FE per use");

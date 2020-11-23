@@ -1,5 +1,9 @@
 {
   "homepage": "https://github.com/Direwolf20-MC/MiningGadgets",
+  "1.16.4": {
+    "1.7.1": "Changelog: https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md",
+    "1.7.0": "Changelog: https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md"
+  },
   "1.16.3": {
     "1.6.0": "Changelog: https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md"
   },
@@ -26,6 +30,8 @@
     "1.0.0": "Changelog: https://github.com/Direwolf20-MC/MiningGadgets/blob/master/CHANGELOG.md"
   },
   "promos": {
+    "1.16.4-latest": "1.7.1",
+    "1.16.4-recommended": "1.7.1",
     "1.16.3-latest": "1.6.0",
     "1.16.3-recommended": "1.6.0",
     "1.16.2-latest": "1.5.1",

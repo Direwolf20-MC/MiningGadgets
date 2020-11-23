@@ -14,7 +14,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -69,8 +68,9 @@ public class MiningGadgets
     public void rightClickEvent(PlayerInteractEvent.RightClickBlock event) {
         ItemStack stack = MiningGadget.getGadget(event.getPlayer());
         if( stack.getItem() instanceof MiningGadget ) {
-            if (this.stackIsAnnoying(event.getPlayer().getHeldItemMainhand()) ||
-                    this.stackIsAnnoying(event.getPlayer().getHeldItemOffhand())) {
+            if (this.stackIsAnnoying(event.getPlayer().getHeldItemMainhand())
+                    || this.stackIsAnnoying(event.getPlayer().getHeldItemOffhand())
+                    || event.getWorld().getBlockState(event.getPos()).getBlock() instanceof RedstoneOreBlock) {
                 event.setCanceled(true);
             }
         }

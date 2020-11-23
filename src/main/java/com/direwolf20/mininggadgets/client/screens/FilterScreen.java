@@ -19,7 +19,7 @@ import net.minecraft.util.text.TranslationTextComponent;
  */
 public class FilterScreen extends ContainerScreen<FilterContainer> {
     // Stealing the normal chest gui, should make this a tad simpler.
-    private static final ResourceLocation TEXTURE =  new ResourceLocation("textures/gui/container/generic_54.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
     public FilterScreen(FilterContainer container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
