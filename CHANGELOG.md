@@ -123,6 +123,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - The first release for 1.15.2 - I think its pretty stable? :)
 
 ## 1.14.4
+### [1.2.5]
+#### Fixed
+- Fixed an issue causing the game to crash with the custom render blocks [#49](https://github.com/Direwolf20-MC/MiningGadgets/issues/49)
+
 ### [1.2.4]
 #### Added
 - Added `ru` translations thanks to @Smollet777
