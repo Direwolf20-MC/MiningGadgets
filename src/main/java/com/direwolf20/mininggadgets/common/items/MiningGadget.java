@@ -20,9 +20,7 @@ import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.ControlsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -31,7 +29,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -41,18 +42,18 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.ForgeI18n;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -435,6 +436,12 @@ public class MiningGadget extends Item {
             int hasteLevel = hasteEffect.getAmplifier() + 1;
             toolSpeed = toolSpeed + (toolSpeed * ((hasteLevel * 20f) / 100));
         }
+
+        EffectInstance miningFatigue = player.getActivePotionEffect(Effects.MINING_FATIGUE);
+        if (miningFatigue != null) {
+            toolSpeed = toolSpeed / 3f;
+        }
+
         World world = player.getEntityWorld();
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
