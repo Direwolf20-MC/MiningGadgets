@@ -339,8 +339,14 @@ public class MiningGadget extends Item {
                         return;
                     }
                     List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
-                    world.setBlockState(coord, ModBlocks.RENDER_BLOCK.get().getDefaultState());
+                    boolean placed = world.setBlockState(coord, ModBlocks.RENDER_BLOCK.get().getDefaultState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getTileEntity(coord);
+
+                    if (!placed || te == null) {
+                        // this can happen when another mod rejects the set block state (fixes #120)
+                        return;
+                    }
+
                     te.setRenderBlock(state);
                     te.setBreakType(MiningProperties.getBreakType(stack));
                     te.setGadgetUpgrades(gadgetUpgrades);
