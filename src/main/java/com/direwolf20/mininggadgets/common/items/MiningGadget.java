@@ -1,9 +1,9 @@
 package com.direwolf20.mininggadgets.common.items;
 
-import com.direwolf20.mininggadgets.common.Config;
-import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
+import com.direwolf20.mininggadgets.common.Config;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
@@ -20,9 +20,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -114,9 +114,8 @@ public class MiningGadget extends Item {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         Minecraft mc = Minecraft.getInstance();
 
-        if (!InputMappings.isKeyDown(mc.getMainWindow().getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode())) {
-            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
-                    mc.gameSettings.keyBindSneak.getLocalizedName().toLowerCase())
+        if (!Screen.hasShiftDown()) {
+            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades")
                     .applyTextStyle(TextFormatting.GRAY));
         } else {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).applyTextStyle(TextFormatting.RED));

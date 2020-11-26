@@ -30,7 +30,7 @@
   "mininggadgets.gadget.range_change": "Range Change: %1$d x %1$d",
   "mininggadgets.tooltip.item.battery_boost": "Battery Boost: %1$d",
   "mininggadgets.tooltip.item.break_cost": "Per Block Cost: %1$d",
-  "mininggadgets.tooltip.item.show_upgrades": "Hold %s to show upgrades",
+  "mininggadgets.tooltip.item.show_upgrades": "Hold left shift to show upgrades",
   "mininggadgets.tooltip.item.upgrade_cost": "Upgrade Cost: %1$d",
   "mininggadgets.tooltip.item.upgrades": "Current Upgrades:",
   "mininggadgets.tooltip.item.use_cost": "+%1$d FE per use",
