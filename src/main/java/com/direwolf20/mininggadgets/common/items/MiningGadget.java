@@ -107,6 +107,10 @@ public class MiningGadget extends Item {
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         super.addInformation(stack, world, tooltip, flag);
 
+        if (world == null) {
+            return;
+        }
+
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         Minecraft mc = Minecraft.getInstance();
 
@@ -126,7 +130,7 @@ public class MiningGadget extends Item {
             }
         }
 
-        stack.getCapability(CapabilityEnergy.ENERGY, null)
+        stack.getCapability(CapabilityEnergy.ENERGY)
                 .ifPresent(energy -> tooltip.add(
                         new TranslationTextComponent("mininggadgets.gadget.energy",
                                 MagicHelpers.tidyValue(energy.getEnergyStored()),

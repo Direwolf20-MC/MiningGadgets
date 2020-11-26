@@ -245,12 +245,12 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
             rangeSlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
             rangeSlider.updateSlider();
         }
-        if( freezeDelaySlider.isMouseOver(mouseX, mouseY) ) {
+        if( freezeDelaySlider != null && freezeDelaySlider.isMouseOver(mouseX, mouseY) ) {
             freezeDelaySlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
             freezeDelaySlider.updateSlider();
         }
         if( volumeSlider.isMouseOver(mouseX, mouseY) ) {
-            volumeSlider.sliderValue += (1f * (delta > 0 ? 1 : -1));
+            volumeSlider.sliderValue += (.01f * (delta > 0 ? 1 : -1));
             volumeSlider.updateSlider();
         }
         return false;
