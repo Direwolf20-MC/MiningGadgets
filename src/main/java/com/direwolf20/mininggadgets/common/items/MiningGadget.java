@@ -104,6 +104,10 @@ public class MiningGadget extends Item {
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
         Minecraft mc = Minecraft.getInstance();
 
+        if (world == null) {
+            return;
+        }
+
         if (!InputMappings.isKeyDown(mc.mainWindow.getHandle(), mc.gameSettings.keyBindSneak.getKey().getKeyCode())) {
             tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
                     mc.gameSettings.keyBindSneak.getLocalizedName().toLowerCase())

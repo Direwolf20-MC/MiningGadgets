@@ -263,7 +263,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("priorDurability", priorDurability);
         tag.putInt("durability", durability);
         tag.putInt("ticksSinceMine", ticksSinceMine);
-        tag.putUniqueId("playerUUID", playerUUID);
+        if (playerUUID != null)
+            tag.putUniqueId("playerUUID", playerUUID);
         tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
         tag.putByte("breakType", (byte) breakType.ordinal());
         tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
