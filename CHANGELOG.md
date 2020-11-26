@@ -79,6 +79,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated the mod to 1.16.1 :+1:
 
 ## 1.15.2
+### [1.3.6] - 2020-11-26
+#### Fixed
+- Scrolling in the Mining Gadget menu crashing the game [#112](https://github.com/Direwolf20-MC/MiningGadgets/issues/112)
+- An issue where custom mouse buttons would crash the game [#92](https://github.com/Direwolf20-MC/MiningGadgets/issues/92)
+- Issues with the filter screen causing item voiding [#80](https://github.com/Direwolf20-MC/MiningGadgets/issues/80)
+- Fixed crashing when another mod blocks our render block [#120](https://github.com/Direwolf20-MC/MiningGadgets/issues/120)
+- Fixed crashing when another mod blocks our render block [#120](https://github.com/Direwolf20-MC/MiningGadgets/issues/120)
+
 ### [1.3.5] - 2020-03-29
 #### Added
 - Support for all (if they respect events) items that pick up items (dank storage, pocket storage, etc)
@@ -115,6 +123,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - The first release for 1.15.2 - I think its pretty stable? :)
 
 ## 1.14.4
+### [1.2.5]
+#### Fixed
+- Fixed an issue causing the game to crash with the custom render blocks [#49](https://github.com/Direwolf20-MC/MiningGadgets/issues/49)
+
 ### [1.2.4]
 #### Added
 - Added `ru` translations thanks to @Smollet777
