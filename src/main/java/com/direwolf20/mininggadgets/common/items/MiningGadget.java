@@ -33,6 +33,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
@@ -43,6 +44,7 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -58,6 +60,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class MiningGadget extends Item {
@@ -289,6 +292,19 @@ public class MiningGadget extends Item {
         world.addParticle(data, laserPos.x, laserPos.y, laserPos.z, 0.025, 0.025f, 0.025);
     }
 
+    private void spawnFireParticle(BlockPos sourcePos, ServerWorld world) {
+        double partType = rand.nextDouble();
+        if (partType < 0.75d) return;
+        double randomTX = rand.nextDouble();
+        double randomTY = rand.nextDouble();
+        double randomTZ = rand.nextDouble();
+
+        if (partType < 0.95d)
+            world.spawnParticle(ParticleTypes.FLAME, sourcePos.getX() + randomTX, sourcePos.getY() + randomTY, sourcePos.getZ() + randomTZ, 1, 0D, 0D, 0D, 0.0D);
+        else
+            world.spawnParticle(ParticleTypes.SMOKE, sourcePos.getX() + randomTX, sourcePos.getY() + randomTY, sourcePos.getZ() + randomTZ, 1, 0D, 0D, 0D, 0.0D);
+    }
+
     @OnlyIn(Dist.CLIENT)
     public void playLoopSound(LivingEntity player, ItemStack stack) {
         float volume = MiningProperties.getVolume(stack);
@@ -389,6 +405,9 @@ public class MiningGadget extends Item {
                     }
                     te.setDurability(durability, stack);
                     //}
+                }
+                if (player instanceof PlayerEntity && stack.getDisplayName().getString().toLowerCase(Locale.ROOT).contains("wildfirev")) {
+                    spawnFireParticle(coord, (ServerWorld)player.world);
                 }
             }
             if (!(UpgradeTools.containsActiveUpgrade(stack, Upgrade.LIGHT_PLACER)))
