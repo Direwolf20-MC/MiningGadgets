@@ -21,6 +21,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.*;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
+import java.util.Locale;
+
 public class RenderMiningLaser2 {
 
     private final static ResourceLocation laserBeam = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser.png");
@@ -73,7 +75,35 @@ public class RenderMiningLaser2 {
 
         float beam2r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f;
         float beam2g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f;
-        float beam2b =MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
+        float beam2b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
+
+        if (stack.getDisplayName().getString().toLowerCase(Locale.ROOT).contains("rgb")) {
+            if (beam2r < 1 && beam2g == 0)
+                MiningProperties.setColor(stack, (short) (beam2r * 255f + 1), MiningProperties.COLOR_RED_INNER);
+            else if (beam2b > 0 && beam2r == 1)
+                MiningProperties.setColor(stack, (short) (beam2b * 255f - 1), MiningProperties.COLOR_BLUE_INNER);
+            else if (beam2g < 1 && beam2r == 1)
+                MiningProperties.setColor(stack, (short) (beam2g * 255f + 1), MiningProperties.COLOR_GREEN_INNER);
+            else if (beam2r > 0 && beam2g == 1)
+                MiningProperties.setColor(stack, (short) (beam2r * 255f - 1), MiningProperties.COLOR_RED_INNER);
+            else if (beam2b < 1 && beam2g == 1)
+                MiningProperties.setColor(stack, (short) (beam2b * 255f + 1), MiningProperties.COLOR_BLUE_INNER);
+            else if (beam2g > 0 && beam2b == 1)
+                MiningProperties.setColor(stack, (short) (beam2g * 255f - 1), MiningProperties.COLOR_GREEN_INNER);
+
+            if (r < 1 && g == 0)
+                MiningProperties.setColor(stack, (short) (r * 255f + 1), MiningProperties.COLOR_RED);
+            else if (b > 0 && r == 1)
+                MiningProperties.setColor(stack, (short) (b * 255f - 1), MiningProperties.COLOR_BLUE);
+            else if (g < 1 && r == 1)
+                MiningProperties.setColor(stack, (short) (g * 255f + 1), MiningProperties.COLOR_GREEN);
+            else if (r > 0 && g == 1)
+                MiningProperties.setColor(stack, (short) (r * 255f - 1), MiningProperties.COLOR_RED);
+            else if (b < 1 && g == 1)
+                MiningProperties.setColor(stack, (short) (b * 255f + 1), MiningProperties.COLOR_BLUE);
+            else if (g > 0 && b == 1)
+                MiningProperties.setColor(stack, (short) (g * 255f - 1), MiningProperties.COLOR_GREEN);
+        }
 
         Vector3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
         IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
