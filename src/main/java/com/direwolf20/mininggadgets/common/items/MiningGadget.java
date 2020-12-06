@@ -20,9 +20,7 @@ import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.ControlsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -31,7 +29,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
@@ -42,19 +43,19 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.ForgeI18n;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -182,7 +183,7 @@ public class MiningGadget extends Item {
         if (!player.isAllowEdit() || !world.isBlockModifiable(player, pos))
             return false;
 
-        if(MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, state, player)))
+        if (MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, state, player)))
             return false;
 
         return canMine(tool);
@@ -331,6 +332,41 @@ public class MiningGadget extends Item {
             return;
 
 
+        if (!world.isRemote && stack.getDisplayName().getString().toLowerCase(Locale.ROOT).contains("rgb")) {
+            float beam2r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f;
+            float beam2g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f;
+            float beam2b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
+            float r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f;
+            float g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f;
+            float b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f;
+            if (beam2r < 1 && beam2g == 0)
+                MiningProperties.setColor(stack, (short) (beam2r * 255f + Math.min(255-(beam2r * 255f), 5)), MiningProperties.COLOR_RED_INNER);
+            else if (beam2b > 0 && beam2r == 1)
+                MiningProperties.setColor(stack, (short) (beam2b * 255f - Math.min(Math.abs(0-(beam2b * 255f)), 5)), MiningProperties.COLOR_BLUE_INNER);
+            else if (beam2g < 1 && beam2r == 1)
+                MiningProperties.setColor(stack, (short) (beam2g * 255f + Math.min(255-(beam2g * 255f), 5)), MiningProperties.COLOR_GREEN_INNER);
+            else if (beam2r > 0 && beam2g == 1)
+                MiningProperties.setColor(stack, (short) (beam2r * 255f - Math.min(Math.abs(0-(beam2r * 255f)), 5)), MiningProperties.COLOR_RED_INNER);
+            else if (beam2b < 1 && beam2g == 1)
+                MiningProperties.setColor(stack, (short) (beam2b * 255f + Math.min(255-(beam2b * 255f), 5)), MiningProperties.COLOR_BLUE_INNER);
+            else if (beam2g > 0 && beam2b == 1)
+                MiningProperties.setColor(stack, (short) (beam2g * 255f - Math.min(Math.abs(0-(beam2g * 255f)), 5)), MiningProperties.COLOR_GREEN_INNER);
+
+            if (r < 1 && g == 0)
+                MiningProperties.setColor(stack, (short) (r * 255f + Math.min(255-(r * 255f), 5)), MiningProperties.COLOR_RED);
+            else if (b > 0 && r == 1)
+                MiningProperties.setColor(stack, (short) (b * 255f - Math.min(Math.abs(0-(b * 255f)), 5)), MiningProperties.COLOR_BLUE);
+            else if (g < 1 && r == 1)
+                MiningProperties.setColor(stack, (short) (g * 255f + Math.min(255-(g * 255f), 5)), MiningProperties.COLOR_GREEN);
+            else if (r > 0 && g == 1)
+                MiningProperties.setColor(stack, (short) (r * 255f - Math.min(Math.abs(0-(r * 255f)), 5)), MiningProperties.COLOR_RED);
+            else if (b < 1 && g == 1)
+                MiningProperties.setColor(stack, (short) (b * 255f + Math.min(255-(b * 255f), 5)), MiningProperties.COLOR_BLUE);
+            else if (g > 0 && b == 1)
+                MiningProperties.setColor(stack, (short) (g * 255f - Math.min(Math.abs(0-(g * 255f)), 5)), MiningProperties.COLOR_GREEN);
+
+        }
+
         int range = MiningProperties.getBeamRange(stack);
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, range);
         if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, range).getPos()) == Blocks.AIR.getDefaultState()))
@@ -342,7 +378,7 @@ public class MiningGadget extends Item {
             for (BlockPos sourcePos : findSources(player.world, coords)) {
                 if (player instanceof PlayerEntity) {
                     int delay = MiningProperties.getFreezeDelay(stack);
-                    if( delay == 0 || count % delay == 0 )
+                    if (delay == 0 || count % delay == 0)
                         spawnFreezeParticle((PlayerEntity) player, sourcePos, player.world, stack);
                 }
             }
@@ -407,7 +443,7 @@ public class MiningGadget extends Item {
                     //}
                 }
                 if (player instanceof PlayerEntity && stack.getDisplayName().getString().toLowerCase(Locale.ROOT).contains("wildfirev")) {
-                    spawnFireParticle(coord, (ServerWorld)player.world);
+                    spawnFireParticle(coord, (ServerWorld) player.world);
                 }
             }
             if (!(UpgradeTools.containsActiveUpgrade(stack, Upgrade.LIGHT_PLACER)))
@@ -477,7 +513,7 @@ public class MiningGadget extends Item {
             if (laserLoopSound != null) {
                 float volume = MiningProperties.getVolume(stack);
                 if (volume != 0.0f && !laserLoopSound.isDonePlaying()) {
-                    entityLiving.playSound(OurSounds.LASER_END.getSound(), volume* 0.5f, 1f);
+                    entityLiving.playSound(OurSounds.LASER_END.getSound(), volume * 0.5f, 1f);
                 }
                 laserLoopSound = null;
             }
