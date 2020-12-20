@@ -235,7 +235,10 @@ public class MiningGadget extends Item {
         if (world.isRemote) {
             float volume = MiningProperties.getVolume(itemstack);
             if (volume != 0.0f)
-                player.playSound(OurSounds.LASER_START.getSound(), volume * 0.5f, 1f);
+                if (itemstack.getDisplayName().getString().toLowerCase(Locale.ROOT).contains("mongo"))
+                    player.playSound(SoundEvents.BLOCK_STONE_HIT, volume * 0.5f, 1f);
+                else
+                    player.playSound(OurSounds.LASER_START.getSound(), volume * 0.5f, 1f);
             return new ActionResult<>(ActionResultType.PASS, itemstack);
         }
 
@@ -312,9 +315,18 @@ public class MiningGadget extends Item {
         PlayerEntity myplayer = Minecraft.getInstance().player;
         if (myplayer.equals(player)) {
             if (volume != 0.0f) {
-                if (laserLoopSound == null) {
-                    laserLoopSound = new LaserLoopSound((PlayerEntity) player, volume);
-                    Minecraft.getInstance().getSoundHandler().play(laserLoopSound);
+                if (stack.getDisplayName().getString().toLowerCase(Locale.ROOT).contains("mongo")) {
+                    if (player.world.getGameTime() % 5 == 0)
+                        if (rand.nextDouble() > 0.005d)
+                            player.playSound(SoundEvents.BLOCK_STONE_HIT, volume * 0.5f, 1f);
+                        else
+                            player.playSound(SoundEvents.ENTITY_CREEPER_PRIMED, volume * 1f, 1f);
+                }
+                else {
+                    if (laserLoopSound == null) {
+                        laserLoopSound = new LaserLoopSound((PlayerEntity) player, volume);
+                        Minecraft.getInstance().getSoundHandler().play(laserLoopSound);
+                    }
                 }
             }
         }
