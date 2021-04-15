@@ -35,28 +35,28 @@ public class PlayerParticle extends SpriteTexturedParticle {
     public PlayerParticle(ClientWorld world, double sourceX, double sourceY, double sourceZ, double targetX, double targetY, double targetZ, double xSpeed, double ySpeed, double zSpeed,
                           float size, float red, float green, float blue, boolean collide, float maxAge, String particleType, IAnimatedSprite sprite) {
         super(world, sourceX, sourceY, sourceZ);
-        motionX = xSpeed;
-        motionY = ySpeed;
-        motionZ = zSpeed;
-        particleRed = red;
-        particleGreen = green;
-        particleBlue = blue;
-        particleGravity = 0;
-        this.maxAge = Math.round(maxAge);
+        xd = xSpeed;
+        yd = ySpeed;
+        zd = zSpeed;
+        rCol = red;
+        gCol = green;
+        bCol = blue;
+        gravity = 0;
+        this.lifetime = Math.round(maxAge);
 
         setSize(0.001F, 0.001F);
 
-        prevPosX = posX;
-        prevPosY = posY;
-        prevPosZ = posZ;
-        this.particleScale = size;
+        xo = x;
+        yo = y;
+        zo = z;
+        this.quadSize = size;
         this.sourceX = sourceX;
         this.sourceY = sourceY;
         this.sourceZ = sourceZ;
         this.targetX = targetX;
         this.targetY = targetY;
         this.targetZ = targetZ;
-        this.canCollide = collide;
+        this.hasPhysics = collide;
         this.particleType = particleType;
         this.setGravity(0f);
         particlePicker = rand.nextInt(3) + 1;
@@ -65,8 +65,8 @@ public class PlayerParticle extends SpriteTexturedParticle {
     }
 
     @Override
-    public void renderParticle(IVertexBuilder p_225606_1_, ActiveRenderInfo p_225606_2_, float p_225606_3_) {
-        super.renderParticle(p_225606_1_, p_225606_2_, p_225606_3_);
+    public void render(IVertexBuilder p_225606_1_, ActiveRenderInfo p_225606_2_, float p_225606_3_) {
+        super.render(p_225606_1_, p_225606_2_, p_225606_3_);
     }
 
     public IParticleRenderType getRenderType() {
@@ -82,51 +82,51 @@ public class PlayerParticle extends SpriteTexturedParticle {
         double moveZ;
 
         //Just in case something goes weird, we remove the particle if its been around too long.
-        if (this.age++ >= this.maxAge) {
-            this.setExpired();
+        if (this.age++ >= this.lifetime) {
+            this.remove();
         }
 
         //prevPos is used in the render. if you don't do this your particle rubber bands (Like lag in an MMO).
         //This is used because ticks are 20 per second, and FPS is usually 60 or higher.
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
+        this.xo = this.x;
+        this.yo = this.y;
+        this.zo = this.z;
 
         Vector3d sourcePos = new Vector3d(sourceX, sourceY, sourceZ);
         Vector3d targetPos = new Vector3d(targetX, targetY, targetZ);
 
         //Get the current position of the particle, and figure out the vector of where it's going
-        Vector3d partPos = new Vector3d(this.posX, this.posY, this.posZ);
-        Vector3d targetDirection = new Vector3d(targetPos.getX() - this.posX, targetPos.getY() - this.posY, targetPos.getZ() - this.posZ);
+        Vector3d partPos = new Vector3d(this.x, this.y, this.z);
+        Vector3d targetDirection = new Vector3d(targetPos.x() - this.x, targetPos.y() - this.y, targetPos.z() - this.z);
 
         //The total distance between the particle and target
         double totalDistance = targetPos.distanceTo(partPos);
         if (totalDistance < 0.1)
-            this.setExpired();
+            this.remove();
 
         double speedAdjust = 20;
 
-        moveX = (targetX - this.posX) / speedAdjust;
-        moveY = (targetY - this.posY) / speedAdjust;
-        moveZ = (targetZ - this.posZ) / speedAdjust;
+        moveX = (targetX - this.x) / speedAdjust;
+        moveY = (targetY - this.y) / speedAdjust;
+        moveZ = (targetZ - this.z) / speedAdjust;
 
-        BlockPos nextPos = new BlockPos(this.posX + moveX, this.posY + moveY, this.posZ + moveZ);
+        BlockPos nextPos = new BlockPos(this.x + moveX, this.y + moveY, this.z + moveZ);
 
         if (age > 40)
             //if (world.getBlockState(nextPos).getBlock() == ModBlocks.RENDERBLOCK)
-            this.canCollide = false;
+            this.hasPhysics = false;
         //Perform the ACTUAL move of the particle.
         this.move(moveX, moveY, moveZ);
     }
 
     public void setGravity(float value) {
-        particleGravity = value;
+        gravity = value;
     }
 
     public void setSpeed(float mx, float my, float mz) {
-        motionX = mx;
-        motionY = my;
-        motionZ = mz;
+        xd = mx;
+        yd = my;
+        zd = mz;
     }
 
 }

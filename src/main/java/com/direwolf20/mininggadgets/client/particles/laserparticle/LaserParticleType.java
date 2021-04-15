@@ -9,7 +9,7 @@ public class LaserParticleType extends ParticleType<LaserParticleData> {
     }
 
     @Override
-    public Codec<LaserParticleData> func_230522_e_() {
+    public Codec<LaserParticleData> codec() {
         return null;
     }
 }

@@ -13,7 +13,7 @@ public class PlayerParticleType extends ParticleType<PlayerParticleData> {
     }
 
     @Override
-    public Codec<PlayerParticleData> func_230522_e_() {
+    public Codec<PlayerParticleData> codec() {
         return null;
     }
 
@@ -25,7 +25,7 @@ public class PlayerParticleType extends ParticleType<PlayerParticleData> {
         }
 
         @Override
-        public Particle makeParticle(PlayerParticleData data, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(PlayerParticleData data, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             return new PlayerParticle(world, x, y, z, data.targetX, data.targetY, data.targetZ, xSpeed, ySpeed, zSpeed, data.size, data.r, data.g, data.b, data.depthTest, data.maxAgeMul, data.partType, this.sprites);
         }
     }

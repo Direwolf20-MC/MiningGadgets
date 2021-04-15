@@ -35,26 +35,26 @@ public class ModificationTableTileEntity extends TileEntity implements INamedCon
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT tag) {
+    public void load(BlockState state, CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
         handler.ifPresent(h -> ((INBTSerializable<CompoundNBT>) h).deserializeNBT(invTag));
-        super.read(state, tag);
+        super.load(state, tag);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         handler.ifPresent(h -> {
             CompoundNBT compound = ((INBTSerializable<CompoundNBT>) h).serializeNBT();
             tag.put("inv", compound);
         });
-        return super.write(tag);
+        return super.save(tag);
     }
 
     private IItemHandler createHandler() {
         return new ItemStackHandler(2) {
             @Override
             protected void onContentsChanged(int slot) {
-                markDirty();
+                setChanged();
             }
 
             @Override
@@ -83,10 +83,10 @@ public class ModificationTableTileEntity extends TileEntity implements INamedCon
     @Nullable
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new ModificationTableContainer(i, world, pos, playerInventory);
+        return new ModificationTableContainer(i, level, worldPosition, playerInventory);
     }
 
     public ModificationTableContainer getContainer(PlayerEntity playerIn) {
-        return new ModificationTableContainer(0, playerIn.world, this.pos, playerIn.inventory);
+        return new ModificationTableContainer(0, playerIn.level, this.worldPosition, playerIn.inventory);
     }
 }

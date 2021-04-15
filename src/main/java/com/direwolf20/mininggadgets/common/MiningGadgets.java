@@ -35,7 +35,7 @@ public class MiningGadgets
 
     public static ItemGroup itemGroup = new ItemGroup(MiningGadgets.MOD_ID) {
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(ModItems.MININGGADGET.get());
         }
     };
@@ -68,8 +68,8 @@ public class MiningGadgets
     public void rightClickEvent(PlayerInteractEvent.RightClickBlock event) {
         ItemStack stack = MiningGadget.getGadget(event.getPlayer());
         if( stack.getItem() instanceof MiningGadget ) {
-            if (this.stackIsAnnoying(event.getPlayer().getHeldItemMainhand())
-                    || this.stackIsAnnoying(event.getPlayer().getHeldItemOffhand())
+            if (this.stackIsAnnoying(event.getPlayer().getMainHandItem())
+                    || this.stackIsAnnoying(event.getPlayer().getOffhandItem())
                     || event.getWorld().getBlockState(event.getPos()).getBlock() instanceof RedstoneOreBlock) {
                 event.setCanceled(true);
             }

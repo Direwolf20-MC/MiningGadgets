@@ -13,6 +13,8 @@ import net.minecraft.particles.ParticleType;
 import javax.annotation.Nonnull;
 import java.util.Locale;
 
+import net.minecraft.particles.IParticleData.IDeserializer;
+
 public class LaserParticleData implements IParticleData {
     public final float size;
     public final float r, g, b;
@@ -54,8 +56,8 @@ public class LaserParticleData implements IParticleData {
     }
 
     @Override
-    public void write(PacketBuffer buf) {
-        buf.writeVarInt(Block.BLOCK_STATE_IDS.getId(state));
+    public void writeToNetwork(PacketBuffer buf) {
+        buf.writeVarInt(Block.BLOCK_STATE_REGISTRY.getId(state));
         buf.writeFloat(size);
         buf.writeFloat(r);
         buf.writeFloat(g);
@@ -66,7 +68,7 @@ public class LaserParticleData implements IParticleData {
 
     @Nonnull
     @Override
-    public String getParameters() {
+    public String writeToString() {
         return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %.2f %.2f %s",
                 this.getType().getRegistryName(), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
     }
@@ -74,7 +76,7 @@ public class LaserParticleData implements IParticleData {
     public static final IDeserializer<LaserParticleData> DESERIALIZER = new IDeserializer<LaserParticleData>() {
         @Nonnull
         @Override
-        public LaserParticleData deserialize(@Nonnull ParticleType<LaserParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {
+        public LaserParticleData fromCommand(@Nonnull ParticleType<LaserParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {
             reader.expect(' ');
             BlockState state = (new BlockStateParser(reader, false)).parse(false).getState();
             reader.expect(' ');
@@ -96,8 +98,8 @@ public class LaserParticleData implements IParticleData {
         }
 
         @Override
-        public LaserParticleData read(@Nonnull ParticleType<LaserParticleData> type, PacketBuffer buf) {
-            return new LaserParticleData(Block.BLOCK_STATE_IDS.getByValue(buf.readVarInt()), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readBoolean());
+        public LaserParticleData fromNetwork(@Nonnull ParticleType<LaserParticleData> type, PacketBuffer buf) {
+            return new LaserParticleData(Block.BLOCK_STATE_REGISTRY.byId(buf.readVarInt()), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readBoolean());
         }
     };
 }

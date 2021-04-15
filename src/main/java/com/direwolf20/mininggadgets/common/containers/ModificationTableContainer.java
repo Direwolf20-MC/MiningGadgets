@@ -33,7 +33,7 @@ public class ModificationTableContainer extends Container {
     public ModificationTableContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
         super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
 
-        this.tileEntity = Minecraft.getInstance().world.getTileEntity(extraData.readBlockPos());
+        this.tileEntity = Minecraft.getInstance().level.getBlockEntity(extraData.readBlockPos());
         this.playerInventory = new InvWrapper(playerInventory);
 
         setupContainerSlots();
@@ -42,7 +42,7 @@ public class ModificationTableContainer extends Container {
 
     public ModificationTableContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
         super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
-        this.tileEntity = world.getTileEntity(pos);
+        this.tileEntity = world.getBlockEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);
 
         setupContainerSlots();
@@ -50,8 +50,8 @@ public class ModificationTableContainer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(getTE().getWorld(), tileEntity.getPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
+    public boolean stillValid(PlayerEntity playerIn) {
+        return stillValid(IWorldPosCallable.create(getTE().getLevel(), tileEntity.getBlockPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
     }
 
     private void setupContainerSlots() {
@@ -61,7 +61,7 @@ public class ModificationTableContainer extends Container {
     }
 
     private void updateUpgradeCache(int index) {
-        ItemStack stack = this.getSlot(index).getStack();
+        ItemStack stack = this.getSlot(index).getItem();
         if( (stack.isEmpty() && !upgradesCache.isEmpty()) || !(stack.getItem() instanceof MiningGadget) ) {
             upgradesCache.clear();
             return;
@@ -107,26 +107,26 @@ public class ModificationTableContainer extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            ItemStack stack = slot.getStack();
+        Slot slot = this.slots.get(index);
+        if (slot != null && slot.hasItem()) {
+            ItemStack stack = slot.getItem();
             itemstack = stack.copy();
             if (index == 0) {
-                if (!this.mergeItemStack(stack, 1, this.getInventory().size(), true)) {
+                if (!this.moveItemStackTo(stack, 1, this.getItems().size(), true)) {
                     return ItemStack.EMPTY;
                 }
-                slot.onSlotChange(stack, itemstack);
+                slot.onQuickCraft(stack, itemstack);
             } else {
                 if (stack.getItem() instanceof MiningGadget) {
-                    if (!this.mergeItemStack(stack, 0, 1, false)) {
+                    if (!this.moveItemStackTo(stack, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (stack.getItem() instanceof UpgradeCard) {
                     // Push the item right into the modification table.
                     if( ModificationTableCommands.insertButton(this, stack) ) {
-                        int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+                        int maxSize = Math.min(slot.getMaxStackSize(), stack.getMaxStackSize());
                         int remove = maxSize - itemstack.getCount();
                         stack.shrink(remove == 0 ? 1 : remove);
                         updateUpgradeCache(0);
@@ -134,18 +134,18 @@ public class ModificationTableContainer extends Container {
                     else
                         return ItemStack.EMPTY;
                 } else if (index < 29) {
-                    if (!this.mergeItemStack(stack, 29, 37, false)) {
+                    if (!this.moveItemStackTo(stack, 29, 37, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 38 && !this.mergeItemStack(stack, 1, 29, false)) {
+                } else if (index < 38 && !this.moveItemStackTo(stack, 1, 29, false)) {
                     return ItemStack.EMPTY;
                 }
             }
 
             if (stack.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             if (stack.getCount() == itemstack.getCount()) {

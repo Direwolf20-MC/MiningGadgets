@@ -29,32 +29,32 @@ import java.util.stream.Collectors;
 public class MiningCollect {
     public static List<BlockPos> collect(PlayerEntity player, BlockRayTraceResult startBlock, World world, int range) {
         List<BlockPos> coordinates = new ArrayList<>();
-        BlockPos startPos = startBlock.getPos();
+        BlockPos startPos = startBlock.getBlockPos();
 
         if (range == 1) {
-            if( !isValid(player, startBlock.getPos(), world) )
+            if( !isValid(player, startBlock.getBlockPos(), world) )
                 return coordinates;
 
-            coordinates.add(startBlock.getPos());
+            coordinates.add(startBlock.getBlockPos());
             return coordinates;
         }
 
-        Direction side = startBlock.getFace();
+        Direction side = startBlock.getDirection();
         boolean vertical = side.getAxis().isVertical();
-        Direction up = vertical ? player.getHorizontalFacing() : Direction.UP;
+        Direction up = vertical ? player.getDirection() : Direction.UP;
         Direction down = up.getOpposite();
-        Direction right = vertical ? up.rotateY() : side.rotateYCCW();
+        Direction right = vertical ? up.getClockWise() : side.getCounterClockWise();
         Direction left = right.getOpposite();
 
-        coordinates.add(startPos.offset(up).offset(left));
-        coordinates.add(startPos.offset(up));
-        coordinates.add(startPos.offset(up).offset(right));
-        coordinates.add(startPos.offset(left));
+        coordinates.add(startPos.relative(up).relative(left));
+        coordinates.add(startPos.relative(up));
+        coordinates.add(startPos.relative(up).relative(right));
+        coordinates.add(startPos.relative(left));
         coordinates.add(startPos);
-        coordinates.add(startPos.offset(right));
-        coordinates.add(startPos.offset(down).offset(left));
-        coordinates.add(startPos.offset(down));
-        coordinates.add(startPos.offset(down).offset(right));
+        coordinates.add(startPos.relative(right));
+        coordinates.add(startPos.relative(down).relative(left));
+        coordinates.add(startPos.relative(down));
+        coordinates.add(startPos.relative(down).relative(right));
 
         return coordinates.stream().filter(e -> isValid(player, e, world)).collect(Collectors.toList());
     }
@@ -72,15 +72,15 @@ public class MiningCollect {
 //           return false;
 
         // Reject fluids and air (supports waterlogged blocks too)
-        if ((!state.getFluidState().isEmpty() && !state.hasProperty(BlockStateProperties.WATERLOGGED)) || world.isAirBlock(pos))
+        if ((!state.getFluidState().isEmpty() && !state.hasProperty(BlockStateProperties.WATERLOGGED)) || world.isEmptyBlock(pos))
             return false;
 
         // Rejects any blocks with a hardness less than 0
-        if (state.getBlockHardness(world, pos) < 0)
+        if (state.getDestroySpeed(world, pos) < 0)
             return false;
 
         // No TE's
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getBlockEntity(pos);
         if (te != null && !(te instanceof RenderBlockTileEntity))
             return false;
 
