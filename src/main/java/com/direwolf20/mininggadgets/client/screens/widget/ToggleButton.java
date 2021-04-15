@@ -30,7 +30,7 @@ public class ToggleButton extends Widget {
     }
 
     @Override
-    public void renderButton(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         Color activeColor = this.enabled ? Color.GREEN : Color.RED;
 
         RenderSystem.enableBlend();

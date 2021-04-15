@@ -125,7 +125,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
         // Freeze delay
         if( containsFreeze )
-            leftWidgets.add(freezeDelaySlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").appendString(": "), new StringTextComponent(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), false, true, s -> {}, this));
+            leftWidgets.add(freezeDelaySlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").appendString(": "), new StringTextComponent(" ").appendSibling(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), false, true, s -> {}, this));
 
         // Button logic
         if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) )
@@ -275,7 +275,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         }
 
         @Override
-        public void renderButton(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+        public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
             RenderSystem.disableTexture();
             RenderSystem.color4f(.4f, .4f, .4f, 1f);
             this.blit(stack, this.x, this.y, 0, 0, this.width, this.height);
