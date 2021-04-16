@@ -5,6 +5,7 @@ import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
 import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
@@ -55,7 +56,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         int relX = (this.width) / 2;
         int relY = (this.height) / 2;
 
-        drawCenteredString(stack, font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 105, 0xFFFFFF);
+        drawCenteredString(stack, font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 100, 0xFFFFFF);
 
         if (this.container.getUpgradesCache().size() == 0) {
             String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
@@ -102,6 +103,10 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
             if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
                 // Send packet to remove the item from the inventory and add it to the table
+                if (UpgradeTools.containsUpgrade(gadget, ((UpgradeCard) heldStack.getItem()).getUpgrade())) {
+                    return false;
+                }
+
                 PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
                 playerInventory.setCarried(ItemStack.EMPTY);
             }
