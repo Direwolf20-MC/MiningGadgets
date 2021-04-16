@@ -102,7 +102,12 @@ repositories {
         url = "https://modmaven.k-4u.nl"
     }
     maven { url 'https://www.dogforce-games.com/maven/' }
-    maven { url 'https://www.cursemaven.com' }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -113,8 +118,8 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
-    runtimeOnly fg.deobf("curse.maven:lollipop:3105500")
-    runtimeOnly fg.deobf("curse.maven:powah:3108425")
+    runtimeOnly fg.deobf("curse.maven:lollipop-347954:3232534")
+    runtimeOnly fg.deobf("curse.maven:powah-352656:352656")
 }
 
 processResources {

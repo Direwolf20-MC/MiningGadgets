@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.client.events;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,7 @@ public class EventRenderGadget
     @SubscribeEvent
     static void renderGadget(RenderHandEvent event)
     {
-        if (!ModItems.MININGGADGET.get().equals(event.getItemStack().getItem())) {
+        if (!(event.getItemStack().getItem() instanceof MiningGadget)) {
             return;
         }
 

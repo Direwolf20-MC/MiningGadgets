@@ -36,7 +36,9 @@ public class MiningGadgets
     public static ItemGroup itemGroup = new ItemGroup(MiningGadgets.MOD_ID) {
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(ModItems.MININGGADGET.get());
+            ItemStack itemStack = new ItemStack(ModItems.MININGGADGET.get());
+            itemStack.getOrCreateTag().putInt("energy", Integer.MAX_VALUE);
+            return itemStack;
         }
     };
 

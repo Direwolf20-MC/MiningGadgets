@@ -19,6 +19,8 @@ public class ModItems {
 
     // Items
     public static final RegistryObject<Item> MININGGADGET = ITEMS.register("mininggadget", MiningGadget::new);
+    public static final RegistryObject<Item> MININGGADGET_SIMPLE = ITEMS.register("mininggadget_simple", MiningGadget::new);
+    public static final RegistryObject<Item> MININGGADGET_FANCY = ITEMS.register("mininggadget_fancy", MiningGadget::new);
 
     // Block items
     public static final RegistryObject<Item> MODIFICATION_TABLE_ITEM = ITEMS.register("modificationtable", () -> new BlockItem(ModBlocks.MODIFICATION_TABLE.get(), ITEM_GROUP));
