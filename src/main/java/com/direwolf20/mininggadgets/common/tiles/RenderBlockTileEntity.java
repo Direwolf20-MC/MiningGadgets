@@ -21,6 +21,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -138,6 +139,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         for (Direction side : Direction.values()) {
             BlockPos sidePos = worldPosition.relative(side);
             FluidState state = level.getFluidState(sidePos);
+            BlockState blockState = level.getBlockState(sidePos);
+
             if (state.getType().isSame(Fluids.LAVA) && state.getType().isSource(state)) {
                 energy -= this.replaceBlockWithAlternative(level, sidePos, Blocks.OBSIDIAN.defaultBlockState(), stack, freezeCost, energy);
             } else if (state.getType().isSame(Fluids.WATER) && state.getType().isSource(state)) {
@@ -154,6 +157,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
 
         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(costOfOperation, false));
+
+        // If the block is just water logged, remove the fluid
+        BlockState blockState = world.getBlockState(pos);
+        if (blockState.hasProperty(BlockStateProperties.WATERLOGGED) && blockState.getValue(BlockStateProperties.WATERLOGGED)) {
+            world.setBlockAndUpdate(pos, blockState.setValue(BlockStateProperties.WATERLOGGED, false));
+            return costOfOperation;
+        }
+
         world.setBlockAndUpdate(pos, state);
         return costOfOperation;
     }
