@@ -14,7 +14,9 @@ public class GeneratorLanguage extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add("itemGroup.mininggadgets", "Mining Gadgets");
-        addItem(ModItems.MININGGADGET, "Mining Gadget");
+        addItem(ModItems.MININGGADGET, "Mining Gadget MK3");
+        addItem(ModItems.MININGGADGET_SIMPLE, "Mining Gadget MK1");
+        addItem(ModItems.MININGGADGET_FANCY, "Mining Gadget MK2");
         addItem(ModItems.UPGRADE_EMPTY, "Blank Upgrade Module");
 
         // This should always match the start of below upgrade names. I use this

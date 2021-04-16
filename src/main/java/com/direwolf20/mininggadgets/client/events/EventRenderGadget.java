@@ -20,15 +20,15 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT)
-public class EventRenderGadget
-{
-    
+public class EventRenderGadget {
+
     @SubscribeEvent
-    static void renderGadget(RenderHandEvent event)
-    {
+    public static void renderGadget(RenderHandEvent event) {
         if (!(event.getItemStack().getItem() instanceof MiningGadget)) {
             return;
         }
+
+        boolean isFancyGadget = ModItems.MININGGADGET_FANCY.get().equals(event.getItemStack().getItem());
 
         Minecraft mc = Minecraft.getInstance();
         MatrixStack matrixStackIn = event.getMatrixStack();
@@ -77,7 +77,7 @@ public class EventRenderGadget
 
         // renders gadget
         matrixStackIn.pushPose();
-        matrixStackIn.translate(f * (f2 + 0.64000005F - .1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.71999997F - 0.1f);
+        matrixStackIn.translate(f * (f2 + 0.64000005F - .1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.71999997F - 0.1f + (isFancyGadget ? -.10f : 0));
         matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * f6 * 70.0F));
         matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
         matrixStackIn.translate(rightHand ? .13f:-.1f, -.25f, -.35f);
