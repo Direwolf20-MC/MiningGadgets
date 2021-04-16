@@ -57,8 +57,8 @@ public class PlayerParticleData implements IParticleData {
     }
 
     @Override
-    public void write(PacketBuffer buf) {
-        buf.writeString(partType);
+    public void writeToNetwork(PacketBuffer buf) {
+        buf.writeUtf(partType);
         buf.writeDouble(targetX);
         buf.writeDouble(targetY);
         buf.writeDouble(targetZ);
@@ -72,7 +72,7 @@ public class PlayerParticleData implements IParticleData {
 
     @Nonnull
     @Override
-    public String getParameters() {
+    public String writeToString() {
         return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %.2f %.2f %s",
                 this.getType().getRegistryName(), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
     }
@@ -80,7 +80,7 @@ public class PlayerParticleData implements IParticleData {
     public static final IParticleData.IDeserializer<PlayerParticleData> DESERIALIZER = new IParticleData.IDeserializer<PlayerParticleData>() {
         @Nonnull
         @Override
-        public PlayerParticleData deserialize(@Nonnull ParticleType<PlayerParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {
+        public PlayerParticleData fromCommand(@Nonnull ParticleType<PlayerParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {
             reader.expect(' ');
             String partType = reader.readString();
             reader.expect(' ');
@@ -108,8 +108,8 @@ public class PlayerParticleData implements IParticleData {
         }
 
         @Override
-        public PlayerParticleData read(@Nonnull ParticleType<PlayerParticleData> type, PacketBuffer buf) {
-            return new PlayerParticleData(buf.readString(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readBoolean());
+        public PlayerParticleData fromNetwork(@Nonnull ParticleType<PlayerParticleData> type, PacketBuffer buf) {
+            return new PlayerParticleData(buf.readUtf(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readBoolean());
         }
     };
 }

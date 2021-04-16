@@ -17,8 +17,8 @@ import java.util.List;
 
 public class ModificationTableCommands {
     public static boolean insertButton(ModificationTableContainer container, ItemStack upgrade) {
-        Slot laserSlot = container.inventorySlots.get(0);
-        ItemStack laser = laserSlot.getStack();
+        Slot laserSlot = container.slots.get(0);
+        ItemStack laser = laserSlot.getItem();
 
         if (laser.getItem() instanceof MiningGadget && upgrade.getItem() instanceof UpgradeCard) {
             Upgrade card = ((UpgradeCard) upgrade.getItem()).getUpgrade();
@@ -62,8 +62,8 @@ public class ModificationTableCommands {
     }
 
     public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName) {
-        Slot laserSlot = container.inventorySlots.get(0);
-        ItemStack laser = laserSlot.getStack();
+        Slot laserSlot = container.slots.get(0);
+        ItemStack laser = laserSlot.getItem();
 
         if (!(laser.getItem() instanceof MiningGadget))
             return;
@@ -77,9 +77,9 @@ public class ModificationTableCommands {
 
             UpgradeTools.removeUpgrade(laser, upgrade);
 
-            boolean success = player.inventory.addItemStackToInventory(new ItemStack(upgrade.getCard(), 1));
+            boolean success = player.inventory.add(new ItemStack(upgrade.getCard(), 1));
             if (!success) {
-                player.dropItem(new ItemStack(upgrade.getCard(), 1), true);
+                player.drop(new ItemStack(upgrade.getCard(), 1), true);
             }
 
             if (upgrade == Upgrade.THREE_BY_THREE)

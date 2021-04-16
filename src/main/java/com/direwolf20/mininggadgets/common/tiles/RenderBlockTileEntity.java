@@ -71,7 +71,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
             boolean contains = false;
             for (ItemStack filter : filters) {
-                if (dropStack.isItemEqual(filter)) {
+                if (dropStack.sameItem(filter)) {
                     contains = true;
                     break;
                 }
@@ -119,9 +119,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 freeze(stack);
             }
         }
-        if (!(world.isRemote)) {
-            markDirty();
-            ServerTickHandler.addToList(pos, durability, world);
+        if (!(level.isClientSide)) {
+            setChanged();
+            ServerTickHandler.addToList(worldPosition, durability, level);
             //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
             //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
         }
@@ -136,14 +136,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
 
         for (Direction side : Direction.values()) {
-            BlockPos sidePos = pos.offset(side);
-            FluidState state = world.getFluidState(sidePos);
-            if (state.getFluid().isEquivalentTo(Fluids.LAVA) && state.getFluid().isSource(state)) {
-                energy -= this.replaceBlockWithAlternative(world, sidePos, Blocks.OBSIDIAN.getDefaultState(), stack, freezeCost, energy);
-            } else if (state.getFluid().isEquivalentTo(Fluids.WATER) && state.getFluid().isSource(state)) {
-                energy -= this.replaceBlockWithAlternative(world, sidePos, Blocks.PACKED_ICE.getDefaultState(), stack, freezeCost, energy);
-            } else if ((state.getFluid().isEquivalentTo(Fluids.WATER) || state.getFluid().isEquivalentTo(Fluids.LAVA)) && !state.getFluid().isSource(state)) {
-                energy -= this.replaceBlockWithAlternative(world, sidePos, Blocks.COBBLESTONE.getDefaultState(), stack, freezeCost, energy);
+            BlockPos sidePos = worldPosition.relative(side);
+            FluidState state = level.getFluidState(sidePos);
+            if (state.getType().isSame(Fluids.LAVA) && state.getType().isSource(state)) {
+                energy -= this.replaceBlockWithAlternative(level, sidePos, Blocks.OBSIDIAN.defaultBlockState(), stack, freezeCost, energy);
+            } else if (state.getType().isSame(Fluids.WATER) && state.getType().isSource(state)) {
+                energy -= this.replaceBlockWithAlternative(level, sidePos, Blocks.PACKED_ICE.defaultBlockState(), stack, freezeCost, energy);
+            } else if ((state.getType().isSame(Fluids.WATER) || state.getType().isSame(Fluids.LAVA)) && !state.getType().isSource(state)) {
+                energy -= this.replaceBlockWithAlternative(level, sidePos, Blocks.COBBLESTONE.defaultBlockState(), stack, freezeCost, energy);
             }
         }
     }
@@ -154,7 +154,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
 
         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(costOfOperation, false));
-        world.setBlockState(pos, state);
+        world.setBlockAndUpdate(pos, state);
         return costOfOperation;
     }
 
@@ -169,7 +169,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 double randomZ = rand.nextDouble();
 
                 LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, 1f, 1f, 1f, 200);
-                getWorld().addParticle(data, this.getPos().getX() + randomX, this.getPos().getY() + randomY, this.getPos().getZ() + randomZ, 0, 0.0f, 0);
+                getLevel().addParticle(data, this.getBlockPos().getX() + randomX, this.getBlockPos().getY() + randomY, this.getBlockPos().getZ() + randomZ, 0, 0.0f, 0);
             }
         }
     }
@@ -187,14 +187,14 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public PlayerEntity getPlayer() {
-        if (getWorld() == null)
+        if (getLevel() == null)
             return null;
 
-        return this.getWorld().getPlayerByUuid(playerUUID);
+        return this.getLevel().getPlayerByUUID(playerUUID);
     }
 
     public void setPlayer(PlayerEntity player) {
-        this.playerUUID = player.getUniqueID();
+        this.playerUUID = player.getUUID();
     }
 
     public UUID getPlayerUUID() {
@@ -257,41 +257,41 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         // Vanilla uses the type parameter to indicate which type of tile entity (command block, skull, or beacon?) is receiving the packet, but it seems like Forge has overridden this behavior
-        return new SUpdateTileEntityPacket(pos, 0, getUpdateTag());
+        return new SUpdateTileEntityPacket(worldPosition, 0, getUpdateTag());
     }
 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        read(state, tag);
+        load(state, tag);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        read(this.getBlockState(), pkt.getNbtCompound());
+        load(this.getBlockState(), pkt.getTag());
     }
 
     public void markDirtyClient() {
-        markDirty();
-        if (getWorld() != null) {
-            BlockState state = getWorld().getBlockState(getPos());
-            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
+        setChanged();
+        if (getLevel() != null) {
+            BlockState state = getLevel().getBlockState(getBlockPos());
+            getLevel().sendBlockUpdated(getBlockPos(), state, state, 3);
         }
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT tag) {
-        super.read(state, tag);
+    public void load(BlockState state, CompoundNBT tag) {
+        super.load(state, tag);
         renderBlock = NBTUtil.readBlockState(tag.getCompound("renderBlock"));
         originalDurability = tag.getInt("originalDurability");
         priorDurability = tag.getInt("priorDurability");
         durability = tag.getInt("durability");
         ticksSinceMine = tag.getInt("ticksSinceMine");
-        playerUUID = tag.getUniqueId("playerUUID");
+        playerUUID = tag.getUUID("playerUUID");
         gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
         breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
         gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"));
@@ -300,7 +300,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         if (renderBlock != null)
             tag.put("renderBlock", NBTUtil.writeBlockState(renderBlock));
         tag.putInt("originalDurability", originalDurability);
@@ -308,20 +308,20 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         tag.putInt("durability", durability);
         tag.putInt("ticksSinceMine", ticksSinceMine);
         if (playerUUID != null)
-            tag.putUniqueId("playerUUID", playerUUID);
+            tag.putUUID("playerUUID", playerUUID);
         tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
         tag.putByte("breakType", (byte) breakType.ordinal());
         tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
         tag.putBoolean("gadgetIsWhitelist", isGadgetIsWhitelist());
         tag.putBoolean("blockAllowed", blockAllowed);
-        return super.write(tag);
+        return super.save(tag);
     }
 
     private void removeBlock() {
-        if (world == null || world.isRemote || playerUUID == null)
+        if (level == null || level.isClientSide || playerUUID == null)
             return;
 
-        PlayerEntity player = world.getPlayerByUuid(playerUUID);
+        PlayerEntity player = level.getPlayerByUUID(playerUUID);
         if (player == null)
             return;
 
@@ -332,7 +332,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
         // If silk is in the upgrades, apply it without a tier.
         if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
-            tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
             silk = 1;
         }
 
@@ -341,28 +341,28 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
-                tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
+                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
             }
         }
 
-        List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
+        List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) level, this.worldPosition, null, player, tempTool);
 
         if (blockAllowed) {
-            int exp = renderBlock.getExpDrop(world, pos, fortune, silk);
+            int exp = renderBlock.getExpDrop(level, worldPosition, fortune, silk);
             boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
                 if (drop != null) {
                     if (magnetMode) {
-                        int wasPickedUp = ForgeEventFactory.onItemPickup(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), drop), player);
+                        int wasPickedUp = ForgeEventFactory.onItemPickup(new ItemEntity(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), drop), player);
                         // 1  = someone allowed the event meaning it's handled,
                         // -1 = someone blocked the event and thus we shouldn't drop it nor insert it
                         // 0  = no body captured the event and we should handle it by hand.
                         if (wasPickedUp == 0) {
-                            if (!player.addItemStackToInventory(drop))
-                                Block.spawnAsEntity(world, pos, drop);
+                            if (!player.addItem(drop))
+                                Block.popResource(level, worldPosition, drop);
                         }
                     } else {
-                        Block.spawnAsEntity(world, pos, drop);
+                        Block.popResource(level, worldPosition, drop);
                     }
                 }
             }
@@ -371,16 +371,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                     player.giveExperiencePoints(exp);
             } else {
                 if (exp > 0)
-                    renderBlock.getBlock().dropXpOnBlockBreak((ServerWorld) world, pos, exp);
+                    renderBlock.getBlock().popExperience((ServerWorld) level, worldPosition, exp);
             }
 
-            renderBlock.spawnAdditionalDrops((ServerWorld) world, pos, tempTool); // Fixes silver fish basically...
+            renderBlock.spawnAfterBreak((ServerWorld) level, worldPosition, tempTool); // Fixes silver fish basically...
         }
 
 //        BlockState underState = world.getBlockState(this.pos.down());
 
-        world.removeTileEntity(this.pos);
-        world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+        level.removeBlockEntity(this.worldPosition);
+        level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
 
 //        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
 //            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
@@ -389,22 +389,22 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 //        }
 
         // Add to the break stats
-        player.addStat(Stats.BLOCK_MINED.get(renderBlock.getBlock()));
+        player.awardStat(Stats.BLOCK_MINED.get(renderBlock.getBlock()));
 
         // Handle special cases
         if (SpecialBlockActions.getRegister().containsKey(renderBlock.getBlock()))
-            SpecialBlockActions.getRegister().get(renderBlock.getBlock()).accept(world, pos, renderBlock);
+            SpecialBlockActions.getRegister().get(renderBlock.getBlock()).accept(level, worldPosition, renderBlock);
     }
 
     private void resetBlock() {
-        if (world == null)
+        if (level == null)
             return;
 
-        if (!world.isRemote) {
+        if (!level.isClientSide) {
             if (renderBlock != null)
-                world.setBlockState(this.pos, renderBlock);
+                level.setBlockAndUpdate(this.worldPosition, renderBlock);
             else
-                world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+                level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -416,10 +416,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             spawnParticle();
         }
         //Client only
-        if (world.isRemote) {
+        if (level.isClientSide) {
             //Update ticks since last mine on client side for particle renders
             if (playerUUID != null) {
-                if (getPlayer() != null && !getPlayer().isHandActive()) ticksSinceMine++;
+                if (getPlayer() != null && !getPlayer().isUsingItem()) ticksSinceMine++;
                 else ticksSinceMine = 0;
             }
             //The packet with new durability arrives between ticks. Update it on tick.
@@ -438,17 +438,17 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
         }
         //Server Only
-        if (!world.isRemote) {
+        if (!level.isClientSide) {
             if (ticksSinceMine == 1) {
                 //Immediately after player stops mining, stability the shrinking effects and notify players
                 priorDurability = durability;
-                ServerTickHandler.addToList(pos, durability, world);
+                ServerTickHandler.addToList(worldPosition, durability, level);
             }
             if (ticksSinceMine >= 10) {
                 //After half a second, start 'regrowing' blocks that haven't been mined.
                 priorDurability = durability;
                 durability++;
-                ServerTickHandler.addToList(pos, durability, world);
+                ServerTickHandler.addToList(worldPosition, durability, level);
             }
             if (durability >= originalDurability) {
                 //Once we reach the original durability value set the block back to its original blockstate.
@@ -463,7 +463,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             this.blockAllowed = true;
             return;
         }
-        PlayerEntity player = world.getPlayerByUuid(playerUUID);
+        PlayerEntity player = level.getPlayerByUUID(playerUUID);
         if (player == null) return;
         int silk = 0;
         int fortune = 0;
@@ -472,7 +472,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
         // If silk is in the upgrades, apply it without a tier.
         if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
-            tempTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
+            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
             silk = 1;
         }
 
@@ -481,11 +481,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
-                tempTool.addEnchantment(Enchantments.FORTUNE, fortune);
+                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
             }
         }
 
-        List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) world, this.pos, null, player, tempTool);
+        List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) level, this.worldPosition, null, player, tempTool);
 
         this.blockAllowed = blockAllowed(drops, getGadgetFilters(), isGadgetIsWhitelist());
     }

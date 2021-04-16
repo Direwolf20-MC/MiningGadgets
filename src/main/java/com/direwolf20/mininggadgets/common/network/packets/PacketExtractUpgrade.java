@@ -27,12 +27,12 @@ public class PacketExtractUpgrade {
     public static void encode(PacketExtractUpgrade msg, PacketBuffer buffer) {
         buffer.writeInt(msg.nameLength);
         buffer.writeBlockPos(msg.pos);
-        buffer.writeString(msg.upgrade);
+        buffer.writeUtf(msg.upgrade);
     }
 
     public static PacketExtractUpgrade decode(PacketBuffer buffer) {
         int strLength = buffer.readInt();
-        return new PacketExtractUpgrade(buffer.readBlockPos(), buffer.readString(strLength), strLength);
+        return new PacketExtractUpgrade(buffer.readBlockPos(), buffer.readUtf(strLength), strLength);
     }
 
     public static class Handler {
@@ -41,10 +41,10 @@ public class PacketExtractUpgrade {
                 ServerPlayerEntity player = ctx.get().getSender();
                 if (player == null) return;
 
-                World world = player.world;
+                World world = player.level;
                 BlockPos pos = msg.pos;
 
-                TileEntity te = world.getTileEntity(pos);
+                TileEntity te = world.getBlockEntity(pos);
                 if (!(te instanceof ModificationTableTileEntity)) return;
                 ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 

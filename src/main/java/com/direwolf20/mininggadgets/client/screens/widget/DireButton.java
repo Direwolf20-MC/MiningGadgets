@@ -8,6 +8,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 public class DireButton extends Button {
 
     public DireButton(int x, int y, int widthIn, int heightIn, ITextComponent buttonText, IPressable action) {
@@ -17,13 +19,13 @@ public class DireButton extends Button {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
-            FontRenderer fontrenderer = Minecraft.getInstance().fontRenderer;
-            Minecraft.getInstance().getTextureManager().bindTexture(WIDGETS_LOCATION);
+            FontRenderer fontrenderer = Minecraft.getInstance().font;
+            Minecraft.getInstance().getTextureManager().bind(WIDGETS_LOCATION);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.isHovered = isMouseOver(mouseX, mouseY);
             RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param, GlStateManager.SourceFactor.ONE.param, GlStateManager.DestFactor.ZERO.param);
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value, GlStateManager.SourceFactor.ONE.value, GlStateManager.DestFactor.ZERO.value);
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value);
             this.blit(stack, this.x, this.y, 0, 46, this.width / 2, this.height);
             this.blit(stack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46, this.width / 2, this.height);
 

@@ -27,40 +27,40 @@ public class BlockOverlayRender {
     public static void render(RenderWorldLastEvent event, ItemStack item) {
         final Minecraft mc = Minecraft.getInstance();
 
-        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 
         int range = MiningProperties.getBeamRange(item);
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt(mc.player, RayTraceContext.FluidMode.NONE, range);
-        if (mc.world.getBlockState(VectorHelper.getLookingAt(mc.player, item, range).getPos()) == Blocks.AIR.getDefaultState()) {
+        if (mc.level.getBlockState(VectorHelper.getLookingAt(mc.player, item, range).getBlockPos()) == Blocks.AIR.defaultBlockState()) {
             return;
         }
 
-        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.world, MiningProperties.getRange(item));
-        Vector3d view = mc.gameRenderer.getActiveRenderInfo().getProjectedView();
+        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.level, MiningProperties.getRange(item));
+        Vector3d view = mc.gameRenderer.getMainCamera().getPosition();
 
         MatrixStack matrix = event.getMatrixStack();
-        matrix.push();
-        matrix.translate(-view.getX(), -view.getY(), -view.getZ());
+        matrix.pushPose();
+        matrix.translate(-view.x(), -view.y(), -view.z());
 
         IVertexBuilder builder;
         builder = buffer.getBuffer(MyRenderType.BlockOverlay);
         coords.forEach(e -> {
-            if (mc.world.getBlockState(e).getBlock() != ModBlocks.RENDER_BLOCK.get()) {
+            if (mc.level.getBlockState(e).getBlock() != ModBlocks.RENDER_BLOCK.get()) {
 
-                matrix.push();
+                matrix.pushPose();
                 matrix.translate(e.getX(), e.getY(), e.getZ());
                 matrix.translate(-0.005f, -0.005f, -0.005f);
                 matrix.scale(1.01f, 1.01f, 1.01f);
-                matrix.rotate(Vector3f.YP.rotationDegrees(-90.0F));
+                matrix.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
 
-                Matrix4f positionMatrix = matrix.getLast().getMatrix();
+                Matrix4f positionMatrix = matrix.last().pose();
                 BlockOverlayRender.render(positionMatrix, builder, e, Color.GREEN);
-                matrix.pop();
+                matrix.popPose();
             }
         });
-        matrix.pop();
+        matrix.popPose();
         RenderSystem.disableDepthTest();
-        buffer.finish(MyRenderType.BlockOverlay);
+        buffer.endBatch(MyRenderType.BlockOverlay);
     }
 
     public static void render(Matrix4f matrix, IVertexBuilder builder, BlockPos pos, Color color) {
@@ -69,39 +69,39 @@ public class BlockOverlayRender {
         float startX = 0, startY = 0, startZ = -1, endX = 1, endY = 1, endZ = 0;
 
         //down
-        builder.pos(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
 
         //up
-        builder.pos(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
 
         //east
-        builder.pos(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
 
         //west
-        builder.pos(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
 
         //south
-        builder.pos(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, endX, startY, endZ).color(red, green, blue, alpha).endVertex();
 
         //north
-        builder.pos(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        builder.pos(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        builder.vertex(matrix, startX, endY, startZ).color(red, green, blue, alpha).endVertex();
     }
 }

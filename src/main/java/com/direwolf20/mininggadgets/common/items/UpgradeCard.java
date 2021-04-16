@@ -16,17 +16,19 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 public class UpgradeCard extends Item {
     private Upgrade upgrade;
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        super.addInformation(stack, world, tooltip, flag);
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+        super.appendHoverText(stack, world, tooltip, flag);
         if (stack.getItem() instanceof UpgradeCard) {
             Upgrade upgrade = ((UpgradeCard) stack.getItem()).upgrade;
             int cost = upgrade.getCostPerBlock();
             if (cost > 0)
-                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrade_cost", cost).mergeStyle(TextFormatting.AQUA));
+                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrade_cost", cost).withStyle(TextFormatting.AQUA));
 
             cost = 0;
             if (upgrade == Upgrade.LIGHT_PLACER)
@@ -34,21 +36,21 @@ public class UpgradeCard extends Item {
             if (upgrade == Upgrade.FREEZING)
                 cost = Config.UPGRADECOST_FREEZE.get();
             if (cost > 0)
-                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.use_cost", cost).mergeStyle(TextFormatting.AQUA));
+                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.use_cost", cost).withStyle(TextFormatting.AQUA));
 
             if( upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()) ) {
                 UpgradeBatteryLevels.getBatteryByLevel(upgrade.getTier()).ifPresent(e -> {
-                    tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.battery_boost", MagicHelpers.tidyValue(e.getPower())).mergeStyle(TextFormatting.AQUA));
+                    tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.battery_boost", MagicHelpers.tidyValue(e.getPower())).withStyle(TextFormatting.AQUA));
                 });
             }
 
-            tooltip.add(new TranslationTextComponent(this.upgrade.getToolTip()).mergeStyle(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent(this.upgrade.getToolTip()).withStyle(TextFormatting.GRAY));
         }
 
     }
 
     public UpgradeCard(Upgrade upgrade, int maxStack) {
-        super(new Properties().group(MiningGadgets.itemGroup).maxStackSize(maxStack));
+        super(new Properties().tab(MiningGadgets.itemGroup).stacksTo(maxStack));
         this.upgrade = upgrade;
     }
 

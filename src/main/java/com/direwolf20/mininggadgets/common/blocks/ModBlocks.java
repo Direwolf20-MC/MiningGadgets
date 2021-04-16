@@ -27,8 +27,8 @@ public class ModBlocks {
      * TileEntity Registers to the above deferred registers to be loaded in from the mods main class.
      */
     public static final RegistryObject<TileEntityType<RenderBlockTileEntity>> RENDERBLOCK_TILE =
-            TILES_ENTITIES.register("renderblock", () -> TileEntityType.Builder.create(RenderBlockTileEntity::new, ModBlocks.RENDER_BLOCK.get()).build(null));
+            TILES_ENTITIES.register("renderblock", () -> TileEntityType.Builder.of(RenderBlockTileEntity::new, ModBlocks.RENDER_BLOCK.get()).build(null));
 
     public static final RegistryObject<TileEntityType<ModificationTableTileEntity>> MODIFICATIONTABLE_TILE =
-            TILES_ENTITIES.register("modificationtable", () -> TileEntityType.Builder.create(ModificationTableTileEntity::new, ModBlocks.MODIFICATION_TABLE.get()).build(null));
+            TILES_ENTITIES.register("modificationtable", () -> TileEntityType.Builder.of(ModificationTableTileEntity::new, ModBlocks.MODIFICATION_TABLE.get()).build(null));
 }

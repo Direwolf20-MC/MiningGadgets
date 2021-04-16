@@ -39,7 +39,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
     public ModificationTableScreen(ModificationTableContainer container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        this.tePos = container.getTE().getPos();
+        this.tePos = container.getTE().getBlockPos();
         this.container = container;
         this.playerInventory = inv;
     }
@@ -50,7 +50,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
         super.render(stack, mouseX, mouseY, partialTicks);
 
         this.scrollingUpgrades.render(stack, mouseX, mouseY, partialTicks);
-        this.renderHoveredTooltip(stack, mouseX, mouseY); // @mcp: func_230459_a_ = renderHoveredToolTip
+        this.renderTooltip(stack, mouseX, mouseY); // @mcp: renderTooltip = renderHoveredToolTip
 
         int relX = (this.width) / 2;
         int relY = (this.height) / 2;
@@ -61,49 +61,49 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
             String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
             String[] parts = string.split("\n");
             for (int i = 0; i < parts.length; i++) {
-                drawScaledCenteredString(stack, (relX + 17) - (font.getStringWidth(parts[0]) / 2), (relY - 68) + (i * font.FONT_HEIGHT), .8f, parts[i], 0xFFFFFF);
+                drawScaledCenteredString(stack, (relX + 17) - (font.width(parts[0]) / 2), (relY - 68) + (i * font.lineHeight), .8f, parts[i], 0xFFFFFF);
             }
         }
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
+    protected void renderLabels(MatrixStack stack, int mouseX, int mouseY) {
     }
 
     private void drawScaledCenteredString(MatrixStack matrices, int x, int y, float scale, String textComponent, int color) {
-        matrices.push();
+        matrices.pushPose();
         matrices.translate(x, y, 0);
         matrices.scale(scale, scale, scale);
         drawString(matrices, font, textComponent, 0, 0, color);
-        matrices.pop();
+        matrices.popPose();
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        getMinecraft().getTextureManager().bindTexture(GUI);
-        int relX = (this.width - this.xSize) / 2;
-        int relY = (this.height - this.ySize) / 2;
-        this.blit(stack, relX - 23, relY, 0, 0, this.xSize + 23, this.ySize);
+        getMinecraft().getTextureManager().bind(GUI);
+        int relX = (this.width - this.imageWidth) / 2;
+        int relY = (this.height - this.imageHeight) / 2;
+        this.blit(stack, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight);
     }
 
     @Override
     public void init() {
         super.init();
 
-        this.scrollingUpgrades = new ScrollingUpgrades(Minecraft.getInstance(), this.xSize - 14, 72, guiTop + 7, guiLeft + 7, this);
+        this.scrollingUpgrades = new ScrollingUpgrades(Minecraft.getInstance(), this.imageWidth - 14, 72, topPos + 7, leftPos + 7, this);
         this.children.add(this.scrollingUpgrades);
    }
 
     @Override
     public boolean mouseClicked(double mouseXIn, double mouseYIn, int p_231044_5_) {
-        ItemStack heldStack = this.playerInventory.getItemStack();
-        ItemStack gadget = this.container.inventorySlots.get(0).getStack();
+        ItemStack heldStack = this.playerInventory.getCarried();
+        ItemStack gadget = this.container.slots.get(0).getItem();
         if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
             if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
                 // Send packet to remove the item from the inventory and add it to the table
                 PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
-                playerInventory.setItemStack(ItemStack.EMPTY);
+                playerInventory.setCarried(ItemStack.EMPTY);
             }
         }
         return super.mouseClicked(mouseXIn, mouseYIn, p_231044_5_);
@@ -140,7 +140,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
 
             int index = 0;
             for (Upgrade upgrade : this.parent.container.getUpgradesCache()) {
-                Minecraft.getInstance().getItemRenderer().renderItemIntoGUI(new ItemStack(upgrade.getCard()), x, y);
+                Minecraft.getInstance().getItemRenderer().renderGuiItem(new ItemStack(upgrade.getCard()), x, y);
 
                 if( isMouseOver(mouseX, mouseY) && (mouseX > x && mouseX < x + 15 && mouseY > y && mouseY < y + 15)  )
                     currentUpgrade = upgrade;
@@ -171,7 +171,7 @@ public class ModificationTableScreen extends ContainerScreen<ModificationTableCo
             super.render(stack, mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                this.parent.renderTooltip(stack, Lists.transform(this.upgrade.getStack().getTooltip(this.parent.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL), ITextComponent::func_241878_f), mouseX, mouseY);
+                this.parent.renderTooltip(stack, Lists.transform(this.upgrade.getStack().getTooltipLines(this.parent.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL), ITextComponent::getVisualOrderText), mouseX, mouseY);
         }
     }
 }

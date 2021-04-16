@@ -21,11 +21,11 @@ public class PacketGhostSlot {
 
     public static void encode(PacketGhostSlot msg, PacketBuffer buffer) {
         buffer.writeInt(msg.slotNumber);
-        buffer.writeItemStack(msg.stack);
+        buffer.writeItem(msg.stack);
     }
 
     public static PacketGhostSlot decode(PacketBuffer buffer) {
-        return new PacketGhostSlot(buffer.readInt(), buffer.readItemStack());
+        return new PacketGhostSlot(buffer.readInt(), buffer.readItem());
     }
 
     public static class Handler {
@@ -35,13 +35,13 @@ public class PacketGhostSlot {
                 if (sender == null)
                     return;
 
-                Container container = sender.openContainer;
+                Container container = sender.containerMenu;
                 if (container == null)
                     return;
 
-                Slot slot = container.inventorySlots.get(msg.slotNumber);
+                Slot slot = container.slots.get(msg.slotNumber);
                 if (slot instanceof GhostSlot)
-                    slot.putStack(msg.stack);
+                    slot.set(msg.stack);
             });
 
             ctx.get().setPacketHandled(true);

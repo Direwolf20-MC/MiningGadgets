@@ -11,7 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ModItems {
     // The item group is the creative tab it will go into.
-    public static final Item.Properties ITEM_GROUP = new Item.Properties().group(MiningGadgets.itemGroup);
+    public static final Item.Properties ITEM_GROUP = new Item.Properties().tab(MiningGadgets.itemGroup);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MiningGadgets.MOD_ID);
 
     // We have a separate register just to contain all of the upgrades for quick reference
@@ -22,7 +22,7 @@ public class ModItems {
 
     // Block items
     public static final RegistryObject<Item> MODIFICATION_TABLE_ITEM = ITEMS.register("modificationtable", () -> new BlockItem(ModBlocks.MODIFICATION_TABLE.get(), ITEM_GROUP));
-    public static final RegistryObject<Item> MINERS_LIGHT_ITEM = ITEMS.register("minerslight", () -> new BlockItem(ModBlocks.MINERS_LIGHT.get(), ITEM_GROUP.maxStackSize(1)));
+    public static final RegistryObject<Item> MINERS_LIGHT_ITEM = ITEMS.register("minerslight", () -> new BlockItem(ModBlocks.MINERS_LIGHT.get(), ITEM_GROUP.stacksTo(1)));
 
     /**
      * Upgrades are a bit ugly.. Soz
