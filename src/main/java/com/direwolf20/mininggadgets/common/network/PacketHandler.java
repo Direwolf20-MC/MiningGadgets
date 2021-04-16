@@ -52,14 +52,14 @@ public class PacketHandler {
 
     public static void sendTo(Object msg, ServerPlayerEntity player) {
         if (!(player instanceof FakePlayer))
-            HANDLER.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+            HANDLER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static void sendToAll(Object msg, World world) {
         //Todo Maybe only send to nearby players?
-        for (PlayerEntity player : world.getPlayers()) {
+        for (PlayerEntity player : world.players()) {
             if (!(player instanceof FakePlayer))
-                HANDLER.sendTo(msg, ((ServerPlayerEntity) player).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+                HANDLER.sendTo(msg, ((ServerPlayerEntity) player).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         }
     }
 

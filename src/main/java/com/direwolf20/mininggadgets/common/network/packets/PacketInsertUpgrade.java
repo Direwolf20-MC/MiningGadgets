@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 
 public final class PacketInsertUpgrade {
     public static PacketInsertUpgrade decode(PacketBuffer buffer) {
-        return new PacketInsertUpgrade(buffer.readBlockPos(), buffer.readItemStack());
+        return new PacketInsertUpgrade(buffer.readBlockPos(), buffer.readItem());
     }
 
     private final BlockPos pos;
@@ -29,7 +29,7 @@ public final class PacketInsertUpgrade {
 
     public void encode(PacketBuffer buffer) {
         buffer.writeBlockPos(pos);
-        buffer.writeItemStack(upgrade);
+        buffer.writeItem(upgrade);
     }
 
     public void handler(Supplier<NetworkEvent.Context> ctx) {
@@ -37,20 +37,20 @@ public final class PacketInsertUpgrade {
             ServerPlayerEntity player = ctx.get().getSender();
             if (player == null) return;
 
-            World world = player.world;
+            World world = player.level;
             BlockPos pos = this.pos;
 
-            TileEntity te = world.getTileEntity(pos);
+            TileEntity te = world.getBlockEntity(pos);
             if (!(te instanceof ModificationTableTileEntity)) return;
             ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
-            ItemStack stack = player.inventory.getItemStack();
-            if (!stack.isItemEqual(upgrade)) {
+            ItemStack stack = player.inventory.getCarried();
+            if (!stack.sameItem(upgrade)) {
                 return;
             }
 
             ModificationTableCommands.insertButton(container, this.upgrade);
-            player.inventory.setItemStack(ItemStack.EMPTY);
+            player.inventory.setCarried(ItemStack.EMPTY);
         });
 
         ctx.get().setPacketHandled(true);

@@ -64,18 +64,18 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
 
         addButton(blockBreakButton);
 
-        sliderRedInner = new Slider(baseX - (150), baseY - 10, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.red, false, true, s -> {
+        sliderRedInner = new Slider(baseX - (150), baseY - 10, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red").append(": "), StringTextComponent.EMPTY, 0, 255, this.red, false, true, s -> {
         }, this);
-        sliderGreenInner = new Slider(baseX - (150), baseY + 15, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.green, false, true, s -> {
+        sliderGreenInner = new Slider(baseX - (150), baseY + 15, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green").append(": "), StringTextComponent.EMPTY, 0, 255, this.green, false, true, s -> {
         }, this);
-        sliderBlueInner = new Slider(baseX - (150), baseY + 40, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.blue, false, true, s -> {
+        sliderBlueInner = new Slider(baseX - (150), baseY + 40, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue").append(": "), StringTextComponent.EMPTY, 0, 255, this.blue, false, true, s -> {
         }, this);
 
-        sliderRedOuter = new Slider(baseX + (25), baseY - 10, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.red_inner, false, true, s -> {
+        sliderRedOuter = new Slider(baseX + (25), baseY - 10, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red").append(": "), StringTextComponent.EMPTY, 0, 255, this.red_inner, false, true, s -> {
         }, this);
-        sliderGreenOuter = new Slider(baseX + (25), baseY + 15, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.green_inner, false, true, s -> {
+        sliderGreenOuter = new Slider(baseX + (25), baseY + 15, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green").append(": "), StringTextComponent.EMPTY, 0, 255, this.green_inner, false, true, s -> {
         }, this);
-        sliderBlueOuter = new Slider(baseX + (25), baseY + 40, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue").appendString(": "), StringTextComponent.EMPTY, 0, 255, this.blue_inner, false, true, s -> {
+        sliderBlueOuter = new Slider(baseX + (25), baseY + 40, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue").append(": "), StringTextComponent.EMPTY, 0, 255, this.blue_inner, false, true, s -> {
         }, this);
 
         addButton(sliderRedInner);
@@ -97,10 +97,10 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
         drawString(stack, font, new TranslationTextComponent("mininggadgets.tooltip.screen.outer_color"), (width / 2) - 150, (height / 2) - 25, 0xFFFFFF);
         drawString(stack, font, new TranslationTextComponent("mininggadgets.tooltip.screen.inner_color"), (width / 2) + 25, (height / 2) - 25, 0xFFFFFF);
 
-        stack.push();
+        stack.pushPose();
         fill(stack, (width / 2) + 25, (height / 2) - 55, ((width / 2) + 25) + 150, ((height / 2) - 55) + 20, this.rgbToInt(this.red, this.green, this.blue));
         fill(stack, (width / 2) + 25, (height / 2) - 50, ((width / 2) + 25) + 150, ((height / 2) - 50) + 10, this.rgbToInt(this.red_inner, this.green_inner, this.blue_inner));
-        stack.pop();
+        stack.popPose();
     }
 
     private int rgbToInt(int r, int g, int b) {
@@ -117,8 +117,8 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
+    public void removed() {
+        super.removed();
     }
 
     private void syncColors() {
@@ -127,16 +127,16 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
 
     @Override
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
-        InputMappings.Input mouseKey = InputMappings.getInputByCode(p_keyPressed_1_, p_keyPressed_2_);
+        InputMappings.Input mouseKey = InputMappings.getKey(p_keyPressed_1_, p_keyPressed_2_);
         if (p_keyPressed_1_ == 256) {
             syncColors();
             ModScreens.openGadgetSettingsScreen(this.gadget);
             return true;
         }
 
-        if (getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
+        if (getMinecraft().options.keyInventory.isActiveAndMatches(mouseKey)) {
             syncColors();
-            onClose();
+            removed();
             return true;
         }
 

@@ -17,13 +17,13 @@ public class VectorHelper {
     }
 
     public static BlockRayTraceResult getLookingAt(PlayerEntity player, RayTraceContext.FluidMode rayTraceFluid, int range) {
-        World world = player.world;
+        World world = player.level;
 
-        Vector3d look = player.getLookVec();
-        Vector3d start = new Vector3d(player.getPosX(), player.getPosY() + player.getEyeHeight(), player.getPosZ());
+        Vector3d look = player.getLookAngle();
+        Vector3d start = new Vector3d(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
 
-        Vector3d end = new Vector3d(player.getPosX() + look.x * (double) range, player.getPosY() + player.getEyeHeight() + look.y * (double) range, player.getPosZ() + look.z * (double) range);
+        Vector3d end = new Vector3d(player.getX() + look.x * (double) range, player.getY() + player.getEyeHeight() + look.y * (double) range, player.getZ() + look.z * (double) range);
         RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, rayTraceFluid, player);
-        return world.rayTraceBlocks(context);
+        return world.clip(context);
     }
 }

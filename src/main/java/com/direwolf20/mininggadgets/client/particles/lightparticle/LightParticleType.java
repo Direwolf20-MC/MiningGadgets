@@ -21,9 +21,9 @@ public class LightParticleType extends BasicParticleType {
             this.spriteSet = p_i50522_1_;
         }
 
-        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             LightParticle particle = new LightParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
-            particle.selectSpriteRandomly(this.spriteSet);
+            particle.pickSprite(this.spriteSet);
             particle.setColor(.1F, .5f, .5F);
             return particle;
         }

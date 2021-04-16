@@ -22,9 +22,9 @@ public class SpecialBlockActions {
 
     static {
         register.put(Blocks.ICE, (world, pos, state) -> {
-            Material material = world.getBlockState(pos.down()).getMaterial();
-            if (material.blocksMovement() || material.isLiquid())
-                world.setBlockState(pos, Blocks.WATER.getDefaultState());
+            Material material = world.getBlockState(pos.below()).getMaterial();
+            if (material.blocksMotion() || material.isLiquid())
+                world.setBlockAndUpdate(pos, Blocks.WATER.defaultBlockState());
         });
     }
 

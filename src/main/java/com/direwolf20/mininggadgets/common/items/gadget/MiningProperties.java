@@ -180,7 +180,7 @@ public class MiningProperties {
      *           understanding on why you shouldn't change the tad data on the gadget directly.
      */
     public static List<ItemStack> getFiltersAsList(ItemStack gadget) {
-        return deserializeItemStackList(gadget.getOrCreateChildTag(MiningProperties.KEY_FILTERS));
+        return deserializeItemStackList(gadget.getOrCreateTagElement(MiningProperties.KEY_FILTERS));
     }
 
     // mostly stolen from ItemStackHandler
@@ -190,7 +190,7 @@ public class MiningProperties {
 
         for (int i = 0; i < tagList.size(); i++) {
             CompoundNBT itemTags = tagList.getCompound(i);
-            stacks.add(ItemStack.read(itemTags));
+            stacks.add(ItemStack.of(itemTags));
         }
 
         return stacks;
@@ -204,7 +204,7 @@ public class MiningProperties {
                 continue;
 
             CompoundNBT itemTag = new CompoundNBT();
-            stacks.get(i).write(itemTag);
+            stacks.get(i).save(itemTag);
             nbtTagList.add(itemTag);
         }
 

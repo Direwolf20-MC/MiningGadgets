@@ -47,17 +47,17 @@ public class FilterContainer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean stillValid(PlayerEntity playerIn) {
         return true;
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
+        Slot slot = this.slots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack currentStack = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack currentStack = slot.getItem();
 
             // Stop our items at the very least :P
             if (currentStack.getItem() instanceof MiningGadget || currentStack.getItem() instanceof UpgradeCard)
@@ -69,11 +69,11 @@ public class FilterContainer extends Container {
             // Find the first empty slot number
             int slotNumber = -1;
             for (int i = 36; i <= 62; i++) {
-                if (this.inventorySlots.get(i).getStack().isEmpty()) {
+                if (this.slots.get(i).getItem().isEmpty()) {
                     slotNumber = i;
                     break;
                 } else {
-                    if (this.inventorySlots.get(i).getStack().getItem() == currentStack.getItem()) {
+                    if (this.slots.get(i).getItem().getItem() == currentStack.getItem()) {
                         break;
                     }
                 }
@@ -82,21 +82,21 @@ public class FilterContainer extends Container {
             if (slotNumber == -1)
                 return itemstack;
 
-            this.inventorySlots.get(slotNumber).putStack(currentStack.copy().split(1));
+            this.slots.get(slotNumber).set(currentStack.copy().split(1));
         }
 
         return itemstack;
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        if ((slotId < this.inventorySlots.size()
+    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        if ((slotId < this.slots.size()
                 && slotId >= 0
-                && this.inventorySlots.get(slotId).getStack().getItem() instanceof MiningGadget)
+                && this.slots.get(slotId).getItem().getItem() instanceof MiningGadget)
                 || clickTypeIn == ClickType.SWAP) {
             return ItemStack.EMPTY;
         }
 
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
+        return super.clicked(slotId, dragType, clickTypeIn, player);
     }
 }

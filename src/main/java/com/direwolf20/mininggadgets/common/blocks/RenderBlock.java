@@ -17,14 +17,16 @@ import javax.annotation.Nullable;
 
 //import net.minecraft.util.BlockRenderLayer;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class RenderBlock extends Block {
     public RenderBlock() {
         super(
-                Properties.create(Material.IRON)
-                        .hardnessAndResistance(2.0f)
-                        .notSolid()
+                Properties.of(Material.METAL)
+                        .strength(2.0f)
+                        .noOcclusion()
                         .noDrops()
-                        .setOpaque((a, b, c) -> false) // @mcp: setOpaque seems to replace isNormalBlock
+                        .isRedstoneConductor((a, b, c) -> false) // @mcp: setOpaque seems to replace isNormalBlock
         );
     }
 
@@ -47,7 +49,7 @@ public class RenderBlock extends Block {
      */
     @Override
     @SuppressWarnings("deprecation")
-    public BlockRenderType getRenderType(BlockState state) {
+    public BlockRenderType getRenderShape(BlockState state) {
         // We still make effect blocks invisible because all effects (scaling block, transparent box) are dynamic so they has to be in the TER
         return BlockRenderType.INVISIBLE;
     }
@@ -56,23 +58,23 @@ public class RenderBlock extends Block {
      * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
      */
     @Override
-    public PushReaction getPushReaction(BlockState state) {
+    public PushReaction getPistonPushReaction(BlockState state) {
         return PushReaction.BLOCK;
     }
 
     @Override
-    public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public int getLightBlock(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return 0;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return 1.0f;
     }
 
     @Override
-    public boolean isSideInvisible(BlockState p_200122_1_, BlockState p_200122_2_, Direction p_200122_3_) {
+    public boolean skipRendering(BlockState p_200122_1_, BlockState p_200122_2_, Direction p_200122_3_) {
         return true;
     }
 }

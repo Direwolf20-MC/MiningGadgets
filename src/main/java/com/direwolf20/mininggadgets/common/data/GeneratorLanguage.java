@@ -50,7 +50,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.void_junk", "Voids blocks! (adds filtering too)");
         add("tooltop.mininggadgets.magnet", "Deconstructs blocks right into your inventory");
         add("tooltop.mininggadgets.three_by_three", "Allows for a 3x3 mining radius");
-        add("tooltop.mininggadgets.light_placer", "Places touches whenever the surroundings light level is lower than 8");
+        add("tooltop.mininggadgets.light_placer", "Places torches whenever the surroundings light level is lower than 8");
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
         add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");

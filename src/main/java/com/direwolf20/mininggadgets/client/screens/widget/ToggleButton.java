@@ -30,12 +30,12 @@ public class ToggleButton extends Widget {
     }
 
     @Override
-    public void renderButton(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         Color activeColor = this.enabled ? Color.GREEN : Color.RED;
 
         RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param, GlStateManager.SourceFactor.ONE.param, GlStateManager.DestFactor.ZERO.param);
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value, GlStateManager.SourceFactor.ONE.value, GlStateManager.DestFactor.ZERO.value);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value);
 
         RenderSystem.disableTexture();
         RenderSystem.color4f(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, this.enabled ? .4f : .6f);
@@ -43,12 +43,12 @@ public class ToggleButton extends Widget {
         RenderSystem.enableTexture();
 
         RenderSystem.color4f(1f, 1f, 1f, 1f);
-        Minecraft.getInstance().getTextureManager().bindTexture(texture);
+        Minecraft.getInstance().getTextureManager().bind(texture);
         blit(stack, this.x +2, this.y + 5, 0, 0, 16, 16, 16, 16);
     }
 
     public List<IReorderingProcessor> getTooltip() {
-        return LanguageMap.getInstance().func_244260_a(Arrays.asList(this.getMessage(), new StringTextComponent("Enabled: " + this.enabled).mergeStyle(this.enabled ? TextFormatting.GREEN : TextFormatting.RED)));
+        return LanguageMap.getInstance().getVisualOrder(Arrays.asList(this.getMessage(), new StringTextComponent("Enabled: " + this.enabled).withStyle(this.enabled ? TextFormatting.GREEN : TextFormatting.RED)));
     }
 
     @Override

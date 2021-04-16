@@ -17,8 +17,8 @@ public class WatchedSlot extends SlotItemHandler {
     }
 
     @Override
-    public void onSlotChanged() {
-        super.onSlotChanged();
+    public void setChanged() {
+        super.setChanged();
 
         this.onPress.accept(this.getSlotIndex());
     }

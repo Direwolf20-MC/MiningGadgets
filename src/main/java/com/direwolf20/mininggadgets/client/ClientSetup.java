@@ -23,8 +23,8 @@ public final class ClientSetup {
      * Called from some Client Dist runner in the main class
      */
     private static void registerContainerScreens() {
-        ScreenManager.registerFactory(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), ModificationTableScreen::new);
-        ScreenManager.registerFactory(ModContainers.FILTER_CONTAINER.get(), FilterScreen::new);
+        ScreenManager.register(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), ModificationTableScreen::new);
+        ScreenManager.register(ModContainers.FILTER_CONTAINER.get(), FilterScreen::new);
     }
 
     /**

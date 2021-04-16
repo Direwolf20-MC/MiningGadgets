@@ -16,27 +16,27 @@ public class LaserLoopSound extends TickableSound {
     public LaserLoopSound(PlayerEntity player, float volume) {
         super(OurSounds.LASER_LOOP.getSound(), SoundCategory.PLAYERS);
         this.player = player;
-        this.repeat = true;
-        this.repeatDelay = 0;
+        this.looping = true;
+        this.delay = 0;
         this.volume = volume;
-        this.x = (float) player.getPosX();
-        this.y = (float) player.getPosY();
-        this.z = (float) player.getPosZ();
+        this.x = (float) player.getX();
+        this.y = (float) player.getY();
+        this.z = (float) player.getZ();
     }
 
-    public boolean canBeSilent() {
+    public boolean canStartSilent() {
         return true;
     }
 
     public void tick() {
         ItemStack heldItem = MiningGadget.getGadget(player);
-        if (!(this.player.isHandActive() && heldItem.getItem() instanceof MiningGadget)) {
-            this.finishPlaying();
+        if (!(this.player.isUsingItem() && heldItem.getItem() instanceof MiningGadget)) {
+            this.stop();
         } else {
 //            PlayerEntity myplayer = Minecraft.getInstance().player;
-            this.x = (float) this.player.getPosX();
-            this.y = (float) this.player.getPosY();
-            this.z = (float) this.player.getPosZ();
+            this.x = (float) this.player.getX();
+            this.y = (float) this.player.getY();
+            this.z = (float) this.player.getZ();
             //this.distance = MathHelper.clamp(this.distance + 0.0025F, 0.0F, 1.0F);
             //this.volume = (float) MathHelper.lerp((1.0f - (player.getDistanceSq(myplayer)/10)), 0.0F, 1.0f);
         }

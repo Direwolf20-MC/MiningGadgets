@@ -14,17 +14,17 @@ public class GhostSlot extends SlotItemHandler {
     }
 
     @Override
-    public int getSlotStackLimit() {
+    public int getMaxStackSize() {
         return 1;
     }
 
     @Override
-    public void putStack(@Nonnull ItemStack stack) {
-        super.putStack(stack);
+    public void set(@Nonnull ItemStack stack) {
+        super.set(stack);
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity player) {
+    public boolean mayPickup(PlayerEntity player) {
         return false;
     }
 
@@ -34,12 +34,12 @@ public class GhostSlot extends SlotItemHandler {
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@Nonnull ItemStack stack) {
         return !(stack.getItem() instanceof MiningGadget);
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack) {
+    public int getMaxStackSize(@Nonnull ItemStack stack) {
         return 1;
     }
 }

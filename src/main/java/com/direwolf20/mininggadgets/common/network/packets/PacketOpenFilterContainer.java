@@ -27,7 +27,7 @@ public class PacketOpenFilterContainer {
                 if (sender == null)
                     return;
 
-                Container container = sender.openContainer;
+                Container container = sender.containerMenu;
                 if (container == null)
                     return;
 
@@ -42,8 +42,8 @@ public class PacketOpenFilterContainer {
                     }
                 };
 
-                ghostInventory.deserializeNBT(stack.getOrCreateChildTag(MiningProperties.KEY_FILTERS));
-                sender.openContainer(new SimpleNamedContainerProvider(
+                ghostInventory.deserializeNBT(stack.getOrCreateTagElement(MiningProperties.KEY_FILTERS));
+                sender.openMenu(new SimpleNamedContainerProvider(
                         (windowId, playerInventory, playerEntity) -> new FilterContainer(windowId, playerInventory, ghostInventory), new StringTextComponent("")
                 ));
             });

@@ -37,11 +37,11 @@ public class PacketDurabilitySync {
             nbtList.add(i, nbt);
         }
         tag.put("list", nbtList);
-        buffer.writeCompoundTag(tag);
+        buffer.writeNbt(tag);
     }
 
     public static PacketDurabilitySync decode(PacketBuffer buffer) {
-        CompoundNBT tag = buffer.readCompoundTag();
+        CompoundNBT tag = buffer.readNbt();
         ListNBT nbtList = tag.getList("list", Constants.NBT.TAG_COMPOUND);
         List<Tuple<BlockPos, Integer>> thisList = new ArrayList<>();
         for (int i = 0; i < nbtList.size(); i++) {
@@ -64,7 +64,7 @@ public class PacketDurabilitySync {
         for (int i = 0; i < thisList.size(); i++) {
             BlockPos pos = thisList.get(i).getA();
             int durability = thisList.get(i).getB();
-            TileEntity clientTE = Minecraft.getInstance().world.getTileEntity(pos);
+            TileEntity clientTE = Minecraft.getInstance().level.getBlockEntity(pos);
             if (!(clientTE instanceof RenderBlockTileEntity)) return;
             ((RenderBlockTileEntity) clientTE).setClientDurability(durability);
         }

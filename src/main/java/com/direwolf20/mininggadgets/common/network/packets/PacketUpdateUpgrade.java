@@ -18,11 +18,11 @@ public class PacketUpdateUpgrade {
     }
 
     public static void encode(PacketUpdateUpgrade msg, PacketBuffer buffer) {
-        buffer.writeString(msg.upgrade);
+        buffer.writeUtf(msg.upgrade);
     }
 
     public static PacketUpdateUpgrade decode(PacketBuffer buffer) {
-        return new PacketUpdateUpgrade(buffer.readString(100));
+        return new PacketUpdateUpgrade(buffer.readUtf(100));
     }
 
     public static class Handler {

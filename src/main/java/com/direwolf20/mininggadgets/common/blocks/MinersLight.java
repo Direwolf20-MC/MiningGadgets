@@ -18,15 +18,15 @@ import java.util.Random;
 
 public class MinersLight extends Block {
 
-    protected static final VoxelShape SHAPE = Block.makeCuboidShape(6.0D, 6.0D, 6.0D, 10.0D, 10.0D, 10.0D);
+    protected static final VoxelShape SHAPE = Block.box(6.0D, 6.0D, 6.0D, 10.0D, 10.0D, 10.0D);
 
     public MinersLight() {
         super(
                 Block.Properties
-                        .create(Material.MISCELLANEOUS)
-                        .doesNotBlockMovement()
-                        .hardnessAndResistance(0.0f)
-                        .setLightLevel(e -> 14)
+                        .of(Material.DECORATION)
+                        .noCollission()
+                        .strength(0.0f)
+                        .lightLevel(e -> 14)
         );
     }
 
@@ -37,7 +37,7 @@ public class MinersLight extends Block {
      */
     @Override
     @SuppressWarnings("deprecation")
-    public BlockRenderType getRenderType(BlockState state) {
+    public BlockRenderType getRenderShape(BlockState state) {
         // We still make effect blocks invisible because all effects (scaling block, transparent box) are dynamic so they has to be in the TER
         return BlockRenderType.INVISIBLE;
     }

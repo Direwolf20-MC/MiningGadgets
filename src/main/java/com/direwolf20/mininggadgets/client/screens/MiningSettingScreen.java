@@ -26,6 +26,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 // todo: refactor and clean up
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private ItemStack gadget;
 
@@ -107,7 +109,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
             PacketHandler.sendToServer(new PacketChangeMiningSize());
         }));
 
-        leftWidgets.add(rangeSlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").appendString(": "), StringTextComponent.EMPTY, 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this));
+        leftWidgets.add(rangeSlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), StringTextComponent.EMPTY, 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this));
 
         leftWidgets.add(new Button(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.visuals_menu"), (button) -> {
             ModScreens.openVisualSettingsScreen(gadget);
@@ -121,11 +123,11 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         }));
 
         // volume slider
-        leftWidgets.add(volumeSlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").appendString(": "), new StringTextComponent("%"), 0, 100, Math.min(100, volume * 100), false, true, s -> {}, this));
+        leftWidgets.add(volumeSlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), new StringTextComponent("%"), 0, 100, Math.min(100, volume * 100), false, true, s -> {}, this));
 
         // Freeze delay
         if( containsFreeze )
-            leftWidgets.add(freezeDelaySlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").appendString(": "), new StringTextComponent(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), false, true, s -> {}, this));
+            leftWidgets.add(freezeDelaySlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").append(": "), new StringTextComponent(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), false, true, s -> {}, this));
 
         // Button logic
         if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) )
@@ -168,11 +170,11 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
         int top = (height / 2) - (containsFreeze ? 80 : 60);
 
-        drawString(stack, getMinecraft().fontRenderer, getTrans("tooltip.screen.mining_gadget"), (width / 2) - 135, top, Color.WHITE.getRGB());
-        drawString(stack, getMinecraft().fontRenderer, getTrans("tooltip.screen.toggle_upgrades"), (width / 2) + 10, top, Color.WHITE.getRGB());
+        drawString(stack, getMinecraft().font, getTrans("tooltip.screen.mining_gadget"), (width / 2) - 135, top, Color.WHITE.getRGB());
+        drawString(stack, getMinecraft().font, getTrans("tooltip.screen.toggle_upgrades"), (width / 2) + 10, top, Color.WHITE.getRGB());
 
         if( toggleableList.size() == 0 )
-            drawString(stack, getMinecraft().fontRenderer, getTrans("tooltip.screen.no_upgrades"), (width / 2) + 10, top + 20, Color.GRAY.getRGB());
+            drawString(stack, getMinecraft().font, getTrans("tooltip.screen.no_upgrades"), (width / 2) + 10, top + 20, Color.GRAY.getRGB());
 
         this.children.forEach(e -> {
             if( !(e instanceof ToggleButton) && !(e instanceof WhitelistButton) && !e.equals(freezeDelaySlider) )
@@ -187,7 +189,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
                     // This is a bit silly, not going to lie
                     List<ITextProperties> helpText = Arrays.stream(getTrans("tooltip.screen.delay_explain").getString().split("\n")).map(StringTextComponent::new).collect(Collectors.toList());
-                    renderTooltip(stack, LanguageMap.getInstance().func_244260_a(helpText), ((Slider)e).x - 8, ((Slider)e).y + 40);
+                    renderTooltip(stack, LanguageMap.getInstance().getVisualOrder(helpText), ((Slider)e).x - 8, ((Slider)e).y + 40);
                 }
             } else {
                 assert e instanceof ToggleButton;
@@ -204,19 +206,19 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     }
 
     @Override
-    public void onClose() {
+    public void removed() {
         PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
         PacketHandler.sendToServer(new PacketChangeVolume(this.volume));
         PacketHandler.sendToServer(new PacketChangeFreezeDelay(this.freezeDelay));
 
-        super.onClose();
+        super.removed();
     }
 
     @Override
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
-        InputMappings.Input mouseKey = InputMappings.getInputByCode(p_keyPressed_1_, p_keyPressed_2_);
-        if (p_keyPressed_1_ == 256 || minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
-            closeScreen();
+        InputMappings.Input mouseKey = InputMappings.getKey(p_keyPressed_1_, p_keyPressed_2_);
+        if (p_keyPressed_1_ == 256 || minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
+            onClose();
 
             return true;
         }
@@ -275,7 +277,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         }
 
         @Override
-        public void renderButton(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+        public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
             RenderSystem.disableTexture();
             RenderSystem.color4f(.4f, .4f, .4f, 1f);
             this.blit(stack, this.x, this.y, 0, 0, this.width, this.height);

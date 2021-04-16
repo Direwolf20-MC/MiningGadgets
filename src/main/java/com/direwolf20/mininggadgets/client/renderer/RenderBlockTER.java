@@ -35,7 +35,7 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
             float f1;
             float f2;
 
-            if (bakedquad.hasTintIndex()) {
+            if (bakedquad.isTinted()) {
                 f = red * 1f;
                 f1 = green * 1f;
                 f2 = blue * 1f;
@@ -68,34 +68,34 @@ public class RenderBlockTER extends TileEntityRenderer<RenderBlockTileEntity> {
         if( renderState == null )
             return;
 
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-        Minecraft.getInstance().getTextureManager().bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
+        Minecraft.getInstance().getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
         MiningProperties.BreakTypes breakType = tile.getBreakType();
-        IBakedModel ibakedmodel = blockrendererdispatcher.getModelForState(renderState);
+        IBakedModel ibakedmodel = blockrendererdispatcher.getBlockModel(renderState);
         BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-        int color = blockColors.getColor(renderState, tile.getWorld(), tile.getPos(), 0);
+        int color = blockColors.getColor(renderState, tile.getLevel(), tile.getBlockPos(), 0);
         float f = (float) (color >> 16 & 255) / 255.0F;
         float f1 = (float) (color >> 8 & 255) / 255.0F;
         float f2 = (float) (color & 255) / 255.0F;
 
-        matrixStackIn.push();
+        matrixStackIn.pushPose();
 
         if (breakType == MiningProperties.BreakTypes.SHRINK) {
             matrixStackIn.translate((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
             matrixStackIn.scale(scale, scale, scale);
 
             for (Direction direction : Direction.values()) {
-                renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(RenderType.getCutout()), f, f1, f2, 1f, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
+                renderModelBrightnessColorQuads(matrixStackIn.last(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, 1f, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getSeed(tile.getBlockPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
             }
 
         } else if (breakType == MiningProperties.BreakTypes.FADE) {
             scale = MathHelper.lerp(scale, 0.1f, 1.0f);
             for (Direction direction : Direction.values()) {
-                if (!(tile.getWorld().getBlockState(tile.getPos().offset(direction)).getBlock() instanceof RenderBlock)) {
-                    renderModelBrightnessColorQuads(matrixStackIn.getLast(), bufferIn.getBuffer(MyRenderType.RenderBlock), f, f1, f2, scale, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getPositionRandom(tile.getPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
+                if (!(tile.getLevel().getBlockState(tile.getBlockPos().relative(direction)).getBlock() instanceof RenderBlock)) {
+                    renderModelBrightnessColorQuads(matrixStackIn.last(), bufferIn.getBuffer(MyRenderType.RenderBlock), f, f1, f2, scale, ibakedmodel.getQuads(renderState, direction, new Random(MathHelper.getSeed(tile.getBlockPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
                 }
             }
         }
-        matrixStackIn.pop();
+        matrixStackIn.popPose();
     }
 }

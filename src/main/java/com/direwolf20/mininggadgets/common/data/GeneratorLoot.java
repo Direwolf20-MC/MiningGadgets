@@ -32,13 +32,13 @@ public class GeneratorLoot extends LootTableProvider {
 
     @Override
     protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationresults) {
-        map.forEach((name, table) -> LootTableManager.validateLootTable(validationresults, name, table));
+        map.forEach((name, table) -> LootTableManager.validate(validationresults, name, table));
     }
 
     private static class Blocks extends BlockLootTables {
         @Override
         protected void addTables() {
-            this.registerDropSelfLootTable(ModBlocks.MODIFICATION_TABLE.get());
+            this.dropSelf(ModBlocks.MODIFICATION_TABLE.get());
         }
 
         @Override

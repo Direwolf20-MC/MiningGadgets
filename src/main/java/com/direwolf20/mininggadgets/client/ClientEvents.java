@@ -28,7 +28,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     static void renderWorldLastEvent(RenderWorldLastEvent evt) {
-        List<AbstractClientPlayerEntity> players = Minecraft.getInstance().world.getPlayers();
+        List<AbstractClientPlayerEntity> players = Minecraft.getInstance().level.players();
         PlayerEntity myplayer = Minecraft.getInstance().player;
 
         ItemStack myItem = MiningGadget.getGadget(myplayer);
@@ -36,13 +36,13 @@ public class ClientEvents {
             BlockOverlayRender.render(evt, myItem);
 
         for (PlayerEntity player : players) {
-            if (player.getDistanceSq(myplayer) > 500)
+            if (player.distanceToSqr(myplayer) > 500)
                 continue;
 
             ItemStack heldItem = MiningGadget.getGadget(player);
-            if (player.isHandActive() && heldItem.getItem() instanceof MiningGadget) {
+            if (player.isUsingItem() && heldItem.getItem() instanceof MiningGadget) {
                 if (MiningGadget.canMine(heldItem)) {
-                    RenderMiningLaser2.renderLaser(evt, player, Minecraft.getInstance().getRenderPartialTicks());
+                    RenderMiningLaser2.renderLaser(evt, player, Minecraft.getInstance().getFrameTime());
                 }
             }
         }
@@ -50,7 +50,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     static void keyPressed(InputEvent.KeyInputEvent event) {
-        if (OurKeys.shiftClickGuiBinding.isPressed() && Minecraft.getInstance().currentScreen == null) {
+        if (OurKeys.shiftClickGuiBinding.consumeClick() && Minecraft.getInstance().screen == null) {
             if (Minecraft.getInstance().player == null) {
                 return;
             }

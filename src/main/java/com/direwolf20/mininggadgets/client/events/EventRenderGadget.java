@@ -35,10 +35,10 @@ public class EventRenderGadget
 
         float swingProgress = event.getSwingProgress();
         float equipProgress = event.getEquipProgress();
-        boolean rightHand = event.getHand() == Hand.MAIN_HAND ^ mc.player.getPrimaryHand() == HandSide.LEFT;
+        boolean rightHand = event.getHand() == Hand.MAIN_HAND ^ mc.player.getMainArm() == HandSide.LEFT;
 
         // renders arm
-        matrixStackIn.push();
+        matrixStackIn.pushPose();
 
         float f = rightHand ? 1.0F : -1.0F;
         float f1 = MathHelper.sqrt(swingProgress);
@@ -47,43 +47,43 @@ public class EventRenderGadget
         float f4 = -0.4F * MathHelper.sin(swingProgress * (float)Math.PI);
 
         matrixStackIn.translate(f * (f2 + 0.64000005F - .1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.71999997F + .3f);
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f * 75.0F));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * 75.0F));
 
         float f5 = MathHelper.sin(swingProgress * swingProgress * (float)Math.PI);
         float f6 = MathHelper.sin(f1 * (float)Math.PI);
 
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f * f6 * 45.0F));
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * f6 * 45.0F));
+        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
 
         AbstractClientPlayerEntity abstractclientplayerentity = mc.player;
-        mc.getTextureManager().bindTexture(abstractclientplayerentity.getLocationSkin());
+        mc.getTextureManager().bind(abstractclientplayerentity.getSkinTextureLocation());
 
         matrixStackIn.translate(f * -1.0F, 3.6F, 3.5D);
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(f * 120.0F));
-        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(200.0F));
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f * -135.0F));
+        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * 120.0F));
+        matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(200.0F));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * -135.0F));
         matrixStackIn.translate(f * 5.6F, 0.0D, 0.0D);
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f * 55.0F));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * 55.0F));
 
-        PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(abstractclientplayerentity);
+        PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(abstractclientplayerentity);
         if (rightHand) {
-            playerrenderer.renderRightArm(matrixStackIn, buffer, event.getLight(), abstractclientplayerentity);
+            playerrenderer.renderRightHand(matrixStackIn, buffer, event.getLight(), abstractclientplayerentity);
         } else {
-            playerrenderer.renderLeftArm(matrixStackIn, buffer, event.getLight(), abstractclientplayerentity);
+            playerrenderer.renderLeftHand(matrixStackIn, buffer, event.getLight(), abstractclientplayerentity);
         }
 
-        matrixStackIn.pop();
+        matrixStackIn.popPose();
 
         // renders gadget
-        matrixStackIn.push();
+        matrixStackIn.pushPose();
         matrixStackIn.translate(f * (f2 + 0.64000005F - .1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.71999997F - 0.1f);
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f * f6 * 70.0F));
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * f6 * 70.0F));
+        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
         matrixStackIn.translate(rightHand ? .13f:-.1f, -.25f, -.35f);
         matrixStackIn.scale(1.15f, 1.15f, 1.15f);
 
-        FirstPersonRenderer firstPersonRenderer = mc.getFirstPersonRenderer();
-        firstPersonRenderer.renderItemSide(abstractclientplayerentity,
+        FirstPersonRenderer firstPersonRenderer = mc.getItemInHandRenderer();
+        firstPersonRenderer.renderItem(abstractclientplayerentity,
                 event.getItemStack(),
                 rightHand
                         ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND
@@ -93,7 +93,7 @@ public class EventRenderGadget
                 event.getBuffers(),
                 event.getLight()
         );
-        matrixStackIn.pop();
+        matrixStackIn.popPose();
 
         event.setCanceled(true);
     }
