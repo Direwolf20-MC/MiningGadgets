@@ -141,7 +141,6 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         for (Direction side : Direction.values()) {
             BlockPos sidePos = this.worldPosition.relative(side);
             FluidState state = this.level.getFluidState(sidePos);
-            BlockState blockState = this.level.getBlockState(sidePos);
 
             if (state.getType().isSame(Fluids.LAVA) && state.getType().isSource(state)) {
                 energy -= this.replaceBlockWithAlternative(this.level, sidePos, Blocks.OBSIDIAN.defaultBlockState(), stack, freezeCost, energy);
@@ -162,7 +161,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
         // If the block is just water logged, remove the fluid
         BlockState blockState = world.getBlockState(pos);
-        if (blockState.hasProperty(BlockStateProperties.WATERLOGGED) && blockState.getValue(BlockStateProperties.WATERLOGGED)) {
+        if (blockState.hasProperty(BlockStateProperties.WATERLOGGED) && blockState.getValue(BlockStateProperties.WATERLOGGED) && world.getBlockEntity(pos) == null) {
             world.setBlockAndUpdate(pos, blockState.setValue(BlockStateProperties.WATERLOGGED, false));
             return costOfOperation;
         }
