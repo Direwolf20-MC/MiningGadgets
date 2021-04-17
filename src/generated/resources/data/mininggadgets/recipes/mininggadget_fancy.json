@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "dig",
+    "dii",
     "dur",
     "dig"
   ],
@@ -23,6 +23,6 @@
     }
   },
   "result": {
-    "item": "mininggadgets:mininggadget"
+    "item": "mininggadgets:mininggadget_fancy"
   }
 }

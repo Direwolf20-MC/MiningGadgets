@@ -3,7 +3,7 @@
   "pattern": [
     "dig",
     "dur",
-    "dig"
+    "dii"
   ],
   "key": {
     "u": {
@@ -23,6 +23,6 @@
     }
   },
   "result": {
-    "item": "mininggadgets:mininggadget"
+    "item": "mininggadgets:mininggadget_simple"
   }
 }

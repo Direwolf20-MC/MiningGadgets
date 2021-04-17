@@ -1,9 +1,9 @@
 package com.direwolf20.mininggadgets.client;
 
 import com.direwolf20.mininggadgets.client.renderer.BlockOverlayRender;
-import com.direwolf20.mininggadgets.client.renderer.RenderMiningLaser2;
+import com.direwolf20.mininggadgets.client.renderer.ModificationShiftOverlay;
+import com.direwolf20.mininggadgets.client.renderer.RenderMiningLaser;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
-import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
@@ -35,6 +35,10 @@ public class ClientEvents {
         if (myItem.getItem() instanceof MiningGadget)
             BlockOverlayRender.render(evt, myItem);
 
+        if (myplayer.isShiftKeyDown()) {
+            ModificationShiftOverlay.render(evt, myplayer);
+        }
+
         for (PlayerEntity player : players) {
             if (player.distanceToSqr(myplayer) > 500)
                 continue;
@@ -42,7 +46,7 @@ public class ClientEvents {
             ItemStack heldItem = MiningGadget.getGadget(player);
             if (player.isUsingItem() && heldItem.getItem() instanceof MiningGadget) {
                 if (MiningGadget.canMine(heldItem)) {
-                    RenderMiningLaser2.renderLaser(evt, player, Minecraft.getInstance().getFrameTime());
+                    RenderMiningLaser.renderLaser(evt, player, Minecraft.getInstance().getFrameTime());
                 }
             }
         }

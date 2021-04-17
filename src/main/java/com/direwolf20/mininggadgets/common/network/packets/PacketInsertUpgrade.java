@@ -49,8 +49,9 @@ public final class PacketInsertUpgrade {
                 return;
             }
 
-            ModificationTableCommands.insertButton(container, this.upgrade);
-            player.inventory.setCarried(ItemStack.EMPTY);
+            if (ModificationTableCommands.insertButton(container, this.upgrade)) {
+                player.inventory.setCarried(ItemStack.EMPTY);
+            }
         });
 
         ctx.get().setPacketHandled(true);

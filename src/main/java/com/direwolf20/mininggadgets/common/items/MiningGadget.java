@@ -502,7 +502,13 @@ public class MiningGadget extends Item {
             int hasteLevel = hasteEffect.getAmplifier() + 1;
             toolSpeed = toolSpeed + (toolSpeed * ((hasteLevel * 20f) / 100));
         }
-        World world = player.getCommandSenderWorld();
+
+        EffectInstance miningFatigue = player.getEffect(Effects.DIG_SLOWDOWN);
+        if (miningFatigue != null) {
+            toolSpeed = toolSpeed / 3f;
+        }
+
+        World world = player.level;
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             float temphardness = state.getDestroySpeed(world, coord);

@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.tileentity.TileEntity;
@@ -23,7 +24,7 @@ public class RenderBlock extends Block {
     public RenderBlock() {
         super(
                 Properties.of(Material.METAL)
-                        .strength(2.0f)
+                        .strength(50.0F, 1200.0F)
                         .noOcclusion()
                         .noDrops()
                         .isRedstoneConductor((a, b, c) -> false) // @mcp: setOpaque seems to replace isNormalBlock
