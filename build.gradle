@@ -23,6 +23,8 @@ archivesBaseName = 'mininggadgets'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
+    hideOfficialWarningUntilChanged
+
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
     // stable_#            Stables are built at the discretion of the MCP team.
@@ -120,6 +122,7 @@ dependencies {
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
     runtimeOnly fg.deobf("curse.maven:lollipop-347954:3232534")
     runtimeOnly fg.deobf("curse.maven:powah-352656:352656")
+    runtimeOnly fg.deobf("curse.maven:mekanism-268560:268560")
 }
 
 processResources {

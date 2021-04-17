@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.client;
 
+import com.direwolf20.mininggadgets.client.renderer.ModificationTableTER;
 import com.direwolf20.mininggadgets.client.renderer.RenderBlockTER;
 import com.direwolf20.mininggadgets.client.screens.FilterScreen;
 import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
@@ -32,7 +33,8 @@ public final class ClientSetup {
      */
     private static void registerRenderers() {
         //FMLJavaModLoadingContext.get().getModEventBus().addListener(event ->
-                ClientRegistry.bindTileEntityRenderer(ModBlocks.RENDERBLOCK_TILE.get(), RenderBlockTER::new);
+        ClientRegistry.bindTileEntityRenderer(ModBlocks.RENDERBLOCK_TILE.get(), RenderBlockTER::new);
+        ClientRegistry.bindTileEntityRenderer(ModBlocks.MODIFICATIONTABLE_TILE.get(), ModificationTableTER::new);
                 //);
     }
 }
