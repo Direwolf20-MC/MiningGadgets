@@ -1,8 +1,9 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
+import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.MODIFICATIONTABLE_TILE;
+
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,6 +11,8 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
@@ -24,14 +27,28 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.MODIFICATIONTABLE_TILE;
-
 public class ModificationTableTileEntity extends TileEntity implements INamedContainerProvider {
-
-    private LazyOptional<IItemHandler> handler = LazyOptional.of(this::createHandler);
+    public final LazyOptional<IItemHandler> handler = LazyOptional.of(this::createHandler);
 
     public ModificationTableTileEntity() {
         super(MODIFICATIONTABLE_TILE.get());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
+        this.load(this.getBlockState(), packet.getTag());
+    }
+
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        CompoundNBT nbt = new CompoundNBT();
+        this.save(nbt);
+        return new SUpdateTileEntityPacket(this.getBlockPos(), 0, nbt);
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        return this.save(new CompoundNBT());
     }
 
     @Override
@@ -60,7 +77,6 @@ public class ModificationTableTileEntity extends TileEntity implements INamedCon
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 if (slot == 0 && stack.getItem() instanceof MiningGadget) return true;
-                if (slot == 1 && stack.getItem() instanceof UpgradeCard) return true;
                 return false;
             }
         };
