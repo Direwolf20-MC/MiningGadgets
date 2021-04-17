@@ -1,5 +1,7 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
+import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
+
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
@@ -39,18 +41,15 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
-
 public class RenderBlockTileEntity extends TileEntity implements ITickableTileEntity {
+    private final Random rand = new Random();
     private BlockState renderBlock;
-
     private int priorDurability = 9999;
     private int clientPrevDurability;
     private int clientDurability;
     private int durability;
     private UUID playerUUID;
     private int originalDurability;
-    private final Random rand = new Random();
     private int ticksSinceMine = 0;
     private List<Upgrade> gadgetUpgrades;
     private List<ItemStack> gadgetFilters;
@@ -67,8 +66,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     public static boolean blockAllowed(List<ItemStack> drops, List<ItemStack> filters, boolean isWhiteList) {
         boolean blockAllowed = false;
         for (ItemStack dropStack : drops) {
-            if (filters.size() == 0)
+            if (filters.size() == 0) {
                 return true;
+            }
 
             boolean contains = false;
             for (ItemStack filter : filters) {
@@ -80,23 +80,24 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
             blockAllowed = (isWhiteList && contains) || (!isWhiteList && !contains);
 
-            if (blockAllowed)
+            if (blockAllowed) {
                 break;
+            }
         }
 
         return blockAllowed;
     }
 
     public BlockState getRenderBlock() {
-        return renderBlock;
+        return this.renderBlock;
     }
 
     public void setRenderBlock(BlockState state) {
-        renderBlock = state;
+        this.renderBlock = state;
     }
 
     public MiningProperties.BreakTypes getBreakType() {
-        return breakType;
+        return this.breakType;
     }
 
     public void setBreakType(MiningProperties.BreakTypes breakType) {
@@ -104,25 +105,26 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public void justSetDurability(int durability) {
-        priorDurability = this.durability;
+        this.priorDurability = this.durability;
         this.durability = durability;
         //System.out.println("Got:"+ " Prior: " + priorDurability + " Dur: " + durability);
     }
 
     public void setDurability(int dur, ItemStack stack) {
-        ticksSinceMine = 0;
-        if (durability != 0)
-            priorDurability = durability;
-        durability = dur;
+        this.ticksSinceMine = 0;
+        if (this.durability != 0) {
+            this.priorDurability = this.durability;
+        }
+        this.durability = dur;
         if (dur <= 0) {
-            removeBlock();
-            if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FREEZING)) {
-                freeze(stack);
+            this.removeBlock();
+            if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FREEZING)) {
+                this.freeze(stack);
             }
         }
-        if (!(level.isClientSide)) {
-            setChanged();
-            ServerTickHandler.addToList(worldPosition, durability, level);
+        if (!(this.level.isClientSide)) {
+            this.setChanged();
+            ServerTickHandler.addToList(this.worldPosition, this.durability, this.level);
             //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
             //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
         }
@@ -137,16 +139,16 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
 
         for (Direction side : Direction.values()) {
-            BlockPos sidePos = worldPosition.relative(side);
-            FluidState state = level.getFluidState(sidePos);
-            BlockState blockState = level.getBlockState(sidePos);
+            BlockPos sidePos = this.worldPosition.relative(side);
+            FluidState state = this.level.getFluidState(sidePos);
+            BlockState blockState = this.level.getBlockState(sidePos);
 
             if (state.getType().isSame(Fluids.LAVA) && state.getType().isSource(state)) {
-                energy -= this.replaceBlockWithAlternative(level, sidePos, Blocks.OBSIDIAN.defaultBlockState(), stack, freezeCost, energy);
+                energy -= this.replaceBlockWithAlternative(this.level, sidePos, Blocks.OBSIDIAN.defaultBlockState(), stack, freezeCost, energy);
             } else if (state.getType().isSame(Fluids.WATER) && state.getType().isSource(state)) {
-                energy -= this.replaceBlockWithAlternative(level, sidePos, Blocks.PACKED_ICE.defaultBlockState(), stack, freezeCost, energy);
+                energy -= this.replaceBlockWithAlternative(this.level, sidePos, Blocks.PACKED_ICE.defaultBlockState(), stack, freezeCost, energy);
             } else if ((state.getType().isSame(Fluids.WATER) || state.getType().isSame(Fluids.LAVA)) && !state.getType().isSource(state)) {
-                energy -= this.replaceBlockWithAlternative(level, sidePos, Blocks.COBBLESTONE.defaultBlockState(), stack, freezeCost, energy);
+                energy -= this.replaceBlockWithAlternative(this.level, sidePos, Blocks.COBBLESTONE.defaultBlockState(), stack, freezeCost, energy);
             }
         }
     }
@@ -170,27 +172,29 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public void spawnParticle() {
-        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET) && originalDurability > 0) {
-            int PartCount = 20 / originalDurability;
-            if (PartCount <= 1) PartCount = 1;
+        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET) && this.originalDurability > 0) {
+            int PartCount = 20 / this.originalDurability;
+            if (PartCount <= 1) {
+                PartCount = 1;
+            }
             for (int i = 0; i <= PartCount; i++) {
-                double randomPartSize = 0.125 + rand.nextDouble() * 0.5;
-                double randomX = rand.nextDouble();
-                double randomY = rand.nextDouble();
-                double randomZ = rand.nextDouble();
+                double randomPartSize = 0.125 + this.rand.nextDouble() * 0.5;
+                double randomX = this.rand.nextDouble();
+                double randomY = this.rand.nextDouble();
+                double randomZ = this.rand.nextDouble();
 
-                LaserParticleData data = LaserParticleData.laserparticle(renderBlock, (float) randomPartSize, 1f, 1f, 1f, 200);
-                getLevel().addParticle(data, this.getBlockPos().getX() + randomX, this.getBlockPos().getY() + randomY, this.getBlockPos().getZ() + randomZ, 0, 0.0f, 0);
+                LaserParticleData data = LaserParticleData.laserparticle(this.renderBlock, (float) randomPartSize, 1f, 1f, 1f, 200);
+                this.getLevel().addParticle(data, this.getBlockPos().getX() + randomX, this.getBlockPos().getY() + randomY, this.getBlockPos().getZ() + randomZ, 0, 0.0f, 0);
             }
         }
     }
 
     public int getDurability() {
-        return durability;
+        return this.durability;
     }
 
     public int getOriginalDurability() {
-        return originalDurability;
+        return this.originalDurability;
     }
 
     public void setOriginalDurability(int originalDurability) {
@@ -198,10 +202,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public PlayerEntity getPlayer() {
-        if (getLevel() == null)
+        if (this.getLevel() == null) {
             return null;
+        }
 
-        return this.getLevel().getPlayerByUUID(playerUUID);
+        return this.getLevel().getPlayerByUUID(this.playerUUID);
     }
 
     public void setPlayer(PlayerEntity player) {
@@ -213,7 +218,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public int getTicksSinceMine() {
-        return ticksSinceMine;
+        return this.ticksSinceMine;
     }
 
     public void setTicksSinceMine(int ticksSinceMine) {
@@ -221,7 +226,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public int getPriorDurability() {
-        return priorDurability;
+        return this.priorDurability;
     }
 
     public void setPriorDurability(int priorDurability) {
@@ -229,20 +234,21 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public int getClientDurability() {
-        return clientDurability;
+        return this.clientDurability;
     }
 
     public void setClientDurability(int clientDurability) {
-        if (this.durability == 0)
+        if (this.durability == 0) {
             this.clientPrevDurability = clientDurability;
-        else
+        } else {
             this.clientPrevDurability = this.durability;
+        }
         this.clientDurability = clientDurability;
-        packetReceived = true;
+        this.packetReceived = true;
     }
 
     public List<Upgrade> getGadgetUpgrades() {
-        return gadgetUpgrades;
+        return this.gadgetUpgrades;
     }
 
     public void setGadgetUpgrades(List<Upgrade> gadgetUpgrades) {
@@ -250,7 +256,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public List<ItemStack> getGadgetFilters() {
-        return gadgetFilters;
+        return this.gadgetFilters;
     }
 
     public void setGadgetFilters(List<ItemStack> gadgetFilters) {
@@ -258,7 +264,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     public boolean isGadgetIsWhitelist() {
-        return gadgetIsWhitelist;
+        return this.gadgetIsWhitelist;
     }
 
     public void setGadgetIsWhitelist(boolean gadgetIsWhitelist) {
@@ -268,73 +274,77 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         // Vanilla uses the type parameter to indicate which type of tile entity (command block, skull, or beacon?) is receiving the packet, but it seems like Forge has overridden this behavior
-        return new SUpdateTileEntityPacket(worldPosition, 0, getUpdateTag());
+        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.getUpdateTag());
     }
 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        load(state, tag);
+        this.load(state, tag);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return save(new CompoundNBT());
+        return this.save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        load(this.getBlockState(), pkt.getTag());
+        this.load(this.getBlockState(), pkt.getTag());
     }
 
     public void markDirtyClient() {
-        setChanged();
-        if (getLevel() != null) {
-            BlockState state = getLevel().getBlockState(getBlockPos());
-            getLevel().sendBlockUpdated(getBlockPos(), state, state, 3);
+        this.setChanged();
+        if (this.getLevel() != null) {
+            BlockState state = this.getLevel().getBlockState(this.getBlockPos());
+            this.getLevel().sendBlockUpdated(this.getBlockPos(), state, state, 3);
         }
     }
 
     @Override
     public void load(BlockState state, CompoundNBT tag) {
         super.load(state, tag);
-        renderBlock = NBTUtil.readBlockState(tag.getCompound("renderBlock"));
-        originalDurability = tag.getInt("originalDurability");
-        priorDurability = tag.getInt("priorDurability");
-        durability = tag.getInt("durability");
-        ticksSinceMine = tag.getInt("ticksSinceMine");
-        playerUUID = tag.getUUID("playerUUID");
-        gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
-        breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
-        gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"));
-        gadgetIsWhitelist = tag.getBoolean("gadgetIsWhitelist");
-        blockAllowed = tag.getBoolean("blockAllowed");
+        this.renderBlock = NBTUtil.readBlockState(tag.getCompound("renderBlock"));
+        this.originalDurability = tag.getInt("originalDurability");
+        this.priorDurability = tag.getInt("priorDurability");
+        this.durability = tag.getInt("durability");
+        this.ticksSinceMine = tag.getInt("ticksSinceMine");
+        this.playerUUID = tag.getUUID("playerUUID");
+        this.gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
+        this.breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
+        this.gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"));
+        this.gadgetIsWhitelist = tag.getBoolean("gadgetIsWhitelist");
+        this.blockAllowed = tag.getBoolean("blockAllowed");
     }
 
     @Override
     public CompoundNBT save(CompoundNBT tag) {
-        if (renderBlock != null)
-            tag.put("renderBlock", NBTUtil.writeBlockState(renderBlock));
-        tag.putInt("originalDurability", originalDurability);
-        tag.putInt("priorDurability", priorDurability);
-        tag.putInt("durability", durability);
-        tag.putInt("ticksSinceMine", ticksSinceMine);
-        if (playerUUID != null)
-            tag.putUUID("playerUUID", playerUUID);
-        tag.put("upgrades", UpgradeTools.setUpgradesNBT(gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
-        tag.putByte("breakType", (byte) breakType.ordinal());
-        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(getGadgetFilters()));
-        tag.putBoolean("gadgetIsWhitelist", isGadgetIsWhitelist());
-        tag.putBoolean("blockAllowed", blockAllowed);
+        if (this.renderBlock != null) {
+            tag.put("renderBlock", NBTUtil.writeBlockState(this.renderBlock));
+        }
+        tag.putInt("originalDurability", this.originalDurability);
+        tag.putInt("priorDurability", this.priorDurability);
+        tag.putInt("durability", this.durability);
+        tag.putInt("ticksSinceMine", this.ticksSinceMine);
+        if (this.playerUUID != null) {
+            tag.putUUID("playerUUID", this.playerUUID);
+        }
+        tag.put("upgrades", UpgradeTools.setUpgradesNBT(this.gadgetUpgrades).getList("upgrades", Constants.NBT.TAG_COMPOUND));
+        tag.putByte("breakType", (byte) this.breakType.ordinal());
+        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(this.getGadgetFilters()));
+        tag.putBoolean("gadgetIsWhitelist", this.isGadgetIsWhitelist());
+        tag.putBoolean("blockAllowed", this.blockAllowed);
         return super.save(tag);
     }
 
     private void removeBlock() {
-        if (level == null || level.isClientSide || playerUUID == null)
+        if (this.level == null || this.level.isClientSide || this.playerUUID == null) {
             return;
+        }
 
-        PlayerEntity player = level.getPlayerByUUID(playerUUID);
-        if (player == null)
+        PlayerEntity player = this.level.getPlayerByUUID(this.playerUUID);
+        if (player == null) {
             return;
+        }
 
         int silk = 0;
         int fortune = 0;
@@ -342,166 +352,178 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
 
         // If silk is in the upgrades, apply it without a tier.
-        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
             tempTool.enchant(Enchantments.SILK_TOUCH, 1);
             silk = 1;
         }
 
         // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
-            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1)) {
+            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
                 tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
             }
         }
 
-        List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) level, this.worldPosition, null, player, tempTool);
+        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerWorld) this.level, this.worldPosition, null, player, tempTool);
 
-        if (blockAllowed) {
-            int exp = renderBlock.getExpDrop(level, worldPosition, fortune, silk);
-            boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.MAGNET));
+        if (this.blockAllowed) {
+            int exp = this.renderBlock.getExpDrop(this.level, this.worldPosition, fortune, silk);
+            boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
                 if (drop != null) {
                     if (magnetMode) {
-                        int wasPickedUp = ForgeEventFactory.onItemPickup(new ItemEntity(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), drop), player);
+                        int wasPickedUp = ForgeEventFactory.onItemPickup(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
                         // 1  = someone allowed the event meaning it's handled,
                         // -1 = someone blocked the event and thus we shouldn't drop it nor insert it
                         // 0  = no body captured the event and we should handle it by hand.
                         if (wasPickedUp == 0) {
-                            if (!player.addItem(drop))
-                                Block.popResource(level, worldPosition, drop);
+                            if (!player.addItem(drop)) {
+                                Block.popResource(this.level, this.worldPosition, drop);
+                            }
                         }
                     } else {
-                        Block.popResource(level, worldPosition, drop);
+                        Block.popResource(this.level, this.worldPosition, drop);
                     }
                 }
             }
             if (magnetMode) {
-                if (exp > 0)
+                if (exp > 0) {
                     player.giveExperiencePoints(exp);
+                }
             } else {
-                if (exp > 0)
-                    renderBlock.getBlock().popExperience((ServerWorld) level, worldPosition, exp);
+                if (exp > 0) {
+                    this.renderBlock.getBlock().popExperience((ServerWorld) this.level, this.worldPosition, exp);
+                }
             }
 
-            renderBlock.spawnAfterBreak((ServerWorld) level, worldPosition, tempTool); // Fixes silver fish basically...
+            this.renderBlock.spawnAfterBreak((ServerWorld) this.level, this.worldPosition, tempTool); // Fixes silver fish basically...
         }
 
-//        BlockState underState = world.getBlockState(this.pos.down());
+        //        BlockState underState = world.getBlockState(this.pos.down());
+        this.level.removeBlockEntity(this.worldPosition);
+        this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
 
-        level.removeBlockEntity(this.worldPosition);
-        level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
-
-//        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
-//            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
-//                world.setBlockState(this.pos.down(), Blocks.COBBLESTONE.getDefaultState());
-//            }
-//        }
+        //        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
+        //            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
+        //                world.setBlockState(this.pos.down(), Blocks.COBBLESTONE.getDefaultState());
+        //            }
+        //        }
 
         // Add to the break stats
-        player.awardStat(Stats.BLOCK_MINED.get(renderBlock.getBlock()));
+        player.awardStat(Stats.BLOCK_MINED.get(this.renderBlock.getBlock()));
 
         // Handle special cases
-        if (SpecialBlockActions.getRegister().containsKey(renderBlock.getBlock()))
-            SpecialBlockActions.getRegister().get(renderBlock.getBlock()).accept(level, worldPosition, renderBlock);
+        if (SpecialBlockActions.getRegister().containsKey(this.renderBlock.getBlock())) {
+            SpecialBlockActions.getRegister().get(this.renderBlock.getBlock()).accept(this.level, this.worldPosition, this.renderBlock);
+        }
     }
 
     private void resetBlock() {
-        if (level == null)
+        if (this.level == null) {
             return;
+        }
 
-        if (!level.isClientSide) {
-            if (renderBlock != null)
-                level.setBlockAndUpdate(this.worldPosition, renderBlock);
-            else
-                level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
+        if (!this.level.isClientSide) {
+            if (this.renderBlock != null) {
+                this.level.setBlockAndUpdate(this.worldPosition, this.renderBlock);
+            } else {
+                this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
+            }
         }
     }
 
     @Override
     public void tick() {
-        totalAge++;
+        this.totalAge++;
         //Client and server - spawn a 'block break' particle if the player is actively mining
-        if (ticksSinceMine == 0) {
-            spawnParticle();
+        if (this.ticksSinceMine == 0) {
+            this.spawnParticle();
         }
         //Client only
-        if (level.isClientSide) {
+        if (this.level.isClientSide) {
             //Update ticks since last mine on client side for particle renders
-            if (playerUUID != null) {
-                if (getPlayer() != null && !getPlayer().isUsingItem()) ticksSinceMine++;
-                else ticksSinceMine = 0;
+            if (this.playerUUID != null) {
+                if (this.getPlayer() != null && !this.getPlayer().isUsingItem()) {
+                    this.ticksSinceMine++;
+                } else {
+                    this.ticksSinceMine = 0;
+                }
             }
             //The packet with new durability arrives between ticks. Update it on tick.
-            if (packetReceived) {
+            if (this.packetReceived) {
                 //System.out.println("PreChange: " + this.durability + ":" + this.priorDurability);
                 this.priorDurability = this.durability;
                 this.durability = this.clientDurability;
                 //System.out.println("PostChange: " + this.durability + ":" + this.priorDurability);
-                packetReceived = false;
+                this.packetReceived = false;
             } else {
-                if (durability != 0)
+                if (this.durability != 0) {
                     this.priorDurability = this.durability;
+                }
 
             }
 
 
         }
         //Server Only
-        if (!level.isClientSide) {
-            if (ticksSinceMine == 1) {
+        if (!this.level.isClientSide) {
+            if (this.ticksSinceMine == 1) {
                 //Immediately after player stops mining, stability the shrinking effects and notify players
-                priorDurability = durability;
-                ServerTickHandler.addToList(worldPosition, durability, level);
+                this.priorDurability = this.durability;
+                ServerTickHandler.addToList(this.worldPosition, this.durability, this.level);
             }
-            if (ticksSinceMine >= 10) {
+            if (this.ticksSinceMine >= 10) {
                 //After half a second, start 'regrowing' blocks that haven't been mined.
-                priorDurability = durability;
-                durability++;
-                ServerTickHandler.addToList(worldPosition, durability, level);
+                this.priorDurability = this.durability;
+                this.durability++;
+                ServerTickHandler.addToList(this.worldPosition, this.durability, this.level);
             }
-            if (durability >= originalDurability) {
+            if (this.durability >= this.originalDurability) {
                 //Once we reach the original durability value set the block back to its original blockstate.
-                resetBlock();
+                this.resetBlock();
             }
-            ticksSinceMine++;
+            this.ticksSinceMine++;
         }
     }
 
     public void setBlockAllowed() {
-        if (!UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.VOID_JUNK)) {
+        if (!UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.VOID_JUNK)) {
             this.blockAllowed = true;
             return;
         }
-        PlayerEntity player = level.getPlayerByUUID(playerUUID);
-        if (player == null) return;
+        PlayerEntity player = this.level.getPlayerByUUID(this.playerUUID);
+        if (player == null) {
+            return;
+        }
         int silk = 0;
         int fortune = 0;
 
         ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
 
         // If silk is in the upgrades, apply it without a tier.
-        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.SILK)) {
+        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
             tempTool.enchant(Enchantments.SILK_TOUCH, 1);
             silk = 1;
         }
 
         // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1)) {
-            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(gadgetUpgrades, Upgrade.FORTUNE_1);
+        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1)) {
+            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
                 tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
             }
         }
 
-        List<ItemStack> drops = Block.getDrops(renderBlock, (ServerWorld) level, this.worldPosition, null, player, tempTool);
+        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerWorld) this.level, this.worldPosition, null, player, tempTool);
 
-        this.blockAllowed = blockAllowed(drops, getGadgetFilters(), isGadgetIsWhitelist());
+        this.blockAllowed = blockAllowed(drops, this.getGadgetFilters(), this.isGadgetIsWhitelist());
     }
 
     public boolean getBlockAllowed() {
-        return blockAllowed;
+        return this.blockAllowed;
     }
+
 }

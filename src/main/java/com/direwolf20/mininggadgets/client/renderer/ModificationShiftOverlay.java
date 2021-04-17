@@ -56,7 +56,7 @@ public class ModificationShiftOverlay {
         BlockPos blockPos = ((BlockRayTraceResult) pick).getBlockPos();
 
         double distance = player.getPosition(evt.getPartialTicks()).distanceTo(new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
-        float scaleFactor = (float) distance / 10;
+        float scaleFactor = Math.max(.2f, ((float) distance / 10) + .1f);
 
         MatrixStack matrix = evt.getMatrixStack();
         matrix.pushPose();
