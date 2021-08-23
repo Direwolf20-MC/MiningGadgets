@@ -65,7 +65,6 @@ public class ShapelessWalker {
 
             Block block = level.getBlockState(ptr).getBlock();
             if ((block == Blocks.OAK_LOG || block == ModBlocks.RENDER_BLOCK.get()) && known.add(ptr)) {
-                System.out.println(block);
                 if (known.size() >= 60) {
                     return;
                 }

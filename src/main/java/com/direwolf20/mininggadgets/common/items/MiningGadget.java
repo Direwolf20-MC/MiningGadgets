@@ -439,7 +439,6 @@ public class MiningGadget extends Item {
                     //if (!world.isRemote) {
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getBlockEntity(coord);
                     int durability = te.getDurability();
-                    //System.out.println(durability);
                 /*if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
                     durability = durability - 2;
                 else*/
@@ -497,6 +496,7 @@ public class MiningGadget extends Item {
         if (efficiency > 0) {
             toolSpeed = toolSpeed + ((efficiency * efficiency + 1));
         }
+
         EffectInstance hasteEffect = player.getEffect(Effects.DIG_SPEED);
         if (hasteEffect != null) {
             int hasteLevel = hasteEffect.getAmplifier() + 1;
@@ -512,9 +512,19 @@ public class MiningGadget extends Item {
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             float temphardness = state.getDestroySpeed(world, coord);
+
+            if (state.getBlock() instanceof RenderBlock) {
+                RenderBlockTileEntity blockEntity = (RenderBlockTileEntity) world.getBlockEntity(coord);
+                if (blockEntity != null) {
+                    temphardness = blockEntity.getRenderBlock().getDestroySpeed(world, coord);
+                }
+            }
+
+
             //if (state.getMaterial() == Material.EARTH) temphardness = temphardness * 4;
             hardness += (temphardness * 30) / toolSpeed;
         }
+
         return ((hardness / coords.size()));
     }
 

@@ -29,6 +29,7 @@ public class FilterScreen extends ContainerScreen<FilterContainer> {
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
+
         this.renderTooltip(stack, mouseX, mouseY); // @mcp: renderTooltip = renderHoveredToolTip
     }
 

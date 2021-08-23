@@ -13,6 +13,7 @@ import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -72,6 +73,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
 
             boolean contains = false;
             for (ItemStack filter : filters) {
+
                 if (dropStack.sameItem(filter)) {
                     contains = true;
                     break;
