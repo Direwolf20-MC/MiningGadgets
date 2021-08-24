@@ -15,6 +15,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -80,7 +81,7 @@ public class MiningGadgets
 
     /**
      * I've tried to identity annoying offhand items that can be placed whilst mining.
-     * I assume some level of logic so we assume that you'd have that item in your offhand
+     * I assume some level of logic, so we assume that you'd have that item in your offhand
      * whilst using the gadget.
      */
     private boolean stackIsAnnoying(ItemStack stack) {

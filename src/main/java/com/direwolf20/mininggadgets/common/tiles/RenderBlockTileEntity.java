@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,10 +33,13 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.List;
 import java.util.Optional;
@@ -367,6 +371,15 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             }
         }
 
+        // Fire an event for other mods that we've just broken the block
+        BlockEvent.BreakEvent breakEvent = fixForgeEventBreakBlock(this.renderBlock, player, level, worldPosition, tempTool);
+        MinecraftForge.EVENT_BUS.post(breakEvent);
+        // Someone cancelled out break event
+        if (breakEvent.isCanceled()) {
+            return;
+        }
+
+
         List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerWorld) this.level, this.worldPosition, null, player, tempTool);
 
         if (this.blockAllowed) {
@@ -419,6 +432,18 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         if (SpecialBlockActions.getRegister().containsKey(this.renderBlock.getBlock())) {
             SpecialBlockActions.getRegister().get(this.renderBlock.getBlock()).accept(this.level, this.worldPosition, this.renderBlock);
         }
+    }
+
+    private static BlockEvent.BreakEvent fixForgeEventBreakBlock(BlockState state, PlayerEntity player, World world, BlockPos pos, ItemStack tool) {
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
+        // Handle empty block or player unable to break block scenario
+        if (state != null && ForgeHooks.canHarvestBlock(state, player, world, pos)) {
+            int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
+            int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
+            event.setExpToDrop(state.getExpDrop(world, pos, bonusLevel, silklevel));
+        }
+
+        return event;
     }
 
     private void resetBlock() {
