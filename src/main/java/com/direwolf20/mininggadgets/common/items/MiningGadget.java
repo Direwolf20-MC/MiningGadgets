@@ -381,18 +381,16 @@ public class MiningGadget extends Item {
 
         int range = MiningProperties.getBeamRange(stack);
         BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, range);
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, range).getBlockPos()) == Blocks.AIR.defaultBlockState()))
+        if (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, range).getBlockPos()) == Blocks.AIR.defaultBlockState())
             return;
 
         List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.level, coords)) {
-                if (player instanceof PlayerEntity) {
-                    int delay = MiningProperties.getFreezeDelay(stack);
-                    if (delay == 0 || count % delay == 0)
-                        spawnFreezeParticle((PlayerEntity) player, sourcePos, player.level, stack);
-                }
+                int delay = MiningProperties.getFreezeDelay(stack);
+                if (delay == 0 || count % delay == 0)
+                    spawnFreezeParticle((PlayerEntity) player, sourcePos, player.level, stack);
             }
         }
 
@@ -438,22 +436,24 @@ public class MiningGadget extends Item {
                 } else {
                     //if (!world.isRemote) {
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getBlockEntity(coord);
-                    int durability = te.getDurability();
+                    if (te != null) {
+                        int durability = te.getDurability();
                 /*if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
                     durability = durability - 2;
                 else*/
-                    durability = durability - 1;
-                    if (durability <= 0) {
-                        stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
-                        if (MiningProperties.getPrecisionMode(stack)) {
-                            MiningProperties.setCanMine(stack, false);
-                            player.stopUsingItem();
+                        durability = durability - 1;
+                        if (durability <= 0) {
+                            stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
+                            if (MiningProperties.getPrecisionMode(stack)) {
+                                MiningProperties.setCanMine(stack, false);
+                                player.stopUsingItem();
+                            }
                         }
+                        te.setDurability(durability, stack);
                     }
-                    te.setDurability(durability, stack);
                     //}
                 }
-                if (player instanceof PlayerEntity && stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("wildfirev")) {
+                if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("wildfirev")) {
                     spawnFireParticle(coord, (ServerWorld) player.level);
                 }
             }

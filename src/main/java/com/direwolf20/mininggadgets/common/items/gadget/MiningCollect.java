@@ -20,11 +20,6 @@ import java.util.stream.Collectors;
 
 /**
  * Handles collecting the blocks for the mining action.
- *
- * @implNote Currently done using static reference but having it as a dynamic class
- * may work in the future as more methods and functionality is added.
- *
- * @since 1.0.5
  */
 public class MiningCollect {
     public static List<BlockPos> collect(PlayerEntity player, BlockRayTraceResult startBlock, World world, int range) {
