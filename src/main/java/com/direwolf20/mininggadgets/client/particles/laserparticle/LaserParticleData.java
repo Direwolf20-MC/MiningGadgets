@@ -3,19 +3,19 @@ package com.direwolf20.mininggadgets.client.particles.laserparticle;
 import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.command.arguments.BlockStateParser;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.commands.arguments.blocks.BlockStateParser;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
 
-import net.minecraft.particles.IParticleData.IDeserializer;
+import net.minecraft.core.particles.ParticleOptions.Deserializer;
 
-public class LaserParticleData implements IParticleData {
+public class LaserParticleData implements ParticleOptions {
     public final float size;
     public final float r, g, b;
     public final float maxAgeMul;
@@ -56,7 +56,7 @@ public class LaserParticleData implements IParticleData {
     }
 
     @Override
-    public void writeToNetwork(PacketBuffer buf) {
+    public void writeToNetwork(FriendlyByteBuf buf) {
         buf.writeVarInt(Block.BLOCK_STATE_REGISTRY.getId(state));
         buf.writeFloat(size);
         buf.writeFloat(r);
@@ -73,7 +73,7 @@ public class LaserParticleData implements IParticleData {
                 this.getType().getRegistryName(), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
     }
 
-    public static final IDeserializer<LaserParticleData> DESERIALIZER = new IDeserializer<LaserParticleData>() {
+    public static final Deserializer<LaserParticleData> DESERIALIZER = new Deserializer<LaserParticleData>() {
         @Nonnull
         @Override
         public LaserParticleData fromCommand(@Nonnull ParticleType<LaserParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {
@@ -98,7 +98,7 @@ public class LaserParticleData implements IParticleData {
         }
 
         @Override
-        public LaserParticleData fromNetwork(@Nonnull ParticleType<LaserParticleData> type, PacketBuffer buf) {
+        public LaserParticleData fromNetwork(@Nonnull ParticleType<LaserParticleData> type, FriendlyByteBuf buf) {
             return new LaserParticleData(Block.BLOCK_STATE_REGISTRY.byId(buf.readVarInt()), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readBoolean());
         }
     };

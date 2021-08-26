@@ -2,16 +2,14 @@ package com.direwolf20.mininggadgets.common.network;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.network.packets.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.NetworkDirection;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -50,16 +48,16 @@ public class PacketHandler {
         HANDLER.registerMessage(id++, PacketInsertUpgrade.class,      PacketInsertUpgrade::encode,        PacketInsertUpgrade::decode,        PacketInsertUpgrade::handler);
     }
 
-    public static void sendTo(Object msg, ServerPlayerEntity player) {
+    public static void sendTo(Object msg, ServerPlayer player) {
         if (!(player instanceof FakePlayer))
             HANDLER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
-    public static void sendToAll(Object msg, World world) {
+    public static void sendToAll(Object msg, Level world) {
         //Todo Maybe only send to nearby players?
-        for (PlayerEntity player : world.players()) {
+        for (Player player : world.players()) {
             if (!(player instanceof FakePlayer))
-                HANDLER.sendTo(msg, ((ServerPlayerEntity) player).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+                HANDLER.sendTo(msg, ((ServerPlayer) player).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         }
     }
 

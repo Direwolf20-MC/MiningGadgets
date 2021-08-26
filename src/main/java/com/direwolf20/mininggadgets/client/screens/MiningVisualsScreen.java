@@ -4,15 +4,15 @@ import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeBreakType;
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeColor;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.widget.Slider;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.fmlclient.gui.widget.Slider;
 
 import java.awt.*;
 
@@ -33,7 +33,7 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
     private Slider sliderBlueOuter;
 
     public MiningVisualsScreen(ItemStack gadget) {
-        super(new StringTextComponent("title"));
+        super(new TextComponent("title"));
         this.gadget = gadget;
         this.red = MiningProperties.getColor(gadget, MiningProperties.COLOR_RED);
         this.green = MiningProperties.getColor(gadget, MiningProperties.COLOR_GREEN);
@@ -47,55 +47,55 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
     protected void init() {
         int baseX = width / 2, baseY = height / 2;
 
-        TranslationTextComponent buttonText;
+        TranslatableComponent buttonText;
         if (MiningProperties.getBreakType(gadget) == MiningProperties.BreakTypes.SHRINK)
-            buttonText = new TranslationTextComponent("mininggadgets.tooltip.screen.shrink");
+            buttonText = new TranslatableComponent("mininggadgets.tooltip.screen.shrink");
         else
-            buttonText = new TranslationTextComponent("mininggadgets.tooltip.screen.fade");
+            buttonText = new TranslatableComponent("mininggadgets.tooltip.screen.fade");
 
         blockBreakButton = new Button(baseX - (150), baseY - 55, 150, 20, buttonText, (button) -> {
             if (blockBreakButton.getMessage().getString().contains("Shrink"))
-                button.setMessage(new TranslationTextComponent("mininggadgets.tooltip.screen.fade"));
+                button.setMessage(new TranslatableComponent("mininggadgets.tooltip.screen.fade"));
             else
-                button.setMessage(new TranslationTextComponent("mininggadgets.tooltip.screen.shrink"));
+                button.setMessage(new TranslatableComponent("mininggadgets.tooltip.screen.shrink"));
 
             PacketHandler.sendToServer(new PacketChangeBreakType());
         });
 
-        addButton(blockBreakButton);
+        addRenderableWidget(blockBreakButton);
 
-        sliderRedInner = new Slider(baseX - (150), baseY - 10, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red").append(": "), StringTextComponent.EMPTY, 0, 255, this.red, false, true, s -> {
+        sliderRedInner = new Slider(baseX - (150), baseY - 10, 150, 20, new TranslatableComponent("mininggadgets.tooltip.screen.red").append(": "), TextComponent.EMPTY, 0, 255, this.red, false, true, s -> {
         }, this);
-        sliderGreenInner = new Slider(baseX - (150), baseY + 15, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green").append(": "), StringTextComponent.EMPTY, 0, 255, this.green, false, true, s -> {
+        sliderGreenInner = new Slider(baseX - (150), baseY + 15, 150, 20, new TranslatableComponent("mininggadgets.tooltip.screen.green").append(": "), TextComponent.EMPTY, 0, 255, this.green, false, true, s -> {
         }, this);
-        sliderBlueInner = new Slider(baseX - (150), baseY + 40, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue").append(": "), StringTextComponent.EMPTY, 0, 255, this.blue, false, true, s -> {
-        }, this);
-
-        sliderRedOuter = new Slider(baseX + (25), baseY - 10, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.red").append(": "), StringTextComponent.EMPTY, 0, 255, this.red_inner, false, true, s -> {
-        }, this);
-        sliderGreenOuter = new Slider(baseX + (25), baseY + 15, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.green").append(": "), StringTextComponent.EMPTY, 0, 255, this.green_inner, false, true, s -> {
-        }, this);
-        sliderBlueOuter = new Slider(baseX + (25), baseY + 40, 150, 20, new TranslationTextComponent("mininggadgets.tooltip.screen.blue").append(": "), StringTextComponent.EMPTY, 0, 255, this.blue_inner, false, true, s -> {
+        sliderBlueInner = new Slider(baseX - (150), baseY + 40, 150, 20, new TranslatableComponent("mininggadgets.tooltip.screen.blue").append(": "), TextComponent.EMPTY, 0, 255, this.blue, false, true, s -> {
         }, this);
 
-        addButton(sliderRedInner);
-        addButton(sliderGreenInner);
-        addButton(sliderBlueInner);
-        addButton(sliderRedOuter);
-        addButton(sliderGreenOuter);
-        addButton(sliderBlueOuter);
+        sliderRedOuter = new Slider(baseX + (25), baseY - 10, 150, 20, new TranslatableComponent("mininggadgets.tooltip.screen.red").append(": "), TextComponent.EMPTY, 0, 255, this.red_inner, false, true, s -> {
+        }, this);
+        sliderGreenOuter = new Slider(baseX + (25), baseY + 15, 150, 20, new TranslatableComponent("mininggadgets.tooltip.screen.green").append(": "), TextComponent.EMPTY, 0, 255, this.green_inner, false, true, s -> {
+        }, this);
+        sliderBlueOuter = new Slider(baseX + (25), baseY + 40, 150, 20, new TranslatableComponent("mininggadgets.tooltip.screen.blue").append(": "), TextComponent.EMPTY, 0, 255, this.blue_inner, false, true, s -> {
+        }, this);
+
+        addRenderableWidget(sliderRedInner);
+        addRenderableWidget(sliderGreenInner);
+        addRenderableWidget(sliderBlueInner);
+        addRenderableWidget(sliderRedOuter);
+        addRenderableWidget(sliderGreenOuter);
+        addRenderableWidget(sliderBlueOuter);
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
 
-        drawCenteredString(stack, font, new TranslationTextComponent("mininggadgets.tooltip.screen.visual_settings"), (width / 2), (height / 2) - 95, 0xFFFFFF);
-        drawString(stack, font, new TranslationTextComponent("mininggadgets.tooltip.screen.block_break_style"), (width / 2) - 150, (height / 2) - 70, 0xFFFFFF);
-        drawString(stack, font, new TranslationTextComponent("mininggadgets.tooltip.screen.beam_preview"), (width / 2) + 25, (height / 2) - 70, 0xFFFFFF);
-        drawString(stack, font, new TranslationTextComponent("mininggadgets.tooltip.screen.outer_color"), (width / 2) - 150, (height / 2) - 25, 0xFFFFFF);
-        drawString(stack, font, new TranslationTextComponent("mininggadgets.tooltip.screen.inner_color"), (width / 2) + 25, (height / 2) - 25, 0xFFFFFF);
+        drawCenteredString(stack, font, new TranslatableComponent("mininggadgets.tooltip.screen.visual_settings"), (width / 2), (height / 2) - 95, 0xFFFFFF);
+        drawString(stack, font, new TranslatableComponent("mininggadgets.tooltip.screen.block_break_style"), (width / 2) - 150, (height / 2) - 70, 0xFFFFFF);
+        drawString(stack, font, new TranslatableComponent("mininggadgets.tooltip.screen.beam_preview"), (width / 2) + 25, (height / 2) - 70, 0xFFFFFF);
+        drawString(stack, font, new TranslatableComponent("mininggadgets.tooltip.screen.outer_color"), (width / 2) - 150, (height / 2) - 25, 0xFFFFFF);
+        drawString(stack, font, new TranslatableComponent("mininggadgets.tooltip.screen.inner_color"), (width / 2) + 25, (height / 2) - 25, 0xFFFFFF);
 
         stack.pushPose();
         fill(stack, (width / 2) + 25, (height / 2) - 55, ((width / 2) + 25) + 150, ((height / 2) - 55) + 20, this.rgbToInt(this.red, this.green, this.blue));
@@ -127,7 +127,7 @@ public class MiningVisualsScreen extends Screen implements Slider.ISlider {
 
     @Override
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
-        InputMappings.Input mouseKey = InputMappings.getKey(p_keyPressed_1_, p_keyPressed_2_);
+        InputConstants.Key mouseKey = InputConstants.getKey(p_keyPressed_1_, p_keyPressed_2_);
         if (p_keyPressed_1_ == 256) {
             syncColors();
             ModScreens.openGadgetSettingsScreen(this.gadget);

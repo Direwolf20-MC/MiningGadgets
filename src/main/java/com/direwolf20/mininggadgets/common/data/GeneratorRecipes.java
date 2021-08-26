@@ -3,12 +3,12 @@ package com.direwolf20.mininggadgets.common.data;
 import static com.direwolf20.mininggadgets.common.items.ModItems.*;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
-import net.minecraft.data.ShapedRecipeBuilder;
-import net.minecraft.item.Items;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.common.Tags;
 
 import java.util.function.Consumer;
@@ -24,8 +24,9 @@ public class GeneratorRecipes extends RecipeProvider {
      * use to see if you can make that recipe. I've been pretty lazy and just done the higher tier ones
      * for now. Hopefully this should mean we write less json in the long run :D
      */
+
     @Override
-    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
         ShapedRecipeBuilder.shaped(UPGRADE_EMPTY.get())
             .define('r', Tags.Items.DUSTS_REDSTONE)
             .define('g', Tags.Items.GLASS_PANES)

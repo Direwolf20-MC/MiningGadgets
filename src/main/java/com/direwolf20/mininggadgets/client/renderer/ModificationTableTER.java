@@ -2,26 +2,27 @@ package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.Direction;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-public class ModificationTableTER extends TileEntityRenderer<ModificationTableTileEntity> {
-    public ModificationTableTER(TileEntityRendererDispatcher dispatcher) {
-        super(dispatcher);
+public class ModificationTableTER implements BlockEntityRenderer<ModificationTableTileEntity> {
+    public ModificationTableTER(BlockEntityRendererProvider.Context p_173636_) {
+
     }
 
     @Override
-    public void render(ModificationTableTileEntity tile, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLights, int combinedOverlay) {
+    public void render(ModificationTableTileEntity tile, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int combinedLights, int combinedOverlay) {
         ItemStack stack = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(e -> e.getStackInSlot(0)).orElse(ItemStack.EMPTY);
         if (stack.isEmpty()) {
             return;
@@ -56,8 +57,8 @@ public class ModificationTableTER extends TileEntityRenderer<ModificationTableTi
             matrix.scale(.8f, .8f, .8f);
         }
 
-        IBakedModel model = Minecraft.getInstance().getItemRenderer().getModel(stack, Minecraft.getInstance().level, null);
-        Minecraft.getInstance().getItemRenderer().render(stack, ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, false, matrix,buffer, combinedLights, combinedOverlay, model);
+        BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(stack, Minecraft.getInstance().level, null, 0);
+        Minecraft.getInstance().getItemRenderer().render(stack, ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, false, matrix,buffer, combinedLights, combinedOverlay, model);
         matrix.popPose();
     }
 }

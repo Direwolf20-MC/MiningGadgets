@@ -6,10 +6,11 @@ import com.direwolf20.mininggadgets.client.renderer.RenderMiningLaser;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.DrawHighlightEvent;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.event.DrawSelectionEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class ClientEvents {
     @SubscribeEvent
-    static void drawBlockHighlightEvent(DrawHighlightEvent evt) {
+    static void drawBlockHighlightEvent(DrawSelectionEvent evt) {
         if( Minecraft.getInstance().player == null )
             return;
 
@@ -28,8 +29,8 @@ public class ClientEvents {
 
     @SubscribeEvent
     static void renderWorldLastEvent(RenderWorldLastEvent evt) {
-        List<AbstractClientPlayerEntity> players = Minecraft.getInstance().level.players();
-        PlayerEntity myplayer = Minecraft.getInstance().player;
+        List<AbstractClientPlayer> players = Minecraft.getInstance().level.players();
+        Player myplayer = Minecraft.getInstance().player;
 
         ItemStack myItem = MiningGadget.getGadget(myplayer);
         if (myItem.getItem() instanceof MiningGadget)
@@ -39,7 +40,7 @@ public class ClientEvents {
             ModificationShiftOverlay.render(evt, myplayer);
         }
 
-        for (PlayerEntity player : players) {
+        for (Player player : players) {
             if (player.distanceToSqr(myplayer) > 500)
                 continue;
 

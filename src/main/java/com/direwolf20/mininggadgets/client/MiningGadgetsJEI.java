@@ -11,9 +11,9 @@ import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,8 +55,8 @@ public class MiningGadgetsJEI implements IModPlugin {
 
     private static class ModificationTableContainerHandler implements IGuiContainerHandler<ModificationTableScreen> {
         @Override
-        public List<Rectangle2d> getGuiExtraAreas(ModificationTableScreen containerScreen) {
-            return new ArrayList<>(Collections.singleton(new Rectangle2d((containerScreen.width / 2) - 120, (containerScreen.height / 2) - 5, 25, 35)));
+        public List<Rect2i> getGuiExtraAreas(ModificationTableScreen containerScreen) {
+            return new ArrayList<>(Collections.singleton(new Rect2i((containerScreen.width / 2) - 120, (containerScreen.height / 2) - 5, 25, 35)));
         }
     }
 }

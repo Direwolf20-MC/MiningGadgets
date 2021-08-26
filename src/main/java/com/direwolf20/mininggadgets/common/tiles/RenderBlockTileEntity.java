@@ -10,29 +10,29 @@ import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
@@ -46,7 +46,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-public class RenderBlockTileEntity extends TileEntity implements ITickableTileEntity {
+public class RenderBlockTileEntity extends BlockEntity {
     private final Random rand = new Random();
     private BlockState renderBlock;
     private int priorDurability = 9999;
@@ -64,8 +64,8 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     private MiningProperties.BreakTypes breakType;
     private boolean blockAllowed;
 
-    public RenderBlockTileEntity() {
-        super(RENDERBLOCK_TILE.get());
+    public RenderBlockTileEntity(BlockPos pos, BlockState state) {
+        super(RENDERBLOCK_TILE.get(), pos, state);
     }
 
     public static boolean blockAllowed(List<ItemStack> drops, List<ItemStack> filters, boolean isWhiteList) {
@@ -92,6 +92,65 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
 
         return blockAllowed;
+    }
+
+    public static <T extends BlockEntity> void ticker(Level level, BlockPos blockPos, BlockState state, T tile) {
+        if (!(tile instanceof RenderBlockTileEntity)) {
+            return;
+        }
+
+        RenderBlockTileEntity entity = ((RenderBlockTileEntity) tile);
+        entity.totalAge++;
+
+        //Client and server - spawn a 'block break' particle if the player is actively mining
+        if (entity.ticksSinceMine == 0) {
+            entity.spawnParticle();
+        }
+        //Client only
+        if (entity.level.isClientSide) {
+            //Update ticks since last mine on client side for particle renders
+            if (entity.playerUUID != null) {
+                if (entity.getPlayer() != null && !entity.getPlayer().isUsingItem()) {
+                    entity.ticksSinceMine++;
+                } else {
+                    entity.ticksSinceMine = 0;
+                }
+            }
+            //The packet with new durability arrives between ticks. Update it on tick.
+            if (entity.packetReceived) {
+                //System.out.println("PreChange: " + entity.durability + ":" + entity.priorDurability);
+                entity.priorDurability = entity.durability;
+                entity.durability = entity.clientDurability;
+                //System.out.println("PostChange: " + entity.durability + ":" + entity.priorDurability);
+                entity.packetReceived = false;
+            } else {
+                if (entity.durability != 0) {
+                    entity.priorDurability = entity.durability;
+                }
+
+            }
+
+
+        }
+        //Server Only
+        if (!entity.level.isClientSide) {
+            if (entity.ticksSinceMine == 1) {
+                //Immediately after player stops mining, stability the shrinking effects and notify players
+                entity.priorDurability = entity.durability;
+                ServerTickHandler.addToList(blockPos, entity.durability, level);
+            }
+            if (entity.ticksSinceMine >= 10) {
+                //After half a second, start 'regrowing' blocks that haven't been mined.
+                entity.priorDurability = entity.durability;
+                entity.durability++;
+                ServerTickHandler.addToList(blockPos, entity.durability, level);
+            }
+            if (entity.durability >= entity.originalDurability) {
+                //Once we reach the original durability value set the block back to its original blockstate.
+                entity.resetBlock();
+            }
+            entity.ticksSinceMine++;
+        }
     }
 
     public BlockState getRenderBlock() {
@@ -158,7 +217,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
-    private int replaceBlockWithAlternative(World world, BlockPos pos, BlockState state, ItemStack stack, int costOfOperation, int remainingEnergy) {
+    private int replaceBlockWithAlternative(Level world, BlockPos pos, BlockState state, ItemStack stack, int costOfOperation, int remainingEnergy) {
         if (remainingEnergy < costOfOperation) {
             return 0;
         }
@@ -206,7 +265,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         this.originalDurability = originalDurability;
     }
 
-    public PlayerEntity getPlayer() {
+    public Player getPlayer() {
         if (this.getLevel() == null) {
             return null;
         }
@@ -214,7 +273,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         return this.getLevel().getPlayerByUUID(this.playerUUID);
     }
 
-    public void setPlayer(PlayerEntity player) {
+    public void setPlayer(Player player) {
         this.playerUUID = player.getUUID();
     }
 
@@ -277,24 +336,24 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         // Vanilla uses the type parameter to indicate which type of tile entity (command block, skull, or beacon?) is receiving the packet, but it seems like Forge has overridden this behavior
-        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.getUpdateTag());
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, this.getUpdateTag());
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        this.load(state, tag);
+    public void handleUpdateTag(CompoundTag tag) {
+        this.load(tag);
     }
 
     @Override
-    public CompoundNBT getUpdateTag() {
-        return this.save(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return this.save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        this.load(this.getBlockState(), pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        this.load(pkt.getTag());
     }
 
     public void markDirtyClient() {
@@ -306,9 +365,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT tag) {
-        super.load(state, tag);
-        this.renderBlock = NBTUtil.readBlockState(tag.getCompound("renderBlock"));
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        this.renderBlock = NbtUtils.readBlockState(tag.getCompound("renderBlock"));
         this.originalDurability = tag.getInt("originalDurability");
         this.priorDurability = tag.getInt("priorDurability");
         this.durability = tag.getInt("durability");
@@ -322,9 +381,9 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         if (this.renderBlock != null) {
-            tag.put("renderBlock", NBTUtil.writeBlockState(this.renderBlock));
+            tag.put("renderBlock", NbtUtils.writeBlockState(this.renderBlock));
         }
         tag.putInt("originalDurability", this.originalDurability);
         tag.putInt("priorDurability", this.priorDurability);
@@ -346,7 +405,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             return;
         }
 
-        PlayerEntity player = this.level.getPlayerByUUID(this.playerUUID);
+        Player player = this.level.getPlayerByUUID(this.playerUUID);
         if (player == null) {
             return;
         }
@@ -380,7 +439,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
 
 
-        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerWorld) this.level, this.worldPosition, null, player, tempTool);
+        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
 
         if (this.blockAllowed) {
             int exp = this.renderBlock.getExpDrop(this.level, this.worldPosition, fortune, silk);
@@ -408,11 +467,11 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
                 }
             } else {
                 if (exp > 0) {
-                    this.renderBlock.getBlock().popExperience((ServerWorld) this.level, this.worldPosition, exp);
+                    this.renderBlock.getBlock().popExperience((ServerLevel) this.level, this.worldPosition, exp);
                 }
             }
 
-            this.renderBlock.spawnAfterBreak((ServerWorld) this.level, this.worldPosition, tempTool); // Fixes silver fish basically...
+            this.renderBlock.spawnAfterBreak((ServerLevel) this.level, this.worldPosition, tempTool); // Fixes silver fish basically...
         }
 
         //        BlockState underState = world.getBlockState(this.pos.down());
@@ -434,10 +493,10 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
-    private static BlockEvent.BreakEvent fixForgeEventBreakBlock(BlockState state, PlayerEntity player, World world, BlockPos pos, ItemStack tool) {
+    private static BlockEvent.BreakEvent fixForgeEventBreakBlock(BlockState state, Player player, Level world, BlockPos pos, ItemStack tool) {
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
         // Handle empty block or player unable to break block scenario
-        if (state != null && ForgeHooks.canHarvestBlock(state, player, world, pos)) {
+        if (state != null && ForgeHooks.isCorrectToolForDrops(state, player)) {
             int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
             int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
             event.setExpToDrop(state.getExpDrop(world, pos, bonusLevel, silklevel));
@@ -460,66 +519,12 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
         }
     }
 
-    @Override
-    public void tick() {
-        this.totalAge++;
-        //Client and server - spawn a 'block break' particle if the player is actively mining
-        if (this.ticksSinceMine == 0) {
-            this.spawnParticle();
-        }
-        //Client only
-        if (this.level.isClientSide) {
-            //Update ticks since last mine on client side for particle renders
-            if (this.playerUUID != null) {
-                if (this.getPlayer() != null && !this.getPlayer().isUsingItem()) {
-                    this.ticksSinceMine++;
-                } else {
-                    this.ticksSinceMine = 0;
-                }
-            }
-            //The packet with new durability arrives between ticks. Update it on tick.
-            if (this.packetReceived) {
-                //System.out.println("PreChange: " + this.durability + ":" + this.priorDurability);
-                this.priorDurability = this.durability;
-                this.durability = this.clientDurability;
-                //System.out.println("PostChange: " + this.durability + ":" + this.priorDurability);
-                this.packetReceived = false;
-            } else {
-                if (this.durability != 0) {
-                    this.priorDurability = this.durability;
-                }
-
-            }
-
-
-        }
-        //Server Only
-        if (!this.level.isClientSide) {
-            if (this.ticksSinceMine == 1) {
-                //Immediately after player stops mining, stability the shrinking effects and notify players
-                this.priorDurability = this.durability;
-                ServerTickHandler.addToList(this.worldPosition, this.durability, this.level);
-            }
-            if (this.ticksSinceMine >= 10) {
-                //After half a second, start 'regrowing' blocks that haven't been mined.
-                this.priorDurability = this.durability;
-                this.durability++;
-                ServerTickHandler.addToList(this.worldPosition, this.durability, this.level);
-            }
-            if (this.durability >= this.originalDurability) {
-                //Once we reach the original durability value set the block back to its original blockstate.
-                this.resetBlock();
-            }
-            this.ticksSinceMine++;
-        }
-    }
-
     public void setBlockAllowed() {
         if (!UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.VOID_JUNK)) {
             this.blockAllowed = true;
             return;
         }
-        PlayerEntity player = this.level.getPlayerByUUID(this.playerUUID);
+        Player player = this.level.getPlayerByUUID(this.playerUUID);
         if (player == null) {
             return;
         }
@@ -543,7 +548,7 @@ public class RenderBlockTileEntity extends TileEntity implements ITickableTileEn
             }
         }
 
-        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerWorld) this.level, this.worldPosition, null, player, tempTool);
+        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
 
         this.blockAllowed = blockAllowed(drops, this.getGadgetFilters(), this.isGadgetIsWhitelist());
     }

@@ -4,29 +4,29 @@ import com.direwolf20.mininggadgets.common.containers.FilterContainer;
 import com.direwolf20.mininggadgets.common.containers.GhostSlot;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketGhostSlot;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Complete props and thanks to @amadones for their awesome implementation of this system
  * and their help whilst implementing it :heart:
  */
-public class FilterScreen extends ContainerScreen<FilterContainer> {
+public class FilterScreen extends AbstractContainerScreen<FilterContainer> {
     // Stealing the normal chest gui, should make this a tad simpler.
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
-    public FilterScreen(FilterContainer container, PlayerInventory inv, ITextComponent name) {
+    public FilterScreen(FilterContainer container, Inventory inv, Component name) {
         super(container, inv, name);
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
 
@@ -34,15 +34,15 @@ public class FilterScreen extends ContainerScreen<FilterContainer> {
     }
 
     @Override
-    protected void renderLabels(MatrixStack stack, int mouseX, int mouseY) {
-        font.draw(stack, new TranslationTextComponent("mininggadgets.tooltip.single.filters").getString(), 8, 6, 4210752);
-        font.draw(stack, this.inventory.getDisplayName().getString(), 8, (this.imageHeight - 96 + 3), 4210752);
+    protected void renderLabels(PoseStack stack, int mouseX, int mouseY) {
+        font.draw(stack, new TranslatableComponent("mininggadgets.tooltip.single.filters").getString(), 8, 6, 4210752);
+        font.draw(stack, this.menu.getCarried().getDisplayName().getString(), 8, (this.imageHeight - 96 + 3), 4210752);
     }
 
     @Override
-    protected void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        getMinecraft().getTextureManager().bind(TEXTURE);
+    protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        getMinecraft().getTextureManager().bindForSetup(TEXTURE);
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
@@ -57,7 +57,7 @@ public class FilterScreen extends ContainerScreen<FilterContainer> {
             return super.mouseClicked(x, y, btn);
 
         // By splitting the stack we can get air easily :) perfect removal basically
-        ItemStack stack = getMinecraft().player.inventory.getCarried();
+        ItemStack stack = getMinecraft().player.getInventory().getSelected();
         stack = stack.copy().split(hoveredSlot.getMaxStackSize()); // Limit to slot limit
         hoveredSlot.set(stack); // Temporarily update the client for continuity purposes
 

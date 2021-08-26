@@ -1,16 +1,16 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
 import com.direwolf20.mininggadgets.client.particles.ModParticles;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
@@ -37,31 +37,31 @@ public class MinersLight extends Block {
      */
     @Override
     @SuppressWarnings("deprecation")
-    public BlockRenderType getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         // We still make effect blocks invisible because all effects (scaling block, transparent box) are dynamic so they has to be in the TER
-        return BlockRenderType.INVISIBLE;
+        return RenderShape.INVISIBLE;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return VoxelShapes.empty();
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
     }
 
     /**
      * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
      */
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext selectionContext) {
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext selectionContext) {
         return SHAPE;
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
         return true;
     }
 
     @Override
-    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
         double d0 = (double) pos.getX() + 0.5D;
         double d1 = (double) pos.getY() + 0.5D;
         double d2 = (double) pos.getZ() + 0.5D;

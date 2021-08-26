@@ -1,27 +1,27 @@
 package com.direwolf20.mininggadgets.client.screens.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 
-import net.minecraft.client.gui.widget.button.Button.IPressable;
+import net.minecraft.client.gui.components.Button.OnPress;
 
 public class DireButton extends Button {
 
-    public DireButton(int x, int y, int widthIn, int heightIn, ITextComponent buttonText, IPressable action) {
+    public DireButton(int x, int y, int widthIn, int heightIn, Component buttonText, OnPress action) {
         super(x, y, widthIn, heightIn, buttonText, action);
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
-            FontRenderer fontrenderer = Minecraft.getInstance().font;
-            Minecraft.getInstance().getTextureManager().bind(WIDGETS_LOCATION);
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            Font fontrenderer = Minecraft.getInstance().font;
+            Minecraft.getInstance().getTextureManager().bindForSetup(WIDGETS_LOCATION);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             this.isHovered = isMouseOver(mouseX, mouseY);
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value, GlStateManager.SourceFactor.ONE.value, GlStateManager.DestFactor.ZERO.value);

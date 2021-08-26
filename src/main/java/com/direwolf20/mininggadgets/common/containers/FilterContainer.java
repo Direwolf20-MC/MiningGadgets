@@ -2,24 +2,24 @@ package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-public class FilterContainer extends Container {
-    FilterContainer(int windowId, PlayerInventory playerInventory, PacketBuffer buf) {
+public class FilterContainer extends AbstractContainerMenu {
+    FilterContainer(int windowId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(windowId, playerInventory, new ItemStackHandler(30));
     }
 
-    public FilterContainer(int windowId, PlayerInventory playerInventory, IItemHandler ghostInventory) {
+    public FilterContainer(int windowId, Inventory playerInventory, IItemHandler ghostInventory) {
         super(ModContainers.FILTER_CONTAINER.get(), windowId);
         this.setup(new InvWrapper(playerInventory), ghostInventory);
     }
@@ -47,12 +47,12 @@ public class FilterContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         return true;
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
 
@@ -88,15 +88,15 @@ public class FilterContainer extends Container {
         return itemstack;
     }
 
-    @Override
-    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        if ((slotId < this.slots.size()
-                && slotId >= 0
-                && this.slots.get(slotId).getItem().getItem() instanceof MiningGadget)
-                || clickTypeIn == ClickType.SWAP) {
-            return ItemStack.EMPTY;
-        }
-
-        return super.clicked(slotId, dragType, clickTypeIn, player);
-    }
+//    @Override
+//    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+//        if ((slotId < this.slots.size()
+//                && slotId >= 0
+//                && this.slots.get(slotId).getItem().getItem() instanceof MiningGadget)
+//                || clickTypeIn == ClickType.SWAP) {
+//            return ItemStack.EMPTY;
+//        }
+//
+//        return super.clicked(slotId, dragType, clickTypeIn, player);
+//    }
 }

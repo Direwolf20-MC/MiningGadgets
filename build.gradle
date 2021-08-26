@@ -4,23 +4,23 @@ import groovy.json.JsonOutput
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 version = "${mod_version}"
 group = 'com.direwolf20.mininggadgets' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'mininggadgets'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
     hideOfficialWarningUntilChanged
@@ -79,8 +79,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'mininggadgets', '--all', '--output', rootProject.file('src/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
-
+            args '--mod', 'mininggadgets', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
                 mininggadgets {
                     source sourceSets.main
@@ -120,22 +119,14 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
-    runtimeOnly fg.deobf("curse.maven:lollipop-347954:3232534")
-    runtimeOnly fg.deobf("curse.maven:powah-352656:352656")
-    runtimeOnly fg.deobf("curse.maven:mekanism-268560:268560")
+//--
+//    runtimeOnly fg.deobf("curse.maven:lollipop-347954:3232534")
+//    runtimeOnly fg.deobf("curse.maven:powah-352656:352656")
+//    runtimeOnly fg.deobf("curse.maven:mekanism-268560:268560")
 }
 
 processResources {
-    inputs.property 'version', project.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'version': project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
+    duplicatesStrategy = DuplicatesStrategy.INHERIT
 
 	doLast {
 	

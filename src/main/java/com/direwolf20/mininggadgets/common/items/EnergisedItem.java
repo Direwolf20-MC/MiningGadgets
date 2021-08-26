@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.items;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.EnergyStorage;
 
 public class EnergisedItem extends EnergyStorage {

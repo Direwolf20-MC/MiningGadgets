@@ -1,16 +1,19 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.PushReaction;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -18,9 +21,9 @@ import javax.annotation.Nullable;
 
 //import net.minecraft.util.BlockRenderLayer;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public class RenderBlock extends Block {
+public class RenderBlock extends Block implements EntityBlock {
     public RenderBlock() {
         super(
                 Properties.of(Material.METAL)
@@ -31,16 +34,16 @@ public class RenderBlock extends Block {
         );
     }
 
-
+    @Nullable
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
+        return RenderBlockTileEntity::ticker;
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new RenderBlockTileEntity();
+    public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
+        return ModBlocks.RENDERBLOCK_TILE.get().create(p_153215_, p_153216_);
     }
 
     /**
@@ -50,9 +53,9 @@ public class RenderBlock extends Block {
      */
     @Override
     @SuppressWarnings("deprecation")
-    public BlockRenderType getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         // We still make effect blocks invisible because all effects (scaling block, transparent box) are dynamic so they has to be in the TER
-        return BlockRenderType.INVISIBLE;
+        return RenderShape.INVISIBLE;
     }
 
     /**
@@ -64,13 +67,13 @@ public class RenderBlock extends Block {
     }
 
     @Override
-    public int getLightBlock(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return 0;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public float getShadeBrightness(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return 1.0f;
     }
 
@@ -78,4 +81,5 @@ public class RenderBlock extends Block {
     public boolean skipRendering(BlockState p_200122_1_, BlockState p_200122_2_, Direction p_200122_3_) {
         return true;
     }
+
 }

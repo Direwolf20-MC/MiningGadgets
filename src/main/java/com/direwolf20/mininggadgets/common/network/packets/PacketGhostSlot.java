@@ -1,12 +1,12 @@
 package com.direwolf20.mininggadgets.common.network.packets;
 
 import com.direwolf20.mininggadgets.common.containers.GhostSlot;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -19,23 +19,23 @@ public class PacketGhostSlot {
         this.stack = stack;
     }
 
-    public static void encode(PacketGhostSlot msg, PacketBuffer buffer) {
+    public static void encode(PacketGhostSlot msg, FriendlyByteBuf buffer) {
         buffer.writeInt(msg.slotNumber);
         buffer.writeItem(msg.stack);
     }
 
-    public static PacketGhostSlot decode(PacketBuffer buffer) {
+    public static PacketGhostSlot decode(FriendlyByteBuf buffer) {
         return new PacketGhostSlot(buffer.readInt(), buffer.readItem());
     }
 
     public static class Handler {
         public static void handle(PacketGhostSlot msg, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
-                ServerPlayerEntity sender = ctx.get().getSender();
+                ServerPlayer sender = ctx.get().getSender();
                 if (sender == null)
                     return;
 
-                Container container = sender.containerMenu;
+                AbstractContainerMenu container = sender.containerMenu;
                 if (container == null)
                     return;
 

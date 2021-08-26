@@ -1,11 +1,11 @@
 package com.direwolf20.mininggadgets.client;
 
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraftforge.fmlclient.registry.ClientRegistry;
 
 public class OurKeys {
-    public static final KeyBinding shiftClickGuiBinding = new KeyBinding("mininggadgets.text.open_gui", InputMappings.UNKNOWN.getValue(), "itemGroup.mininggadgets");
+    public static final KeyMapping shiftClickGuiBinding = new KeyMapping("mininggadgets.text.open_gui", InputConstants.UNKNOWN.getValue(), "itemGroup.mininggadgets");
 
     public static void register() {
         ClientRegistry.registerKeyBinding(shiftClickGuiBinding);

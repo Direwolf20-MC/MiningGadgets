@@ -3,7 +3,7 @@ package com.direwolf20.mininggadgets.common.data;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.ModItems;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;

@@ -1,26 +1,29 @@
 package com.direwolf20.mininggadgets.client.screens.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
-
-import java.awt.*;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.resources.ResourceLocation;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ToggleButton extends Widget {
+import net.minecraft.ChatFormatting;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+
+public class ToggleButton extends AbstractWidget {
     private Predicate<Boolean> onPress;
     private boolean enabled;
     private ResourceLocation texture;
 
-    public ToggleButton(int xIn, int yIn, ITextComponent msg, ResourceLocation texture, Predicate<Boolean> onPress) {
+    public ToggleButton(int xIn, int yIn, Component msg, ResourceLocation texture, Predicate<Boolean> onPress) {
         super(xIn, yIn, 21, 26, msg);
 
         this.onPress = onPress;
@@ -30,25 +33,18 @@ public class ToggleButton extends Widget {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         Color activeColor = this.enabled ? Color.GREEN : Color.RED;
 
-        RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value, GlStateManager.SourceFactor.ONE.value, GlStateManager.DestFactor.ZERO.value);
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value);
+        fill(stack, this.x, this.y, this.x + this.width, this.y + this.height, ((this.enabled ? 0x68000000 : 0x9B000000)) + activeColor.getRGB());
 
-        RenderSystem.disableTexture();
-        RenderSystem.color4f(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, this.enabled ? .4f : .6f);
-        blit(stack, this.x, this.y, 0, 0, this.width, this.height);
-        RenderSystem.enableTexture();
-
-        RenderSystem.color4f(1f, 1f, 1f, 1f);
-        Minecraft.getInstance().getTextureManager().bind(texture);
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.setShaderTexture(0, texture);
         blit(stack, this.x +2, this.y + 5, 0, 0, 16, 16, 16, 16);
     }
 
-    public List<IReorderingProcessor> getTooltip() {
-        return LanguageMap.getInstance().getVisualOrder(Arrays.asList(this.getMessage(), new StringTextComponent("Enabled: " + this.enabled).withStyle(this.enabled ? TextFormatting.GREEN : TextFormatting.RED)));
+    public List<FormattedCharSequence> getTooltip() {
+        return Language.getInstance().getVisualOrder(Arrays.asList(this.getMessage(), new TextComponent("Enabled: " + this.enabled).withStyle(this.enabled ? ChatFormatting.GREEN : ChatFormatting.RED)));
     }
 
     @Override
@@ -63,5 +59,10 @@ public class ToggleButton extends Widget {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public void updateNarration(NarrationElementOutput p_169152_) {
+
     }
 }

@@ -2,17 +2,17 @@ package com.direwolf20.mininggadgets.common.network.packets;
 
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +26,13 @@ public class PacketDurabilitySync {
         this.updateList = updateList;
     }
 
-    public static void encode(PacketDurabilitySync msg, PacketBuffer buffer) {
+    public static void encode(PacketDurabilitySync msg, FriendlyByteBuf buffer) {
         List<Tuple<BlockPos, Integer>> thisList = msg.updateList;
-        CompoundNBT tag = new CompoundNBT();
-        ListNBT nbtList = new ListNBT();
+        CompoundTag tag = new CompoundTag();
+        ListTag nbtList = new ListTag();
         for (int i = 0; i < thisList.size(); i++) {
-            CompoundNBT nbt = new CompoundNBT();
-            nbt.put("pos", NBTUtil.writeBlockPos(thisList.get(i).getA()));
+            CompoundTag nbt = new CompoundTag();
+            nbt.put("pos", NbtUtils.writeBlockPos(thisList.get(i).getA()));
             nbt.putInt("dur", thisList.get(i).getB());
             nbtList.add(i, nbt);
         }
@@ -40,13 +40,13 @@ public class PacketDurabilitySync {
         buffer.writeNbt(tag);
     }
 
-    public static PacketDurabilitySync decode(PacketBuffer buffer) {
-        CompoundNBT tag = buffer.readNbt();
-        ListNBT nbtList = tag.getList("list", Constants.NBT.TAG_COMPOUND);
+    public static PacketDurabilitySync decode(FriendlyByteBuf buffer) {
+        CompoundTag tag = buffer.readNbt();
+        ListTag nbtList = tag.getList("list", Constants.NBT.TAG_COMPOUND);
         List<Tuple<BlockPos, Integer>> thisList = new ArrayList<>();
         for (int i = 0; i < nbtList.size(); i++) {
-            CompoundNBT nbt = nbtList.getCompound(i);
-            thisList.add(new Tuple<>(NBTUtil.readBlockPos(nbt.getCompound("pos")), nbt.getInt("dur")));
+            CompoundTag nbt = nbtList.getCompound(i);
+            thisList.add(new Tuple<>(NbtUtils.readBlockPos(nbt.getCompound("pos")), nbt.getInt("dur")));
         }
         return new PacketDurabilitySync(thisList);
     }
@@ -64,7 +64,7 @@ public class PacketDurabilitySync {
         for (int i = 0; i < thisList.size(); i++) {
             BlockPos pos = thisList.get(i).getA();
             int durability = thisList.get(i).getB();
-            TileEntity clientTE = Minecraft.getInstance().level.getBlockEntity(pos);
+            BlockEntity clientTE = Minecraft.getInstance().level.getBlockEntity(pos);
             if (!(clientTE instanceof RenderBlockTileEntity)) return;
             ((RenderBlockTileEntity) clientTE).setClientDurability(durability);
         }

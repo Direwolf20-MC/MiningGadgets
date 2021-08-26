@@ -2,14 +2,13 @@ package com.direwolf20.mininggadgets.common.items.upgrade;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.ForgeI18n;
+import net.minecraftforge.fmllegacy.ForgeI18n;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -28,10 +27,10 @@ public class UpgradeTools {
      * use {@link MiningGadget#applyUpgrade(ItemStack, UpgradeCard)} unless you actually require this
      * kind of unchecked functionality
      */
-    private static void setUpgradeNBT(CompoundNBT nbt, UpgradeCard upgrade) {
-        ListNBT list = nbt.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+    private static void setUpgradeNBT(CompoundTag nbt, UpgradeCard upgrade) {
+        ListTag list = nbt.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
-        CompoundNBT compound = new CompoundNBT();
+        CompoundTag compound = new CompoundTag();
         compound.putString(KEY_UPGRADE, upgrade.getUpgrade().getName());
         compound.putBoolean(KEY_ENABLED, upgrade.getUpgrade().isEnabled());
 
@@ -39,12 +38,12 @@ public class UpgradeTools {
         nbt.put(KEY_UPGRADES, list);
     }
 
-    public static CompoundNBT setUpgradesNBT(List<Upgrade> laserUpgrades) {
-        CompoundNBT listCompound = new CompoundNBT();
-        ListNBT list = new ListNBT();
+    public static CompoundTag setUpgradesNBT(List<Upgrade> laserUpgrades) {
+        CompoundTag listCompound = new CompoundTag();
+        ListTag list = new ListTag();
 
         laserUpgrades.forEach( upgrade -> {
-            CompoundNBT compound = new CompoundNBT();
+            CompoundTag compound = new CompoundTag();
             compound.putString(KEY_UPGRADE, upgrade.getName());
             compound.putBoolean(KEY_ENABLED, upgrade.isEnabled());
             list.add(compound);
@@ -55,16 +54,16 @@ public class UpgradeTools {
     }
 
     public static void setUpgrade(ItemStack tool, UpgradeCard upgrade) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
+        CompoundTag tagCompound = tool.getOrCreateTag();
         setUpgradeNBT(tagCompound, upgrade);
     }
 
     public static void updateUpgrade(ItemStack tool, Upgrade upgrade) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
-        ListNBT list = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+        CompoundTag tagCompound = tool.getOrCreateTag();
+        ListTag list = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
         list.forEach( e -> {
-            CompoundNBT compound = (CompoundNBT) e;
+            CompoundTag compound = (CompoundTag) e;
             String name = compound.getString(KEY_UPGRADE);
             boolean enabled = compound.getBoolean(KEY_ENABLED);
 
@@ -78,15 +77,15 @@ public class UpgradeTools {
     }
 
     // Return all upgrades in the item.
-    public static List<Upgrade> getUpgradesFromTag(CompoundNBT tagCompound) {
-        ListNBT upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+    public static List<Upgrade> getUpgradesFromTag(CompoundTag tagCompound) {
+        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
         List<Upgrade> functionalUpgrades = new ArrayList<>();
         if (upgrades.isEmpty())
             return functionalUpgrades;
 
         for (int i = 0; i < upgrades.size(); i++) {
-            CompoundNBT tag = upgrades.getCompound(i);
+            CompoundTag tag = upgrades.getCompound(i);
 
             // Skip unknowns
             Upgrade type = getUpgradeByName(tag.getString(KEY_UPGRADE));
@@ -100,15 +99,15 @@ public class UpgradeTools {
         return functionalUpgrades;
     }
 
-    public static List<Upgrade> getActiveUpgradesFromTag(CompoundNBT tagCompound) {
-        ListNBT upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+    public static List<Upgrade> getActiveUpgradesFromTag(CompoundTag tagCompound) {
+        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
         List<Upgrade> functionalUpgrades = new ArrayList<>();
         if (upgrades.isEmpty())
             return functionalUpgrades;
 
         for (int i = 0; i < upgrades.size(); i++) {
-            CompoundNBT tag = upgrades.getCompound(i);
+            CompoundTag tag = upgrades.getCompound(i);
 
             Upgrade type = getUpgradeByName(tag.getString(KEY_UPGRADE));
             if (type == null)
@@ -135,12 +134,12 @@ public class UpgradeTools {
 
     // Return all upgrades in the item.
     public static List<Upgrade> getUpgrades(ItemStack tool) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
+        CompoundTag tagCompound = tool.getOrCreateTag();
         return getUpgradesFromTag(tagCompound);
     }
 
     public static List<Upgrade> getActiveUpgrades(ItemStack tool) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
+        CompoundTag tagCompound = tool.getOrCreateTag();
         return getActiveUpgradesFromTag(tagCompound);
     }
 
@@ -171,13 +170,13 @@ public class UpgradeTools {
      * as the gadget stores the full name and not it's base name
      */
     public static void removeUpgrade(ItemStack tool, Upgrade upgrade) {
-        CompoundNBT tagCompound = tool.getOrCreateTag();
-        ListNBT upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+        CompoundTag tagCompound = tool.getOrCreateTag();
+        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
 
         // Slightly completed but basically it just makes a new list and collects that back to an ListNBT
         tagCompound.put(KEY_UPGRADES, upgrades.stream()
-                .filter(e -> !((CompoundNBT) e).getString(KEY_UPGRADE).equals(upgrade.getName()))
-                .collect(Collectors.toCollection(ListNBT::new)));
+                .filter(e -> !((CompoundTag) e).getString(KEY_UPGRADE).equals(upgrade.getName()))
+                .collect(Collectors.toCollection(ListTag::new)));
     }
 
     public static boolean containsUpgrade(ItemStack tool, Upgrade type) {
@@ -211,7 +210,7 @@ public class UpgradeTools {
      * @param upgrade the upgrade Enum
      * @return A formatted string of the Upgrade without it's `Upgrade:` prefix
      */
-    public static ITextComponent getName(Upgrade upgrade) {
-        return new StringTextComponent(ForgeI18n.parseMessage(upgrade.getLocal()).replace(ForgeI18n.parseMessage(upgrade.getLocalReplacement()), ""));
+    public static Component getName(Upgrade upgrade) {
+        return new TextComponent(ForgeI18n.parseMessage(upgrade.getLocal()).replace(ForgeI18n.parseMessage(upgrade.getLocalReplacement()), ""));
     }
 }

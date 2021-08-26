@@ -1,8 +1,8 @@
 package com.direwolf20.mininggadgets.common.capabilities;
 
 import com.direwolf20.mininggadgets.common.items.EnergisedItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;

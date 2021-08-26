@@ -1,20 +1,17 @@
 package com.direwolf20.mininggadgets.common.sounds;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.TickableSound;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundSource;
 
-public class LaserLoopSound extends TickableSound {
-    private final PlayerEntity player;
+public class LaserLoopSound extends AbstractTickableSoundInstance {
+    private final Player player;
     private float distance = 0.0F;
 
-    public LaserLoopSound(PlayerEntity player, float volume) {
-        super(OurSounds.LASER_LOOP.getSound(), SoundCategory.PLAYERS);
+    public LaserLoopSound(Player player, float volume) {
+        super(OurSounds.LASER_LOOP.getSound(), SoundSource.PLAYERS);
         this.player = player;
         this.looping = true;
         this.delay = 0;

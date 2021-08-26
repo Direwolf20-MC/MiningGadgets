@@ -3,19 +3,19 @@ package com.direwolf20.mininggadgets.common.network.packets;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableCommands;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import javax.swing.*;
 import java.util.function.Supplier;
 
 public final class PacketInsertUpgrade {
-    public static PacketInsertUpgrade decode(PacketBuffer buffer) {
+    public static PacketInsertUpgrade decode(FriendlyByteBuf buffer) {
         return new PacketInsertUpgrade(buffer.readBlockPos(), buffer.readItem());
     }
 
@@ -27,30 +27,30 @@ public final class PacketInsertUpgrade {
         this.upgrade = stack;
     }
 
-    public void encode(PacketBuffer buffer) {
+    public void encode(FriendlyByteBuf buffer) {
         buffer.writeBlockPos(pos);
         buffer.writeItem(upgrade);
     }
 
     public void handler(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            World world = player.level;
+            Level world = player.level;
             BlockPos pos = this.pos;
 
-            TileEntity te = world.getBlockEntity(pos);
+            BlockEntity te = world.getBlockEntity(pos);
             if (!(te instanceof ModificationTableTileEntity)) return;
             ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
-            ItemStack stack = player.inventory.getCarried();
+            ItemStack stack = player.getInventory().getSelected();
             if (!stack.sameItem(upgrade)) {
                 return;
             }
 
             if (ModificationTableCommands.insertButton(container, this.upgrade)) {
-                player.inventory.setCarried(ItemStack.EMPTY);
+                player.getInventory().setPickedItem(ItemStack.EMPTY);
             }
         });
 

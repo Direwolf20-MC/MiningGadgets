@@ -3,14 +3,14 @@ package com.direwolf20.mininggadgets.client.particles.playerparticle;
 import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
 
-public class PlayerParticleData implements IParticleData {
+public class PlayerParticleData implements ParticleOptions {
     public final float size;
     public final float r, g, b;
     public final float maxAgeMul;
@@ -57,7 +57,7 @@ public class PlayerParticleData implements IParticleData {
     }
 
     @Override
-    public void writeToNetwork(PacketBuffer buf) {
+    public void writeToNetwork(FriendlyByteBuf buf) {
         buf.writeUtf(partType);
         buf.writeDouble(targetX);
         buf.writeDouble(targetY);
@@ -77,7 +77,7 @@ public class PlayerParticleData implements IParticleData {
                 this.getType().getRegistryName(), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
     }
 
-    public static final IParticleData.IDeserializer<PlayerParticleData> DESERIALIZER = new IParticleData.IDeserializer<PlayerParticleData>() {
+    public static final ParticleOptions.Deserializer<PlayerParticleData> DESERIALIZER = new ParticleOptions.Deserializer<PlayerParticleData>() {
         @Nonnull
         @Override
         public PlayerParticleData fromCommand(@Nonnull ParticleType<PlayerParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {
@@ -108,7 +108,7 @@ public class PlayerParticleData implements IParticleData {
         }
 
         @Override
-        public PlayerParticleData fromNetwork(@Nonnull ParticleType<PlayerParticleData> type, PacketBuffer buf) {
+        public PlayerParticleData fromNetwork(@Nonnull ParticleType<PlayerParticleData> type, FriendlyByteBuf buf) {
             return new PlayerParticleData(buf.readUtf(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readBoolean());
         }
     };

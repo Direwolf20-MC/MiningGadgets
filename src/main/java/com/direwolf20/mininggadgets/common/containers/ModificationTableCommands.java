@@ -8,9 +8,9 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.EnergisedItem;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.util.List;
@@ -61,7 +61,7 @@ public class ModificationTableCommands {
         return false;
     }
 
-    public static void extractButton(ModificationTableContainer container, ServerPlayerEntity player, String upgradeName) {
+    public static void extractButton(ModificationTableContainer container, ServerPlayer player, String upgradeName) {
         Slot laserSlot = container.slots.get(0);
         ItemStack laser = laserSlot.getItem();
 
@@ -77,7 +77,7 @@ public class ModificationTableCommands {
 
             UpgradeTools.removeUpgrade(laser, upgrade);
 
-            boolean success = player.inventory.add(new ItemStack(upgrade.getCard(), 1));
+            boolean success = player.getInventory().add(new ItemStack(upgrade.getCard(), 1));
             if (!success) {
                 player.drop(new ItemStack(upgrade.getCard(), 1), true);
             }

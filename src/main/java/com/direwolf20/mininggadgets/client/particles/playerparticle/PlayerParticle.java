@@ -1,19 +1,19 @@
 package com.direwolf20.mininggadgets.client.particles.playerparticle;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.particle.IAnimatedSprite;
-import net.minecraft.client.particle.IParticleRenderType;
-import net.minecraft.client.particle.SpriteTexturedParticle;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
 
-public class PlayerParticle extends SpriteTexturedParticle {
+public class PlayerParticle extends TextureSheetParticle {
     private double sourceX;
     private double sourceY;
     private double sourceZ;
@@ -24,7 +24,7 @@ public class PlayerParticle extends SpriteTexturedParticle {
     private String particleType;
     private Random rand = new Random();
     private int particlePicker;
-    protected final IAnimatedSprite spriteSet;
+    protected final SpriteSet spriteSet;
 
     public static final ResourceLocation iceParticle = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/snowflake1.png");
     public static final ResourceLocation iceParticle2 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/snowflake2.png");
@@ -32,8 +32,8 @@ public class PlayerParticle extends SpriteTexturedParticle {
     public static final ResourceLocation lightParticle = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/lightparticle.png");
 
 
-    public PlayerParticle(ClientWorld world, double sourceX, double sourceY, double sourceZ, double targetX, double targetY, double targetZ, double xSpeed, double ySpeed, double zSpeed,
-                          float size, float red, float green, float blue, boolean collide, float maxAge, String particleType, IAnimatedSprite sprite) {
+    public PlayerParticle(ClientLevel world, double sourceX, double sourceY, double sourceZ, double targetX, double targetY, double targetZ, double xSpeed, double ySpeed, double zSpeed,
+                          float size, float red, float green, float blue, boolean collide, float maxAge, String particleType, SpriteSet sprite) {
         super(world, sourceX, sourceY, sourceZ);
         xd = xSpeed;
         yd = ySpeed;
@@ -65,12 +65,12 @@ public class PlayerParticle extends SpriteTexturedParticle {
     }
 
     @Override
-    public void render(IVertexBuilder p_225606_1_, ActiveRenderInfo p_225606_2_, float p_225606_3_) {
+    public void render(VertexConsumer p_225606_1_, Camera p_225606_2_, float p_225606_3_) {
         super.render(p_225606_1_, p_225606_2_, p_225606_3_);
     }
 
-    public IParticleRenderType getRenderType() {
-        return IParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public ParticleRenderType getRenderType() {
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     // [VanillaCopy] of super, without drag when onGround is true
@@ -92,12 +92,12 @@ public class PlayerParticle extends SpriteTexturedParticle {
         this.yo = this.y;
         this.zo = this.z;
 
-        Vector3d sourcePos = new Vector3d(sourceX, sourceY, sourceZ);
-        Vector3d targetPos = new Vector3d(targetX, targetY, targetZ);
+        Vec3 sourcePos = new Vec3(sourceX, sourceY, sourceZ);
+        Vec3 targetPos = new Vec3(targetX, targetY, targetZ);
 
         //Get the current position of the particle, and figure out the vector of where it's going
-        Vector3d partPos = new Vector3d(this.x, this.y, this.z);
-        Vector3d targetDirection = new Vector3d(targetPos.x() - this.x, targetPos.y() - this.y, targetPos.z() - this.z);
+        Vec3 partPos = new Vec3(this.x, this.y, this.z);
+        Vec3 targetDirection = new Vec3(targetPos.x() - this.x, targetPos.y() - this.y, targetPos.z() - this.z);
 
         //The total distance between the particle and target
         double totalDistance = targetPos.distanceTo(partPos);
