@@ -78,7 +78,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
     @Override
     protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        getMinecraft().getTextureManager().bindForSetup(GUI);
+        RenderSystem.setShaderTexture(0, GUI);
         int relX = (this.width - this.imageWidth) / 2;
         int relY = (this.height - this.imageHeight) / 2;
         this.blit(stack, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight);

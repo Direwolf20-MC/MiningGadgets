@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.client.events;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -57,7 +58,7 @@ public class EventRenderGadget {
         matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
 
         AbstractClientPlayer abstractclientplayerentity = mc.player;
-        mc.getTextureManager().bindForSetup(abstractclientplayerentity.getSkinTextureLocation());
+        RenderSystem.setShaderTexture(0, abstractclientplayerentity.getSkinTextureLocation());
 
         matrixStackIn.translate(f * -1.0F, 3.6F, 3.5D);
         matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * 120.0F));

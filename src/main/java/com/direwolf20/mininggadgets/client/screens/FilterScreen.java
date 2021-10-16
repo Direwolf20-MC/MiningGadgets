@@ -42,7 +42,7 @@ public class FilterScreen extends AbstractContainerScreen<FilterContainer> {
     @Override
     protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        getMinecraft().getTextureManager().bindForSetup(TEXTURE);
+        RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
