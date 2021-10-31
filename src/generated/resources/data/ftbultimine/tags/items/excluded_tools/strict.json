@@ -1,0 +1,17 @@
+{
+	"replace": false,
+	"values": [
+		{
+			"id": "mininggadgets:mininggadget",
+			"required": false
+		},
+		{
+			"id": "mininggadgets:mininggadget_simple",
+			"required": false
+		},
+		{
+			"id": "mininggadgets:mininggadget_fancy",
+			"required": false
+		}
+	]
+}
