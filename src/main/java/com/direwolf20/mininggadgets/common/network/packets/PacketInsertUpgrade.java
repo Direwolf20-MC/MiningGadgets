@@ -44,13 +44,13 @@ public final class PacketInsertUpgrade {
             if (!(te instanceof ModificationTableTileEntity)) return;
             ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
-            ItemStack stack = player.getInventory().getSelected();
+            ItemStack stack = player.containerMenu.getCarried();
             if (!stack.sameItem(upgrade)) {
                 return;
             }
 
             if (ModificationTableCommands.insertButton(container, this.upgrade)) {
-                player.getInventory().setPickedItem(ItemStack.EMPTY);
+                player.containerMenu.setCarried(ItemStack.EMPTY);
             }
         });
 

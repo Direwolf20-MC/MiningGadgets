@@ -94,7 +94,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
 
     @Override
     public boolean mouseClicked(double mouseXIn, double mouseYIn, int p_231044_5_) {
-        ItemStack heldStack = this.playerInventory.getSelected();
+        ItemStack heldStack = this.menu.getCarried();
         ItemStack gadget = this.container.slots.get(0).getItem();
         if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
             if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
@@ -104,7 +104,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
                 }
 
                 PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
-                playerInventory.setPickedItem(ItemStack.EMPTY);
+                this.menu.setCarried(ItemStack.EMPTY);
             }
         }
         return super.mouseClicked(mouseXIn, mouseYIn, p_231044_5_);

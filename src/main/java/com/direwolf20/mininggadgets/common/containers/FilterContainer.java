@@ -31,7 +31,7 @@ public class FilterContainer extends AbstractContainerMenu {
         // space between the hotbar inventory and the players remaining inventory.
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 9; j++) {
-                addSlot(new SlotItemHandler(playerInventory, index, x + (j * 18), (y - (i > 0 ? 4 : 0)) - (i * 18)));
+                addSlot(new SlotItemHandler(playerInventory, index, x + (j * 18), (y - (i > 0 ? (4 * 18) + 4 : 0)) + (i * 18)));
                 index++;
             }
         }
