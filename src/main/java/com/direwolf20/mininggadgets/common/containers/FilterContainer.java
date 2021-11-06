@@ -88,15 +88,17 @@ public class FilterContainer extends AbstractContainerMenu {
         return itemstack;
     }
 
-//    @Override
-//    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
-//        if ((slotId < this.slots.size()
-//                && slotId >= 0
-//                && this.slots.get(slotId).getItem().getItem() instanceof MiningGadget)
-//                || clickTypeIn == ClickType.SWAP) {
-//            return ItemStack.EMPTY;
-//        }
-//
-//        return super.clicked(slotId, dragType, clickTypeIn, player);
-//    }
+
+
+    @Override
+    public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+        if ((slotId < this.slots.size()
+                && slotId >= 0
+                && this.slots.get(slotId).getItem().getItem() instanceof MiningGadget)
+                || clickTypeIn == ClickType.SWAP) {
+            return ;
+        }
+
+        super.clicked(slotId, dragType, clickTypeIn, player);
+    }
 }

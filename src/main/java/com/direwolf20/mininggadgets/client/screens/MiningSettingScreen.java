@@ -281,17 +281,8 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
         @Override
         public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-            RenderSystem.disableTexture();
-            RenderSystem.setShaderColor(.4f, .4f, .4f, 1f);
-            this.blit(stack, this.x, this.y, 0, 0, this.width, this.height);
-
-            if( this.isWhitelist )
-                RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            else
-                RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
-
-            this.blit(stack, this.x + 2, this.y + 2, 0, 0, this.width-4, this.height-4);
-            RenderSystem.enableTexture();
+            fill(stack, this.x, this.y, this.x + this.width, this.y + this.height, 0xFFa8a8a8);
+            fill(stack, this.x + 2, this.y + 2, this.x + this.width - 2, this.y + this.height - 2, this.isWhitelist ? 0xFFFFFFFF : 0xFF000000);
         }
 
         public void setWhitelist(boolean whitelist) {

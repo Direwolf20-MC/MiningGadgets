@@ -57,10 +57,13 @@ public class FilterScreen extends AbstractContainerScreen<FilterContainer> {
             return super.mouseClicked(x, y, btn);
 
         // By splitting the stack we can get air easily :) perfect removal basically
-        ItemStack stack = getMinecraft().player.getInventory().getSelected();
+        ItemStack stack = this.menu.getCarried();// getMinecraft().player.inventoryMenu.getCarried();
+        System.out.println(stack);
         stack = stack.copy().split(hoveredSlot.getMaxStackSize()); // Limit to slot limit
+        System.out.println(stack);
         hoveredSlot.set(stack); // Temporarily update the client for continuity purposes
 
+        System.out.println(hoveredSlot.index);
         PacketHandler.sendToServer(new PacketGhostSlot(hoveredSlot.index, stack));
         return true;
     }
