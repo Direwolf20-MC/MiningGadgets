@@ -86,18 +86,25 @@ public class RenderBlockTER implements BlockEntityRenderer<RenderBlockTileEntity
             matrixStackIn.translate((1 - scale) / 2, (1 - scale) / 2, (1 - scale) / 2);
             matrixStackIn.scale(scale, scale, scale);
 
+            VertexConsumer builder = bufferIn.getBuffer(RenderType.cutout());
             for (Direction direction : Direction.values()) {
-                renderModelBrightnessColorQuads(matrixStackIn.last(), bufferIn.getBuffer(RenderType.cutout()), f, f1, f2, 1f, ibakedmodel.getQuads(renderState, direction, new Random(Mth.getSeed(tile.getBlockPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
+                renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, 1f, getQuads(ibakedmodel, tile, direction), combinedLightsIn, combinedOverlayIn);
             }
-
+            renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, 1f, getQuads(ibakedmodel, tile, null), combinedLightsIn, combinedOverlayIn);
         } else if (breakType == MiningProperties.BreakTypes.FADE) {
             scale = Mth.lerp(scale, 0.1f, 1.0f);
+            VertexConsumer builder = bufferIn.getBuffer(MyRenderType.RenderBlock);
             for (Direction direction : Direction.values()) {
                 if (!(tile.getLevel().getBlockState(tile.getBlockPos().relative(direction)).getBlock() instanceof RenderBlock)) {
-                    renderModelBrightnessColorQuads(matrixStackIn.last(), bufferIn.getBuffer(MyRenderType.RenderBlock), f, f1, f2, scale, ibakedmodel.getQuads(renderState, direction, new Random(Mth.getSeed(tile.getBlockPos())), EmptyModelData.INSTANCE), combinedLightsIn, combinedOverlayIn);
+                    renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, scale, getQuads(ibakedmodel, tile, direction), combinedLightsIn, combinedOverlayIn);
                 }
             }
+            renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, scale, getQuads(ibakedmodel, tile, null), combinedLightsIn, combinedOverlayIn);
         }
         matrixStackIn.popPose();
+    }
+
+    private List<BakedQuad> getQuads(BakedModel model, RenderBlockTileEntity tile, Direction side) {
+        return model.getQuads(tile.getRenderBlock(), side, new Random(Mth.getSeed(tile.getBlockPos())), EmptyModelData.INSTANCE);
     }
 }
