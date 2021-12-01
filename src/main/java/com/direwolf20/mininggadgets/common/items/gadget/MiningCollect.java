@@ -3,16 +3,15 @@ package com.direwolf20.mininggadgets.common.items.gadget;
 import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.Dimension;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +19,9 @@ import java.util.stream.Collectors;
 
 /**
  * Handles collecting the blocks for the mining action.
- *
- * @implNote Currently done using static reference but having it as a dynamic class
- * may work in the future as more methods and functionality is added.
- *
- * @since 1.0.5
  */
 public class MiningCollect {
-    public static List<BlockPos> collect(PlayerEntity player, BlockRayTraceResult startBlock, World world, int range) {
+    public static List<BlockPos> collect(Player player, BlockHitResult startBlock, Level world, int range) {
         List<BlockPos> coordinates = new ArrayList<>();
         BlockPos startPos = startBlock.getBlockPos();
 
@@ -59,7 +53,7 @@ public class MiningCollect {
         return coordinates.stream().filter(e -> isValid(player, e, world)).collect(Collectors.toList());
     }
 
-    private static boolean isValid(PlayerEntity player, BlockPos pos, World world) {
+    private static boolean isValid(Player player, BlockPos pos, Level world) {
         BlockState state = world.getBlockState(pos);
 
         // Already checked the contained block. And declaring it invalid would prevent the contained block from being broken
@@ -80,7 +74,7 @@ public class MiningCollect {
             return false;
 
         // No TE's
-        TileEntity te = world.getBlockEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (te != null && !(te instanceof RenderBlockTileEntity))
             return false;
 

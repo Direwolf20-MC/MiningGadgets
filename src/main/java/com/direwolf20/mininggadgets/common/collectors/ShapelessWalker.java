@@ -1,10 +1,10 @@
 package com.direwolf20.mininggadgets.common.collectors;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.*;
 
@@ -47,14 +47,14 @@ public class ShapelessWalker {
         NEIGHBOR_POSITIONS[25] = new BlockPos(-1, -1, -1);
     }
 
-    public List<BlockPos> getBlocks(World level, BlockPos pos) {
+    public List<BlockPos> getBlocks(Level level, BlockPos pos) {
         HashSet<BlockPos> known = new HashSet<>();
         this.walk(level, pos, known);
 
         return new ArrayList<>(known);
     }
 
-    private void walk(World level, BlockPos pos, HashSet<BlockPos> known) {
+    private void walk(Level level, BlockPos pos, HashSet<BlockPos> known) {
         Set<BlockPos> traversed = new HashSet<>();
         Deque<BlockPos> openSet = new ArrayDeque<>();
         openSet.add(pos);
@@ -65,7 +65,6 @@ public class ShapelessWalker {
 
             Block block = level.getBlockState(ptr).getBlock();
             if ((block == Blocks.OAK_LOG || block == ModBlocks.RENDER_BLOCK.get()) && known.add(ptr)) {
-                System.out.println(block);
                 if (known.size() >= 60) {
                     return;
                 }

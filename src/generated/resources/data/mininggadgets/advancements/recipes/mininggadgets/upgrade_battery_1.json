@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "mininggadgets:upgrade_empty"
+            "items": [
+              "mininggadgets:upgrade_empty"
+            ]
           }
         ]
       }

@@ -6,16 +6,16 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -24,13 +24,13 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModificationTableContainer extends Container {
+public class ModificationTableContainer extends AbstractContainerMenu {
 
-    private TileEntity tileEntity;
+    private BlockEntity tileEntity;
     private IItemHandler playerInventory;
     private List<Upgrade> upgradesCache = new ArrayList<>();
 
-    public ModificationTableContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
+    public ModificationTableContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
         super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
 
         this.tileEntity = Minecraft.getInstance().level.getBlockEntity(extraData.readBlockPos());
@@ -40,7 +40,7 @@ public class ModificationTableContainer extends Container {
         layoutPlayerInventorySlots(8, 84);
     }
 
-    public ModificationTableContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
+    public ModificationTableContainer(int windowId, Level world, BlockPos pos, Inventory playerInventory) {
         super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
         this.tileEntity = world.getBlockEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);
@@ -50,8 +50,8 @@ public class ModificationTableContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
-        return stillValid(IWorldPosCallable.create(getTE().getLevel(), tileEntity.getBlockPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
+    public boolean stillValid(Player playerIn) {
+        return stillValid(ContainerLevelAccess.create(getTE().getLevel(), tileEntity.getBlockPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
     }
 
     private void setupContainerSlots() {
@@ -76,7 +76,7 @@ public class ModificationTableContainer extends Container {
         return upgradesCache;
     }
 
-    public TileEntity getTE() {
+    public BlockEntity getTE() {
         return this.tileEntity;
     }
 
@@ -107,7 +107,7 @@ public class ModificationTableContainer extends Container {
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {

@@ -5,7 +5,7 @@ license="MIT (https://github.com/Direwolf20-MC/MiningGadgets/blob/master/LICENSE
 
 [[mods]]
 modId="mininggadgets"
-version="${version}"
+version="${file.jarVersion}"
 displayName="Mining Gadgets"
 updateJSONURL="https://raw.githubusercontent.com/Direwolf20-MC/MiningGadgets/master/update.json"
 displayURL="https://github.com/Direwolf20-MC/MiningGadgets/"

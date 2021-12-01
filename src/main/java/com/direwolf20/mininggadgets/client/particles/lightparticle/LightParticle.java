@@ -1,12 +1,12 @@
 package com.direwolf20.mininggadgets.client.particles.lightparticle;
 
-import net.minecraft.client.particle.IParticleRenderType;
-import net.minecraft.client.particle.SpriteTexturedParticle;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.multiplayer.ClientLevel;
 
 // Steal
-public class LightParticle extends SpriteTexturedParticle {
-    public LightParticle(ClientWorld worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double speedIn) {
+public class LightParticle extends TextureSheetParticle {
+    public LightParticle(ClientLevel worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double speedIn) {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, speedIn);
         float f = this.random.nextFloat() * 0.1F + 0.2F;
         this.rCol = f;
@@ -21,8 +21,8 @@ public class LightParticle extends SpriteTexturedParticle {
         this.alpha = .8f;
     }
 
-    public IParticleRenderType getRenderType() {
-        return IParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public ParticleRenderType getRenderType() {
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     public void move(double x, double y, double z) {

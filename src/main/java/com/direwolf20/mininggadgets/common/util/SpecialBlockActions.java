@@ -1,11 +1,11 @@
 package com.direwolf20.mininggadgets.common.util;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.HashMap;
  * @implNote The consumer is likely a bit much haha.
  */
 public class SpecialBlockActions {
-    private static final HashMap<Block, TriConsumer<World, BlockPos, BlockState>> register = new HashMap<>();
+    private static final HashMap<Block, TriConsumer<Level, BlockPos, BlockState>> register = new HashMap<>();
 
     static {
         register.put(Blocks.ICE, (world, pos, state) -> {
@@ -28,7 +28,7 @@ public class SpecialBlockActions {
         });
     }
 
-    public static HashMap<Block, TriConsumer<World, BlockPos, BlockState>> getRegister() {
+    public static HashMap<Block, TriConsumer<Level, BlockPos, BlockState>> getRegister() {
         return register;
     }
 }

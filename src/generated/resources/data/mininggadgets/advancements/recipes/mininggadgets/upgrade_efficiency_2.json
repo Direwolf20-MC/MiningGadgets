@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "mininggadgets:upgrade_efficiency_1"
+            "items": [
+              "mininggadgets:upgrade_efficiency_1"
+            ]
           }
         ]
       }
@@ -21,7 +23,9 @@
       "conditions": {
         "items": [
           {
-            "item": "mininggadgets:upgrade_empty"
+            "items": [
+              "mininggadgets:upgrade_empty"
+            ]
           }
         ]
       }

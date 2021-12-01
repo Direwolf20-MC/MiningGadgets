@@ -9,10 +9,10 @@ import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -33,7 +33,7 @@ public class MiningGadgets
     public static final String MOD_ID = "mininggadgets";
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static ItemGroup itemGroup = new ItemGroup(MiningGadgets.MOD_ID) {
+    public static CreativeModeTab itemGroup = new CreativeModeTab(MiningGadgets.MOD_ID) {
         @Override
         public ItemStack makeIcon() {
             ItemStack itemStack = new ItemStack(ModItems.MININGGADGET.get());
@@ -72,7 +72,7 @@ public class MiningGadgets
         if( stack.getItem() instanceof MiningGadget ) {
             if (this.stackIsAnnoying(event.getPlayer().getMainHandItem())
                     || this.stackIsAnnoying(event.getPlayer().getOffhandItem())
-                    || event.getWorld().getBlockState(event.getPos()).getBlock() instanceof RedstoneOreBlock) {
+                    || event.getWorld().getBlockState(event.getPos()).getBlock() instanceof RedStoneOreBlock) {
                 event.setCanceled(true);
             }
         }
@@ -80,7 +80,7 @@ public class MiningGadgets
 
     /**
      * I've tried to identity annoying offhand items that can be placed whilst mining.
-     * I assume some level of logic so we assume that you'd have that item in your offhand
+     * I assume some level of logic, so we assume that you'd have that item in your offhand
      * whilst using the gadget.
      */
     private boolean stackIsAnnoying(ItemStack stack) {

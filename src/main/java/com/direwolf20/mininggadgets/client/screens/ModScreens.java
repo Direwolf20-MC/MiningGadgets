@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.client.screens;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class ModScreens {
     public static void openGadgetSettingsScreen(ItemStack itemstack) {

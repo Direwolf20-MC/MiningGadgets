@@ -17,38 +17,37 @@ import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.TooltipFlag;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -63,6 +62,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 
 public class MiningGadget extends Item {
     private int energyCapacity;
@@ -94,7 +100,7 @@ public class MiningGadget extends Item {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new CapabilityEnergyProvider(stack, Config.MININGGADGET_MAXPOWER.get());
     }
 
@@ -108,13 +114,13 @@ public class MiningGadget extends Item {
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack) {
         return stack.getCapability(CapabilityEnergy.ENERGY)
-                .map(e -> MathHelper.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
+                .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
                 .orElse(super.getRGBDurabilityForDisplay(stack));
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);
 
         List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
@@ -127,32 +133,32 @@ public class MiningGadget extends Item {
         boolean sneakPressed = Screen.hasShiftDown();
 
         if (!sneakPressed) {
-            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.show_upgrades",
+            tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.show_upgrades",
                     "shift")
-                    .withStyle(TextFormatting.GRAY));
+                    .withStyle(ChatFormatting.GRAY));
         } else {
-            tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).withStyle(TextFormatting.RED));
+            tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).withStyle(ChatFormatting.RED));
             if (!(upgrades.isEmpty())) {
-                tooltip.add(new TranslationTextComponent("mininggadgets.tooltip.item.upgrades").withStyle(TextFormatting.AQUA));
+                tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.upgrades").withStyle(ChatFormatting.AQUA));
                 for (Upgrade upgrade : upgrades) {
-                    tooltip.add(new StringTextComponent(" - " +
+                    tooltip.add(new TextComponent(" - " +
                             I18n.get(upgrade.getLocal())
-                    ).withStyle(TextFormatting.GRAY));
+                    ).withStyle(ChatFormatting.GRAY));
                 }
             }
         }
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
                 .ifPresent(energy -> {
-                    TranslationTextComponent energyText = !sneakPressed
-                            ? new TranslationTextComponent("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
-                            : new TranslationTextComponent("mininggadgets.gadget.energy", String.format("%,d", energy.getEnergyStored()), String.format("%,d", energy.getMaxEnergyStored()));
-                    tooltip.add(energyText.withStyle(TextFormatting.GREEN));
+                    TranslatableComponent energyText = !sneakPressed
+                            ? new TranslatableComponent("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
+                            : new TranslatableComponent("mininggadgets.gadget.energy", String.format("%,d", energy.getEnergyStored()), String.format("%,d", energy.getMaxEnergyStored()));
+                    tooltip.add(energyText.withStyle(ChatFormatting.GREEN));
                 });
     }
 
     @Override
-    public void fillItemCategory(@Nonnull ItemGroup group, @Nonnull NonNullList<ItemStack> items) {
+    public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
         if (!allowdedIn(group))
             return;
@@ -179,7 +185,7 @@ public class MiningGadget extends Item {
         return energy.getEnergyStored() >= cost;
     }
 
-    public static boolean canMineBlock(ItemStack tool, World world, PlayerEntity player, BlockPos pos, BlockState state) {
+    public static boolean canMineBlock(ItemStack tool, Level world, Player player, BlockPos pos, BlockState state) {
         if (!player.mayBuild() || !world.mayInteract(player, pos))
             return false;
 
@@ -190,8 +196,8 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
-        return UseAction.NONE;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 
     @Override
@@ -210,7 +216,7 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
 
         // Only perform the shift action
@@ -221,15 +227,15 @@ public class MiningGadget extends Item {
             }
 
             if (world.isClientSide) {
-                if (OurKeys.shiftClickGuiBinding.getKey() == InputMappings.UNKNOWN) {
+                if (OurKeys.shiftClickGuiBinding.getKey() == InputConstants.UNKNOWN) {
                     ModScreens.openGadgetSettingsScreen(itemstack);
-                    return ActionResult.pass(itemstack);
+                    return InteractionResultHolder.pass(itemstack);
                 }
             }
 
             // INTENTIONALLY LEFT IN. I DON'T HAVE THE TIME TO FIX THIS ISSUE ATM
             // @todo: migrate keybinding setting onto gadget so I can set a tag on the item
-            return ActionResult.pass(itemstack);
+            return InteractionResultHolder.pass(itemstack);
         }
 
         if (world.isClientSide) {
@@ -239,17 +245,17 @@ public class MiningGadget extends Item {
                     player.playSound(SoundEvents.STONE_HIT, volume * 0.5f, 1f);
                 else
                     player.playSound(OurSounds.LASER_START.getSound(), volume * 0.5f, 1f);
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
+            return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
         }
 
         if (!canMine(itemstack))
-            return new ActionResult<>(ActionResultType.FAIL, itemstack);
+            return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
 
         player.startUsingItem(hand);
-        return new ActionResult<>(ActionResultType.PASS, itemstack);
+        return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
     }
 
-    public List<BlockPos> findSources(World world, List<BlockPos> coords) {
+    public List<BlockPos> findSources(Level world, List<BlockPos> coords) {
         List<BlockPos> sources = new ArrayList<>();
         for (BlockPos coord : coords) {
             for (Direction side : Direction.values()) {
@@ -263,22 +269,22 @@ public class MiningGadget extends Item {
         return sources;
     }
 
-    private void spawnFreezeParticle(PlayerEntity player, BlockPos sourcePos, World world, ItemStack stack) {
+    private void spawnFreezeParticle(Player player, BlockPos sourcePos, Level world, ItemStack stack) {
         float randomPartSize = 0.05f + (0.125f - 0.05f) * rand.nextFloat();
         double randomTX = rand.nextDouble();
         double randomTY = rand.nextDouble();
         double randomTZ = rand.nextDouble();
         double alpha = -0.5f + (1.0f - 0.5f) * rand.nextDouble(); //rangeMin + (rangeMax - rangeMin) * r.nextDouble();
-        Vector3d playerPos = player.position().add(0, player.getEyeHeight(), 0);
-        Vector3d look = player.getLookAngle(); // or getLook(partialTicks)
+        Vec3 playerPos = player.position().add(0, player.getEyeHeight(), 0);
+        Vec3 look = player.getLookAngle(); // or getLook(partialTicks)
         int range = MiningProperties.getBeamRange(stack);
-        BlockRayTraceResult lookAt = VectorHelper.getLookingAt(player, RayTraceContext.FluidMode.NONE, range);
-        Vector3d lookingAt = lookAt.getLocation();
+        BlockHitResult lookAt = VectorHelper.getLookingAt(player, ClipContext.Fluid.NONE, range);
+        Vec3 lookingAt = lookAt.getLocation();
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
-        Vector3d right = new Vector3d(-look.z, 0, look.x).normalize();
-        Vector3d forward = look;
-        Vector3d backward = look.multiply(-1, 1, -1);
-        Vector3d down = right.cross(forward);
+        Vec3 right = new Vec3(-look.z, 0, look.x).normalize();
+        Vec3 forward = look;
+        Vec3 backward = look.multiply(-1, 1, -1);
+        Vec3 down = right.cross(forward);
 
         //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
         right = right.scale(0.65f);
@@ -287,7 +293,7 @@ public class MiningGadget extends Item {
         backward = backward.scale(0.05);
 
         //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
-        Vector3d laserPos = playerPos.add(right);
+        Vec3 laserPos = playerPos.add(right);
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
         lookingAt = lookingAt.add(backward);
@@ -296,7 +302,7 @@ public class MiningGadget extends Item {
         world.addParticle(data, laserPos.x, laserPos.y, laserPos.z, 0.025, 0.025f, 0.025);
     }
 
-    private void spawnFireParticle(BlockPos sourcePos, ServerWorld world) {
+    private void spawnFireParticle(BlockPos sourcePos, ServerLevel world) {
         double partType = rand.nextDouble();
         if (partType < 0.75d) return;
         double randomTX = rand.nextDouble();
@@ -312,7 +318,7 @@ public class MiningGadget extends Item {
     @OnlyIn(Dist.CLIENT)
     public void playLoopSound(LivingEntity player, ItemStack stack) {
         float volume = MiningProperties.getVolume(stack);
-        PlayerEntity myplayer = Minecraft.getInstance().player;
+        Player myplayer = Minecraft.getInstance().player;
         if (myplayer.equals(player)) {
             if (volume != 0.0f) {
                 if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("mongo")) {
@@ -324,7 +330,7 @@ public class MiningGadget extends Item {
                 }
                 else {
                     if (laserLoopSound == null) {
-                        laserLoopSound = new LaserLoopSound((PlayerEntity) player, volume);
+                        laserLoopSound = new LaserLoopSound((Player) player, volume);
                         Minecraft.getInstance().getSoundManager().play(laserLoopSound);
                     }
                 }
@@ -335,7 +341,7 @@ public class MiningGadget extends Item {
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         //Server and Client side
-        World world = player.level;
+        Level world = player.level;
         if (world.isClientSide) {
             this.playLoopSound(player, stack);
         }
@@ -380,19 +386,17 @@ public class MiningGadget extends Item {
         }
 
         int range = MiningProperties.getBeamRange(stack);
-        BlockRayTraceResult lookingAt = VectorHelper.getLookingAt((PlayerEntity) player, RayTraceContext.FluidMode.NONE, range);
-        if (lookingAt == null || (world.getBlockState(VectorHelper.getLookingAt((PlayerEntity) player, stack, range).getBlockPos()) == Blocks.AIR.defaultBlockState()))
+        BlockHitResult lookingAt = VectorHelper.getLookingAt((Player) player, ClipContext.Fluid.NONE, range);
+        if (world.getBlockState(VectorHelper.getLookingAt((Player) player, stack, range).getBlockPos()) == Blocks.AIR.defaultBlockState())
             return;
 
-        List<BlockPos> coords = MiningCollect.collect((PlayerEntity) player, lookingAt, world, MiningProperties.getRange(stack));
+        List<BlockPos> coords = MiningCollect.collect((Player) player, lookingAt, world, MiningProperties.getRange(stack));
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.level, coords)) {
-                if (player instanceof PlayerEntity) {
-                    int delay = MiningProperties.getFreezeDelay(stack);
-                    if (delay == 0 || count % delay == 0)
-                        spawnFreezeParticle((PlayerEntity) player, sourcePos, player.level, stack);
-                }
+                int delay = MiningProperties.getFreezeDelay(stack);
+                if (delay == 0 || count % delay == 0)
+                    spawnFreezeParticle((Player) player, sourcePos, player.level, stack);
             }
         }
 
@@ -404,7 +408,7 @@ public class MiningGadget extends Item {
             if (UpgradeTools.containsActiveUpgrade((stack), Upgrade.EFFICIENCY_1))
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
-            float hardness = getHardness(coords, (PlayerEntity) player, efficiency);
+            float hardness = getHardness(coords, (Player) player, efficiency);
             hardness = hardness * MiningProperties.getRange(stack) * 1;
             hardness = (float) Math.floor(hardness);
             if (hardness == 0) hardness = 1;
@@ -412,7 +416,7 @@ public class MiningGadget extends Item {
                 BlockState state = world.getBlockState(coord);
                 if (!(state.getBlock() instanceof RenderBlock)) {
                     //if (!world.isRemote) {
-                    if (!canMineBlock(stack, world, (PlayerEntity) player, coord, state)) {
+                    if (!canMineBlock(stack, world, (Player) player, coord, state)) {
                         return;
                     }
                     List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
@@ -432,30 +436,31 @@ public class MiningGadget extends Item {
                     te.setPriorDurability((int) hardness + 1);
                     te.setOriginalDurability((int) hardness + 1);
                     te.setDurability((int) hardness, stack);
-                    te.setPlayer((PlayerEntity) player);
+                    te.setPlayer((Player) player);
                     te.setBlockAllowed();
                     //}
                 } else {
                     //if (!world.isRemote) {
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getBlockEntity(coord);
-                    int durability = te.getDurability();
-                    //System.out.println(durability);
+                    if (te != null) {
+                        int durability = te.getDurability();
                 /*if (player.getHeldItemMainhand().getItem() instanceof MiningGadget && player.getHeldItemOffhand().getItem() instanceof MiningGadget)
                     durability = durability - 2;
                 else*/
-                    durability = durability - 1;
-                    if (durability <= 0) {
-                        stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
-                        if (MiningProperties.getPrecisionMode(stack)) {
-                            MiningProperties.setCanMine(stack, false);
-                            player.stopUsingItem();
+                        durability = durability - 1;
+                        if (durability <= 0) {
+                            stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
+                            if (MiningProperties.getPrecisionMode(stack)) {
+                                MiningProperties.setCanMine(stack, false);
+                                player.stopUsingItem();
+                            }
                         }
+                        te.setDurability(durability, stack);
                     }
-                    te.setDurability(durability, stack);
                     //}
                 }
-                if (player instanceof PlayerEntity && stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("wildfirev")) {
-                    spawnFireParticle(coord, (ServerWorld) player.level);
+                if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("wildfirev")) {
+                    spawnFireParticle(coord, (ServerLevel) player.level);
                 }
             }
             if (!(UpgradeTools.containsActiveUpgrade(stack, Upgrade.LIGHT_PLACER)))
@@ -491,30 +496,41 @@ public class MiningGadget extends Item {
         return cost + upgrades.stream().mapToInt(Upgrade::getCostPerBlock).sum();
     }
 
-    private static float getHardness(List<BlockPos> coords, PlayerEntity player, int efficiency) {
+    private static float getHardness(List<BlockPos> coords, Player player, int efficiency) {
         float hardness = 0;
         float toolSpeed = 8;
         if (efficiency > 0) {
             toolSpeed = toolSpeed + ((efficiency * efficiency + 1));
         }
-        EffectInstance hasteEffect = player.getEffect(Effects.DIG_SPEED);
+
+        MobEffectInstance hasteEffect = player.getEffect(MobEffects.DIG_SPEED);
         if (hasteEffect != null) {
             int hasteLevel = hasteEffect.getAmplifier() + 1;
             toolSpeed = toolSpeed + (toolSpeed * ((hasteLevel * 20f) / 100));
         }
 
-        EffectInstance miningFatigue = player.getEffect(Effects.DIG_SLOWDOWN);
+        MobEffectInstance miningFatigue = player.getEffect(MobEffects.DIG_SLOWDOWN);
         if (miningFatigue != null) {
             toolSpeed = toolSpeed / 3f;
         }
 
-        World world = player.level;
+        Level world = player.level;
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             float temphardness = state.getDestroySpeed(world, coord);
+
+            if (state.getBlock() instanceof RenderBlock) {
+                RenderBlockTileEntity blockEntity = (RenderBlockTileEntity) world.getBlockEntity(coord);
+                if (blockEntity != null) {
+                    temphardness = blockEntity.getRenderBlock().getDestroySpeed(world, coord);
+                }
+            }
+
+
             //if (state.getMaterial() == Material.EARTH) temphardness = temphardness * 4;
             hardness += (temphardness * 30) / toolSpeed;
         }
+
         return ((hardness / coords.size()));
     }
 
@@ -526,7 +542,7 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+    public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         if (worldIn.isClientSide) {
             if (laserLoopSound != null) {
                 float volume = MiningProperties.getVolume(stack);
@@ -537,7 +553,7 @@ public class MiningGadget extends Item {
             }
         }
 
-        if (entityLiving instanceof PlayerEntity)
+        if (entityLiving instanceof Player)
             entityLiving.stopUsingItem();
 
         if (!worldIn.isClientSide)
@@ -547,7 +563,7 @@ public class MiningGadget extends Item {
     /*
         UTILS
     */
-    public static ItemStack getGadget(PlayerEntity player) {
+    public static ItemStack getGadget(Player player) {
         ItemStack heldItem = player.getMainHandItem();
         if (!(heldItem.getItem() instanceof MiningGadget)) {
             heldItem = player.getOffhandItem();
@@ -558,7 +574,7 @@ public class MiningGadget extends Item {
         return heldItem;
     }
 
-    public static boolean isHolding(PlayerEntity entity) {
+    public static boolean isHolding(Player entity) {
         return getGadget(entity).getItem() instanceof MiningGadget;
     }
 }

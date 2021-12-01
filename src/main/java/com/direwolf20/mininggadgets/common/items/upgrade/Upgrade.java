@@ -3,7 +3,7 @@ package com.direwolf20.mininggadgets.common.items.upgrade;
 import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Supplier;
 

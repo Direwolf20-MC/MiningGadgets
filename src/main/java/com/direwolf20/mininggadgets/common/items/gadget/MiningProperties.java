@@ -1,8 +1,8 @@
 package com.direwolf20.mininggadgets.common.items.gadget;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class MiningProperties {
     }
 
     public static short getColor(ItemStack gadget, String color) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         if (color.equals(COLOR_RED) || color.contains("Inner")) {
             return !compound.contains(color) ? setColor(gadget, (short) 255, color) : compound.getShort(color);
         } else {
@@ -65,7 +65,7 @@ public class MiningProperties {
     }
 
     public static void nextBreakType(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         if (compound.contains(BREAK_TYPE)) {
             int type = getBreakType(gadget).ordinal() == BreakTypes.values().length - 1 ? 0 : getBreakType(gadget).ordinal() + 1;
             setBreakType(gadget, BreakTypes.values()[type]);
@@ -75,7 +75,7 @@ public class MiningProperties {
     }
 
     public static BreakTypes getBreakType(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(BREAK_TYPE) ? setBreakType(gadget, BreakTypes.SHRINK) : BreakTypes.values()[compound.getByte(BREAK_TYPE)];
     }
 
@@ -85,7 +85,7 @@ public class MiningProperties {
     }
 
     public static int getSpeed(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(KEY_SPEED) ? setSpeed(gadget, 1) : compound.getInt(KEY_SPEED);
     }
 
@@ -95,7 +95,7 @@ public class MiningProperties {
     }
 
     public static int getRange(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(KEY_RANGE) ? setRange(gadget, 1) : compound.getInt(KEY_RANGE);
     }
 
@@ -110,12 +110,12 @@ public class MiningProperties {
     }
 
     public static int getBeamRange(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(KEY_BEAM_RANGE) ? setBeamRange(gadget, MIN_RANGE) : compound.getInt(KEY_BEAM_RANGE);
     }
 
     public static int getBeamMaxRange(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(KEY_MAX_BEAM_RANGE) ? setBeamMaxRange(gadget, MIN_RANGE) : compound.getInt(KEY_MAX_BEAM_RANGE);
     }
 
@@ -125,7 +125,7 @@ public class MiningProperties {
     }
 
     public static boolean getWhiteList(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(KEY_WHITELIST) ? setWhitelist(gadget, true) : compound.getBoolean(KEY_WHITELIST);
     }
 
@@ -135,7 +135,7 @@ public class MiningProperties {
     }
 
     public static boolean getCanMine(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(CAN_MINE) ? setCanMine(gadget, true) : compound.getBoolean(CAN_MINE);
     }
 
@@ -145,7 +145,7 @@ public class MiningProperties {
     }
 
     public static boolean getPrecisionMode(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(PRECISION_MODE) ? setPrecisionMode(gadget, false) : compound.getBoolean(PRECISION_MODE);
     }
 
@@ -155,7 +155,7 @@ public class MiningProperties {
     }
 
     public static float getVolume(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(VOLUME) ? setVolume(gadget, 1.0f) : compound.getFloat(VOLUME);
     }
 
@@ -165,7 +165,7 @@ public class MiningProperties {
     }
 
     public static int getFreezeDelay(ItemStack gadget) {
-        CompoundNBT compound = gadget.getOrCreateTag();
+        CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(FREEZE_PARTICLE_DELAY) ? setFreezeDelay(gadget, 0) : compound.getInt(FREEZE_PARTICLE_DELAY);
     }
 
@@ -184,31 +184,31 @@ public class MiningProperties {
     }
 
     // mostly stolen from ItemStackHandler
-    public static List<ItemStack> deserializeItemStackList(CompoundNBT nbt) {
+    public static List<ItemStack> deserializeItemStackList(CompoundTag nbt) {
         List<ItemStack> stacks = new ArrayList<>();
-        ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
+        ListTag tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
 
         for (int i = 0; i < tagList.size(); i++) {
-            CompoundNBT itemTags = tagList.getCompound(i);
+            CompoundTag itemTags = tagList.getCompound(i);
             stacks.add(ItemStack.of(itemTags));
         }
 
         return stacks;
     }
 
-    public static CompoundNBT serializeItemStackList(List<ItemStack> stacks) {
-        ListNBT nbtTagList = new ListNBT();
+    public static CompoundTag serializeItemStackList(List<ItemStack> stacks) {
+        ListTag nbtTagList = new ListTag();
         for (int i = 0; i < stacks.size(); i++)
         {
             if (stacks.get(i).isEmpty())
                 continue;
 
-            CompoundNBT itemTag = new CompoundNBT();
+            CompoundTag itemTag = new CompoundTag();
             stacks.get(i).save(itemTag);
             nbtTagList.add(itemTag);
         }
 
-        CompoundNBT nbt = new CompoundNBT();
+        CompoundTag nbt = new CompoundTag();
         nbt.put("Items", nbtTagList);
         return nbt;
     }

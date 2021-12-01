@@ -3,23 +3,23 @@ package com.direwolf20.mininggadgets.client.particles.laserparticle;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.block.BlockState;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.BreakingParticle;
-import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.particle.BreakingItemParticle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
 
-public class LaserParticle extends BreakingParticle {
+public class LaserParticle extends BreakingItemParticle {
     // Queue values
     private float f;
     private float f1;
@@ -36,14 +36,14 @@ public class LaserParticle extends BreakingParticle {
     private boolean voiding = false;
     private float originalSize;
 
-    public LaserParticle(ClientWorld world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
+    public LaserParticle(ClientLevel world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul, BlockState blockState) {
         this(world, d, d1, d2, xSpeed, ySpeed, zSpeed, size, red, green, blue, depthTest, maxAgeMul);
         this.blockState = blockState;
         this.setSprite(Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getParticleIcon(blockState));
     }
 
-    public LaserParticle(ClientWorld world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
+    public LaserParticle(ClientLevel world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
                          float size, float red, float green, float blue, boolean depthTest, float maxAgeMul) {
         super(world, d, d1, d2, ItemStack.EMPTY);
         // super applies wiggle to motion so set it here instead
@@ -79,16 +79,16 @@ public class LaserParticle extends BreakingParticle {
     }
 
     @Override
-    public void render(IVertexBuilder builder, ActiveRenderInfo activeRenderInfo, float partialTicks) {
+    public void render(VertexConsumer builder, Camera activeRenderInfo, float partialTicks) {
         super.render(builder, activeRenderInfo, partialTicks);
     }
 
-    public boolean particleToPlayer(PlayerEntity player) {
+    public boolean particleToPlayer(Player player) {
         boolean partToPlayer = false;
         //if (player.isHandActive()) partToPlayer = true;
         BlockPos sourcePos = new BlockPos(sourceX, sourceY, sourceZ);
         if (!(level.getBlockState(sourcePos) == this.blockState)) partToPlayer = true;
-        TileEntity te = level.getBlockEntity(sourcePos);
+        BlockEntity te = level.getBlockEntity(sourcePos);
         if (te != null && te instanceof RenderBlockTileEntity) {
             if (((RenderBlockTileEntity) te).getTicksSinceMine() >= 5) {
                 partToPlayer = false;
@@ -112,18 +112,18 @@ public class LaserParticle extends BreakingParticle {
             return;
         }
         //Some calculations for the particle motion
-        PlayerEntity player = level.getPlayerByUUID(this.playerUUID);
+        Player player = level.getPlayerByUUID(this.playerUUID);
         if (player == null) {
             this.remove();
             return;
         }
-        Vector3d playerPos = player.position().add(0, player.getEyeHeight(), 0);
-        Vector3d blockPos = new Vector3d(sourceX, sourceY, sourceZ);
-        Vector3d look = player.getLookAngle(); // or getLook(partialTicks)
+        Vec3 playerPos = player.position().add(0, player.getEyeHeight(), 0);
+        Vec3 blockPos = new Vec3(sourceX, sourceY, sourceZ);
+        Vec3 look = player.getLookAngle(); // or getLook(partialTicks)
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
-        Vector3d right = new Vector3d(-look.z, 0, look.x).normalize();
-        Vector3d forward = look;
-        Vector3d down = right.cross(forward);
+        Vec3 right = new Vec3(-look.z, 0, look.x).normalize();
+        Vec3 forward = look;
+        Vec3 down = right.cross(forward);
 
         //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
         right = right.scale(0.65f);
@@ -131,13 +131,13 @@ public class LaserParticle extends BreakingParticle {
         down = down.scale(-0.35);
 
         //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
-        Vector3d laserPos = playerPos.add(right);
+        Vec3 laserPos = playerPos.add(right);
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
 
         //Get the current position of the particle, and figure out the vector of where it's going
-        Vector3d partPos = new Vector3d(this.x, this.y, this.z);
-        Vector3d targetDirection = new Vector3d(laserPos.x() - this.x, laserPos.y() - this.y, laserPos.z() - this.z);
+        Vec3 partPos = new Vec3(this.x, this.y, this.z);
+        Vec3 targetDirection = new Vec3(laserPos.x() - this.x, laserPos.y() - this.y, laserPos.z() - this.z);
 
         //The total distance between the laser's endpoint and the block(s) we're mining
         double totalDistance = blockPos.distanceTo(laserPos);
@@ -156,11 +156,11 @@ public class LaserParticle extends BreakingParticle {
             }
             //Apply the spinning effect, but only if the particle has been around for a bit, and slow the spin it gets closer to player.
             if (age > 5) {
-                float spinSpeed = MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.1f, 0.05f);
+                float spinSpeed = Mth.lerp(1 - (float) distance / (float) totalDistance, 1.1f, 0.05f);
                 targetDirection = targetDirection.add(targetDirection.cross(look).scale(spinSpeed).multiply(3, 3, 3));
             }
             //Change particle size as it gets closer to player.
-            this.quadSize = quadSize * MathHelper.lerp(1 - (float) distance / (float) totalDistance, 1.05f, 0.85f);
+            this.quadSize = quadSize * Mth.lerp(1 - (float) distance / (float) totalDistance, 1.05f, 0.85f);
             //Calculate where the particle's next position should be.
             moveX = (targetDirection.x()) / speedAdjust;
             moveY = (targetDirection.y()) / speedAdjust;
@@ -200,13 +200,13 @@ public class LaserParticle extends BreakingParticle {
         this.zo = this.z;
 
         if (voiding && age > 10 && age <= 15) {
-            float darkness = MathHelper.lerp((age - 10) / 5f, 1, 0);
+            float darkness = Mth.lerp((age - 10) / 5f, 1, 0);
             this.rCol = darkness;
             this.gCol = darkness;
             this.bCol = darkness;
         }
         if (voiding && age > 15 && age <= 25) {
-            float fade = MathHelper.lerp(((age - 15f) / 10f), 1, 0f);
+            float fade = Mth.lerp(((age - 15f) / 10f), 1, 0f);
             this.quadSize = this.originalSize * fade;
         }
         /*
@@ -231,7 +231,7 @@ public class LaserParticle extends BreakingParticle {
         zd = mz;
     }
 
-    public static IParticleFactory<LaserParticleData> FACTORY =
+    public static ParticleProvider<LaserParticleData> FACTORY =
             (data, world, x, y, z, xSpeed, ySpeed, zSpeed) ->
                     new LaserParticle(world, x, y, z, xSpeed, ySpeed, zSpeed, data.size, data.r, data.g, data.b, data.depthTest, data.maxAgeMul, data.state);
 

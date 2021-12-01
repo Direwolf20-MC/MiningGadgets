@@ -6,7 +6,7 @@ import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticle
 import com.direwolf20.mininggadgets.client.particles.lightparticle.LightParticleType;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleType;
-import net.minecraft.particles.ParticleType;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

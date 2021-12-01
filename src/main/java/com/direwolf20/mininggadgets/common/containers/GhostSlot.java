@@ -1,8 +1,8 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -24,13 +24,13 @@ public class GhostSlot extends SlotItemHandler {
     }
 
     @Override
-    public boolean mayPickup(PlayerEntity player) {
+    public boolean mayPickup(Player player) {
         return false;
     }
 
+
     @Override
-    public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
-        return ItemStack.EMPTY;
+    public void onTake(Player thePlayer, ItemStack stack) {
     }
 
     @Override
