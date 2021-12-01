@@ -1,9 +1,9 @@
 package com.direwolf20.mininggadgets.common.items.gadget;
 
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -173,7 +173,7 @@ public class MiningProperties {
      * So this is a bit fun, because we only need the items in our list we're ditching half the data
      * that the `Items` actually contains.
      *
-     * @implNote Please do not use {@link #deserializeItemStackList(CompoundNBT)} or {@link #serializeItemStackList(List)}
+     * @implNote Please do not use {@link #deserializeItemStackList(CompoundTag)} or {@link #serializeItemStackList(List)}
      *           if you wish to maintain the original tag data on the gadget. These have specific uses.
      *
      *           See {@link com.direwolf20.mininggadgets.common.network.packets.PacketOpenFilterContainer.Handler} for an
@@ -186,7 +186,7 @@ public class MiningProperties {
     // mostly stolen from ItemStackHandler
     public static List<ItemStack> deserializeItemStackList(CompoundTag nbt) {
         List<ItemStack> stacks = new ArrayList<>();
-        ListTag tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
+        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
 
         for (int i = 0; i < tagList.size(); i++) {
             CompoundTag itemTags = tagList.getCompound(i);

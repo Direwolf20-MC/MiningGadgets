@@ -5,14 +5,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class PacketDurabilitySync {
 
     public static PacketDurabilitySync decode(FriendlyByteBuf buffer) {
         CompoundTag tag = buffer.readNbt();
-        ListTag nbtList = tag.getList("list", Constants.NBT.TAG_COMPOUND);
+        ListTag nbtList = tag.getList("list", Tag.TAG_COMPOUND);
         List<Tuple<BlockPos, Integer>> thisList = new ArrayList<>();
         for (int i = 0; i < nbtList.size(); i++) {
             CompoundTag nbt = nbtList.getCompound(i);

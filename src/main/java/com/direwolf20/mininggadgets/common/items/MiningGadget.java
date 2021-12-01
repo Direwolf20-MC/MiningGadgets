@@ -93,7 +93,7 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public boolean isBarVisible(ItemStack stack) {
         IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
         return (energy.getEnergyStored() < energy.getMaxEnergyStored());
     }
@@ -105,17 +105,17 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
+    public int getBarWidth(ItemStack stack) {
         return stack.getCapability(CapabilityEnergy.ENERGY, null)
-                .map(e -> 1D - (e.getEnergyStored() / (double) e.getMaxEnergyStored()))
-                .orElse(0D);
+                .map(e -> (int) (1 - (e.getEnergyStored() / (double) e.getMaxEnergyStored())))
+                .orElse(0);
     }
 
     @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack) {
+    public int getBarColor(ItemStack stack) {
         return stack.getCapability(CapabilityEnergy.ENERGY)
                 .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
-                .orElse(super.getRGBDurabilityForDisplay(stack));
+                .orElse(super.getBarColor(stack));
     }
 
     @OnlyIn(Dist.CLIENT)

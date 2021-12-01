@@ -19,7 +19,7 @@ version = "${mod_version}"
 group = 'com.direwolf20.mininggadgets' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'mininggadgets'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
     hideOfficialWarningUntilChanged
@@ -116,8 +116,10 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     //JEI
-    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+
+// TODO: add back
+//    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+//    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
 //--

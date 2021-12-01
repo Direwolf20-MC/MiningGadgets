@@ -9,8 +9,8 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

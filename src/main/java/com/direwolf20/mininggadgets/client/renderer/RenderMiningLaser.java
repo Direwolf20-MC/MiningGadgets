@@ -19,9 +19,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-
-import java.util.Locale;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
@@ -35,7 +33,7 @@ public class RenderMiningLaser {
     private final static ResourceLocation laserBeam2 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser2.png");
     private final static ResourceLocation laserBeamGlow = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser_glow.png");
 
-    public static void renderLaser(RenderWorldLastEvent event, Player player, float ticks) {
+    public static void renderLaser(RenderLevelLastEvent event, Player player, float ticks) {
         ItemStack stack = MiningGadget.getGadget(player);
 
         if (!MiningProperties.getCanMine(stack))
@@ -62,7 +60,7 @@ public class RenderMiningLaser {
         }
     }
 
-    private static void drawLasers(ItemStack stack, RenderWorldLastEvent event, Vec3 from, HitResult trace, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, Player player, float ticks, float speedModifier) {
+    private static void drawLasers(ItemStack stack, RenderLevelLastEvent event, Vec3 from, HitResult trace, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, Player player, float ticks, float speedModifier) {
         InteractionHand activeHand;
         if (player.getMainHandItem().getItem() instanceof MiningGadget) {
             activeHand = InteractionHand.MAIN_HAND;
@@ -85,7 +83,7 @@ public class RenderMiningLaser {
         Vec3 view = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 
-        PoseStack matrix = event.getMatrixStack();
+        PoseStack matrix = event.getPoseStack();
 
         matrix.pushPose();
 

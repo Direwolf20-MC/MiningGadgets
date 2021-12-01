@@ -2,13 +2,13 @@ package com.direwolf20.mininggadgets.common.items.upgrade;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fmllegacy.ForgeI18n;
+import net.minecraftforge.common.ForgeI18n;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class UpgradeTools {
      * kind of unchecked functionality
      */
     private static void setUpgradeNBT(CompoundTag nbt, UpgradeCard upgrade) {
-        ListTag list = nbt.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+        ListTag list = nbt.getList(KEY_UPGRADES, Tag.TAG_COMPOUND);
 
         CompoundTag compound = new CompoundTag();
         compound.putString(KEY_UPGRADE, upgrade.getUpgrade().getName());
@@ -60,7 +60,7 @@ public class UpgradeTools {
 
     public static void updateUpgrade(ItemStack tool, Upgrade upgrade) {
         CompoundTag tagCompound = tool.getOrCreateTag();
-        ListTag list = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+        ListTag list = tagCompound.getList(KEY_UPGRADES, Tag.TAG_COMPOUND);
 
         list.forEach( e -> {
             CompoundTag compound = (CompoundTag) e;
@@ -78,7 +78,7 @@ public class UpgradeTools {
 
     // Return all upgrades in the item.
     public static List<Upgrade> getUpgradesFromTag(CompoundTag tagCompound) {
-        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Tag.TAG_COMPOUND);
 
         List<Upgrade> functionalUpgrades = new ArrayList<>();
         if (upgrades.isEmpty())
@@ -100,7 +100,7 @@ public class UpgradeTools {
     }
 
     public static List<Upgrade> getActiveUpgradesFromTag(CompoundTag tagCompound) {
-        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Tag.TAG_COMPOUND);
 
         List<Upgrade> functionalUpgrades = new ArrayList<>();
         if (upgrades.isEmpty())
@@ -171,7 +171,7 @@ public class UpgradeTools {
      */
     public static void removeUpgrade(ItemStack tool, Upgrade upgrade) {
         CompoundTag tagCompound = tool.getOrCreateTag();
-        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Constants.NBT.TAG_COMPOUND);
+        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Tag.TAG_COMPOUND);
 
         // Slightly completed but basically it just makes a new list and collects that back to an ListNBT
         tagCompound.put(KEY_UPGRADES, upgrades.stream()
