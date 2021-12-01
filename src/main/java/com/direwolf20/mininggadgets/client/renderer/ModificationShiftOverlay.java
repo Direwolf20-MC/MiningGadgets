@@ -19,13 +19,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import com.mojang.math.Vector3f;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 
 import java.util.List;
 
 public class ModificationShiftOverlay {
 
-    public static void render(RenderWorldLastEvent evt, Player player) {
+    public static void render(RenderLevelLastEvent evt, Player player) {
         HitResult pick = player.pick(5, 0, false);
         if (pick.getType() != HitResult.Type.BLOCK) {
             return;
@@ -55,10 +55,10 @@ public class ModificationShiftOverlay {
         Vec3 view = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         BlockPos blockPos = ((BlockHitResult) pick).getBlockPos();
 
-        double distance = player.getPosition(evt.getPartialTicks()).distanceTo(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+        double distance = player.getPosition(evt.getPartialTick()).distanceTo(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
         float scaleFactor = Math.max(.2f, ((float) distance / 10) + .1f);
 
-        PoseStack matrix = evt.getMatrixStack();
+        PoseStack matrix = evt.getPoseStack();
         matrix.pushPose();
         matrix.translate(-view.x, -view.y, -view.z);
         matrix.translate(blockPos.getX() + .5f, blockPos.getY() + 1, blockPos.getZ() + .5f);

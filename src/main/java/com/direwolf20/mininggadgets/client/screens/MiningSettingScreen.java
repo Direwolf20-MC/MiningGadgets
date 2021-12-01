@@ -29,7 +29,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.fmlclient.gui.widget.Slider;
+import net.minecraftforge.client.gui.widget.Slider;
 
 public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private ItemStack gadget;

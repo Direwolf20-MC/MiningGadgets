@@ -32,8 +32,8 @@ public class EventRenderGadget {
         boolean isFancyGadget = ModItems.MININGGADGET_FANCY.get().equals(event.getItemStack().getItem());
 
         Minecraft mc = Minecraft.getInstance();
-        PoseStack matrixStackIn = event.getMatrixStack();
-        MultiBufferSource buffer = event.getBuffers();
+        PoseStack matrixStackIn = event.getPoseStack();
+        MultiBufferSource buffer = event.getMultiBufferSource();
 
         float swingProgress = event.getSwingProgress();
         float equipProgress = event.getEquipProgress();
@@ -69,9 +69,9 @@ public class EventRenderGadget {
 
         PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(abstractclientplayerentity);
         if (rightHand) {
-            playerrenderer.renderRightHand(matrixStackIn, buffer, event.getLight(), abstractclientplayerentity);
+            playerrenderer.renderRightHand(matrixStackIn, buffer, event.getPackedLight(), abstractclientplayerentity);
         } else {
-            playerrenderer.renderLeftHand(matrixStackIn, buffer, event.getLight(), abstractclientplayerentity);
+            playerrenderer.renderLeftHand(matrixStackIn, buffer, event.getPackedLight(), abstractclientplayerentity);
         }
 
         matrixStackIn.popPose();
@@ -91,9 +91,9 @@ public class EventRenderGadget {
                         ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND
                         : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND,
                 !rightHand,
-                event.getMatrixStack(),
-                event.getBuffers(),
-                event.getLight()
+                event.getPoseStack(),
+                event.getMultiBufferSource(),
+                event.getPackedLight()
         );
         matrixStackIn.popPose();
 

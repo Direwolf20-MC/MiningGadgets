@@ -44,7 +44,7 @@ public class ModificationTableTileEntity extends BlockEntity implements MenuProv
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         CompoundTag nbt = new CompoundTag();
         this.save(nbt);
-        return new ClientboundBlockEntityDataPacket(this.getBlockPos(), 0, nbt);
+        return ClientboundBlockEntityDataPacket.create(this, (entity) -> nbt);
     }
 
     @Override

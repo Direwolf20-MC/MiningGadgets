@@ -12,7 +12,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.fmlclient.gui.widget.Slider;
+import net.minecraftforge.client.gui.widget.Slider;
 
 import java.awt.*;
 

@@ -7,12 +7,11 @@ import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.DrawSelectionEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    static void renderWorldLastEvent(RenderWorldLastEvent evt) {
+    static void renderWorldLastEvent(RenderLevelLastEvent evt) {
         List<AbstractClientPlayer> players = Minecraft.getInstance().level.players();
         Player myplayer = Minecraft.getInstance().player;
 
