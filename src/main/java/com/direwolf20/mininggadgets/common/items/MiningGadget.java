@@ -107,7 +107,7 @@ public class MiningGadget extends Item {
     @Override
     public int getBarWidth(ItemStack stack) {
         return stack.getCapability(CapabilityEnergy.ENERGY, null)
-                .map(e -> (int) (1 - (e.getEnergyStored() / (double) e.getMaxEnergyStored())))
+                .map(e -> Math.min(13 * e.getEnergyStored() / e.getMaxEnergyStored(), 13))
                 .orElse(0);
     }
 
