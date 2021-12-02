@@ -5,6 +5,7 @@ import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.MODIFICATIONT
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -36,36 +37,31 @@ public class ModificationTableTileEntity extends BlockEntity implements MenuProv
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
-        this.load(packet.getTag());
-    }
-
-    @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        CompoundTag nbt = new CompoundTag();
-        this.save(nbt);
-        return ClientboundBlockEntityDataPacket.create(this, (entity) -> nbt);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
     public CompoundTag getUpdateTag() {
-        return this.save(new CompoundTag());
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return tag;
     }
 
     @Override
     public void load(CompoundTag tag) {
+        super.load(tag);
         CompoundTag invTag = tag.getCompound("inv");
         handler.ifPresent(h -> ((INBTSerializable<CompoundTag>) h).deserializeNBT(invTag));
-        super.load(tag);
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         handler.ifPresent(h -> {
             CompoundTag compound = ((INBTSerializable<CompoundTag>) h).serializeNBT();
             tag.put("inv", compound);
         });
-        return super.save(tag);
     }
 
     private IItemHandler createHandler() {
@@ -77,8 +73,7 @@ public class ModificationTableTileEntity extends BlockEntity implements MenuProv
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                if (slot == 0 && stack.getItem() instanceof MiningGadget) return true;
-                return false;
+                return slot == 0 && stack.getItem() instanceof MiningGadget;
             }
         };
     }
