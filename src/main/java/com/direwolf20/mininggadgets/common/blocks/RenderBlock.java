@@ -49,7 +49,7 @@ public class RenderBlock extends Block implements EntityBlock {
     /**
      * @param state blockState
      * @return Render Type
-     * @deprecated call via {@link BlockState#getRenderType()} whenever possible. Implementing/overriding is fine.
+     * @deprecated call via {@link BlockState#getRenderShape()} whenever possible. Implementing/overriding is fine.
      */
     @Override
     @SuppressWarnings("deprecation")
@@ -59,7 +59,7 @@ public class RenderBlock extends Block implements EntityBlock {
     }
 
     /**
-     * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
+     * @deprecated call via {@link BlockState#getPistonPushReaction()} whenever possible. Implementing/overriding is fine.
      */
     @Override
     public PushReaction getPistonPushReaction(BlockState state) {
