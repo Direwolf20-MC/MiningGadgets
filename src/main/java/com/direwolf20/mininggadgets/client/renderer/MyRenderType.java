@@ -1,11 +1,11 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import net.minecraft.client.renderer.RenderType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import java.util.OptionalDouble;
 
@@ -72,16 +72,15 @@ public class MyRenderType extends RenderType {
                     .createCompositeState(false));
 
     public static final RenderType RenderBlock = create("MiningLaserRenderBlock",
-            DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, false,
+            DefaultVertexFormat.BLOCK,
+            VertexFormat.Mode.QUADS,
+            131072,
+            true,
+            false,
             RenderType.CompositeState.builder()
-//                    .setShaderState(SMOOTH_SHADE)
-                    .setShaderState(ShaderStateShard.BLOCK_SHADER)
                     .setLightmapState(LIGHTMAP)
-                    .setTextureState(BLOCK_SHEET_MIPPED)
-                    .setLayeringState(VIEW_OFFSET_Z_LAYERING)
-                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setDepthTestState(LEQUAL_DEPTH_TEST)
-                    .setCullState(CULL)
-                    .setWriteMaskState(COLOR_WRITE)
-                    .createCompositeState(false));
+                    .setShaderState(RENDERTYPE_CUTOUT_SHADER)
+                    .setTextureState(BLOCK_SHEET)
+                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                    .createCompositeState(true));
 }
