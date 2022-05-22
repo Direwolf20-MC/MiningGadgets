@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.data;
+package com.direwolf20.mininggadgets.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.minecraft.data.DataGenerator;

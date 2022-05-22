@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.client;
+package com.direwolf20.mininggadgets.integration;
 
 import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
 import com.direwolf20.mininggadgets.common.Config;

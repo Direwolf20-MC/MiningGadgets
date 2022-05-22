@@ -1,21 +1,20 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
+import com.direwolf20.mininggadgets.common.upgrades.UpgradeHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -28,7 +27,7 @@ public class ModificationTableContainer extends AbstractContainerMenu {
 
     private BlockEntity tileEntity;
     private IItemHandler playerInventory;
-    private List<Upgrade> upgradesCache = new ArrayList<>();
+    private List<UpgradeHolder> upgradesCache = new ArrayList<>();
 
     public ModificationTableContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
         super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
@@ -69,10 +68,10 @@ public class ModificationTableContainer extends AbstractContainerMenu {
 
         // Purge and set cache
         upgradesCache.clear();
-        upgradesCache = UpgradeTools.getUpgrades(stack);
+        upgradesCache = MiningGadget.getUpgrades(stack);
     }
 
-    public List<Upgrade> getUpgradesCache() {
+    public List<UpgradeHolder> getUpgradesCache() {
         return upgradesCache;
     }
 

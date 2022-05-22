@@ -73,9 +73,9 @@
 //        long gameTime = player.level.getGameTime();
 //        double v = gameTime * speedModifier;
 //        float additiveThickness = (thickness * 3.5f) * calculateLaserFlickerModifier(gameTime);
-//        BufferBuilder wr = Tessellator.getInstance().getBuilder();
+//        BufferBuilder wr = Tessellator.get().getBuilder();
 //
-//        Vector3d view = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+//        Vector3d view = Minecraft.get().gameRenderer.getMainCamera().getPosition();
 //
 //        MatrixStack matrix = event.getMatrixStack();
 //        matrix.translate(view.x(), view.y(), view.z());
@@ -99,17 +99,17 @@
 //        // additive laser beam
 //        RenderSystem.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //        RenderSystem.color4f(r, g, b, 0.7f);
-//        Minecraft.getInstance().getTextureManager().bind(laserBeamGlow);
+//        Minecraft.get().getTextureManager().bind(laserBeamGlow);
 //        drawBeam(xOffset, yOffset, zOffset, additiveThickness, activeHand, distance, wr, 0.5, 1, ticks);
 //
 //        // main laser, colored part
 //        RenderSystem.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //        RenderSystem.color4f(r, g, b, 1.0f);
-//        Minecraft.getInstance().getTextureManager().bind(laserBeam2);
+//        Minecraft.get().getTextureManager().bind(laserBeam2);
 //        drawBeam(xOffset, yOffset, zOffset, thickness, activeHand, distance, wr, v, v + distance * 1.5, ticks);
 //        // white core
 //        RenderSystem.color4f(MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f, 1.0f);
-//        Minecraft.getInstance().getTextureManager().bind(laserBeam);
+//        Minecraft.get().getTextureManager().bind(laserBeam);
 //        drawBeam(xOffset, yOffset, zOffset, thickness / 2, activeHand, distance, wr, v, v + distance * 1.5, ticks);
 //
 //        RenderSystem.enableDepthTest();
@@ -122,7 +122,7 @@
 //    }
 //
 //    private static void drawBeam(double xOffset, double yOffset, double zOffset, float thickness, Hand hand, double distance, BufferBuilder wr, double v1, double v2, float ticks) {
-//        ClientPlayerEntity player = Minecraft.getInstance().player;
+//        ClientPlayerEntity player = Minecraft.get().player;
 //
 //        float startXOffset = -0.25f;
 //        float startYOffset = -.115f;
@@ -134,7 +134,7 @@
 //        startYOffset = startYOffset + (f / 1000);
 //
 //        // Support for hand sides remembering to take into account of Skin options
-//        if( Minecraft.getInstance().options.mainHand != HandSide.RIGHT )
+//        if( Minecraft.get().options.mainHand != HandSide.RIGHT )
 //            hand = hand == Hand.MAIN_HAND ? Hand.OFF_HAND : Hand.MAIN_HAND;
 //
 //        wr.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -150,7 +150,7 @@
 //            wr.vertex(xOffset, -thickness + yOffset, distance + zOffset).uv(1, (float) v2).endVertex();
 //            wr.vertex(-startXOffset, -thickness + startYOffset, startZOffset).uv(1, (float) v1).endVertex();
 //        }
-//        Tessellator.getInstance().end();
+//        Tessellator.get().end();
 //    }
 //
 //}

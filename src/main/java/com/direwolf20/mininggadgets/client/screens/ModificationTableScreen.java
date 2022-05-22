@@ -4,25 +4,24 @@ import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
 import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
+import com.direwolf20.mininggadgets.common.upgrades.UpgradeHolder;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.client.gui.ScrollPanel;
 import net.minecraftforge.common.ForgeI18n;
 
@@ -99,9 +98,10 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
             if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
                 // Send packet to remove the item from the inventory and add it to the table
-                if (UpgradeTools.containsUpgrade(gadget, ((UpgradeCard) heldStack.getItem()).getUpgrade())) {
-                    return false;
-                }
+                // TODO: add back
+//                if (UpgradeTools.containsUpgrade(gadget, ((UpgradeCard) heldStack.getItem()).getUpgradeId())) {
+//                    return false;
+//                }
 
                 PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
                 this.menu.setCarried(ItemStack.EMPTY);
@@ -112,7 +112,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
 
     private static class ScrollingUpgrades extends ScrollPanel implements NarratableEntry {
         ModificationTableScreen parent;
-        Upgrade upgrade = null;
+        UpgradeHolder upgrade = null;
 
 
 
@@ -137,12 +137,12 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
 
         @Override
         protected void drawPanel(PoseStack mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
-            Upgrade currentUpgrade = null;
+            UpgradeHolder currentUpgrade = null;
             int x = (entryRight - this.width) + 3;
             int y = relativeY;
 
             int index = 0;
-            for (Upgrade upgrade : this.parent.container.getUpgradesCache()) {
+            for (UpgradeHolder upgrade : this.parent.container.getUpgradesCache()) {
                 Minecraft.getInstance().getItemRenderer().renderGuiItem(new ItemStack(upgrade.getCard()), x, y);
 
                 if( isMouseOver(mouseX, mouseY) && (mouseX > x && mouseX < x + 15 && mouseY > y && mouseY < y + 15)  )

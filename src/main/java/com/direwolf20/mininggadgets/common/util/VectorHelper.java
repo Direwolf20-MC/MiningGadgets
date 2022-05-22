@@ -10,6 +10,8 @@ import net.minecraft.world.level.Level;
 /**
  * @implNote The main reason behind this is so we have control over the RayTraceContext,
  *           this means that we can use COLLIDER so it traces through non-collidable objects
+ *
+ * TODO: support changing this via a gadget setting
  */
 public class VectorHelper {
     public static BlockHitResult getLookingAt(Player player, ItemStack tool, int range) {

@@ -30,7 +30,7 @@ public class LaserLoopSound extends AbstractTickableSoundInstance {
         if (!(this.player.isUsingItem() && heldItem.getItem() instanceof MiningGadget)) {
             this.stop();
         } else {
-//            PlayerEntity myplayer = Minecraft.getInstance().player;
+//            PlayerEntity myplayer = Minecraft.get().player;
             this.x = (float) this.player.getX();
             this.y = (float) this.player.getY();
             this.z = (float) this.player.getZ();

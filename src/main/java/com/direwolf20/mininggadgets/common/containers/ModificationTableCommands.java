@@ -21,7 +21,7 @@ public class ModificationTableCommands {
         ItemStack laser = laserSlot.getItem();
 
         if (laser.getItem() instanceof MiningGadget && upgrade.getItem() instanceof UpgradeCard) {
-            Upgrade card = ((UpgradeCard) upgrade.getItem()).getUpgrade();
+            Upgrade card = ((UpgradeCard) upgrade.getItem()).getUpgradeId();
             if (card == Upgrade.EMPTY)
                 return false; //Don't allow inserting empty cards.
 
@@ -44,7 +44,7 @@ public class ModificationTableCommands {
                 return false;
 
             if (hasFortune && card.getBaseName().equals(Upgrade.SILK.getBaseName()) || hasSilk && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName()))
-                ((UpgradeCard) upgrade.getItem()).getUpgrade().setEnabled(false);
+                ((UpgradeCard) upgrade.getItem()).getUpgradeId().setEnabled(false);
 
             MiningGadget.applyUpgrade(laser, (UpgradeCard) upgrade.getItem());
 

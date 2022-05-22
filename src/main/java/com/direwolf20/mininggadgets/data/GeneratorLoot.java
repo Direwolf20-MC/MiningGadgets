@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.data;
+package com.direwolf20.mininggadgets.data;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.google.common.collect.ImmutableList;

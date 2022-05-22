@@ -1,18 +1,16 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
-import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.Config;
-import com.direwolf20.mininggadgets.common.collectors.ShapelessWalker;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.upgrades.UpgradeHolder;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
@@ -36,20 +34,16 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
 public class RenderBlockTileEntity extends BlockEntity {
-    private final Random rand = new Random();
     private BlockState renderBlock;
     private int priorDurability = 9999;
     private int clientPrevDurability;
@@ -58,7 +52,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     private UUID playerUUID;
     private int originalDurability;
     private int ticksSinceMine = 0;
-    private List<Upgrade> gadgetUpgrades;
+    private List<UpgradeHolder> gadgetUpgrades;
     private List<ItemStack> gadgetFilters;
     private boolean gadgetIsWhitelist;
     private boolean packetReceived = false;
@@ -185,9 +179,10 @@ public class RenderBlockTileEntity extends BlockEntity {
         this.durability = dur;
         if (dur <= 0) {
             this.removeBlock();
-            if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FREEZING)) {
-                this.freeze(stack);
-            }
+            // TODO: Add back
+//            if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FREEZING)) {
+//                this.freeze(stack);
+//            }
         }
 
         this.setChanged();
@@ -238,21 +233,22 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     public void spawnParticle() {
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET) && this.originalDurability > 0) {
-            int PartCount = 20 / this.originalDurability;
-            if (PartCount <= 1) {
-                PartCount = 1;
-            }
-            for (int i = 0; i <= PartCount; i++) {
-                double randomPartSize = 0.125 + this.rand.nextDouble() * 0.5;
-                double randomX = this.rand.nextDouble();
-                double randomY = this.rand.nextDouble();
-                double randomZ = this.rand.nextDouble();
-
-                LaserParticleData data = LaserParticleData.laserparticle(this.renderBlock, (float) randomPartSize, 1f, 1f, 1f, 200);
-                this.getLevel().addParticle(data, this.getBlockPos().getX() + randomX, this.getBlockPos().getY() + randomY, this.getBlockPos().getZ() + randomZ, 0, 0.0f, 0);
-            }
-        }
+        // TODO: Add back
+//        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET) && this.originalDurability > 0) {
+//            int PartCount = 20 / this.originalDurability;
+//            if (PartCount <= 1) {
+//                PartCount = 1;
+//            }
+//            for (int i = 0; i <= PartCount; i++) {
+//                double randomPartSize = 0.125 + this.rand.nextDouble() * 0.5;
+//                double randomX = this.rand.nextDouble();
+//                double randomY = this.rand.nextDouble();
+//                double randomZ = this.rand.nextDouble();
+//
+//                LaserParticleData data = LaserParticleData.laserparticle(this.renderBlock, (float) randomPartSize, 1f, 1f, 1f, 200);
+//                this.getLevel().addParticle(data, this.getBlockPos().getX() + randomX, this.getBlockPos().getY() + randomY, this.getBlockPos().getZ() + randomZ, 0, 0.0f, 0);
+//            }
+//        }
     }
 
     public int getDurability() {
@@ -313,11 +309,8 @@ public class RenderBlockTileEntity extends BlockEntity {
         this.packetReceived = true;
     }
 
-    public List<Upgrade> getGadgetUpgrades() {
-        return this.gadgetUpgrades;
-    }
 
-    public void setGadgetUpgrades(List<Upgrade> gadgetUpgrades) {
+    public void setGadgetUpgrades(List<UpgradeHolder> gadgetUpgrades) {
         this.gadgetUpgrades = gadgetUpgrades;
     }
 
@@ -379,7 +372,14 @@ public class RenderBlockTileEntity extends BlockEntity {
         if (tag.contains("playerUUID")) {
             this.playerUUID = tag.getUUID("playerUUID");
         }
-        this.gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
+
+        List<UpgradeHolder> upgradeSet = new ArrayList<>();
+        ListTag upgrades = tag.getList("upgrades", Tag.TAG_COMPOUND);
+        for (int i = 0; i < upgrades.size(); i++) {
+            upgradeSet.add(UpgradeHolder.read(upgrades.getCompound(i)));
+        }
+        this.gadgetUpgrades = upgradeSet;
+
         this.breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
         this.gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"));
         this.gadgetIsWhitelist = tag.getBoolean("gadgetIsWhitelist");
@@ -399,7 +399,11 @@ public class RenderBlockTileEntity extends BlockEntity {
         if (this.playerUUID != null) {
             tag.putUUID("playerUUID", this.playerUUID);
         }
-        tag.put("upgrades", UpgradeTools.setUpgradesNBT(this.gadgetUpgrades).getList("upgrades", Tag.TAG_COMPOUND));
+
+        var upgrades = new ListTag();
+        this.gadgetUpgrades.stream().map(UpgradeHolder::write).forEach(upgrades::add);
+
+        tag.put("upgrades", upgrades);
         tag.putByte("breakType", (byte) this.breakType.ordinal());
         tag.put("gadgetFilters", MiningProperties.serializeItemStackList(this.getGadgetFilters()));
         tag.putBoolean("gadgetIsWhitelist", this.isGadgetIsWhitelist());
@@ -421,20 +425,22 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
 
+        // TODO: Add back
         // If silk is in the upgrades, apply it without a tier.
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
-            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
-            silk = 1;
-        }
+//        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
+//            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
+//            silk = 1;
+//        }
 
+        // TODO: Add back
         // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1)) {
-            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
-            if (upgrade.isPresent()) {
-                fortune = upgrade.get().getTier();
-                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
-            }
-        }
+//        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1)) {
+//            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
+//            if (upgrade.isPresent()) {
+//                fortune = upgrade.get().getTier();
+//                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
+//            }
+//        }
 
         // Fire an event for other mods that we've just broken the block
         BlockEvent.BreakEvent breakEvent = fixForgeEventBreakBlock(this.renderBlock, player, level, worldPosition, tempTool);
@@ -449,7 +455,8 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         if (this.blockAllowed) {
             int exp = this.renderBlock.getExpDrop(this.level, this.worldPosition, fortune, silk);
-            boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
+            // TODO: Add back
+            boolean magnetMode = false;//(UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
                 if (drop != null) {
                     if (magnetMode) {
@@ -479,6 +486,14 @@ public class RenderBlockTileEntity extends BlockEntity {
 
             this.renderBlock.spawnAfterBreak((ServerLevel) this.level, this.worldPosition, tempTool); // Fixes silver fish basically...
         }
+
+//        var killPos = ShapelessWalker.walk(level, worldPosition, renderBlock);
+////        System.out.println(killPos);
+//        killPos.forEach(e -> {
+//            List<ItemStack> d = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
+//            d.forEach(a -> Block.popResource(this.level, e, a));
+//            level.setBlock(e, Blocks.AIR.defaultBlockState(), 3);
+//        });
 
         //        BlockState underState = world.getBlockState(this.pos.down());
         this.level.removeBlockEntity(this.worldPosition);
@@ -535,33 +550,34 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     public void setBlockAllowed() {
-        if (!UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.VOID_JUNK)) {
-            this.blockAllowed = true;
-            return;
-        }
+        // TODO: add back
+//        if (!UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.VOID_JUNK)) {
+//            this.blockAllowed = true;
+//            return;
+//        }
         Player player = this.level.getPlayerByUUID(this.playerUUID);
-        if (player == null) {
-            return;
-        }
-        int silk = 0;
-        int fortune = 0;
-
+//        if (player == null) {
+//            return;
+//        }
+//        int silk = 0;
+//        int fortune = 0;
+//
         ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
-
-        // If silk is in the upgrades, apply it without a tier.
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
-            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
-            silk = 1;
-        }
-
-        // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1)) {
-            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
-            if (upgrade.isPresent()) {
-                fortune = upgrade.get().getTier();
-                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
-            }
-        }
+//
+//        // If silk is in the upgrades, apply it without a tier.
+//        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
+//            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
+//            silk = 1;
+//        }
+//
+//        // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
+//        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1)) {
+//            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
+//            if (upgrade.isPresent()) {
+//                fortune = upgrade.get().getTier();
+//                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
+//            }
+//        }
 
         List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
 

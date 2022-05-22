@@ -1,4 +1,4 @@
-package com.direwolf20.mininggadgets.common.data;
+package com.direwolf20.mininggadgets.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
@@ -16,6 +16,6 @@ public class GeneratorBlockTags extends BlockTagsProvider {
 
     @Override
     protected void addTags() {
-        tag(BlockTags.create(ModBlocks.MODIFICATION_TABLE.get().getRegistryName())).addTags(BlockTags.MINEABLE_WITH_PICKAXE);
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.MODIFICATION_TABLE.get());
     }
 }

@@ -1,10 +1,18 @@
-package com.direwolf20.mininggadgets.common.data;
+package com.direwolf20.mininggadgets.data;
 
+import com.direwolf20.mininggadgets.api.MiningGadgetsApi;
+import com.direwolf20.mininggadgets.api.upgrades.MinerUpgrade;
+import com.direwolf20.mininggadgets.api.upgrades.TieredUpgrade;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
+
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class GeneratorLanguage extends LanguageProvider {
     public GeneratorLanguage(DataGenerator gen) {
@@ -19,32 +27,21 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.MININGGADGET_FANCY, "Mining Gadget MK2");
         addItem(ModItems.UPGRADE_EMPTY, "Blank Upgrade Module");
 
+        Function<String, String> titleCase = (e) -> Arrays.stream(e.toLowerCase().split(" "))
+                .map(a -> a.substring(0, 1).toUpperCase() + a.substring(1))
+                .collect(Collectors.joining(" "));
+
         // This should always match the start of below upgrade names. I use this
         // to actively replace the start of the word. (it's an exact search so this should
         // still work nicely in other languages. It's rare we need the Upgrade: prefix
         // for most of the gui in the mod so it's purely a gui hack.
         addPrefixed("upgrade.replacement", "Upgrade: ");
-        addItem(ModItems.SILK, "Upgrade: Silk touch");
-        addItem(ModItems.FREEZING, "Upgrade: Freezing");
-        addItem(ModItems.LIGHT_PLACER, "Upgrade: Light Placer");
-        addItem(ModItems.MAGNET, "Upgrade: Magnet");
-        addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
-//        addItem(ModItems.PAVER, "Upgrade: Paver");
-        addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
-        addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
-        addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
-        addItem(ModItems.FORTUNE_3, "Upgrade: Fortune, Tier 3");
-        addItem(ModItems.RANGE_1, "Upgrade: Range, Tier 1");
-        addItem(ModItems.RANGE_2, "Upgrade: Range, Tier 2");
-        addItem(ModItems.RANGE_3, "Upgrade: Range, Tier 3");
-        addItem(ModItems.EFFICIENCY_1, "Upgrade: Efficiency, Tier 1");
-        addItem(ModItems.EFFICIENCY_2, "Upgrade: Efficiency, Tier 2");
-        addItem(ModItems.EFFICIENCY_3, "Upgrade: Efficiency, Tier 3");
-        addItem(ModItems.EFFICIENCY_4, "Upgrade: Efficiency, Tier 4");
-        addItem(ModItems.EFFICIENCY_5, "Upgrade: Efficiency, Tier 5");
-        addItem(ModItems.BATTERY_1, "Upgrade: Battery, Tier 1");
-        addItem(ModItems.BATTERY_2, "Upgrade: Battery, Tier 2");
-        addItem(ModItems.BATTERY_3, "Upgrade: Battery, Tier 3");
+        ModItems.UPGRADE_ITEMS.getEntries().forEach(e -> {
+            UpgradeCard upgradeCard = (UpgradeCard) e.get();
+            MinerUpgrade upgrade = MiningGadgetsApi.get().upgradesRegistry().getUpgrade(upgradeCard.getUpgradeId());
+
+            add(e.get(), "%s " + titleCase.apply(upgrade.getId().getPath() + (upgrade instanceof TieredUpgrade tiered ? ", " + tiered.getTier() : "")));
+        });
 
         // Upgrade tooltips :D
         add("tooltop.mininggadgets.empty", "Used to craft other upgrades");

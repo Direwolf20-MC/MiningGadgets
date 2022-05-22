@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common;
 
+import com.direwolf20.mininggadgets.api.MiningGadgetsApi;
 import com.direwolf20.mininggadgets.client.ClientEvents;
 import com.direwolf20.mininggadgets.client.ClientSetup;
 import com.direwolf20.mininggadgets.client.OurKeys;
@@ -9,6 +10,7 @@ import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
+import com.direwolf20.mininggadgets.common.upgrades.impl.StandardUpgradesImpl;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -64,6 +66,11 @@ public class MiningGadgets
 
         Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-client.toml"));
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
+
+        // Register them all!
+        StandardUpgradesImpl.UPGRADES.forEach(MiningGadgetsApi.get().upgradesRegistry()::register);
+
+        System.out.println(MiningGadgetsApi.get().upgradesRegistry().entries());
     }
 
     @SubscribeEvent
