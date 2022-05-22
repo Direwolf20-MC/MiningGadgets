@@ -1,14 +1,11 @@
 package com.direwolf20.mininggadgets.common.collectors;
 
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.*;
 
-// Not used yet
 // Provided by LatvianModder with express permission, original code found here https://github.com/FTBTeam/FTB-Ultimine/blob/ea9fc0c812e66c7852e05f6e63ce077bcd48594f/common/src/main/java/com/feed_the_beast/mods/ftbultimine/shape/ShapelessShape.java
 public class ShapelessWalker {
     public static final BlockPos[] NEIGHBOR_POSITIONS = new BlockPos[26];
@@ -47,26 +44,21 @@ public class ShapelessWalker {
         NEIGHBOR_POSITIONS[25] = new BlockPos(-1, -1, -1);
     }
 
-    public List<BlockPos> getBlocks(Level level, BlockPos pos) {
+    public static Set<BlockPos> walk(Level level, BlockPos pos, BlockState findState) {
         HashSet<BlockPos> known = new HashSet<>();
-        this.walk(level, pos, known);
-
-        return new ArrayList<>(known);
-    }
-
-    private void walk(Level level, BlockPos pos, HashSet<BlockPos> known) {
-        Set<BlockPos> traversed = new HashSet<>();
         Deque<BlockPos> openSet = new ArrayDeque<>();
+        Set<BlockPos> traversed = new HashSet<>();
+
         openSet.add(pos);
         traversed.add(pos);
 
         while (!openSet.isEmpty()) {
             BlockPos ptr = openSet.pop();
 
-            Block block = level.getBlockState(ptr).getBlock();
-            if ((block == Blocks.OAK_LOG || block == ModBlocks.RENDER_BLOCK.get()) && known.add(ptr)) {
-                if (known.size() >= 60) {
-                    return;
+            BlockState blockState = level.getBlockState(ptr);
+            if ((ptr == pos || blockState.is(findState.getBlock())) && known.add(ptr)) {
+                if (known.size() >= 50) {
+                    return known;
                 }
 
                 for (BlockPos side : NEIGHBOR_POSITIONS) {
@@ -78,5 +70,7 @@ public class ShapelessWalker {
                 }
             }
         }
+
+        return known;
     }
 }
