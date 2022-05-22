@@ -2,12 +2,14 @@ package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.Config;
+import com.direwolf20.mininggadgets.common.collectors.ShapelessWalker;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +28,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -32,15 +36,15 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
@@ -185,12 +189,11 @@ public class RenderBlockTileEntity extends BlockEntity {
                 this.freeze(stack);
             }
         }
-        if (!(this.level.isClientSide)) {
-            this.setChanged();
-            ServerTickHandler.addToList(this.worldPosition, this.durability, this.level);
-            //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
-            //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
-        }
+
+        this.setChanged();
+        ServerTickHandler.addToList(this.worldPosition, this.durability, this.level);
+        //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
+        //System.out.println("Sent: "+ " Prior: " + priorDurability + " Dur: " + dur);
     }
 
     private void freeze(ItemStack stack) {
@@ -203,13 +206,14 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         for (Direction side : Direction.values()) {
             BlockPos sidePos = this.worldPosition.relative(side);
-            FluidState state = this.level.getFluidState(sidePos);
+            BlockState blockState = this.level.getBlockState(sidePos);
+            FluidState state = blockState.getFluidState();
 
-            if (state.getType().isSame(Fluids.LAVA) && state.getType().isSource(state)) {
+            if (blockState.is(Blocks.LAVA) && state.getType().isSame(Fluids.LAVA) && state.getType().isSource(state)) {
                 energy -= this.replaceBlockWithAlternative(this.level, sidePos, Blocks.OBSIDIAN.defaultBlockState(), stack, freezeCost, energy);
-            } else if (state.getType().isSame(Fluids.WATER) && state.getType().isSource(state)) {
+            } else if (blockState.is(Blocks.WATER) && state.getType().isSame(Fluids.WATER) && state.getType().isSource(state)) {
                 energy -= this.replaceBlockWithAlternative(this.level, sidePos, Blocks.PACKED_ICE.defaultBlockState(), stack, freezeCost, energy);
-            } else if ((state.getType().isSame(Fluids.WATER) || state.getType().isSame(Fluids.LAVA)) && !state.getType().isSource(state)) {
+            } else if ((blockState.is(Blocks.WATER) || blockState.is(Blocks.LAVA)) && (state.getType().isSame(Fluids.WATER) || state.getType().isSame(Fluids.LAVA)) && !state.getType().isSource(state)) {
                 energy -= this.replaceBlockWithAlternative(this.level, sidePos, Blocks.COBBLESTONE.defaultBlockState(), stack, freezeCost, energy);
             }
         }
@@ -521,6 +525,15 @@ public class RenderBlockTileEntity extends BlockEntity {
         }
     }
 
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level.isClientSide && this.durability == 0) {
+            SoundType soundtype = renderBlock.getSoundType(this.level, worldPosition, null);
+            ((ClientLevel) this.level).playLocalSound(worldPosition, soundtype.getBreakSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F, false);
+        }
+    }
+
     public void setBlockAllowed() {
         if (!UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.VOID_JUNK)) {
             this.blockAllowed = true;
@@ -558,5 +571,4 @@ public class RenderBlockTileEntity extends BlockEntity {
     public boolean getBlockAllowed() {
         return this.blockAllowed;
     }
-
 }
