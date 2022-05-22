@@ -11,12 +11,16 @@ buildscript {
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+apply {
+    plugin 'net.minecraftforge.gradle'
+    plugin 'eclipse'
+    plugin 'maven-publish'
+
+    from 'https://raw.githubusercontent.com/mezz/JustEnoughItems/1.18/Forge/buildtools/AppleSiliconSupport.gradle'
+}
 
 version = "${mod_version}"
-group = 'com.direwolf20.mininggadgets' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'com.direwolf20.mininggadgets'
 archivesBaseName = 'mininggadgets'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -114,27 +118,28 @@ dependencies {
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
 //    runtimeOnly fg.deobf("curse.maven:lollipop-347954:3232534")
 //    runtimeOnly fg.deobf("curse.maven:powah-352656:352656")
-//    runtimeOnly fg.deobf("curse.maven:mekanism-268560:268560")
+    runtimeOnly fg.deobf("curse.maven:mekanism-268560:3743835")
+//    runtimeOnly fg.deobf("curse.maven:botania-225643:3789677")
 }
 
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INHERIT
 
 	doLast {
-	
+
 	    def jsonMinifyStart = System.currentTimeMillis()
 	    def jsonMinified = 0
 		def jsonBytesSaved = 0
-		
+
 	    fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
-		
+
 			File file = it
 			jsonMinified++
 			def oldLength = file.length()
 			file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
 			jsonBytesSaved += oldLength - file.length()
 		}
-		
+
 		println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
 	}
 }
