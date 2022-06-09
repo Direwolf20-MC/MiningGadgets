@@ -6,24 +6,23 @@ import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.EmptyModelData;
 
 import java.util.List;
-import java.util.Random;
 
 public class RenderBlockTER implements BlockEntityRenderer<RenderBlockTileEntity> {
 
@@ -105,6 +104,6 @@ public class RenderBlockTER implements BlockEntityRenderer<RenderBlockTileEntity
     }
 
     private List<BakedQuad> getQuads(BakedModel model, RenderBlockTileEntity tile, Direction side) {
-        return model.getQuads(tile.getRenderBlock(), side, new Random(Mth.getSeed(tile.getBlockPos())), EmptyModelData.INSTANCE);
+        return model.getQuads(tile.getRenderBlock(), side, RandomSource.create(Mth.getSeed(tile.getBlockPos())), EmptyModelData.INSTANCE);
     }
 }

@@ -124,7 +124,7 @@ public class RenderMiningLaser {
         vector3f.transform(matrixNormalIn);
         LocalPlayer player = Minecraft.getInstance().player;
         // Support for hand sides remembering to take into account of Skin options
-        if( Minecraft.getInstance().options.mainHand != HumanoidArm.RIGHT )
+        if( Minecraft.getInstance().options.mainHand().get() != HumanoidArm.RIGHT )
             hand = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         float startXOffset = -0.20f;
         float startYOffset = -.108f;

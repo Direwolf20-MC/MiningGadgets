@@ -53,20 +53,20 @@ public enum Upgrade {
 
     private final String name;
     private final String baseName;
-    private final UpgradeCard card;
+    private final Supplier<UpgradeCard> card;
     private final int tier;
     private final Supplier<Integer> costPerBlock;
     private boolean active = true;
     private final boolean isToggleable;
     private final String toolTip;
-    private final ItemStack upgradeStack;
+    private final Supplier<ItemStack> upgradeStack;
 
     Upgrade(String name, int tier, Supplier<Integer> costPerBlock, boolean isToggleable) {
         this.name = name;
         this.tier = tier;
         this.costPerBlock = costPerBlock;
-        this.card = new UpgradeCard(this, name.equals("empty") ? 64 : 1);
-        this.upgradeStack = new ItemStack(this.card);
+        this.card = () -> new UpgradeCard(this, name.equals("empty") ? 64 : 1);
+        this.upgradeStack = () -> new ItemStack(this.card.get());
         this.baseName = tier == -1 ? name : name.substring(0, name.lastIndexOf('_'));
         this.isToggleable = isToggleable;
         this.toolTip = "tooltop.mininggadgets." + this.baseName;
@@ -89,11 +89,11 @@ public enum Upgrade {
     }
 
     public UpgradeCard getCard() {
-        return card;
+        return card.get();
     }
 
     public ItemStack getStack() {
-        return upgradeStack;
+        return upgradeStack.get();
     }
 
     public int getTier() {

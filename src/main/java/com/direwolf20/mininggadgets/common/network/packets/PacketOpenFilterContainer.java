@@ -1,14 +1,14 @@
 package com.direwolf20.mininggadgets.common.network.packets;
 
 import com.direwolf20.mininggadgets.common.containers.FilterContainer;
-import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.item.ItemStack;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -44,7 +44,7 @@ public class PacketOpenFilterContainer {
 
                 ghostInventory.deserializeNBT(stack.getOrCreateTagElement(MiningProperties.KEY_FILTERS));
                 sender.openMenu(new SimpleMenuProvider(
-                        (windowId, playerInventory, playerEntity) -> new FilterContainer(windowId, playerInventory, ghostInventory), new TextComponent("")
+                        (windowId, playerInventory, playerEntity) -> new FilterContainer(windowId, playerInventory, ghostInventory), Component.literal("")
                 ));
             });
 

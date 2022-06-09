@@ -1,18 +1,18 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
 import com.direwolf20.mininggadgets.client.particles.ModParticles;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-
-import java.util.Random;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 //import net.minecraft.util.BlockRenderLayer;
 
@@ -61,11 +61,11 @@ public class MinersLight extends Block {
     }
 
     @Override
-    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
+    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
         double d0 = (double) pos.getX() + 0.5D;
         double d1 = (double) pos.getY() + 0.5D;
         double d2 = (double) pos.getZ() + 0.5D;
-        worldIn.addParticle(ModParticles.LIGHT_PARTICLE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
+        worldIn.addParticle((SimpleParticleType) ModParticles.LIGHT_PARTICLE.get(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
         //worldIn.addParticle(ParticleTypes.FLAME, d0, d1, d2, 0.0D, 0.0D, 0.0D);
     }
 

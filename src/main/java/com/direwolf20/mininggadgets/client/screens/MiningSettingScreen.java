@@ -1,37 +1,31 @@
 package com.direwolf20.mininggadgets.client.screens;
 
-import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.client.screens.widget.ToggleButton;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.*;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 import java.awt.*;
-import java.awt.Color;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// todo: refactor and clean up
-import net.minecraft.client.gui.components.Button.OnPress;
-
-import net.minecraft.locale.Language;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.client.gui.widget.Slider;
-
-public class MiningSettingScreen extends Screen implements Slider.ISlider {
+public class MiningSettingScreen extends Screen {
     private ItemStack gadget;
 
     private int beamRange;
@@ -40,15 +34,15 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private int currentSize = 1;
     private boolean isWhitelist = true;
     private boolean isPrecision = true;
-    private Slider rangeSlider;
-    private Slider volumeSlider;
-    private Slider freezeDelaySlider;
+    private ForgeSlider rangeSlider;
+    private ForgeSlider volumeSlider;
+    private ForgeSlider freezeDelaySlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
     private HashMap<Upgrade, ToggleButton> upgradeButtons = new HashMap<>();
     private boolean containsFreeze = false;
 
     public MiningSettingScreen(ItemStack gadget) {
-        super(new TextComponent("title"));
+        super(Component.literal("title"));
 
         this.gadget = gadget;
         this.beamRange = MiningProperties.getBeamRange(gadget);
@@ -106,13 +100,19 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         currentSize = MiningProperties.getRange(gadget);
 
         Button sizeButton;
-        leftWidgets.add(sizeButton = new Button(baseX - 135, 0, 125, 20, new TranslatableComponent("mininggadgets.tooltip.screen.size", currentSize), (button) -> {
+        leftWidgets.add(sizeButton = new Button(baseX - 135, 0, 125, 20, Component.translatable("mininggadgets.tooltip.screen.size", currentSize), (button) -> {
             currentSize = currentSize == 1 ? 3 : 1;
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
             PacketHandler.sendToServer(new PacketChangeMiningSize());
         }));
 
-        leftWidgets.add(rangeSlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), TextComponent.EMPTY, 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, false, true, s -> {}, this));
+        ///ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
+        leftWidgets.add(rangeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), Component.empty(), 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, true) {
+            @Override
+            protected void applyValue() {
+                beamRange = this.getValueInt();
+            }
+        });
 
         leftWidgets.add(new Button(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.visuals_menu"), (button) -> {
             ModScreens.openVisualSettingsScreen(gadget);
@@ -126,11 +126,21 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         }));
 
         // volume slider
-        leftWidgets.add(volumeSlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), new TextComponent("%"), 0, 100, Math.min(100, volume * 100), false, true, s -> {}, this));
+        leftWidgets.add(volumeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, Math.min(100, volume * 100), .1D, 1, true) {
+            @Override
+            protected void applyValue() {
+                volume = (float) this.getValue();
+            }
+        });
 
         // Freeze delay
         if( containsFreeze )
-            leftWidgets.add(freezeDelaySlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").append(": "), new TextComponent(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), false, true, s -> {}, this));
+            leftWidgets.add(freezeDelaySlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").append(": "), Component.literal(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), true) {
+                @Override
+                protected void applyValue() {
+                    freezeDelay = this.getValueInt();
+                }
+            });
 
         // Button logic
         if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) )
@@ -188,11 +198,11 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
                     renderTooltip(stack, isWhitelist ? getTrans("tooltip.screen.whitelist") : getTrans("tooltip.screen.blacklist"), mouseX, mouseY);
             } else if( e.equals(freezeDelaySlider) ) {
                 if( e.isMouseOver(mouseX, mouseY) ) {
-                    assert e instanceof Slider;
+                    assert e instanceof ForgeSlider;
 
                     // This is a bit silly, not going to lie
-                    List<FormattedText> helpText = Arrays.stream(getTrans("tooltip.screen.delay_explain").getString().split("\n")).map(TextComponent::new).collect(Collectors.toList());
-                    renderTooltip(stack, Language.getInstance().getVisualOrder(helpText), ((Slider)e).x - 8, ((Slider)e).y + 40);
+                    List<FormattedText> helpText = Arrays.stream(getTrans("tooltip.screen.delay_explain").getString().split("\n")).map(Component::literal).collect(Collectors.toList());
+                    renderTooltip(stack, Language.getInstance().getVisualOrder(helpText), ((ForgeSlider)e).x - 8, ((ForgeSlider)e).y + 40);
                 }
             } else {
                 assert e instanceof ToggleButton;
@@ -229,53 +239,15 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
     }
 
-    @Override
-    public void onChangeSliderValue(Slider slider) {
-        //Future proofing for other potential sliders
-        if (slider.equals(rangeSlider))
-            this.beamRange = slider.getValueInt();
-
-        if (slider.equals(freezeDelaySlider))
-            this.freezeDelay = slider.getValueInt();
-
-        if (slider.equals(volumeSlider))
-            this.volume = slider.getValueInt() / 100f;
-    }
-
-    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
-        rangeSlider.dragging = false;
-        volumeSlider.dragging = false;
-        if( freezeDelaySlider != null )
-            freezeDelaySlider.dragging = false;
-        return false;
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if( rangeSlider.isMouseOver(mouseX, mouseY) ) {
-            rangeSlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
-            rangeSlider.updateSlider();
-        }
-        if( freezeDelaySlider != null && freezeDelaySlider.isMouseOver(mouseX, mouseY) ) {
-            freezeDelaySlider.sliderValue += (.1f * (delta > 0 ? 1 : -1));
-            freezeDelaySlider.updateSlider();
-        }
-        if( volumeSlider.isMouseOver(mouseX, mouseY) ) {
-            volumeSlider.sliderValue += (.01f * (delta > 0 ? 1 : -1));
-            volumeSlider.updateSlider();
-        }
-        return false;
-    }
-
-    private static TranslatableComponent getTrans(String key, Object... args) {
-        return new TranslatableComponent(MiningGadgets.MOD_ID + "." + key, args);
+    private static MutableComponent getTrans(String key, Object... args) {
+        return Component.translatable(MiningGadgets.MOD_ID + "." + key, args);
     }
 
     public static final class WhitelistButton extends Button {
         private boolean isWhitelist;
 
         public WhitelistButton(int widthIn, int heightIn, int width, int height, boolean isWhitelist, OnPress onPress) {
-            super(widthIn, heightIn, width, height, TextComponent.EMPTY, onPress);
+            super(widthIn, heightIn, width, height, Component.empty(), onPress);
             this.isWhitelist = isWhitelist;
         }
 

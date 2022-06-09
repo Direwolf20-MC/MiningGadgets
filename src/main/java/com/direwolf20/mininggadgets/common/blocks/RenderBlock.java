@@ -1,27 +1,23 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-
-//import net.minecraft.util.BlockRenderLayer;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class RenderBlock extends Block implements EntityBlock {
     public RenderBlock() {
@@ -29,7 +25,6 @@ public class RenderBlock extends Block implements EntityBlock {
                 Properties.of(Material.METAL)
                         .strength(50.0F, 1200.0F)
                         .noOcclusion()
-                        .noDrops()
                         .isRedstoneConductor((a, b, c) -> false) // @mcp: setOpaque seems to replace isNormalBlock
         );
     }

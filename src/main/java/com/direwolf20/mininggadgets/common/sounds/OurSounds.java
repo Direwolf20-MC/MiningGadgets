@@ -3,30 +3,14 @@ package com.direwolf20.mininggadgets.common.sounds;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
-@Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public enum OurSounds {
-    LASER_LOOP("mining_laser_loop"),
-    LASER_START("mining_laser_start1"),
-    LASER_END("mining_laser_end1");
-    private SoundEvent sound;
+public interface OurSounds {
+    DeferredRegister<SoundEvent> SOUND_REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MiningGadgets.MOD_ID);
 
-    OurSounds(String name) {
-        ResourceLocation loc = new ResourceLocation(MiningGadgets.MOD_ID, name);
-        sound = new SoundEvent(loc).setRegistryName(name);
-    }
-
-    public SoundEvent getSound() {
-        return sound;
-    }
-
-    @SubscribeEvent
-    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-        for (OurSounds sound : values()) {
-            event.getRegistry().register(sound.getSound());
-        }
-    }
+    RegistryObject<SoundEvent> LASER_LOOP = SOUND_REGISTRY.register("mining_laser_loop", () -> new SoundEvent(new ResourceLocation(MiningGadgets.MOD_ID, "mining_laser_loop")));
+    RegistryObject<SoundEvent> LASER_START = SOUND_REGISTRY.register("mining_laser_start1", () -> new SoundEvent(new ResourceLocation(MiningGadgets.MOD_ID, "mining_laser_start1")));
+    RegistryObject<SoundEvent> LASER_END = SOUND_REGISTRY.register("mining_laser_end1", () -> new SoundEvent(new ResourceLocation(MiningGadgets.MOD_ID, "mining_laser_end1")));
 }

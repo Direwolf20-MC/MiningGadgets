@@ -444,7 +444,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
 
         if (this.blockAllowed) {
-            int exp = this.renderBlock.getExpDrop(this.level, this.worldPosition, fortune, silk);
+            int exp = this.renderBlock.getExpDrop(this.level, this.level.random, this.worldPosition, fortune, silk);
             boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
                 if (drop != null) {
@@ -473,7 +473,7 @@ public class RenderBlockTileEntity extends BlockEntity {
                 }
             }
 
-            this.renderBlock.spawnAfterBreak((ServerLevel) this.level, this.worldPosition, tempTool); // Fixes silver fish basically...
+            this.renderBlock.spawnAfterBreak((ServerLevel) this.level, this.worldPosition, tempTool, false); // Fixes silver fish basically...
         }
 
         //        BlockState underState = world.getBlockState(this.pos.down());
@@ -501,7 +501,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         if (state != null && ForgeHooks.isCorrectToolForDrops(state, player)) {
             int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
             int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
-            event.setExpToDrop(state.getExpDrop(world, pos, bonusLevel, silklevel));
+            event.setExpToDrop(state.getExpDrop(world, world.random, pos, bonusLevel, silklevel));
         }
 
         return event;
