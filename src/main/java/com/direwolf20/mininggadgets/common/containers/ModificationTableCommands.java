@@ -77,9 +77,9 @@ public class ModificationTableCommands {
 
             UpgradeTools.removeUpgrade(laser, upgrade);
 
-            boolean success = player.getInventory().add(new ItemStack(upgrade.getCard(), 1));
+            boolean success = player.getInventory().add(new ItemStack(upgrade.getCardItem().get(), 1));
             if (!success) {
-                player.drop(new ItemStack(upgrade.getCard(), 1), true);
+                player.drop(new ItemStack(upgrade.getCardItem().get(), 1), true);
             }
 
             if (upgrade == Upgrade.THREE_BY_THREE)

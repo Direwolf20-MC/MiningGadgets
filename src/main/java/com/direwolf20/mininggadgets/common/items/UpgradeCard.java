@@ -51,6 +51,11 @@ public class UpgradeCard extends Item {
         this.upgrade = upgrade;
     }
 
+    public UpgradeCard(Upgrade upgrade) {
+        super(new Properties().tab(MiningGadgets.itemGroup).stacksTo(1));
+        this.upgrade = upgrade;
+    }
+
     public Upgrade getUpgrade() {
         return upgrade;
     }

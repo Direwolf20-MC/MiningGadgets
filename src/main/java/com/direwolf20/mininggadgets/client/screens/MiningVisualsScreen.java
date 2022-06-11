@@ -6,12 +6,16 @@ import com.direwolf20.mininggadgets.common.network.packets.PacketChangeBreakType
 import com.direwolf20.mininggadgets.common.network.packets.PacketChangeColor;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
+import it.unimi.dsi.fastutil.ints.IntConsumer;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MiningVisualsScreen extends Screen {
     private ItemStack gadget;
@@ -28,6 +32,8 @@ public class MiningVisualsScreen extends Screen {
     private ForgeSlider sliderRedOuter;
     private ForgeSlider sliderGreenOuter;
     private ForgeSlider sliderBlueOuter;
+
+    private Map<ForgeSlider, IntConsumer> sliderMap = new HashMap<>();
 
     public MiningVisualsScreen(ItemStack gadget) {
         super(Component.literal("title"));
@@ -105,6 +111,16 @@ public class MiningVisualsScreen extends Screen {
         addRenderableWidget(sliderRedOuter);
         addRenderableWidget(sliderGreenOuter);
         addRenderableWidget(sliderBlueOuter);
+
+        // Used for scroll action
+        this.sliderMap = Map.of(
+                sliderRedInner, (a) -> red_inner = a,
+                sliderGreenInner, (a) -> green_inner = a,
+                sliderBlueInner, (a) -> blue_inner = a,
+                sliderRedOuter, (a) -> red = a,
+                sliderGreenOuter, (a) -> green = a,
+                sliderBlueOuter, (a) -> blue = a
+        );
     }
 
     @Override
@@ -115,8 +131,8 @@ public class MiningVisualsScreen extends Screen {
         drawCenteredString(stack, font, Component.translatable("mininggadgets.tooltip.screen.visual_settings"), (width / 2), (height / 2) - 95, 0xFFFFFF);
         drawString(stack, font, Component.translatable("mininggadgets.tooltip.screen.block_break_style"), (width / 2) - 150, (height / 2) - 70, 0xFFFFFF);
         drawString(stack, font, Component.translatable("mininggadgets.tooltip.screen.beam_preview"), (width / 2) + 25, (height / 2) - 70, 0xFFFFFF);
-        drawString(stack, font, Component.translatable("mininggadgets.tooltip.screen.outer_color"), (width / 2) - 150, (height / 2) - 25, 0xFFFFFF);
-        drawString(stack, font, Component.translatable("mininggadgets.tooltip.screen.inner_color"), (width / 2) + 25, (height / 2) - 25, 0xFFFFFF);
+        drawString(stack, font, Component.translatable("mininggadgets.tooltip.screen.inner_color"), (width / 2) - 150, (height / 2) - 25, 0xFFFFFF);
+        drawString(stack, font, Component.translatable("mininggadgets.tooltip.screen.outer_color"), (width / 2) + 25, (height / 2) - 25, 0xFFFFFF);
 
         stack.pushPose();
         fill(stack, (width / 2) + 25, (height / 2) - 55, ((width / 2) + 25) + 150, ((height / 2) - 55) + 20, this.rgbToInt(this.red, this.green, this.blue));
@@ -130,6 +146,18 @@ public class MiningVisualsScreen extends Screen {
         int blue = b & 0x000000FF;
 
         return 0xFF000000 | red | green | blue;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        this.sliderMap.forEach((slider, consumer) -> {
+           if (slider.isMouseOver(mouseX, mouseY)) {
+               slider.setValue(slider.getValueInt() + (delta > 0 ? 1 : -1));
+               consumer.accept(slider.getValueInt());
+           }
+        });
+
+        return false;
     }
 
     @Override

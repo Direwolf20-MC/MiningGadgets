@@ -81,7 +81,7 @@ public class ModificationShiftOverlay {
             matrix.translate(offset + x, y, 0);
             matrix.mulPose(Vector3f.YP.rotationDegrees(90));
             matrix.mulPose(Vector3f.XP.rotationDegrees(26));
-            ItemStack upgradeStack = upgrade.getStack();
+            ItemStack upgradeStack = new ItemStack(upgrade.getCardItem().get());
             BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(upgradeStack, Minecraft.getInstance().level, null, 0);
             Minecraft.getInstance().getItemRenderer().render(upgradeStack, ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, false, matrix, outlineLayerBuffer, 15728880, OverlayTexture.NO_OVERLAY, model);
             x += 1;

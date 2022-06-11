@@ -126,7 +126,7 @@ public class MiningSettingScreen extends Screen {
         }));
 
         // volume slider
-        leftWidgets.add(volumeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, Math.min(100, volume * 100), .1D, 1, true) {
+        leftWidgets.add(volumeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, Math.min(100, volume * 100), true) {
             @Override
             protected void applyValue() {
                 volume = (float) this.getValue();
@@ -242,6 +242,24 @@ public class MiningSettingScreen extends Screen {
     private static MutableComponent getTrans(String key, Object... args) {
         return Component.translatable(MiningGadgets.MOD_ID + "." + key, args);
     }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if( rangeSlider.isMouseOver(mouseX, mouseY) ) {
+            rangeSlider.setValue(rangeSlider.getValueInt() + (delta > 0 ? 1 : -1));
+            beamRange = rangeSlider.getValueInt();
+        }
+        if( freezeDelaySlider != null && freezeDelaySlider.isMouseOver(mouseX, mouseY) ) {
+            freezeDelaySlider.setValue(freezeDelaySlider.getValueInt() + (delta > 0 ? 1 : -1));
+            freezeDelay = freezeDelaySlider.getValueInt();
+        }
+        if( volumeSlider.isMouseOver(mouseX, mouseY) ) {
+            volumeSlider.setValue(volumeSlider.getValueInt() + (delta > 0 ? 1 : -1));
+            volume = volumeSlider.getValueInt();
+        }
+        return false;
+    }
+
 
     public static final class WhitelistButton extends Button {
         private boolean isWhitelist;
