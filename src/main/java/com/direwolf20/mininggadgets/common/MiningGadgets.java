@@ -3,12 +3,14 @@ package com.direwolf20.mininggadgets.common;
 import com.direwolf20.mininggadgets.client.ClientEvents;
 import com.direwolf20.mininggadgets.client.ClientSetup;
 import com.direwolf20.mininggadgets.client.OurKeys;
+import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
+import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -51,6 +53,8 @@ public class MiningGadgets
         ModBlocks.BLOCKS.register(event);
         ModBlocks.TILES_ENTITIES.register(event);
         ModContainers.CONTAINERS.register(event);
+        ModParticles.PARTICLE_TYPES.register(event);
+        OurSounds.SOUND_REGISTRY.register(event);
 
         event.addListener(this::setup);
         event.addListener(this::setupClient);

@@ -84,7 +84,7 @@ public class EventRenderGadget {
         matrixStackIn.translate(rightHand ? .13f:-.1f, -.25f, -.35f);
         matrixStackIn.scale(1.15f, 1.15f, 1.15f);
 
-        ItemInHandRenderer firstPersonRenderer = mc.getItemInHandRenderer();
+        ItemInHandRenderer firstPersonRenderer = mc.gameRenderer.itemInHandRenderer;
         firstPersonRenderer.renderItem(abstractclientplayerentity,
                 event.getItemStack(),
                 rightHand

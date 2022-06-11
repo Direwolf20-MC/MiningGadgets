@@ -19,16 +19,16 @@ public class Generator {
     }
 
     private static void registerServerProviders(DataGenerator generator) {
-        generator.addProvider(new GeneratorLoot(generator));
-        generator.addProvider(new GeneratorRecipes(generator));
+        generator.addProvider(true, new GeneratorLoot(generator));
+        generator.addProvider(true, new GeneratorRecipes(generator));
     }
 
     private static void registerClientProviders(DataGenerator generator, GatherDataEvent event) {
         ExistingFileHelper helper = event.getExistingFileHelper();
 
-        generator.addProvider(new GeneratorBlockTags(generator, helper));
-        generator.addProvider(new GeneratorBlockStates(generator, helper));
-        generator.addProvider(new GeneratorItemModels(generator, helper));
-        generator.addProvider(new GeneratorLanguage(generator));
+        generator.addProvider(false, new GeneratorBlockTags(generator, helper));
+        generator.addProvider(false, new GeneratorBlockStates(generator, helper));
+        generator.addProvider(false, new GeneratorItemModels(generator, helper));
+        generator.addProvider(false, new GeneratorLanguage(generator));
     }
 }

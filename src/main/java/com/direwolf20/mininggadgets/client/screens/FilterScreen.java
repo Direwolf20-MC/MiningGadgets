@@ -11,7 +11,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Complete props and thanks to @amadones for their awesome implementation of this system
@@ -35,7 +34,7 @@ public class FilterScreen extends AbstractContainerScreen<FilterContainer> {
 
     @Override
     protected void renderLabels(PoseStack stack, int mouseX, int mouseY) {
-        font.draw(stack, new TranslatableComponent("mininggadgets.tooltip.single.filters").getString(), 8, 6, 4210752);
+        font.draw(stack, Component.translatable("mininggadgets.tooltip.single.filters").getString(), 8, 6, 4210752);
         font.draw(stack, this.menu.getCarried().getDisplayName().getString(), 8, (this.imageHeight - 96 + 3), 4210752);
     }
 

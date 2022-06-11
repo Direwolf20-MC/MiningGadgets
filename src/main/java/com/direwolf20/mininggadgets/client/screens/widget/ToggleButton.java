@@ -1,22 +1,19 @@
 package com.direwolf20.mininggadgets.client.screens.widget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import java.awt.Color;
+import net.minecraft.util.FormattedCharSequence;
+
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 public class ToggleButton extends AbstractWidget {
     private Predicate<Boolean> onPress;
@@ -44,7 +41,7 @@ public class ToggleButton extends AbstractWidget {
     }
 
     public List<FormattedCharSequence> getTooltip() {
-        return Language.getInstance().getVisualOrder(Arrays.asList(this.getMessage(), new TextComponent("Enabled: " + this.enabled).withStyle(this.enabled ? ChatFormatting.GREEN : ChatFormatting.RED)));
+        return Language.getInstance().getVisualOrder(Arrays.asList(this.getMessage(), Component.literal("Enabled: " + this.enabled).withStyle(this.enabled ? ChatFormatting.GREEN : ChatFormatting.RED)));
     }
 
     @Override

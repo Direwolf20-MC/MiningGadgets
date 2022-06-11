@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.client.particles.playerparticle;
 import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -53,7 +54,7 @@ public class PlayerParticleData implements ParticleOptions {
     @Nonnull
     @Override
     public ParticleType<PlayerParticleData> getType() {
-        return ModParticles.PLAYERPARTICLE;
+        return ModParticles.PLAYERPARTICLE.get();
     }
 
     @Override
@@ -74,7 +75,7 @@ public class PlayerParticleData implements ParticleOptions {
     @Override
     public String writeToString() {
         return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %.2f %.2f %s",
-                this.getType().getRegistryName(), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
+                Registry.PARTICLE_TYPE.getKey(this.getType()), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
     }
 
     public static final ParticleOptions.Deserializer<PlayerParticleData> DESERIALIZER = new ParticleOptions.Deserializer<PlayerParticleData>() {

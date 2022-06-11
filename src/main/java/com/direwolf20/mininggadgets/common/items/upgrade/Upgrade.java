@@ -2,8 +2,9 @@ package com.direwolf20.mininggadgets.common.items.upgrade;
 
 import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import com.direwolf20.mininggadgets.common.items.UpgradeCard;
-import net.minecraft.world.item.ItemStack;
+import com.direwolf20.mininggadgets.common.items.ModItems;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
 
@@ -22,78 +23,71 @@ import java.util.function.Supplier;
  */
 public enum Upgrade {
     //Blank
-    EMPTY("empty", () -> 0, false),
+    EMPTY("empty", ModItems.UPGRADE_EMPTY, () -> 0, false),
 
-    SILK("silk", () -> Config.UPGRADECOST_SILKTOUCH.get(), true),
-    VOID_JUNK("void_junk", () -> Config.UPGRADECOST_VOID.get()),
-    MAGNET("magnet", () -> Config.UPGRADECOST_MAGNET.get()),
-    FREEZING("freezing", () -> 0), // applied at operation based on config. this isn't ideal
-    THREE_BY_THREE("three_by_three", () -> 0, false),
-    LIGHT_PLACER("light_placer", () -> 0), // applied at operation based on config. this isn't ideal
-//    PAVER("paver", () -> 10),
-    
+    SILK("silk", ModItems.SILK, () -> Config.UPGRADECOST_SILKTOUCH.get(), true),
+    VOID_JUNK("void_junk", ModItems.VOID_JUNK, () -> Config.UPGRADECOST_VOID.get()),
+    MAGNET("magnet", ModItems.MAGNET, () -> Config.UPGRADECOST_MAGNET.get()),
+    FREEZING("freezing", ModItems.FREEZING, () -> 0), // applied at operation based on config. this isn't ideal
+    THREE_BY_THREE("three_by_three", ModItems.THREE_BY_THREE, () -> 0, false),
+    LIGHT_PLACER("light_placer", ModItems.LIGHT_PLACER, () -> 0), // applied at operation based on config. this isn't ideal
+
     // Tiered
-    FORTUNE_1("fortune_1", 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
-    FORTUNE_2("fortune_2", 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),
-    FORTUNE_3("fortune_3", 3, () -> Config.UPGRADECOST_FORTUNE3.get(), true),
+    FORTUNE_1("fortune_1", ModItems.FORTUNE_1, 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
+    FORTUNE_2("fortune_2", ModItems.FORTUNE_2, 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),
+    FORTUNE_3("fortune_3", ModItems.FORTUNE_3, 3, () -> Config.UPGRADECOST_FORTUNE3.get(), true),
 
-    BATTERY_1("battery_1", 1, () -> 0),
-    BATTERY_2("battery_2", 2, () -> 0),
-    BATTERY_3("battery_3", 3, () -> 0),
+    BATTERY_1("battery_1", ModItems.BATTERY_1, 1, () -> 0),
+    BATTERY_2("battery_2", ModItems.BATTERY_2, 2, () -> 0),
+    BATTERY_3("battery_3", ModItems.BATTERY_3, 3, () -> 0),
 
-    RANGE_1("range_1", 1, () -> 0),
-    RANGE_2("range_2", 2, () -> 0),
-    RANGE_3("range_3", 3, () -> 0),
+    RANGE_1("range_1", ModItems.RANGE_1, 1, () -> 0),
+    RANGE_2("range_2", ModItems.RANGE_2, 2, () -> 0),
+    RANGE_3("range_3", ModItems.RANGE_3, 3, () -> 0),
 
-    EFFICIENCY_1("efficiency_1", 1, () -> Config.UPGRADECOST_EFFICIENCY1.get(), true),
-    EFFICIENCY_2("efficiency_2", 2, () -> Config.UPGRADECOST_EFFICIENCY2.get(), true),
-    EFFICIENCY_3("efficiency_3", 3, () -> Config.UPGRADECOST_EFFICIENCY3.get(), true),
-    EFFICIENCY_4("efficiency_4", 4, () -> Config.UPGRADECOST_EFFICIENCY4.get(), true),
-    EFFICIENCY_5("efficiency_5", 5, () -> Config.UPGRADECOST_EFFICIENCY5.get(), true);
+    EFFICIENCY_1("efficiency_1", ModItems.EFFICIENCY_1, 1, () -> Config.UPGRADECOST_EFFICIENCY1.get(), true),
+    EFFICIENCY_2("efficiency_2", ModItems.EFFICIENCY_2, 2, () -> Config.UPGRADECOST_EFFICIENCY2.get(), true),
+    EFFICIENCY_3("efficiency_3", ModItems.EFFICIENCY_3, 3, () -> Config.UPGRADECOST_EFFICIENCY3.get(), true),
+    EFFICIENCY_4("efficiency_4", ModItems.EFFICIENCY_4, 4, () -> Config.UPGRADECOST_EFFICIENCY4.get(), true),
+    EFFICIENCY_5("efficiency_5", ModItems.EFFICIENCY_5, 5, () -> Config.UPGRADECOST_EFFICIENCY5.get(), true);
 
     private final String name;
     private final String baseName;
-    private final UpgradeCard card;
+    private final RegistryObject<Item> card;
     private final int tier;
     private final Supplier<Integer> costPerBlock;
     private boolean active = true;
     private final boolean isToggleable;
     private final String toolTip;
-    private final ItemStack upgradeStack;
 
-    Upgrade(String name, int tier, Supplier<Integer> costPerBlock, boolean isToggleable) {
+    Upgrade(String name, RegistryObject<Item> itemCard, int tier, Supplier<Integer> costPerBlock, boolean isToggleable) {
         this.name = name;
         this.tier = tier;
         this.costPerBlock = costPerBlock;
-        this.card = new UpgradeCard(this, name.equals("empty") ? 64 : 1);
-        this.upgradeStack = new ItemStack(this.card);
+        this.card = itemCard;
         this.baseName = tier == -1 ? name : name.substring(0, name.lastIndexOf('_'));
         this.isToggleable = isToggleable;
         this.toolTip = "tooltop.mininggadgets." + this.baseName;
     }
 
-    Upgrade(String name, int tier, Supplier<Integer> costPerBlock) {
-        this(name, tier, costPerBlock, false);
+    Upgrade(String name, RegistryObject<Item> itemCard, int tier, Supplier<Integer> costPerBlock) {
+        this(name, itemCard, tier, costPerBlock, false);
     }
 
-    Upgrade(String name, Supplier<Integer> costPerBlock) {
-        this(name, -1, costPerBlock, true);
+    Upgrade(String name, RegistryObject<Item> itemCard, Supplier<Integer> costPerBlock) {
+        this(name, itemCard, -1, costPerBlock, true);
     }
 
-    Upgrade(String name, Supplier<Integer> costPerBlock, boolean isToggleable) {
-        this(name, -1, costPerBlock, isToggleable);
+    Upgrade(String name, RegistryObject<Item> itemCard, Supplier<Integer> costPerBlock, boolean isToggleable) {
+        this(name, itemCard, -1, costPerBlock, isToggleable);
     }
 
     public String getName() {
         return name;
     }
 
-    public UpgradeCard getCard() {
+    public RegistryObject<Item> getCardItem() {
         return card;
-    }
-
-    public ItemStack getStack() {
-        return upgradeStack;
     }
 
     public int getTier() {

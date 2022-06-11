@@ -17,37 +17,38 @@ import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.Material;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.world.item.TooltipFlag;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.util.*;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -62,13 +63,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 
 public class MiningGadget extends Item {
     private int energyCapacity;
@@ -133,15 +127,15 @@ public class MiningGadget extends Item {
         boolean sneakPressed = Screen.hasShiftDown();
 
         if (!sneakPressed) {
-            tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.show_upgrades",
+            tooltip.add(Component.translatable("mininggadgets.tooltip.item.show_upgrades",
                     "shift")
                     .withStyle(ChatFormatting.GRAY));
         } else {
-            tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).withStyle(ChatFormatting.RED));
+            tooltip.add(Component.translatable("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).withStyle(ChatFormatting.RED));
             if (!(upgrades.isEmpty())) {
-                tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.upgrades").withStyle(ChatFormatting.AQUA));
+                tooltip.add(Component.translatable("mininggadgets.tooltip.item.upgrades").withStyle(ChatFormatting.AQUA));
                 for (Upgrade upgrade : upgrades) {
-                    tooltip.add(new TextComponent(" - " +
+                    tooltip.add(Component.literal(" - " +
                             I18n.get(upgrade.getLocal())
                     ).withStyle(ChatFormatting.GRAY));
                 }
@@ -150,9 +144,9 @@ public class MiningGadget extends Item {
 
         stack.getCapability(CapabilityEnergy.ENERGY, null)
                 .ifPresent(energy -> {
-                    TranslatableComponent energyText = !sneakPressed
-                            ? new TranslatableComponent("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
-                            : new TranslatableComponent("mininggadgets.gadget.energy", String.format("%,d", energy.getEnergyStored()), String.format("%,d", energy.getMaxEnergyStored()));
+                    MutableComponent energyText = !sneakPressed
+                            ? Component.translatable("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
+                            : Component.translatable("mininggadgets.gadget.energy", String.format("%,d", energy.getEnergyStored()), String.format("%,d", energy.getMaxEnergyStored()));
                     tooltip.add(energyText.withStyle(ChatFormatting.GREEN));
                 });
     }
@@ -160,7 +154,7 @@ public class MiningGadget extends Item {
     @Override
     public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
-        if (!allowdedIn(group))
+        if (!allowedIn(group))
             return;
 
         ItemStack charged = new ItemStack(this);
@@ -244,7 +238,7 @@ public class MiningGadget extends Item {
                 if (itemstack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("mongo"))
                     player.playSound(SoundEvents.STONE_HIT, volume * 0.5f, 1f);
                 else
-                    player.playSound(OurSounds.LASER_START.getSound(), volume * 0.5f, 1f);
+                    player.playSound(OurSounds.LASER_START.get(), volume * 0.5f, 1f);
             return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
         }
 
@@ -330,7 +324,7 @@ public class MiningGadget extends Item {
                 }
                 else {
                     if (laserLoopSound == null) {
-                        laserLoopSound = new LaserLoopSound((Player) player, volume);
+                        laserLoopSound = new LaserLoopSound((Player) player, volume, player.level.random);
                         Minecraft.getInstance().getSoundManager().play(laserLoopSound);
                     }
                 }
@@ -547,7 +541,7 @@ public class MiningGadget extends Item {
             if (laserLoopSound != null) {
                 float volume = MiningProperties.getVolume(stack);
                 if (volume != 0.0f && !laserLoopSound.isStopped()) {
-                    entityLiving.playSound(OurSounds.LASER_END.getSound(), volume * 0.5f, 1f);
+                    entityLiving.playSound(OurSounds.LASER_END.get(), volume * 0.5f, 1f);
                 }
                 laserLoopSound = null;
             }

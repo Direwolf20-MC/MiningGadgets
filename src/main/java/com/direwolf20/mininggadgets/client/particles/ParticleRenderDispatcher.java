@@ -15,8 +15,8 @@ public class ParticleRenderDispatcher {
 
     @SubscribeEvent
     public static void registerFactories(ParticleFactoryRegisterEvent evt) {
-        Minecraft.getInstance().particleEngine.register(ModParticles.LASERPARTICLE, LaserParticle.FACTORY);
-        Minecraft.getInstance().particleEngine.register(ModParticles.PLAYERPARTICLE, PlayerParticleType.FACTORY::new);
-        Minecraft.getInstance().particleEngine.register(ModParticles.LIGHT_PARTICLE, LightParticleType.LightParticleFactory::new);
+        Minecraft.getInstance().particleEngine.register(ModParticles.LASERPARTICLE.get(), LaserParticle.FACTORY);
+        Minecraft.getInstance().particleEngine.register(ModParticles.PLAYERPARTICLE.get(), PlayerParticleType.FACTORY::new);
+        Minecraft.getInstance().particleEngine.register(ModParticles.LIGHT_PARTICLE.get(), LightParticleType.LightParticleFactory::new);
     }
 }
