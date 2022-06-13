@@ -2,6 +2,7 @@ package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
 import com.direwolf20.mininggadgets.common.Config;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
@@ -10,13 +11,16 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -478,7 +482,11 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         //        BlockState underState = world.getBlockState(this.pos.down());
         this.level.removeBlockEntity(this.worldPosition);
-        this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
+        if(this.renderBlock.is(TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(MiningGadgets.MOD_ID, "no_break_drop")))){
+            this.level.setBlockAndUpdate(this.worldPosition, this.renderBlock);
+        } else {
+            this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
+        }
 
         //        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
         //            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
