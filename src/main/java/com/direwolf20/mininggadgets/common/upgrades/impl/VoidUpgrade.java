@@ -1,11 +1,22 @@
 package com.direwolf20.mininggadgets.common.upgrades.impl;
 
 import com.direwolf20.mininggadgets.api.upgrades.MinerUpgrade;
+import com.direwolf20.mininggadgets.api.upgrades.UpgradeItem;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.function.Supplier;
+
 public class VoidUpgrade extends MinerUpgrade {
-    public VoidUpgrade(ResourceLocation id) {
+    private final Supplier<UpgradeItem> item;
+
+    public VoidUpgrade(ResourceLocation id, Supplier<UpgradeItem> item) {
         super(id);
+        this.item = item;
+    }
+
+    @Override
+    public UpgradeItem item() {
+        return item.get();
     }
 
     @Override

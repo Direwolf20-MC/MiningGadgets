@@ -1,17 +1,23 @@
 package com.direwolf20.mininggadgets.common.upgrades.impl;
 
-import com.direwolf20.mininggadgets.api.upgrades.GadgetHooks;
-import com.direwolf20.mininggadgets.api.upgrades.GadgetUseContext;
-import com.direwolf20.mininggadgets.api.upgrades.MinerUpgrade;
-import com.direwolf20.mininggadgets.api.upgrades.RenderBlockHooks;
+import com.direwolf20.mininggadgets.api.upgrades.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class MagnetUpgrade extends MinerUpgrade implements GadgetHooks, RenderBlockHooks {
-    public MagnetUpgrade(ResourceLocation id) {
+    private final Supplier<UpgradeItem> item;
+
+    public MagnetUpgrade(ResourceLocation id, Supplier<UpgradeItem> item) {
         super(id);
+        this.item = item;
+    }
+
+    @Override
+    public UpgradeItem item() {
+        return item.get();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.items;
 
+import com.direwolf20.mininggadgets.api.upgrades.MinerUpgrade;
 import com.direwolf20.mininggadgets.client.OurKeys;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
@@ -29,6 +30,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -58,7 +60,10 @@ import net.minecraftforge.event.world.BlockEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 public class MiningGadget extends Item {
     private int energyCapacity;
@@ -562,7 +567,7 @@ public class MiningGadget extends Item {
     */
     public static List<UpgradeHolder> getUpgrades(ItemStack stack) {
         List<UpgradeHolder> upgrades = new ArrayList<>();
-        if (stack.getItem() instanceof MiningGadget) {
+        if (!(stack.getItem() instanceof MiningGadget)) {
             return upgrades;
         }
 
@@ -577,6 +582,86 @@ public class MiningGadget extends Item {
         }
 
         return upgrades;
+    }
+
+    public static List<MinerUpgrade> getActiveUpgrades(ItemStack stack) {
+        List<MinerUpgrade> upgrades = new ArrayList<>();
+        if (!(stack.getItem() instanceof MiningGadget)) {
+            return upgrades;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        if (!tag.contains("AttachedUpgrades")) {
+            return upgrades;
+        }
+
+        ListTag attachedUpgrades = tag.getList("AttachedUpgrades", Tag.TAG_COMPOUND);
+        for (int i = 0; i < attachedUpgrades.size(); i++) {
+            UpgradeHolder upgrade = UpgradeHolder.read(attachedUpgrades.getCompound(i));
+            if (!upgrade.active()) {
+                continue;
+            }
+
+            upgrades.add(upgrade.upgrade());
+        }
+
+        return upgrades;
+    }
+
+    public static void toggleUpgrade(ItemStack stack, ResourceLocation location) {
+        if (!(stack.getItem() instanceof MiningGadget)) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        if (!tag.contains("AttachedUpgrades")) {
+            return;
+        }
+
+        ListTag newData = new ListTag();
+        ListTag attachedUpgrades = tag.getList("AttachedUpgrades", Tag.TAG_COMPOUND);
+        for (int i = 0; i < attachedUpgrades.size(); i++) {
+            UpgradeHolder holder = UpgradeHolder.read(attachedUpgrades.getCompound(i));
+            if (holder.upgrade().getId() == location) {
+                holder = new UpgradeHolder(holder.upgrade(), !holder.active());
+            }
+            newData.add(holder.write());
+        }
+
+        tag.put("AttachedUpgrades", newData);
+    }
+
+    public static void addUpgrade(ItemStack stack, UpgradeHolder upgradeHolder) {
+        if (!(stack.getItem() instanceof MiningGadget)) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+
+        ListTag newData = tag.contains("AttachedUpgrades") ? tag.getList("AttachedUpgrades", Tag.TAG_COMPOUND) : new ListTag();
+        newData.add(upgradeHolder.write());
+        tag.put("AttachedUpgrades", newData);
+    }
+
+    public static void removeUpgrade(ItemStack stack, ResourceLocation upgradeId) {
+        if (!(stack.getItem() instanceof MiningGadget)) {
+            return;
+        }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        ListTag upgrades = tag.contains("AttachedUpgrades") ? tag.getList("AttachedUpgrades", Tag.TAG_COMPOUND) : new ListTag();
+        ListTag newUpgrades = new ListTag();
+        for (int i = 0; i < upgrades.size(); i++) {
+            var holder = UpgradeHolder.read(upgrades.getCompound(i));
+            System.out.println(holder.upgrade().getId().equals(upgradeId));
+            if (holder.upgrade().getId().equals(upgradeId)) {
+                continue;
+            }
+
+            newUpgrades.add(upgrades.getCompound(i));
+        }
+
+        tag.put("AttachedUpgrades", newUpgrades);
     }
 
     public static ItemStack getGadget(Player player) {

@@ -1,11 +1,14 @@
 package com.direwolf20.mininggadgets.common.upgrades.impl;
 
 import com.direwolf20.mininggadgets.api.upgrades.TieredUpgrade;
+import com.direwolf20.mininggadgets.api.upgrades.UpgradeItem;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.function.Supplier;
+
 public class FortuneUpgrade extends TieredUpgrade {
-    public FortuneUpgrade(ResourceLocation id, int tier) {
-        super(id, tier);
+    public FortuneUpgrade(ResourceLocation id, int tier, Supplier<UpgradeItem> item) {
+        super(id, tier, item);
     }
 
     @Override

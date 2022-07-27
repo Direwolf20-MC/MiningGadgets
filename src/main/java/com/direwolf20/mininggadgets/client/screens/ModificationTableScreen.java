@@ -1,9 +1,9 @@
 package com.direwolf20.mininggadgets.client.screens;
 
+import com.direwolf20.mininggadgets.api.upgrades.UpgradeItem;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
 import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
@@ -20,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.client.gui.ScrollPanel;
@@ -95,13 +96,12 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
     public boolean mouseClicked(double mouseXIn, double mouseYIn, int p_231044_5_) {
         ItemStack heldStack = this.menu.getCarried();
         ItemStack gadget = this.container.slots.get(0).getItem();
-        if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
+        if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeItem upgradeItem) {
             if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
                 // Send packet to remove the item from the inventory and add it to the table
-                // TODO: add back
-//                if (UpgradeTools.containsUpgrade(gadget, ((UpgradeCard) heldStack.getItem()).getUpgradeId())) {
-//                    return false;
-//                }
+                if (MiningGadget.getUpgrades(gadget).stream().anyMatch(e -> e.upgradeId().equals(upgradeItem.getUpgradeId()))) {
+                    return false;
+                }
 
                 PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
                 this.menu.setCarried(ItemStack.EMPTY);
@@ -113,8 +113,6 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
     private static class ScrollingUpgrades extends ScrollPanel implements NarratableEntry {
         ModificationTableScreen parent;
         UpgradeHolder upgrade = null;
-
-
 
         ScrollingUpgrades(Minecraft client, int width, int height, int top, int left, ModificationTableScreen parent) {
             super(client, width, height, top, left);
@@ -143,7 +141,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
 
             int index = 0;
             for (UpgradeHolder upgrade : this.parent.container.getUpgradesCache()) {
-                Minecraft.getInstance().getItemRenderer().renderGuiItem(new ItemStack(upgrade.getCard()), x, y);
+                Minecraft.getInstance().getItemRenderer().renderGuiItem(new ItemStack((Item) upgrade.upgrade().item()), x, y);
 
                 if( isMouseOver(mouseX, mouseY) && (mouseX > x && mouseX < x + 15 && mouseY > y && mouseY < y + 15)  )
                     currentUpgrade = upgrade;
@@ -165,7 +163,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
             if( !isMouseOver(mouseX, mouseY) || this.upgrade == null )
                 return false;
 
-            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
+            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.upgrade().getId()));
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
@@ -174,7 +172,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
             super.render(stack, mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                this.parent.renderTooltip(stack, Lists.transform(this.upgrade.getStack().getTooltipLines(this.parent.getMinecraft().player, TooltipFlag.Default.NORMAL), Component::getVisualOrderText), mouseX, mouseY);
+                this.parent.renderTooltip(stack, Lists.transform(new ItemStack(((Item) this.upgrade.upgrade().item())).getTooltipLines(this.parent.getMinecraft().player, TooltipFlag.Default.NORMAL), Component::getVisualOrderText), mouseX, mouseY);
         }
 
         @Override

@@ -69,8 +69,6 @@ public class MiningGadgets
 
         // Register them all!
         StandardUpgradesImpl.UPGRADES.forEach(MiningGadgetsApi.get().upgradesRegistry()::register);
-
-        System.out.println(MiningGadgetsApi.get().upgradesRegistry().entries());
     }
 
     @SubscribeEvent

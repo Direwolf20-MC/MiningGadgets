@@ -1,35 +1,31 @@
 package com.direwolf20.mininggadgets.client.screens;
 
-import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.api.upgrades.StandardUpgrades;
 import com.direwolf20.mininggadgets.client.screens.widget.ToggleButton;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.network.packets.*;
+import com.direwolf20.mininggadgets.common.upgrades.UpgradeHolder;
+import com.direwolf20.mininggadgets.common.upgrades.impl.FortuneUpgrade;
+import com.direwolf20.mininggadgets.common.upgrades.impl.SilkUpgrade;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-
-import java.awt.*;
-import java.awt.Color;
-import java.util.List;
-import java.util.*;
-import java.util.stream.Collectors;
-
-// todo: refactor and clean up
-import net.minecraft.client.gui.components.Button.OnPress;
-
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.widget.Slider;
+
+import java.awt.*;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private ItemStack gadget;
@@ -43,8 +39,8 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
     private Slider rangeSlider;
     private Slider volumeSlider;
     private Slider freezeDelaySlider;
-    private List<Upgrade> toggleableList = new ArrayList<>();
-    private HashMap<Upgrade, ToggleButton> upgradeButtons = new HashMap<>();
+    private List<UpgradeHolder> toggleableList = new ArrayList<>();
+    private HashMap<UpgradeHolder, ToggleButton> upgradeButtons = new HashMap<>();
     private boolean containsFreeze = false;
 
     public MiningSettingScreen(ItemStack gadget) {
@@ -64,9 +60,10 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
 
         // Filters out the non-toggleable options
         toggleableList.clear();
-        toggleableList = UpgradeTools.getUpgrades(this.gadget).stream().filter(Upgrade::isToggleable).collect(Collectors.toList());
-        containsFreeze = UpgradeTools.containsUpgradeFromList(toggleableList, Upgrade.FREEZING);
-        boolean containsVoid = UpgradeTools.containsUpgradeFromList(toggleableList, Upgrade.VOID_JUNK);
+        List<UpgradeHolder> upgrades = MiningGadget.getUpgrades(this.gadget);
+        toggleableList = upgrades;
+        containsFreeze = upgrades.stream().map(e -> e.upgrade().getId()).anyMatch(e -> e == StandardUpgrades.FREEZING);
+        boolean containsVoid = upgrades.stream().map(e -> e.upgrade().getId()).anyMatch(e -> e == StandardUpgrades.VOID);
 
         isWhitelist = MiningProperties.getWhiteList(gadget);
         isPrecision = MiningProperties.getPrecisionMode(gadget);
@@ -76,10 +73,11 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         // Right size
         // Remove 6 from x to center it as the padding on the right pushes off center... (I'm a ui nerd)
         int index = 0, x = baseX + 10, y = top + (containsVoid ? 45 : 20);
-        for (Upgrade upgrade : toggleableList) {
-            ToggleButton btn = new ToggleButton(x + (index * 30), y, UpgradeTools.getName(upgrade), new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send));
-            addRenderableWidget(btn);
-            upgradeButtons.put(upgrade, btn);
+        for (UpgradeHolder upgrade : toggleableList) {
+            // TODO: add back
+//            ToggleButton btn = new ToggleButton(x + (index * 30), y, new TextComponent(ForgeI18n.parseMessage(upgrade.getLocal()).replace(ForgeI18n.parseMessage(upgrade.getLocalReplacement()), "")), new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send));
+//            addRenderableWidget(btn);
+//            upgradeButtons.put(upgrade, btn);
 
             // Spaces the upgrades
             index ++;
@@ -133,7 +131,7 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
             leftWidgets.add(freezeDelaySlider = new Slider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").append(": "), new TextComponent(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), false, true, s -> {}, this));
 
         // Button logic
-        if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) )
+        if(upgrades.stream().filter(UpgradeHolder::active).noneMatch(e -> e.upgrade().getId() == StandardUpgrades.THREE_BY_THREE))
             sizeButton.active = false;
 
         // Lay the buttons out, too lazy to figure out the math every damn time.
@@ -144,23 +142,23 @@ public class MiningSettingScreen extends Screen implements Slider.ISlider {
         }
     }
 
-    private boolean toggleUpgrade(Upgrade upgrade, boolean update) {
+    private boolean toggleUpgrade(UpgradeHolder upgrade, boolean update) {
         // When the button is clicked we toggle
         if( update ) {
             this.updateButtons(upgrade);
-            PacketHandler.sendToServer(new PacketUpdateUpgrade(upgrade.getName()));
+            PacketHandler.sendToServer(new PacketUpdateUpgrade(upgrade.upgrade().getId()));
         }
 
         // When we're just init the gui, we check if it's on or off.
-        return upgrade.isEnabled();
+        return upgrade.active();
     }
 
-    private void updateButtons(Upgrade upgrade) {
-        for(Map.Entry<Upgrade, ToggleButton> btn : this.upgradeButtons.entrySet()) {
-            Upgrade btnUpgrade = btn.getKey();
+    private void updateButtons(UpgradeHolder upgrade) {
+        for(Map.Entry<UpgradeHolder, ToggleButton> btn : this.upgradeButtons.entrySet()) {
+            UpgradeHolder btnUpgrade = btn.getKey();
 
-            if( (btnUpgrade.lazyIs(Upgrade.FORTUNE_1) && btn.getValue().isEnabled() && upgrade.lazyIs(Upgrade.SILK) )
-                    || ((btnUpgrade.lazyIs(Upgrade.SILK)) && btn.getValue().isEnabled() && upgrade.lazyIs(Upgrade.FORTUNE_1)) ) {
+            if( (btnUpgrade.upgrade() instanceof FortuneUpgrade && btn.getValue().isEnabled() && upgrade.upgrade() instanceof SilkUpgrade)
+                    || ((btnUpgrade.upgrade() instanceof SilkUpgrade) && btn.getValue().isEnabled() && upgrade.upgrade() instanceof FortuneUpgrade) ) {
                 this.upgradeButtons.get(btn.getKey()).setEnabled(false);
             }
         }

@@ -1,28 +1,29 @@
 package com.direwolf20.mininggadgets.common.network.packets;
 
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.api.MiningGadgetsApi;
+import com.direwolf20.mininggadgets.api.upgrades.MinerUpgrade;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class PacketUpdateUpgrade {
-    private final String upgrade;
+    private final ResourceLocation upgrade;
 
-    public PacketUpdateUpgrade(String upgrade) {
+    public PacketUpdateUpgrade(ResourceLocation upgrade) {
         this.upgrade = upgrade;
     }
 
     public static void encode(PacketUpdateUpgrade msg, FriendlyByteBuf buffer) {
-        buffer.writeUtf(msg.upgrade);
+        buffer.writeResourceLocation(msg.upgrade);
     }
 
     public static PacketUpdateUpgrade decode(FriendlyByteBuf buffer) {
-        return new PacketUpdateUpgrade(buffer.readUtf(100));
+        return new PacketUpdateUpgrade(buffer.readResourceLocation());
     }
 
     public static class Handler {
@@ -32,12 +33,12 @@ public class PacketUpdateUpgrade {
                 if (player == null)
                     return;
 
-                Upgrade upgrade = UpgradeTools.getUpgradeByName(msg.upgrade);
-                if( upgrade == null )
+                MinerUpgrade upgrade = MiningGadgetsApi.get().upgradesRegistry().getUpgrade(msg.upgrade);
+                if (upgrade == null)
                     return;
 
                 ItemStack stack = MiningGadget.getGadget(player);
-                UpgradeTools.updateUpgrade(stack, upgrade); //todo: change.
+                MiningGadget.toggleUpgrade(stack, upgrade.getId());
             });
 
             ctx.get().setPacketHandled(true);

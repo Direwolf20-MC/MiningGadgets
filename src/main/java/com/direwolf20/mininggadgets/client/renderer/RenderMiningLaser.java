@@ -4,28 +4,26 @@ import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.upgrades.impl.EfficiencyUpgrade;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
-
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 
 public class RenderMiningLaser {
 
@@ -51,13 +49,14 @@ public class RenderMiningLaser {
     }
 
     private static float getSpeedModifier(ItemStack stack) {
-        if (UpgradeTools.containsUpgrade(stack, Upgrade.EFFICIENCY_1)) {
-            double efficiency = UpgradeTools.getUpgradeFromGadget(stack, Upgrade.EFFICIENCY_1).get().getTier() / 5f;
-            double speedModifier = Mth.lerp(efficiency, 0.02, 0.05);
-            return (float) -speedModifier;
-        } else {
-            return -0.02f;
-        }
+        return MiningGadget.getActiveUpgrades(stack).stream()
+                .filter(e -> e instanceof EfficiencyUpgrade)
+                .findFirst()
+                .map(upgrade -> {
+                    double efficiency = ((EfficiencyUpgrade) upgrade).getTier() / 5f;
+                    double speedModifier = Mth.lerp(efficiency, 0.02, 0.05);
+                    return (float) -speedModifier;
+                }).orElse( -0.02f);
     }
 
     private static void drawLasers(ItemStack stack, RenderLevelLastEvent event, Vec3 from, HitResult trace, double xOffset, double yOffset, double zOffset, float r, float g, float b, float thickness, Player player, float ticks, float speedModifier) {

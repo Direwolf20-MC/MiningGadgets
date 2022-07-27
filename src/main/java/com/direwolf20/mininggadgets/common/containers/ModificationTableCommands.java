@@ -1,56 +1,61 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 
-import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.UpgradeCard;
+import com.direwolf20.mininggadgets.api.MiningGadgetsApi;
+import com.direwolf20.mininggadgets.api.upgrades.MinerUpgrade;
+import com.direwolf20.mininggadgets.api.upgrades.UpgradeItem;
 import com.direwolf20.mininggadgets.common.items.EnergisedItem;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
+import com.direwolf20.mininggadgets.common.upgrades.UpgradeHolder;
+import com.direwolf20.mininggadgets.common.upgrades.impl.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.util.List;
+
+;
 
 public class ModificationTableCommands {
     public static boolean insertButton(ModificationTableContainer container, ItemStack upgrade) {
         Slot laserSlot = container.slots.get(0);
         ItemStack laser = laserSlot.getItem();
 
-        if (laser.getItem() instanceof MiningGadget && upgrade.getItem() instanceof UpgradeCard) {
-            Upgrade card = ((UpgradeCard) upgrade.getItem()).getUpgradeId();
-            if (card == Upgrade.EMPTY)
+        if (laser.getItem() instanceof MiningGadget && upgrade.getItem() instanceof UpgradeItem upgradeItem) {
+            MinerUpgrade insertingUpgrade = MiningGadgetsApi.get().upgradesRegistry().getUpgrade(upgradeItem.getUpgradeId());
+            if (insertingUpgrade == null)
                 return false; //Don't allow inserting empty cards.
 
-            List<Upgrade> upgrades = UpgradeTools.getUpgrades(laser);
-
-            // Fortune has to be done slightly differently as it requires us to check
-            // against all fortune tiers and not just it's existence.
-            boolean hasFortune = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.FORTUNE_1);
-            boolean hasSilk = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.SILK);
-
-            // Did we just insert a Range upgrade?
-            if (card.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
-                // Always reset the range regardless if it's bigger or smaller
-                // We set max range on the gadget so we don't have to check if an upgrade exists.
-                MiningProperties.setBeamRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
-                MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
-            }
-
-            if (UpgradeTools.containsUpgrade(laser, card))
+            List<UpgradeHolder> upgrades = MiningGadget.getUpgrades(laser);
+            var justUpgrades = upgrades.stream().map(UpgradeHolder::upgrade).toList();
+            if (justUpgrades.contains(insertingUpgrade))
                 return false;
 
-            if (hasFortune && card.getBaseName().equals(Upgrade.SILK.getBaseName()) || hasSilk && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName()))
-                ((UpgradeCard) upgrade.getItem()).getUpgradeId().setEnabled(false);
+            boolean hasFortune = upgrades.stream().anyMatch(e -> e.upgrade() instanceof FortuneUpgrade);
+            boolean hasSilk = upgrades.stream().anyMatch(e -> e.upgrade() instanceof SilkUpgrade);
 
-            MiningGadget.applyUpgrade(laser, (UpgradeCard) upgrade.getItem());
+            // Did we just insert a Range upgrade?
+            if (insertingUpgrade instanceof RangeUpgrade rangeUpgrade) {
+                // Always reset the range regardless if it's bigger or smaller
+                // We set max range on the gadget, so we don't have to check if an upgrade exists.
+                MiningProperties.setBeamRange(laser, rangeUpgrade.getTier() * 5);
+                MiningProperties.setBeamMaxRange(laser, rangeUpgrade.getTier() * 5);
+            }
+
+            var holderInsertingUpgrade = new UpgradeHolder(insertingUpgrade, true);
+            if ((hasFortune && insertingUpgrade instanceof SilkUpgrade) || (hasSilk && insertingUpgrade instanceof FortuneUpgrade))
+                holderInsertingUpgrade = new UpgradeHolder(insertingUpgrade, false);
+
+            MiningGadget.addUpgrade(laser, holderInsertingUpgrade);
 
             // Did we just insert a battery upgrade?
-            if(card.getBaseName().equals(Upgrade.BATTERY_1.getBaseName())) {
-                UpgradeBatteryLevels.getBatteryByLevel(card.getTier()).ifPresent(power -> {
+            if(insertingUpgrade instanceof BatteryUpgrade batteryUpgrade) {
+                UpgradeBatteryLevels.getBatteryByLevel(batteryUpgrade.getTier()).ifPresent(power -> {
                     laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(power.getPower()));
                 });
             }
@@ -61,38 +66,38 @@ public class ModificationTableCommands {
         return false;
     }
 
-    public static void extractButton(ModificationTableContainer container, ServerPlayer player, String upgradeName) {
+    public static void extractButton(ModificationTableContainer container, ServerPlayer player, ResourceLocation upgradeId) {
         Slot laserSlot = container.slots.get(0);
         ItemStack laser = laserSlot.getItem();
 
         if (!(laser.getItem() instanceof MiningGadget))
             return;
 
-        if (!UpgradeTools.containsUpgrades(laser))
+        MinerUpgrade removingUpgrade = MiningGadgetsApi.get().upgradesRegistry().getUpgrade(upgradeId);
+        List<UpgradeHolder> upgrades = MiningGadget.getUpgrades(laser);
+
+        if (upgrades.stream().noneMatch(e -> e.upgrade().getId().equals(upgradeId))) {
             return;
+        }
 
-        UpgradeTools.getUpgrades(laser).forEach(upgrade -> {
-            if( !upgrade.getName().equals(upgradeName) )
-                return;
+        MiningGadget.removeUpgrade(laser, upgradeId);
 
-            UpgradeTools.removeUpgrade(laser, upgrade);
+        ItemStack upgradeItem = new ItemStack((Item) removingUpgrade.item(), 1);
+        boolean success = player.getInventory().add(upgradeItem);
+        if (!success) {
+            player.drop(upgradeItem, true);
+        }
 
-            boolean success = player.getInventory().add(new ItemStack(upgrade.getCard(), 1));
-            if (!success) {
-                player.drop(new ItemStack(upgrade.getCard(), 1), true);
-            }
+        if (removingUpgrade instanceof ThreeByThreeUpgrade)
+            MiningProperties.setRange(laser, 1);
 
-            if (upgrade == Upgrade.THREE_BY_THREE)
-                MiningProperties.setRange(laser, 1);
+        // Set both max and default range to MIN_RANGE.
+        if (removingUpgrade instanceof RangeUpgrade) {
+            MiningProperties.setBeamRange(laser, MiningProperties.MIN_RANGE);
+            MiningProperties.setBeamMaxRange(laser, 5);
+        }
 
-            // Set both max and default range to MIN_RANGE.
-            if (upgrade.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
-                MiningProperties.setBeamRange(laser, MiningProperties.MIN_RANGE);
-                MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(0));
-            }
-
-            if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
-                laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
-        });
+        if (removingUpgrade instanceof BatteryUpgrade)
+            laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
     }
 }

@@ -25,10 +25,19 @@ import net.minecraftforge.energy.IEnergyStorage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public class FreezingUpgrade extends MinerUpgrade implements GadgetHooks, RenderBlockHooks {
-    public FreezingUpgrade(ResourceLocation id) {
+    private Supplier<UpgradeItem> item;
+
+    public FreezingUpgrade(ResourceLocation id, Supplier<UpgradeItem> item) {
         super(id);
+        this.item = item;
+    }
+
+    @Override
+    public UpgradeItem item() {
+        return item.get();
     }
 
     @Override

@@ -13,6 +13,8 @@ public abstract class MinerUpgrade {
         return id;
     }
 
+    public abstract UpgradeItem item();
+
     public void onCardAdded() {
 
     }

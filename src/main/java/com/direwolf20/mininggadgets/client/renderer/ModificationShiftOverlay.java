@@ -2,23 +2,23 @@ package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
+import com.direwolf20.mininggadgets.common.upgrades.UpgradeHolder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import com.mojang.math.Vector3f;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class ModificationShiftOverlay {
             return;
         }
 
-        List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
+        List<UpgradeHolder> upgrades = MiningGadget.getUpgrades(stack);
         if (upgrades.isEmpty()) {
             return;
         }
@@ -76,12 +76,12 @@ public class ModificationShiftOverlay {
                 ? -(upgrades.size() / 3f)
                 : -.2f);
 
-        for (Upgrade upgrade : upgrades) {
+        for (UpgradeHolder upgrade : upgrades) {
             matrix.pushPose();
             matrix.translate(offset + x, y, 0);
             matrix.mulPose(Vector3f.YP.rotationDegrees(90));
             matrix.mulPose(Vector3f.XP.rotationDegrees(26));
-            ItemStack upgradeStack = upgrade.getStack();
+            ItemStack upgradeStack = new ItemStack((Item) upgrade.upgrade().item());
             BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(upgradeStack, Minecraft.getInstance().level, null, 0);
             Minecraft.getInstance().getItemRenderer().render(upgradeStack, ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, false, matrix, outlineLayerBuffer, 15728880, OverlayTexture.NO_OVERLAY, model);
             x += 1;

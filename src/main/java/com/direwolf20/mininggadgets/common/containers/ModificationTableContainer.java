@@ -124,7 +124,7 @@ public class ModificationTableContainer extends AbstractContainerMenu {
                     }
                 } else if (stack.getItem() instanceof UpgradeCard) {
                     // Push the item right into the modification table.
-                    if( ModificationTableCommands.insertButton(this, stack) ) {
+                    if(ModificationTableCommands.insertButton(this, stack) ) {
                         int maxSize = Math.min(slot.getMaxStackSize(), stack.getMaxStackSize());
                         int remove = maxSize - itemstack.getCount();
                         stack.shrink(remove == 0 ? 1 : remove);

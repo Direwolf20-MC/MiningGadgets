@@ -12,6 +12,10 @@ public record UpgradeHolder(
     public static final String ID_KEY = "id";
     public static final String ACTIVE_KEY = "active";
 
+    public ResourceLocation upgradeId() {
+        return this.upgrade.getId();
+    }
+
     public CompoundTag write() {
         CompoundTag tag = new CompoundTag();
         tag.putString(ID_KEY, this.upgrade.getId().toString());

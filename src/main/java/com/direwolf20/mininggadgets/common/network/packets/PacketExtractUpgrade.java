@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.common.network.packets;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableCommands;
 import com.direwolf20.mininggadgets.common.containers.ModificationTableContainer;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -15,24 +16,20 @@ import java.util.function.Supplier;
 public class PacketExtractUpgrade {
 
     private final BlockPos pos;
-    private final String upgrade;
-    private final int nameLength;
+    private final ResourceLocation id;
 
-    public PacketExtractUpgrade(BlockPos blockPos, String upgrade, int nameLength) {
+    public PacketExtractUpgrade(BlockPos blockPos, ResourceLocation id) {
         this.pos = blockPos;
-        this.upgrade = upgrade;
-        this.nameLength = nameLength;
+        this.id = id;
     }
 
     public static void encode(PacketExtractUpgrade msg, FriendlyByteBuf buffer) {
-        buffer.writeInt(msg.nameLength);
         buffer.writeBlockPos(msg.pos);
-        buffer.writeUtf(msg.upgrade);
+        buffer.writeResourceLocation(msg.id);
     }
 
     public static PacketExtractUpgrade decode(FriendlyByteBuf buffer) {
-        int strLength = buffer.readInt();
-        return new PacketExtractUpgrade(buffer.readBlockPos(), buffer.readUtf(strLength), strLength);
+        return new PacketExtractUpgrade(buffer.readBlockPos(), buffer.readResourceLocation());
     }
 
     public static class Handler {
@@ -48,7 +45,7 @@ public class PacketExtractUpgrade {
                 if (!(te instanceof ModificationTableTileEntity)) return;
                 ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
-                ModificationTableCommands.extractButton(container, player, msg.upgrade);
+                ModificationTableCommands.extractButton(container, player, msg.id);
             });
 
             ctx.get().setPacketHandled(true);

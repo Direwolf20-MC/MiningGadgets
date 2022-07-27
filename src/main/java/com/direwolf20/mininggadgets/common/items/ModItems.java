@@ -28,12 +28,12 @@ public interface ModItems {
 
     RegistryObject<Item> UPGRADE_EMPTY = ITEMS.register("upgrade_empty", () -> new Item(ITEM_GROUP));
 
-    RegistryObject<Item> SILK = UPGRADE_ITEMS.register("upgrade_silk", () -> new UpgradeCard(StandardUpgrades.FREEZING));
-    RegistryObject<Item> VOID_JUNK = UPGRADE_ITEMS.register("upgrade_void_junk", () -> new UpgradeCard(StandardUpgrades.MAGNET));
-    RegistryObject<Item> MAGNET = UPGRADE_ITEMS.register("upgrade_magnet", () -> new UpgradeCard(StandardUpgrades.SILK));
-    RegistryObject<Item> THREE_BY_THREE = UPGRADE_ITEMS.register("upgrade_three_by_three", () -> new UpgradeCard(StandardUpgrades.VOID));
-    RegistryObject<Item> LIGHT_PLACER = UPGRADE_ITEMS.register("upgrade_light_placer", () -> new UpgradeCard(StandardUpgrades.THREE_BY_THREE));
-    RegistryObject<Item> FREEZING = UPGRADE_ITEMS.register("upgrade_freezing", () -> new UpgradeCard(StandardUpgrades.LIGHT_PLACER));
+    RegistryObject<Item> SILK = UPGRADE_ITEMS.register("upgrade_silk", () -> new UpgradeCard(StandardUpgrades.SILK));
+    RegistryObject<Item> VOID_JUNK = UPGRADE_ITEMS.register("upgrade_void_junk", () -> new UpgradeCard(StandardUpgrades.VOID));
+    RegistryObject<Item> MAGNET = UPGRADE_ITEMS.register("upgrade_magnet", () -> new UpgradeCard(StandardUpgrades.MAGNET));
+    RegistryObject<Item> THREE_BY_THREE = UPGRADE_ITEMS.register("upgrade_three_by_three", () -> new UpgradeCard(StandardUpgrades.THREE_BY_THREE));
+    RegistryObject<Item> LIGHT_PLACER = UPGRADE_ITEMS.register("upgrade_light_placer", () -> new UpgradeCard(StandardUpgrades.LIGHT_PLACER));
+    RegistryObject<Item> FREEZING = UPGRADE_ITEMS.register("upgrade_freezing", () -> new UpgradeCard(StandardUpgrades.FREEZING));
     RegistryObject<Item> FORTUNE_1 = UPGRADE_ITEMS.register("upgrade_fortune_1", () -> new UpgradeCard(StandardUpgrades.FORTUNE_1));
     RegistryObject<Item> FORTUNE_2 = UPGRADE_ITEMS.register("upgrade_fortune_2", () -> new UpgradeCard(StandardUpgrades.FORTUNE_2));
     RegistryObject<Item> FORTUNE_3 = UPGRADE_ITEMS.register("upgrade_fortune_3", () -> new UpgradeCard(StandardUpgrades.FORTUNE_3));
