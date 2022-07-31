@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "brb",
-    "bub",
-    "brb"
-  ],
   "key": {
+    "b": {
+      "item": "minecraft:redstone_block"
+    },
     "r": {
       "tag": "forge:dusts/redstone"
     },
     "u": {
       "item": "mininggadgets:upgrade_efficiency_3"
-    },
-    "b": {
-      "item": "minecraft:redstone_block"
     }
   },
+  "pattern": [
+    "brb",
+    "bub",
+    "brb"
+  ],
   "result": {
     "item": "mininggadgets:upgrade_efficiency_4"
   }

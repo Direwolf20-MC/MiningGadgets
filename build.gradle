@@ -1,19 +1,16 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-    }
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+apply {
+    // Fixes m1 macs having build time errors (#forgeplzfix)
+    from "https://raw.githubusercontent.com/mezz/JustEnoughItems/1.18/Forge/buildtools/AppleSiliconSupport.gradle"
+}
 
 version = "${mod_version}"
 group = 'com.direwolf20.mininggadgets' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -22,8 +19,6 @@ archivesBaseName = 'mininggadgets'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    hideOfficialWarningUntilChanged
-
     mappings channel: 'official', version: "${mc_version}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -32,13 +27,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
-
 
             mods {
                 mininggadgets {
@@ -50,10 +40,7 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -66,10 +53,7 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'mininggadgets', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
@@ -95,7 +79,6 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
-    maven { url 'https://www.dogforce-games.com/maven/' }
     maven {
         url "https://www.cursemaven.com"
         content {
@@ -108,8 +91,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     //JEI
-//    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-//    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
 //    runtimeOnly fg.deobf("curse.maven:lollipop-347954:3232534")
@@ -120,21 +103,29 @@ dependencies {
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INHERIT
 
+    inputs.property "version", project.version
+
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version,
+                "mcversion": project.mc_version,
+                "forgeversion": project.forge_version,
+                "forgeshortversion": project.forge_version.split('\\.')[0]
+    }
+
 	doLast {
-	
 	    def jsonMinifyStart = System.currentTimeMillis()
 	    def jsonMinified = 0
 		def jsonBytesSaved = 0
-		
+
 	    fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
-		
+
 			File file = it
 			jsonMinified++
 			def oldLength = file.length()
 			file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
 			jsonBytesSaved += oldLength - file.length()
 		}
-		
+
 		println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
 	}
 }
@@ -166,4 +157,8 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

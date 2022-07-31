@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "qqq",
-    "quq",
-    "qqq"
-  ],
   "key": {
     "q": {
       "item": "minecraft:quartz"
@@ -13,6 +8,11 @@
       "item": "mininggadgets:upgrade_empty"
     }
   },
+  "pattern": [
+    "qqq",
+    "quq",
+    "qqq"
+  ],
   "result": {
     "item": "mininggadgets:upgrade_battery_1"
   }

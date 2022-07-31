@@ -14,7 +14,7 @@ public class ModBlocks {
      * Deferred Registers for the our Main class to load.
      */
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MiningGadgets.MOD_ID);
-    public static final DeferredRegister<BlockEntityType<?>> TILES_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MiningGadgets.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> TILES_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MiningGadgets.MOD_ID);
 
     /**
      * Register our blocks to the above registers to be loaded when the mod is initialized

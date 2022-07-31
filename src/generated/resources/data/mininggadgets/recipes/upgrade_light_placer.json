@@ -1,27 +1,27 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "ara",
-    "bub",
-    "grg"
-  ],
   "key": {
-    "g": {
-      "item": "minecraft:glowstone_dust"
+    "a": {
+      "item": "minecraft:lantern"
     },
     "b": {
       "item": "minecraft:glowstone"
     },
+    "g": {
+      "item": "minecraft:glowstone_dust"
+    },
     "r": {
       "item": "minecraft:redstone_lamp"
-    },
-    "a": {
-      "item": "minecraft:lantern"
     },
     "u": {
       "item": "mininggadgets:upgrade_empty"
     }
   },
+  "pattern": [
+    "ara",
+    "bub",
+    "grg"
+  ],
   "result": {
     "item": "mininggadgets:upgrade_light_placer"
   }

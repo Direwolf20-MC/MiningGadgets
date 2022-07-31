@@ -2,14 +2,12 @@ package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
-import java.util.Objects;
 
 public class GeneratorBlockStates extends BlockStateProvider {
     public GeneratorBlockStates(DataGenerator gen, ExistingFileHelper exFileHelper) {
@@ -26,7 +24,7 @@ public class GeneratorBlockStates extends BlockStateProvider {
 //                modLoc("block/modificationtable_top")
 //        ).texture("particle", modLoc("block/modificationtable_side")));
 
-        horizontalBlock(ModBlocks.MODIFICATION_TABLE.get(), new ModelFile.UncheckedModelFile(modLoc("models/block/modificationtable")));
+        horizontalBlock(ModBlocks.MODIFICATION_TABLE.get(), new ModelFile.UncheckedModelFile(modLoc("block/modificationtable")));
 
         // Render block
         buildCubeAll(ModBlocks.RENDER_BLOCK.get());

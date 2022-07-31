@@ -55,7 +55,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,8 +65,8 @@ import java.util.Locale;
 import java.util.Random;
 
 public class MiningGadget extends Item {
-    private int energyCapacity;
-    private Random rand = new Random();
+    private final int energyCapacity;
+    private final Random rand = new Random();
     private LaserLoopSound laserLoopSound;
     //private static int energyPerItem = 15;
 

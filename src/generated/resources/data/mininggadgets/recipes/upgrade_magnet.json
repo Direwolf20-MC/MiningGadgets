@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "rgr",
-    "iui",
-    "rgr"
-  ],
   "key": {
+    "g": {
+      "tag": "forge:ingots/gold"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
     "r": {
       "tag": "forge:dusts/redstone"
     },
     "u": {
       "item": "mininggadgets:upgrade_empty"
-    },
-    "i": {
-      "tag": "forge:ingots/iron"
-    },
-    "g": {
-      "tag": "forge:ingots/gold"
     }
   },
+  "pattern": [
+    "rgr",
+    "iui",
+    "rgr"
+  ],
   "result": {
     "item": "mininggadgets:upgrade_magnet"
   }
