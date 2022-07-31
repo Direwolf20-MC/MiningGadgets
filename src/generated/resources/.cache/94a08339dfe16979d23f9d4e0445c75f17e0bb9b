@@ -1,0 +1,6 @@
+// 1.19	2022-07-31T19:45:31.548387	Block States: mininggadgets
+d1a6662ff63880ec364d02b06c4c547d529bb8fe assets/mininggadgets/blockstates/minerslight.json
+7c14a211cba596fc721c75f74f9d6f38b660a610 assets/mininggadgets/blockstates/modificationtable.json
+58d4442f56c89d6f160a1104d74f3084e370d6d0 assets/mininggadgets/blockstates/renderblock.json
+95287d96334413a01ea28886fd9bd619865c1f33 assets/mininggadgets/models/block/minerslight.json
+4f654400bbf9ee39047a8248b1979711bd29e303 assets/mininggadgets/models/block/renderblock.json

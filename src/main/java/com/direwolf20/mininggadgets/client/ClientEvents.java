@@ -9,16 +9,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.DrawSelectionEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderHighlightEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.List;
 
 public class ClientEvents {
     @SubscribeEvent
-    static void drawBlockHighlightEvent(DrawSelectionEvent evt) {
+    static void drawBlockHighlightEvent(RenderHighlightEvent evt) {
         if( Minecraft.getInstance().player == null )
             return;
 
@@ -27,7 +27,11 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    static void renderWorldLastEvent(RenderLevelLastEvent evt) {
+    static void renderWorldLastEvent(RenderLevelStageEvent evt) {
+        if (evt.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+            return;
+        }
+
         List<AbstractClientPlayer> players = Minecraft.getInstance().level.players();
         Player myplayer = Minecraft.getInstance().player;
 
@@ -53,7 +57,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    static void keyPressed(InputEvent.KeyInputEvent event) {
+    static void keyPressed(InputEvent.Key event) {
         if (OurKeys.shiftClickGuiBinding.consumeClick() && Minecraft.getInstance().screen == null) {
             if (Minecraft.getInstance().player == null) {
                 return;

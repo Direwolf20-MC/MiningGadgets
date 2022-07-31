@@ -1,5 +1,9 @@
 {
   "variants": {
+    "facing=east": {
+      "model": "mininggadgets:block/modificationtable",
+      "y": 90
+    },
     "facing=north": {
       "model": "mininggadgets:block/modificationtable"
     },
@@ -10,10 +14,6 @@
     "facing=west": {
       "model": "mininggadgets:block/modificationtable",
       "y": 270
-    },
-    "facing=east": {
-      "model": "mininggadgets:block/modificationtable",
-      "y": 90
     }
   }
 }

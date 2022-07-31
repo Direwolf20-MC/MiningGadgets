@@ -12,7 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
  * @implNote Container screens are registered in {@link ClientSetup#setup()}
  */
 public class ModContainers {
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MiningGadgets.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MiningGadgets.MOD_ID);
 
     // Our containers
     public static final RegistryObject<MenuType<ModificationTableContainer>> MODIFICATIONTABLE_CONTAINER

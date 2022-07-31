@@ -2,7 +2,6 @@ package com.direwolf20.mininggadgets.common;
 
 import com.direwolf20.mininggadgets.client.ClientEvents;
 import com.direwolf20.mininggadgets.client.ClientSetup;
-import com.direwolf20.mininggadgets.client.OurKeys;
 import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.containers.ModContainers;
@@ -72,11 +71,11 @@ public class MiningGadgets
 
     @SubscribeEvent
     public void rightClickEvent(PlayerInteractEvent.RightClickBlock event) {
-        ItemStack stack = MiningGadget.getGadget(event.getPlayer());
+        ItemStack stack = MiningGadget.getGadget(event.getEntity());
         if( stack.getItem() instanceof MiningGadget ) {
-            if (this.stackIsAnnoying(event.getPlayer().getMainHandItem())
-                    || this.stackIsAnnoying(event.getPlayer().getOffhandItem())
-                    || event.getWorld().getBlockState(event.getPos()).getBlock() instanceof RedStoneOreBlock) {
+            if (this.stackIsAnnoying(event.getEntity().getMainHandItem())
+                    || this.stackIsAnnoying(event.getEntity().getOffhandItem())
+                    || event.getLevel().getBlockState(event.getPos()).getBlock() instanceof RedStoneOreBlock) {
                 event.setCanceled(true);
             }
         }
@@ -111,7 +110,6 @@ public class MiningGadgets
     private void setupClient(final FMLClientSetupEvent event) {
         // Register the container screens.
         ClientSetup.setup();
-        OurKeys.register();
         MinecraftForge.EVENT_BUS.register(ClientEvents.class);
     }
 

@@ -1,34 +1,27 @@
 package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import net.minecraft.data.DataGenerator;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Generator {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
-         if( event.includeServer() )
-            registerServerProviders(event.getGenerator());
+        var includeServer = event.includeServer();
+        var includeClient = event.includeClient();
+        var generator = event.getGenerator();
+        var helper = event.getExistingFileHelper();
 
-        if( event.includeClient() )
-            registerClientProviders(event.getGenerator(), event);
-    }
+        // Client
+        generator.addProvider(includeClient, new GeneratorLanguage(generator));
+        generator.addProvider(includeClient, new GeneratorItemModels(generator, helper));
 
-    private static void registerServerProviders(DataGenerator generator) {
-        generator.addProvider(true, new GeneratorLoot(generator));
-        generator.addProvider(true, new GeneratorRecipes(generator));
-    }
-
-    private static void registerClientProviders(DataGenerator generator, GatherDataEvent event) {
-        ExistingFileHelper helper = event.getExistingFileHelper();
-
-        generator.addProvider(false, new GeneratorBlockTags(generator, helper));
-        generator.addProvider(false, new GeneratorBlockStates(generator, helper));
-        generator.addProvider(false, new GeneratorItemModels(generator, helper));
-        generator.addProvider(false, new GeneratorLanguage(generator));
+        // Server
+        generator.addProvider(includeServer, new GeneratorLoot(generator));
+        generator.addProvider(includeServer, new GeneratorRecipes(generator));
+        generator.addProvider(includeServer, new GeneratorBlockTags(generator, helper));
+        generator.addProvider(includeServer, new GeneratorBlockStates(generator, helper));
     }
 }

@@ -20,7 +20,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class RenderBlockTER implements BlockEntityRenderer<RenderBlockTileEntity
                 f2 = 1f;
             }
 
-            builder.putBulkData(matrixEntry, bakedquad, f, f1, f2, alpha, combinedLightsIn, combinedOverlayIn);
+            builder.putBulkData(matrixEntry, bakedquad, f, f1, f2, alpha, combinedLightsIn, combinedOverlayIn, true);
         }
     }
 
@@ -87,23 +87,23 @@ public class RenderBlockTER implements BlockEntityRenderer<RenderBlockTileEntity
 
             VertexConsumer builder = bufferIn.getBuffer(RenderType.cutout());
             for (Direction direction : Direction.values()) {
-                renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, 1f, getQuads(ibakedmodel, tile, direction), combinedLightsIn, combinedOverlayIn);
+                renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, 1f, getQuads(ibakedmodel, tile, direction, RenderType.cutout()), combinedLightsIn, combinedOverlayIn);
             }
-            renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, 1f, getQuads(ibakedmodel, tile, null), combinedLightsIn, combinedOverlayIn);
+            renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, 1f, getQuads(ibakedmodel, tile, null, RenderType.cutout()), combinedLightsIn, combinedOverlayIn);
         } else if (breakType == MiningProperties.BreakTypes.FADE) {
             scale = Mth.lerp(scale, 0.1f, 1.0f);
             VertexConsumer builder = bufferIn.getBuffer(MyRenderType.RenderBlock);
             for (Direction direction : Direction.values()) {
                 if (!(tile.getLevel().getBlockState(tile.getBlockPos().relative(direction)).getBlock() instanceof RenderBlock)) {
-                    renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, scale, getQuads(ibakedmodel, tile, direction), combinedLightsIn, combinedOverlayIn);
+                    renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, scale, getQuads(ibakedmodel, tile, direction, MyRenderType.RenderBlock), combinedLightsIn, combinedOverlayIn);
                 }
             }
-            renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, scale, getQuads(ibakedmodel, tile, null), combinedLightsIn, combinedOverlayIn);
+            renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, scale, getQuads(ibakedmodel, tile, null, MyRenderType.RenderBlock), combinedLightsIn, combinedOverlayIn);
         }
         matrixStackIn.popPose();
     }
 
-    private List<BakedQuad> getQuads(BakedModel model, RenderBlockTileEntity tile, Direction side) {
-        return model.getQuads(tile.getRenderBlock(), side, RandomSource.create(Mth.getSeed(tile.getBlockPos())), EmptyModelData.INSTANCE);
+    private List<BakedQuad> getQuads(BakedModel model, RenderBlockTileEntity tile, Direction side, RenderType type) {
+        return model.getQuads(tile.getRenderBlock(), side, RandomSource.create(Mth.getSeed(tile.getBlockPos())), ModelData.EMPTY, type);
     }
 }

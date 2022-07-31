@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "lgl",
-    "dud",
-    "lgl"
-  ],
   "key": {
-    "l": {
-      "item": "minecraft:lapis_lazuli"
+    "d": {
+      "item": "minecraft:diamond"
     },
     "g": {
       "item": "minecraft:glass"
     },
-    "d": {
-      "item": "minecraft:diamond"
+    "l": {
+      "item": "minecraft:lapis_lazuli"
     },
     "u": {
       "item": "mininggadgets:upgrade_empty"
     }
   },
+  "pattern": [
+    "lgl",
+    "dud",
+    "lgl"
+  ],
   "result": {
     "item": "mininggadgets:upgrade_range_1"
   }
