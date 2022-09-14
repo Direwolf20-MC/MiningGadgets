@@ -126,10 +126,10 @@ public class MiningSettingScreen extends Screen {
         }));
 
         // volume slider
-        leftWidgets.add(volumeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, Math.min(100, volume * 100), true) {
+        leftWidgets.add(volumeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, volume * 100, true) {
             @Override
             protected void applyValue() {
-                volume = (float) this.getValue();
+                volume = (float) (this.getValue() / 100D);
             }
         });
 
