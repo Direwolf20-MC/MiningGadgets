@@ -14,40 +14,43 @@ import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.sounds.LaserLoopSound;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
+import com.direwolf20.mininggadgets.common.sounds.SoundsHandler;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.Material;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.world.item.TooltipFlag;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.util.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -58,22 +61,13 @@ import net.minecraftforge.event.world.BlockEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
-
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+import java.util.*;
 
 public class MiningGadget extends Item {
     private int energyCapacity;
     private Random rand = new Random();
-    private LaserLoopSound laserLoopSound;
+
+    private final SoundsHandler soundHandler = SoundsHandler.INSTANT;
     //private static int energyPerItem = 15;
 
     public MiningGadget() {
@@ -133,8 +127,7 @@ public class MiningGadget extends Item {
         boolean sneakPressed = Screen.hasShiftDown();
 
         if (!sneakPressed) {
-            tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.show_upgrades",
-                    "shift")
+            tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.show_upgrades")
                     .withStyle(ChatFormatting.GRAY));
         } else {
             tooltip.add(new TranslatableComponent("mininggadgets.tooltip.item.break_cost", getEnergyCost(stack)).withStyle(ChatFormatting.RED));
@@ -329,9 +322,10 @@ public class MiningGadget extends Item {
                             player.playSound(SoundEvents.CREEPER_PRIMED, volume * 1f, 1f);
                 }
                 else {
-                    if (laserLoopSound == null) {
-                        laserLoopSound = new LaserLoopSound((Player) player, volume);
-                        Minecraft.getInstance().getSoundManager().play(laserLoopSound);
+                    LaserLoopSound laserLoop = soundHandler.getLaserLoop();
+                    if (laserLoop == null) {
+                        soundHandler.create((Player) player, volume);
+                        Minecraft.getInstance().getSoundManager().play(soundHandler.getLaserLoop());
                     }
                 }
             }
@@ -544,12 +538,13 @@ public class MiningGadget extends Item {
     @Override
     public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         if (worldIn.isClientSide) {
-            if (laserLoopSound != null) {
+            LaserLoopSound laserLoop = soundHandler.getLaserLoop();
+            if (laserLoop != null) {
                 float volume = MiningProperties.getVolume(stack);
-                if (volume != 0.0f && !laserLoopSound.isStopped()) {
+                if (volume != 0.0f && !laserLoop.isStopped()) {
                     entityLiving.playSound(OurSounds.LASER_END.getSound(), volume * 0.5f, 1f);
                 }
-                laserLoopSound = null;
+                soundHandler.clear();
             }
         }
 
