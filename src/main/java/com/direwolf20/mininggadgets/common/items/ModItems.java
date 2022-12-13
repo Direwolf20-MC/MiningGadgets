@@ -35,6 +35,7 @@ public class ModItems {
     public static final RegistryObject<Item> VOID_JUNK = UPGRADE_ITEMS.register("upgrade_void_junk", () -> new UpgradeCard(Upgrade.VOID_JUNK));
     public static final RegistryObject<Item> MAGNET = UPGRADE_ITEMS.register("upgrade_magnet", () -> new UpgradeCard(Upgrade.MAGNET));
     public static final RegistryObject<Item> THREE_BY_THREE = UPGRADE_ITEMS.register("upgrade_three_by_three", () -> new UpgradeCard(Upgrade.THREE_BY_THREE));
+    public static final RegistryObject<Item> FIVE_BY_FIVE = UPGRADE_ITEMS.register("upgrade_five_by_five", () -> new UpgradeCard(Upgrade.FIVE_BY_FIVE));
     public static final RegistryObject<Item> LIGHT_PLACER = UPGRADE_ITEMS.register("upgrade_light_placer", () -> new UpgradeCard(Upgrade.LIGHT_PLACER));
     public static final RegistryObject<Item> FREEZING = UPGRADE_ITEMS.register("upgrade_freezing", () -> new UpgradeCard(Upgrade.FREEZING));
     public static final RegistryObject<Item> FORTUNE_1 = UPGRADE_ITEMS.register("upgrade_fortune_1", () -> new UpgradeCard(Upgrade.FORTUNE_1));

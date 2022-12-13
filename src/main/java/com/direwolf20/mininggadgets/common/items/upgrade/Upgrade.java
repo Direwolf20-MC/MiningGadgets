@@ -29,7 +29,8 @@ public enum Upgrade {
     VOID_JUNK("void_junk", ModItems.VOID_JUNK, () -> Config.UPGRADECOST_VOID.get()),
     MAGNET("magnet", ModItems.MAGNET, () -> Config.UPGRADECOST_MAGNET.get()),
     FREEZING("freezing", ModItems.FREEZING, () -> 0), // applied at operation based on config. this isn't ideal
-    THREE_BY_THREE("three_by_three", ModItems.THREE_BY_THREE, () -> 0, false),
+    THREE_BY_THREE("three_by_three", ModItems.THREE_BY_THREE, 1, () -> 0, false),
+    FIVE_BY_FIVE("five_by_five", ModItems.FIVE_BY_FIVE, 2, () -> 0, false),
     LIGHT_PLACER("light_placer", ModItems.LIGHT_PLACER, () -> 0), // applied at operation based on config. this isn't ideal
 
     // Tiered

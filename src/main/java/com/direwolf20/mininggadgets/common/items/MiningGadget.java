@@ -163,6 +163,14 @@ public class MiningGadget extends Item {
     }
 
     public static void changeRange(ItemStack tool) {
+        List<Upgrade> upgrades = UpgradeTools.getUpgrades(tool);
+        if (upgrades.contains(Upgrade.FIVE_BY_FIVE)) {
+            if (MiningProperties.getRange(tool) == 3) {
+                MiningProperties.setRange(tool, 5);
+                return;
+            }
+        }
+
         if (MiningProperties.getRange(tool) == 1)
             MiningProperties.setRange(tool, 3);
         else
@@ -175,6 +183,9 @@ public class MiningGadget extends Item {
 
         if (MiningProperties.getRange(tool) == 3)
             cost = cost * 9;
+
+        if (MiningProperties.getRange(tool) == 5)
+            cost = cost * 25;
 
         return energy.getEnergyStored() >= cost;
     }

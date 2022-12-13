@@ -40,15 +40,36 @@ public class MiningCollect {
         Direction right = vertical ? up.getClockWise() : side.getCounterClockWise();
         Direction left = right.getOpposite();
 
-        coordinates.add(startPos.relative(up).relative(left));
-        coordinates.add(startPos.relative(up));
-        coordinates.add(startPos.relative(up).relative(right));
-        coordinates.add(startPos.relative(left));
-        coordinates.add(startPos);
-        coordinates.add(startPos.relative(right));
-        coordinates.add(startPos.relative(down).relative(left));
-        coordinates.add(startPos.relative(down));
-        coordinates.add(startPos.relative(down).relative(right));
+        if (range >= 3) {
+            coordinates.add(startPos.relative(up).relative(left));
+            coordinates.add(startPos.relative(up));
+            coordinates.add(startPos.relative(up).relative(right));
+            coordinates.add(startPos.relative(left));
+            coordinates.add(startPos);
+            coordinates.add(startPos.relative(right));
+            coordinates.add(startPos.relative(down).relative(left));
+            coordinates.add(startPos.relative(down));
+            coordinates.add(startPos.relative(down).relative(right));
+        }
+
+        if (range >= 5) {
+            coordinates.add(startPos.relative(up, 2).relative(left, 2));
+            coordinates.add(startPos.relative(up, 2).relative(left));
+            coordinates.add(startPos.relative(up, 2));
+            coordinates.add(startPos.relative(up, 2).relative(right));
+            coordinates.add(startPos.relative(up, 2).relative(right, 2));
+            coordinates.add(startPos.relative(up).relative(left, 2));
+            coordinates.add(startPos.relative(up).relative(right, 2));
+            coordinates.add(startPos.relative(left, 2));
+            coordinates.add(startPos.relative(right, 2));
+            coordinates.add(startPos.relative(down).relative(left, 2));
+            coordinates.add(startPos.relative(down).relative(right, 2));
+            coordinates.add(startPos.relative(down, 2).relative(left, 2));
+            coordinates.add(startPos.relative(down, 2).relative(left));
+            coordinates.add(startPos.relative(down, 2));
+            coordinates.add(startPos.relative(down, 2).relative(right));
+            coordinates.add(startPos.relative(down, 2).relative(right, 2));
+        }
 
         return coordinates.stream().filter(e -> isValid(player, e, world)).collect(Collectors.toList());
     }

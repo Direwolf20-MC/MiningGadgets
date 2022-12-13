@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "d": {
+      "item": "minecraft:diamond_block"
+    },
+    "e": {
+      "tag": "forge:ender_pearls"
+    },
+    "p": {
+      "item": "minecraft:netherite_pickaxe"
+    },
+    "n": {
+      "item": "minecraft:netherite_block"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_three_by_three"
+    }
+  },
+  "pattern": [
+    "ene",
+    "dud",
+    "epe"
+  ],
+  "result": {
+    "item": "mininggadgets:upgrade_five_by_five"
+  }
+}

@@ -292,6 +292,19 @@ public class GeneratorRecipes extends RecipeProvider {
             .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
             .save(consumer);
 
+        ShapedRecipeBuilder.shaped(THREE_BY_THREE.get())
+                .define('n', Items.NETHERITE_BLOCK)
+                .define('u', THREE_BY_THREE.get())
+                .define('d', Items.DIAMOND_BLOCK)
+                .define('p', Items.NETHERITE_PICKAXE)
+                .define('e', Tags.Items.ENDER_PEARLS)
+                .pattern("ene")
+                .pattern("dud")
+                .pattern("epe")
+                .unlockedBy("has_three_by_three", has(THREE_BY_THREE.get()))
+                .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
+                .save(consumer);
+
         ShapedRecipeBuilder.shaped(VOID_JUNK.get())
             .define('r', Tags.Items.DUSTS_REDSTONE)
             .define('u', UPGRADE_EMPTY.get())

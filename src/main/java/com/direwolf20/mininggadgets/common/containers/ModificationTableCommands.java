@@ -82,7 +82,7 @@ public class ModificationTableCommands {
                 player.drop(new ItemStack(upgrade.getCardItem().get(), 1), true);
             }
 
-            if (upgrade == Upgrade.THREE_BY_THREE)
+            if (upgrade == Upgrade.THREE_BY_THREE || upgrade == Upgrade.FIVE_BY_FIVE)
                 MiningProperties.setRange(laser, 1);
 
             // Set both max and default range to MIN_RANGE.

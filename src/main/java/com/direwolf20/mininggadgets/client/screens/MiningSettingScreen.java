@@ -101,7 +101,11 @@ public class MiningSettingScreen extends Screen {
 
         Button sizeButton;
         leftWidgets.add(sizeButton = new Button(baseX - 135, 0, 125, 20, Component.translatable("mininggadgets.tooltip.screen.size", currentSize), (button) -> {
-            currentSize = currentSize == 1 ? 3 : 1;
+            if (UpgradeTools.getUpgrades(gadget).contains(Upgrade.FIVE_BY_FIVE)) {
+                currentSize = currentSize == 3 ? 5 : currentSize == 1 ? 3 : 1;
+            } else {
+                currentSize = currentSize == 1 ? 3 : 1;
+            }
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
             PacketHandler.sendToServer(new PacketChangeMiningSize());
         }));
@@ -143,7 +147,8 @@ public class MiningSettingScreen extends Screen {
             });
 
         // Button logic
-        if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) )
+        if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.THREE_BY_THREE) &&
+            !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.FIVE_BY_FIVE) )
             sizeButton.active = false;
 
         // Lay the buttons out, too lazy to figure out the math every damn time.
