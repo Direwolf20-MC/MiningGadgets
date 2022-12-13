@@ -64,11 +64,20 @@ public class MiningCollect {
             coordinates.add(startPos.relative(right, 2));
             coordinates.add(startPos.relative(down).relative(left, 2));
             coordinates.add(startPos.relative(down).relative(right, 2));
-            coordinates.add(startPos.relative(down, 2).relative(left, 2));
-            coordinates.add(startPos.relative(down, 2).relative(left));
-            coordinates.add(startPos.relative(down, 2));
-            coordinates.add(startPos.relative(down, 2).relative(right));
-            coordinates.add(startPos.relative(down, 2).relative(right, 2));
+
+            if (vertical) {
+                coordinates.add(startPos.relative(down, 2).relative(left, 2));
+                coordinates.add(startPos.relative(down, 2).relative(left));
+                coordinates.add(startPos.relative(down, 2));
+                coordinates.add(startPos.relative(down, 2).relative(right));
+                coordinates.add(startPos.relative(down, 2).relative(right, 2));
+            } else {
+                coordinates.add(startPos.relative(up, 3).relative(left, 2));
+                coordinates.add(startPos.relative(up, 3).relative(left));
+                coordinates.add(startPos.relative(up, 3));
+                coordinates.add(startPos.relative(up, 3).relative(right));
+                coordinates.add(startPos.relative(up, 3).relative(right, 2));
+            }
         }
 
         return coordinates.stream().filter(e -> isValid(player, e, world)).collect(Collectors.toList());
