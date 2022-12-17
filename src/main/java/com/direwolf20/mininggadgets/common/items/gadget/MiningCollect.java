@@ -44,9 +44,14 @@ public class MiningCollect {
         int upRange = midRange;
         int downRange = midRange;
 
-        if (!vertical) {
-            downRange = 1;
-            upRange = range - 2;
+        if (!vertical && range > 3) {
+            double myYPos = player.position().get(Direction.UP.getAxis());
+            double hitBlockPos = startBlock.getBlockPos().get(Direction.UP.getAxis());
+
+            if (Math.abs(myYPos - hitBlockPos) < 2) {
+                downRange = 1;
+                upRange = range - 2;
+            }
         }
 
         BlockPos topLeft = startPos.relative(up, upRange).relative(left, midRange);
