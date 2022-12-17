@@ -11,7 +11,7 @@ import com.direwolf20.mininggadgets.common.items.EnergisedItem;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class ModificationTableCommands {
             // Did we just insert a battery upgrade?
             if(card.getBaseName().equals(Upgrade.BATTERY_1.getBaseName())) {
                 UpgradeBatteryLevels.getBatteryByLevel(card.getTier()).ifPresent(power -> {
-                    laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(power.getPower()));
+                    laser.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(power.getPower()));
                 });
             }
 
@@ -92,7 +92,7 @@ public class ModificationTableCommands {
             }
 
             if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
-                laser.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
+                laser.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
         });
     }
 }

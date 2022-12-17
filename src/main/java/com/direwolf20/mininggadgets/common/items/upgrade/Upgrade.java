@@ -40,6 +40,7 @@ public enum Upgrade {
     BATTERY_1("battery_1", ModItems.BATTERY_1, 1, () -> 0),
     BATTERY_2("battery_2", ModItems.BATTERY_2, 2, () -> 0),
     BATTERY_3("battery_3", ModItems.BATTERY_3, 3, () -> 0),
+    BATTERY_CREATIVE("battery_CREATIVE", ModItems.BATTERY_CREATIVE, 4, () -> 0),
 
     RANGE_1("range_1", ModItems.RANGE_1, 1, () -> 0),
     RANGE_2("range_2", ModItems.RANGE_2, 2, () -> 0),

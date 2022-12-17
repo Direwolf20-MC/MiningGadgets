@@ -15,7 +15,8 @@ public enum UpgradeBatteryLevels {
     BATTERY(0, Config.MININGGADGET_MAXPOWER.get()),
     BATTERY_1(1, Config.UPGRADECOST_BATTERY1.get()),
     BATTERY_2(2, Config.UPGRADECOST_BATTERY2.get()),
-    BATTERY_3(3, Config.UPGRADECOST_BATTERY3.get());
+    BATTERY_3(3, Config.UPGRADECOST_BATTERY3.get()),
+    BATTERY_CREATIVE(4, Integer.MAX_VALUE);
 
     private int level;
     private int power;
