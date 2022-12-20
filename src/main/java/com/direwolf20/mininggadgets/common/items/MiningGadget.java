@@ -88,7 +88,7 @@ public class MiningGadget extends Item {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        if (UpgradeTools.containsActiveUpgradeFromList(UpgradeTools.getUpgrades(stack), Upgrade.BATTERY_CREATIVE))
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
             return false;
 
         IEnergyStorage energy = stack.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
@@ -103,6 +103,9 @@ public class MiningGadget extends Item {
 
     @Override
     public int getBarWidth(ItemStack stack) {
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return 13;
+
         return stack.getCapability(ForgeCapabilities.ENERGY, null)
                 .map(e -> Math.min(13 * e.getEnergyStored() / e.getMaxEnergyStored(), 13))
                 .orElse(0);
@@ -110,6 +113,9 @@ public class MiningGadget extends Item {
 
     @Override
     public int getBarColor(ItemStack stack) {
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return Mth.color(0, 1, 0);
+
         return stack.getCapability(ForgeCapabilities.ENERGY)
                 .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
                 .orElse(super.getBarColor(stack));
@@ -172,7 +178,7 @@ public class MiningGadget extends Item {
     }
 
     public static boolean canMine(ItemStack tool) {
-        if (UpgradeTools.containsActiveUpgradeFromList(UpgradeTools.getUpgrades(tool), Upgrade.BATTERY_CREATIVE))
+        if (MiningProperties.getBatteryTier(tool) == Upgrade.BATTERY_CREATIVE.getTier())
             return true;
 
         IEnergyStorage energy = tool.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
@@ -344,10 +350,6 @@ public class MiningGadget extends Item {
         Level world = player.level;
         if (world.isClientSide) {
             this.playLoopSound(player, stack);
-        } else {
-            if (UpgradeTools.containsActiveUpgradeFromList(UpgradeTools.getUpgrades(stack), Upgrade.BATTERY_CREATIVE)) {
-                stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(e.getMaxEnergyStored() - e.getEnergyStored(), false));
-            }
         }
 
         if (!MiningProperties.getCanMine(stack))
@@ -492,7 +494,7 @@ public class MiningGadget extends Item {
     }
 
     public static int getEnergyCost(ItemStack stack) {
-        if (UpgradeTools.containsActiveUpgradeFromList(UpgradeTools.getUpgrades(stack), Upgrade.BATTERY_CREATIVE))
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
             return 0;
 
         int cost = Config.MININGGADGET_BASECOST.get();
@@ -546,9 +548,6 @@ public class MiningGadget extends Item {
             return;
 
         UpgradeTools.setUpgrade(tool, upgradeCard);
-        if (upgradeCard.getUpgrade() == Upgrade.BATTERY_CREATIVE) {
-            tool.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(e.getMaxEnergyStored() - e.getEnergyStored(), false));
-        }
     }
 
     @Override
