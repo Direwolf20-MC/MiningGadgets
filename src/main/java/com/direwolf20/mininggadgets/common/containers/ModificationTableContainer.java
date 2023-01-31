@@ -1,22 +1,22 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
+import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -55,7 +55,7 @@ public class ModificationTableContainer extends AbstractContainerMenu {
     }
 
     private void setupContainerSlots() {
-        this.getTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+        this.getTE().getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
             addSlot(new WatchedSlot(h, 0,  -16, 84, this::updateUpgradeCache));
         });
     }

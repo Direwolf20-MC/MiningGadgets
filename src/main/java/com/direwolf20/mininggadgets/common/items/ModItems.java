@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ModItems {
     // The item group is the creative tab it will go into.
-    public static final Item.Properties ITEM_GROUP = new Item.Properties().tab(MiningGadgets.itemGroup);
+    public static final Item.Properties ITEM_GROUP = new Item.Properties();
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MiningGadgets.MOD_ID);
 
     // We have a separate register just to contain all of the upgrades for quick reference

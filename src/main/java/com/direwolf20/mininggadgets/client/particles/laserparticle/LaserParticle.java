@@ -4,64 +4,77 @@ import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.BreakingItemParticle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
 
 public class LaserParticle extends BreakingItemParticle {
-    // Queue values
-    private float f;
-    private float f1;
-    private float f2;
-    private float f3;
-    private float f4;
-    private float f5;
+    public static final ParticleProvider<LaserParticleData> FACTORY = (data, world, x, y, z, xSpeed, ySpeed, zSpeed) ->
+                    new LaserParticle(world, x, y, z, xSpeed, ySpeed, zSpeed, data.size, data.depthTest, data.maxAgeMul, data.state);
+
     private BlockState blockState;
     private UUID playerUUID;
-    private double sourceX;
-    private double sourceY;
-    private double sourceZ;
     private int speedModifier;
     private boolean voiding = false;
-    private float originalSize;
+
+    private final double sourceX;
+    private final double sourceY;
+    private final double sourceZ;
+    private final float originalSize;
 
     public LaserParticle(ClientLevel world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
-                         float size, float red, float green, float blue, boolean depthTest, float maxAgeMul, BlockState blockState) {
-        this(world, d, d1, d2, xSpeed, ySpeed, zSpeed, size, red, green, blue, depthTest, maxAgeMul);
+                         float size, boolean depthTest, float maxAgeMul, BlockState blockState) {
+        this(world, d, d1, d2, xSpeed, ySpeed, zSpeed, size, depthTest, maxAgeMul, new ItemStack(blockState.getBlock()));
+
         this.blockState = blockState;
-        this.setSprite(Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getParticleIcon(blockState));
+
+        if (this.blockState.getBlock() == Blocks.GRASS_BLOCK) {
+            rCol = 1;
+            gCol = 1;
+            bCol = 1;
+            return;
+        }
+
+        // This isn't a perfect solution because of the above, but I'm unsure how you'd actually only apply a tint to the gray scale part
+        // of the asset instead of it applying to the entire texture
+        BlockColors blockColors = Minecraft.getInstance().getBlockColors();
+
+        int color = blockColors.getColor(this.blockState, this.level, new BlockPos(d, d1, d2), 0);
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
+
+        rCol = f;
+        gCol = f1;
+        bCol = f2;
     }
 
     public LaserParticle(ClientLevel world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
-                         float size, float red, float green, float blue, boolean depthTest, float maxAgeMul) {
-        super(world, d, d1, d2, ItemStack.EMPTY);
+                         float size, boolean depthTest, float maxAgeMul, ItemStack stack) {
+        super(world, d, d1, d2, stack);
         // super applies wiggle to motion so set it here instead
         xd = xSpeed;
         yd = ySpeed;
         zd = zSpeed;
 
-        rCol = red;
-        gCol = green;
-        bCol = blue;
         gravity = 0;
         quadSize *= size;
         originalSize = quadSize;
-        moteParticleScale = quadSize;
         lifetime = Math.round(maxAgeMul);
-        this.depthTest = depthTest;
 
-        moteHalfLife = lifetime / 2;
         setSize(0.001F, 0.001F);
 
         xo = x;
@@ -220,22 +233,4 @@ public class LaserParticle extends BreakingItemParticle {
         //Perform the ACTUAL move of the particle.
         this.move(moveX, moveY, moveZ);
     }
-
-    public void setGravity(float value) {
-        gravity = value;
-    }
-
-    public void setSpeed(float mx, float my, float mz) {
-        xd = mx;
-        yd = my;
-        zd = mz;
-    }
-
-    public static ParticleProvider<LaserParticleData> FACTORY =
-            (data, world, x, y, z, xSpeed, ySpeed, zSpeed) ->
-                    new LaserParticle(world, x, y, z, xSpeed, ySpeed, zSpeed, data.size, data.r, data.g, data.b, data.depthTest, data.maxAgeMul, data.state);
-
-    private boolean depthTest;
-    private final float moteParticleScale;
-    private final int moteHalfLife;
 }
