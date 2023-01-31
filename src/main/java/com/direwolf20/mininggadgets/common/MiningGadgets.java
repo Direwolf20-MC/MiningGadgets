@@ -8,13 +8,17 @@ import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,15 +37,6 @@ public class MiningGadgets
 {
     public static final String MOD_ID = "mininggadgets";
     private static final Logger LOGGER = LogManager.getLogger();
-
-    public static CreativeModeTab itemGroup = new CreativeModeTab(MiningGadgets.MOD_ID) {
-        @Override
-        public ItemStack makeIcon() {
-            ItemStack itemStack = new ItemStack(ModItems.MININGGADGET.get());
-            itemStack.getOrCreateTag().putInt("energy", Integer.MAX_VALUE);
-            return itemStack;
-        }
-    };
 
     public MiningGadgets() {
         IEventBus event = FMLJavaModLoadingContext.get().getModEventBus();
@@ -63,10 +58,36 @@ public class MiningGadgets
 
         // Register the setup method for modloading
         event.addListener(this::setup);
+        event.addListener(this::buildContents);
         MinecraftForge.EVENT_BUS.register(this);
 
         Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-client.toml"));
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
+    }
+
+    public void buildContents(CreativeModeTabEvent.Register event) {
+        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, MOD_ID), builder ->
+                builder.title(Component.translatable("itemGroup." + MOD_ID))
+                        .icon(() -> new ItemStack(ModItems.MININGGADGET_FANCY.get()))
+                        .displayItems((enabledFlags, populator, hasPermissions) -> {
+                            ModItems.ITEMS.getEntries()
+                                    .stream().filter(e -> e != ModItems.MINERS_LIGHT_ITEM)
+                                    .forEach(e -> {
+                                        // Normal
+                                        Item item = e.get();
+                                        populator.accept(item);
+
+                                        // Charged
+                                        if (item instanceof MiningGadget) {
+                                            ItemStack stack = new ItemStack(item);
+                                            stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
+                                            populator.accept(stack);
+                                        }
+                                    });
+
+                            ModItems.UPGRADE_ITEMS.getEntries().forEach(e -> populator.accept(e.get()));
+                        })
+        );
     }
 
     @SubscribeEvent

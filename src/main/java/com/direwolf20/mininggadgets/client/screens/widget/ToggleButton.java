@@ -33,11 +33,11 @@ public class ToggleButton extends AbstractWidget {
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         Color activeColor = this.enabled ? Color.GREEN : Color.RED;
 
-        fill(stack, this.x, this.y, this.x + this.width, this.y + this.height, ((this.enabled ? 0x68000000 : 0x9B000000)) + activeColor.getRGB());
+        fill(stack, this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, ((this.enabled ? 0x68000000 : 0x9B000000)) + activeColor.getRGB());
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShaderTexture(0, texture);
-        blit(stack, this.x +2, this.y + 5, 0, 0, 16, 16, 16, 16);
+        blit(stack, this.getX() +2, this.getY() + 5, 0, 0, 16, 16, 16, 16);
     }
 
     public List<FormattedCharSequence> getTooltip() {
@@ -59,7 +59,7 @@ public class ToggleButton extends AbstractWidget {
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput p_169152_) {
+    protected void updateWidgetNarration(NarrationElementOutput p_259858_) {
 
     }
 }

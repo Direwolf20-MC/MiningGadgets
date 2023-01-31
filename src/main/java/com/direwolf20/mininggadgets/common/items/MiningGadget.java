@@ -4,7 +4,6 @@ import com.direwolf20.mininggadgets.client.OurKeys;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.Config;
-import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
@@ -24,7 +23,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -39,7 +37,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -52,12 +53,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.level.BlockEvent;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,6 @@ public class MiningGadget extends Item {
     public MiningGadget() {
         super(new Item.Properties()
                 .stacksTo(1)
-                .tab(MiningGadgets.itemGroup)
                 .setNoRepair());
 
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
@@ -88,7 +87,7 @@ public class MiningGadget extends Item {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        IEnergyStorage energy = stack.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         return (energy.getEnergyStored() < energy.getMaxEnergyStored());
     }
 
@@ -100,14 +99,14 @@ public class MiningGadget extends Item {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return stack.getCapability(CapabilityEnergy.ENERGY, null)
+        return stack.getCapability(ForgeCapabilities.ENERGY, null)
                 .map(e -> Math.min(13 * e.getEnergyStored() / e.getMaxEnergyStored(), 13))
                 .orElse(0);
     }
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return stack.getCapability(CapabilityEnergy.ENERGY)
+        return stack.getCapability(ForgeCapabilities.ENERGY)
                 .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
                 .orElse(super.getBarColor(stack));
     }
@@ -142,7 +141,7 @@ public class MiningGadget extends Item {
             }
         }
 
-        stack.getCapability(CapabilityEnergy.ENERGY, null)
+        stack.getCapability(ForgeCapabilities.ENERGY, null)
                 .ifPresent(energy -> {
                     MutableComponent energyText = !sneakPressed
                             ? Component.translatable("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
@@ -151,16 +150,17 @@ public class MiningGadget extends Item {
                 });
     }
 
-    @Override
-    public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items) {
-        super.fillItemCategory(group, items);
-        if (!allowedIn(group))
-            return;
-
-        ItemStack charged = new ItemStack(this);
-        charged.getOrCreateTag().putDouble("energy", Config.MININGGADGET_MAXPOWER.get());
-        items.add(charged);
-    }
+    // TODO: Use event
+//    @Override
+//    public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items) {
+//        super.fillItemCategory(group, items);
+//        if (!allowedIn(group))
+//            return;
+//
+//        ItemStack charged = new ItemStack(this);
+//        charged.getOrCreateTag().putDouble("energy", Config.MININGGADGET_MAXPOWER.get());
+//        items.add(charged);
+//    }
 
     public static void changeRange(ItemStack tool) {
         if (MiningProperties.getRange(tool) == 1)
@@ -170,7 +170,7 @@ public class MiningGadget extends Item {
     }
 
     public static boolean canMine(ItemStack tool) {
-        IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        IEnergyStorage energy = tool.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
 
         if (MiningProperties.getRange(tool) == 3)
@@ -443,7 +443,7 @@ public class MiningGadget extends Item {
                 else*/
                         durability = durability - 1;
                         if (durability <= 0) {
-                            stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
+                            stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                             if (MiningProperties.getPrecisionMode(stack)) {
                                 MiningProperties.setCanMine(stack, false);
                                 player.stopUsingItem();
@@ -472,10 +472,10 @@ public class MiningGadget extends Item {
                 pos = lookingAt.getBlockPos().relative(side).relative(right);
 
             if (world.getMaxLocalRawBrightness(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
-                int energy = stack.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+                int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
                 if (energy > Config.UPGRADECOST_LIGHT.get()) {
                     world.setBlockAndUpdate(pos, ModBlocks.MINERS_LIGHT.get().defaultBlockState());
-                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
+                    stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
                 }
             }
         }

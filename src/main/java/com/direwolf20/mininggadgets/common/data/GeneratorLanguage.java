@@ -3,12 +3,12 @@ package com.direwolf20.mininggadgets.common.data;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.ModItems;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
 public class GeneratorLanguage extends LanguageProvider {
-    public GeneratorLanguage(DataGenerator gen) {
-        super(gen, MiningGadgets.MOD_ID, "en_us");
+    public GeneratorLanguage(PackOutput output) {
+        super(output, MiningGadgets.MOD_ID, "en_us");
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
@@ -32,7 +33,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.level.BlockEvent;
@@ -192,7 +193,7 @@ public class RenderBlockTileEntity extends BlockEntity {
 
     private void freeze(ItemStack stack) {
         int freezeCost = Config.UPGRADECOST_FREEZE.get() * -1;
-        int energy = stack.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+        int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
 
         if (energy == 0) {
             return;
@@ -217,7 +218,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             return 0;
         }
 
-        stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(costOfOperation, false));
+        stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(costOfOperation, false));
 
         // If the block is just water logged, remove the fluid
         BlockState blockState = world.getBlockState(pos);
@@ -364,7 +365,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        this.renderBlock = NbtUtils.readBlockState(tag.getCompound("renderBlock"));
+        this.renderBlock = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), tag.getCompound("renderBlock"));
         this.originalDurability = tag.getInt("originalDurability");
         this.priorDurability = tag.getInt("priorDurability");
         this.durability = tag.getInt("durability");

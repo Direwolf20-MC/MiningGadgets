@@ -85,9 +85,11 @@ public class MiningSettingScreen extends Screen {
 
         // Don't add if we don't have voids
         if( containsVoid ) {
-            addRenderableWidget(new Button(baseX + 10, top + 20, 95, 20, getTrans("tooltip.screen.edit_filters"), (button) -> {
-                PacketHandler.sendToServer(new PacketOpenFilterContainer());
-            }));
+            addRenderableWidget(
+                    Button.builder(getTrans("tooltip.screen.edit_filters"), (button) -> {
+                        PacketHandler.sendToServer(new PacketOpenFilterContainer());
+                    }).pos(baseX + 10, top + 20).size( 95, 20).build()
+            );
 
             addRenderableWidget(new WhitelistButton(baseX + 10 + (115 - 20), top + 20, 20, 20, isWhitelist, (button) -> {
                 isWhitelist = !isWhitelist;
@@ -100,11 +102,11 @@ public class MiningSettingScreen extends Screen {
         currentSize = MiningProperties.getRange(gadget);
 
         Button sizeButton;
-        leftWidgets.add(sizeButton = new Button(baseX - 135, 0, 125, 20, Component.translatable("mininggadgets.tooltip.screen.size", currentSize), (button) -> {
+        leftWidgets.add(sizeButton = Button.builder(Component.translatable("mininggadgets.tooltip.screen.size", currentSize), (button) -> {
             currentSize = currentSize == 1 ? 3 : 1;
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
             PacketHandler.sendToServer(new PacketChangeMiningSize());
-        }));
+        }).pos(baseX - 135, 0).size(125, 20).build());
 
         ///ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
         leftWidgets.add(rangeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), Component.empty(), 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, true) {
@@ -114,16 +116,16 @@ public class MiningSettingScreen extends Screen {
             }
         });
 
-        leftWidgets.add(new Button(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.visuals_menu"), (button) -> {
+        leftWidgets.add(Button.builder(getTrans("tooltip.screen.visuals_menu"), (button) -> {
             ModScreens.openVisualSettingsScreen(gadget);
-        }));
+        }).pos(baseX - 135, 0).size(125, 20).build());
 
         //Precision Mode
-        leftWidgets.add(new Button(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
+        leftWidgets.add(Button.builder(getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
             isPrecision = !isPrecision;
             button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
             PacketHandler.sendToServer(new PacketTogglePrecision());
-        }));
+        }).pos(baseX - 135, 0).size(125, 20).build());
 
         // volume slider
         leftWidgets.add(volumeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, volume * 100, true) {
@@ -149,7 +151,7 @@ public class MiningSettingScreen extends Screen {
         // Lay the buttons out, too lazy to figure out the math every damn time.
         // Ordered by where you add them.
         for(int i = 0; i < leftWidgets.size(); i ++) {
-            leftWidgets.get(i).y = (top + 20) + (i * 25);
+            leftWidgets.get(i).setY((top + 20) + (i * 25));
             addRenderableWidget(leftWidgets.get(i));
         }
     }
@@ -202,7 +204,7 @@ public class MiningSettingScreen extends Screen {
 
                     // This is a bit silly, not going to lie
                     List<FormattedText> helpText = Arrays.stream(getTrans("tooltip.screen.delay_explain").getString().split("\n")).map(Component::literal).collect(Collectors.toList());
-                    renderTooltip(stack, Language.getInstance().getVisualOrder(helpText), ((ForgeSlider)e).x - 8, ((ForgeSlider)e).y + 40);
+                    renderTooltip(stack, Language.getInstance().getVisualOrder(helpText), ((ForgeSlider)e).getX() - 8, ((ForgeSlider)e).getY() + 40);
                 }
             } else {
                 assert e instanceof ToggleButton;
@@ -265,14 +267,14 @@ public class MiningSettingScreen extends Screen {
         private boolean isWhitelist;
 
         public WhitelistButton(int widthIn, int heightIn, int width, int height, boolean isWhitelist, OnPress onPress) {
-            super(widthIn, heightIn, width, height, Component.empty(), onPress);
+            super(Button.builder(Component.empty(), onPress).size(widthIn, heightIn).size(widthIn, heightIn));
             this.isWhitelist = isWhitelist;
         }
 
         @Override
         public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-            fill(stack, this.x, this.y, this.x + this.width, this.y + this.height, 0xFFa8a8a8);
-            fill(stack, this.x + 2, this.y + 2, this.x + this.width - 2, this.y + this.height - 2, this.isWhitelist ? 0xFFFFFFFF : 0xFF000000);
+            fill(stack, this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, 0xFFa8a8a8);
+            fill(stack, this.getX() + 2, this.getY() + 2, this.getX() + this.width - 2, this.getY() + this.height - 2, this.isWhitelist ? 0xFFFFFFFF : 0xFF000000);
         }
 
         public void setWhitelist(boolean whitelist) {

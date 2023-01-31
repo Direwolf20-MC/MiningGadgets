@@ -8,10 +8,7 @@ import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -25,6 +22,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public class RenderMiningLaser {
 
@@ -88,8 +89,8 @@ public class RenderMiningLaser {
 
         matrix.translate(-view.x(), -view.y(), -view.z());
         matrix.translate(from.x, from.y, from.z);
-        matrix.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(ticks, -player.getYRot(), -player.yRotO)));
-        matrix.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(ticks, player.getXRot(), player.xRotO)));
+        matrix.mulPose(Axis.YP.rotationDegrees(Mth.lerp(ticks, -player.getYRot(), -player.yRotO)));
+        matrix.mulPose(Axis.XP.rotationDegrees(Mth.lerp(ticks, player.getXRot(), player.xRotO)));
 
         PoseStack.Pose matrixstack$entry = matrix.last();
         Matrix3f matrixNormal = matrixstack$entry.normal();
@@ -120,7 +121,7 @@ public class RenderMiningLaser {
         boolean isSimple = stack.getItem().equals(ModItems.MININGGADGET_SIMPLE.get());
 
         Vector3f vector3f = new Vector3f(0.0f, 1.0f, 0.0f);
-        vector3f.transform(matrixNormalIn);
+        vector3f.mul(matrixNormalIn);//TODO: validate //.transform(matrixNormalIn);
         LocalPlayer player = Minecraft.getInstance().player;
         // Support for hand sides remembering to take into account of Skin options
         if( Minecraft.getInstance().options.mainHand().get() != HumanoidArm.RIGHT )
@@ -149,13 +150,13 @@ public class RenderMiningLaser {
         startYOffset = startYOffset + (f / 750);
 
         Vector4f vec1 = new Vector4f(startXOffset, -thickness + startYOffset, startZOffset, 1.0F);
-        vec1.transform(positionMatrix);
+        vec1.mul(positionMatrix);
         Vector4f vec2 = new Vector4f((float) xOffset, -thickness + (float) yOffset, (float) distance + (float) zOffset, 1.0F);
-        vec2.transform(positionMatrix);
+        vec2.mul(positionMatrix);
         Vector4f vec3 = new Vector4f((float) xOffset, thickness + (float) yOffset, (float) distance + (float) zOffset, 1.0F);
-        vec3.transform(positionMatrix);
+        vec3.mul(positionMatrix);
         Vector4f vec4 = new Vector4f(startXOffset, thickness + startYOffset, startZOffset, 1.0F);
-        vec4.transform(positionMatrix);
+        vec4.mul(positionMatrix);
 
         if (hand == InteractionHand.MAIN_HAND) {
             builder.vertex(vec4.x(), vec4.y(), vec4.z(), r, g, b, alpha, 0, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());

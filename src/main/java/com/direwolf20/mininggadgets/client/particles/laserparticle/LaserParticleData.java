@@ -4,12 +4,13 @@ import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -54,15 +55,15 @@ public class LaserParticleData implements ParticleOptions {
     @Override
     public String writeToString() {
         return String.format(Locale.ROOT, "%s %.2f %.2f %s",
-                Registry.PARTICLE_TYPE.getKey(this.getType()), this.size, this.maxAgeMul, this.depthTest);
+                ForgeRegistries.PARTICLE_TYPES.getKey(this.getType()), this.size, this.maxAgeMul, this.depthTest);
     }
 
-    public static final Deserializer<LaserParticleData> DESERIALIZER = new Deserializer<LaserParticleData>() {
+    public static final Deserializer<LaserParticleData> DESERIALIZER = new Deserializer<>() {
         @Nonnull
         @Override
         public LaserParticleData fromCommand(@Nonnull ParticleType<LaserParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {
             reader.expect(' ');
-            BlockState state = (BlockStateParser.parseForBlock(Registry.BLOCK, reader, false).blockState());
+            BlockState state = (BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), reader, false).blockState());
             reader.expect(' ');
             float size = reader.readFloat();
             reader.expect(' ');

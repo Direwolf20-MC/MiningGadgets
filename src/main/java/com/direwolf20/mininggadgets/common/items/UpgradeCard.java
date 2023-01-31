@@ -1,7 +1,6 @@
 package com.direwolf20.mininggadgets.common.items;
 
 import com.direwolf20.mininggadgets.common.Config;
-import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
@@ -47,12 +46,12 @@ public class UpgradeCard extends Item {
     }
 
     public UpgradeCard(Upgrade upgrade, int maxStack) {
-        super(new Properties().tab(MiningGadgets.itemGroup).stacksTo(maxStack));
+        super(new Properties().stacksTo(maxStack));
         this.upgrade = upgrade;
     }
 
     public UpgradeCard(Upgrade upgrade) {
-        super(new Properties().tab(MiningGadgets.itemGroup).stacksTo(1));
+        super(new Properties().stacksTo(1));
         this.upgrade = upgrade;
     }
 
