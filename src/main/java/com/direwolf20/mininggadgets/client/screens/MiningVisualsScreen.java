@@ -56,14 +56,20 @@ public class MiningVisualsScreen extends Screen {
         else
             buttonText = Component.translatable("mininggadgets.tooltip.screen.fade");
 
-        blockBreakButton = new Button(baseX - (150), baseY - 55, 150, 20, buttonText, (button) -> {
-            if (blockBreakButton.getMessage().getString().contains("Shrink"))
-                button.setMessage(Component.translatable("mininggadgets.tooltip.screen.fade"));
-            else
-                button.setMessage(Component.translatable("mininggadgets.tooltip.screen.shrink"));
+        blockBreakButton = Button.builder(
+                buttonText,
+                (button) -> {
+                    if (blockBreakButton.getMessage().getString().contains("Shrink"))
+                        button.setMessage(Component.translatable("mininggadgets.tooltip.screen.fade"));
+                    else
+                        button.setMessage(Component.translatable("mininggadgets.tooltip.screen.shrink"));
 
-            PacketHandler.sendToServer(new PacketChangeBreakType());
-        });
+                    PacketHandler.sendToServer(new PacketChangeBreakType());
+                }
+        )
+                .pos(baseX - (150), baseY - 55)
+                .size(150, 20)
+                .build();
 
         addRenderableWidget(blockBreakButton);
 

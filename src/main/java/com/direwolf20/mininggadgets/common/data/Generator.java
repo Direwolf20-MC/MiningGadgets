@@ -13,15 +13,16 @@ public class Generator {
         var includeClient = event.includeClient();
         var generator = event.getGenerator();
         var helper = event.getExistingFileHelper();
+        var packOutput = event.getGenerator().getPackOutput();
 
         // Client
-        generator.addProvider(includeClient, new GeneratorLanguage(generator));
-        generator.addProvider(includeClient, new GeneratorItemModels(generator, helper));
+        generator.addProvider(includeClient, new GeneratorLanguage(packOutput));
+        generator.addProvider(includeClient, new GeneratorItemModels(packOutput, helper));
 
         // Server
-        generator.addProvider(includeServer, new GeneratorLoot(generator));
-        generator.addProvider(includeServer, new GeneratorRecipes(generator));
-        generator.addProvider(includeServer, new GeneratorBlockTags(generator, helper));
-        generator.addProvider(includeServer, new GeneratorBlockStates(generator, helper));
+        generator.addProvider(includeServer, new GeneratorLoot(packOutput));
+        generator.addProvider(includeServer, new GeneratorRecipes(packOutput));
+        generator.addProvider(includeServer, new GeneratorBlockTags(packOutput, event.getLookupProvider(), generator, helper));
+        generator.addProvider(includeServer, new GeneratorBlockStates(packOutput, helper));
     }
 }

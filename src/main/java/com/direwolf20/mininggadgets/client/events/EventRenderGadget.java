@@ -5,6 +5,7 @@ import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -14,7 +15,6 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -49,23 +49,23 @@ public class EventRenderGadget {
         float f4 = -0.4F * Mth.sin(swingProgress * (float)Math.PI);
 
         matrixStackIn.translate(f * (f2 + 0.64000005F - .1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.71999997F + .3f);
-        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * 75.0F));
+        matrixStackIn.mulPose(Axis.YP.rotationDegrees(f * 75.0F));
 
         float f5 = Mth.sin(swingProgress * swingProgress * (float)Math.PI);
         float f6 = Mth.sin(f1 * (float)Math.PI);
 
-        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * f6 * 45.0F));
-        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
+        matrixStackIn.mulPose(Axis.YP.rotationDegrees(f * f6 * 45.0F));
+        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(f * f5 * -20.0F));
 
         AbstractClientPlayer abstractclientplayerentity = mc.player;
         RenderSystem.setShaderTexture(0, abstractclientplayerentity.getSkinTextureLocation());
 
         matrixStackIn.translate(f * -1.0F, 3.6F, 3.5D);
-        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * 120.0F));
-        matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(200.0F));
-        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * -135.0F));
+        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(f * 120.0F));
+        matrixStackIn.mulPose(Axis.XP.rotationDegrees(200.0F));
+        matrixStackIn.mulPose(Axis.YP.rotationDegrees(f * -135.0F));
         matrixStackIn.translate(f * 5.6F, 0.0D, 0.0D);
-        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * 55.0F));
+        matrixStackIn.mulPose(Axis.YP.rotationDegrees(f * 55.0F));
 
         PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(abstractclientplayerentity);
         if (rightHand) {
@@ -79,8 +79,8 @@ public class EventRenderGadget {
         // renders gadget
         matrixStackIn.pushPose();
         matrixStackIn.translate(f * (f2 + 0.64000005F - .1f), f3 + -0.4F + equipProgress * -0.6F, f4 + -0.71999997F - 0.1f + (isFancyGadget ? -.10f : 0));
-        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f * f6 * 70.0F));
-        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
+        matrixStackIn.mulPose(Axis.YP.rotationDegrees(f * f6 * 70.0F));
+        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(f * f5 * -20.0F));
         matrixStackIn.translate(rightHand ? .13f:-.1f, -.25f, -.35f);
         matrixStackIn.scale(1.15f, 1.15f, 1.15f);
 

@@ -10,7 +10,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class PacketChangeVolume {
-    private float volume;
+    private final float volume;
 
     public PacketChangeVolume(float volume) {
         this.volume = volume;

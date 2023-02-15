@@ -6,7 +6,7 @@ import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -79,8 +79,8 @@ public class ModificationShiftOverlay {
         for (Upgrade upgrade : upgrades) {
             matrix.pushPose();
             matrix.translate(offset + x, y, 0);
-            matrix.mulPose(Vector3f.YP.rotationDegrees(90));
-            matrix.mulPose(Vector3f.XP.rotationDegrees(26));
+            matrix.mulPose(Axis.YP.rotationDegrees(90));
+            matrix.mulPose(Axis.XP.rotationDegrees(26));
             ItemStack upgradeStack = new ItemStack(upgrade.getCardItem().get());
             BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(upgradeStack, Minecraft.getInstance().level, null, 0);
             Minecraft.getInstance().getItemRenderer().render(upgradeStack, ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, false, matrix, outlineLayerBuffer, 15728880, OverlayTexture.NO_OVERLAY, model);
