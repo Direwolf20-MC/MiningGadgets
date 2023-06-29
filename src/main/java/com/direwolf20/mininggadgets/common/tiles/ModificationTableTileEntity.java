@@ -97,6 +97,6 @@ public class ModificationTableTileEntity extends BlockEntity implements MenuProv
     }
 
     public ModificationTableContainer getContainer(Player playerIn) {
-        return new ModificationTableContainer(0, playerIn.level, this.worldPosition, playerIn.getInventory());
+        return new ModificationTableContainer(0, playerIn.level(), this.worldPosition, playerIn.getInventory());
     }
 }

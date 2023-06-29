@@ -9,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -23,7 +22,7 @@ public class MinersLight extends Block {
     public MinersLight() {
         super(
                 Block.Properties
-                        .of(Material.DECORATION)
+                        .of()
                         .noCollission()
                         .strength(0.0f)
                         .lightLevel(e -> 14)

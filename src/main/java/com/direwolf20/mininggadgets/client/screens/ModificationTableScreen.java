@@ -14,6 +14,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -42,46 +43,46 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(stack);
-        super.render(stack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-        this.scrollingUpgrades.render(stack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(stack, mouseX, mouseY); // @mcp: renderTooltip = renderHoveredToolTip
+        this.scrollingUpgrades.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY); // @mcp: renderTooltip = renderHoveredToolTip
 
         int relX = (this.width) / 2;
         int relY = (this.height) / 2;
 
-        drawCenteredString(stack, font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 100, 0xFFFFFF);
+        guiGraphics.drawCenteredString(font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 100, 0xFFFFFF);
 
         if (this.container.getUpgradesCache().size() == 0) {
             String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
             String[] parts = string.split("\n");
             for (int i = 0; i < parts.length; i++) {
-                drawScaledCenteredString(stack, (relX + 17) - (font.width(parts[0]) / 2), (relY - 68) + (i * font.lineHeight), .8f, parts[i], 0xFFFFFF);
+                drawScaledCenteredString(guiGraphics, (relX + 17) - (font.width(parts[0]) / 2), (relY - 68) + (i * font.lineHeight), .8f, parts[i], 0xFFFFFF);
             }
         }
     }
 
     @Override
-    protected void renderLabels(PoseStack stack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
     }
 
-    private void drawScaledCenteredString(PoseStack matrices, int x, int y, float scale, String textComponent, int color) {
+    private void drawScaledCenteredString(GuiGraphics guiGraphics, int x, int y, float scale, String textComponent, int color) {
+        PoseStack matrices = guiGraphics.pose();
         matrices.pushPose();
         matrices.translate(x, y, 0);
         matrices.scale(scale, scale, scale);
-        drawString(matrices, font, textComponent, 0, 0, color);
+        guiGraphics.drawString(font, textComponent, 0, 0, color);
         matrices.popPose();
     }
 
     @Override
-    protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, GUI);
         int relX = (this.width - this.imageWidth) / 2;
         int relY = (this.height - this.imageHeight) / 2;
-        this.blit(stack, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight);
+        guiGraphics.blit(GUI, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight);
     }
 
     @Override
@@ -136,14 +137,14 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         }
 
         @Override
-        protected void drawPanel(PoseStack mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
+        protected void drawPanel(GuiGraphics guiGraphics, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
             Upgrade currentUpgrade = null;
             int x = (entryRight - this.width) + 3;
             int y = relativeY;
 
             int index = 0;
             for (Upgrade upgrade : this.parent.container.getUpgradesCache()) {
-                Minecraft.getInstance().getItemRenderer().renderGuiItem(new ItemStack(upgrade.getCardItem().get()), x, y);
+                guiGraphics.renderItem(new ItemStack(upgrade.getCardItem().get()), x, y);
 
                 if( isMouseOver(mouseX, mouseY) && (mouseX > x && mouseX < x + 15 && mouseY > y && mouseY < y + 15)  )
                     currentUpgrade = upgrade;
@@ -170,11 +171,11 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         }
 
         @Override
-        public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-            super.render(stack, mouseX, mouseY, partialTicks);
+        public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+            super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                this.parent.renderTooltip(stack, Lists.transform(new ItemStack(this.upgrade.getCardItem().get()).getTooltipLines(this.parent.getMinecraft().player, TooltipFlag.Default.NORMAL), Component::getVisualOrderText), mouseX, mouseY);
+                guiGraphics.renderTooltip(Minecraft.getInstance().font, Lists.transform(new ItemStack(this.upgrade.getCardItem().get()).getTooltipLines(this.parent.getMinecraft().player, TooltipFlag.Default.NORMAL), Component::getVisualOrderText), mouseX, mouseY);
         }
 
         @Override

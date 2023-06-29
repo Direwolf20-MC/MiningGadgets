@@ -72,7 +72,7 @@ public class RenderMiningLaser {
 
         VertexConsumer builder;
         double distance = Math.max(1, from.subtract(trace.getLocation()).length());
-        long gameTime = player.level.getGameTime();
+        long gameTime = player.level().getGameTime();
         double v = gameTime * speedModifier;
         float additiveThickness = (thickness * 3.5f) * calculateLaserFlickerModifier(gameTime);
 
