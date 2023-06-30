@@ -3,9 +3,9 @@ package com.direwolf20.mininggadgets.common.util;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluids;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.HashMap;
@@ -22,8 +22,7 @@ public class SpecialBlockActions {
 
     static {
         register.put(Blocks.ICE, (world, pos, state) -> {
-            Material material = world.getBlockState(pos.below()).getMaterial();
-            if (material.blocksMotion() || material.isLiquid())
+            if (world.getBlockState(pos.below()).canBeReplaced(Fluids.WATER))
                 world.setBlockAndUpdate(pos, Blocks.WATER.defaultBlockState());
         });
     }

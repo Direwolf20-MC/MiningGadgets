@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.client.screens.widget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.locale.Language;
@@ -30,17 +31,16 @@ public class ToggleButton extends AbstractWidget {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         Color activeColor = this.enabled ? Color.GREEN : Color.RED;
 
-        fill(stack, this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, ((this.enabled ? 0x68000000 : 0x9B000000)) + activeColor.getRGB());
+        guiGraphics.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, ((this.enabled ? 0x68000000 : 0x9B000000)) + activeColor.getRGB());
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, texture);
-        blit(stack, this.getX() +2, this.getY() + 5, 0, 0, 16, 16, 16, 16);
+        guiGraphics.blit(texture, this.getX() +2, this.getY() + 5, 0, 0, 16, 16, 16, 16);
     }
 
-    public List<FormattedCharSequence> getTooltip() {
+    public List<FormattedCharSequence> getOurTooltip() {
         return Language.getInstance().getVisualOrder(Arrays.asList(this.getMessage(), Component.literal("Enabled: " + this.enabled).withStyle(this.enabled ? ChatFormatting.GREEN : ChatFormatting.RED)));
     }
 
