@@ -11,6 +11,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.BreakingItemParticle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -80,10 +81,14 @@ public class LaserParticle extends BreakingItemParticle {
         xo = x;
         yo = y;
         zo = z;
-        RenderBlockTileEntity te = (RenderBlockTileEntity) world.getBlockEntity(new BlockPos((int)this.x, (int)this.y, (int)this.z));
+        BlockEntity te = world.getBlockEntity(new BlockPos((int)this.x, (int)this.y, (int)this.z));
         if (te != null) {
-            playerUUID = te.getPlayerUUID();
-            voiding = !te.getBlockAllowed();
+            CompoundTag tag = te.getUpdateTag();
+
+            if (tag.contains("playerUUID")) {
+                playerUUID = tag.getUUID("playerUUID");
+            }
+            voiding = !tag.getBoolean("blockAllowed");
         }
         sourceX = d;
         sourceY = d1;
