@@ -80,8 +80,7 @@ public class LaserParticle extends BreakingItemParticle {
         xo = x;
         yo = y;
         zo = z;
-        RenderBlockTileEntity te = (RenderBlockTileEntity) world.getBlockEntity(new BlockPos((int)this.x, (int)this.y, (int)this.z));
-        if (te != null) {
+        if (world.getBlockEntity(new BlockPos((int)Math.floor(this.x), (int)Math.floor(this.y), (int)Math.floor(this.z))) instanceof RenderBlockTileEntity te) {
             playerUUID = te.getPlayerUUID();
             voiding = !te.getBlockAllowed();
         }
@@ -99,7 +98,7 @@ public class LaserParticle extends BreakingItemParticle {
     public boolean particleToPlayer(Player player) {
         boolean partToPlayer = false;
         //if (player.isHandActive()) partToPlayer = true;
-        BlockPos sourcePos = new BlockPos((int)sourceX, (int)sourceY, (int)sourceZ);
+        BlockPos sourcePos = new BlockPos((int)Math.floor(sourceX), (int)Math.floor(sourceY), (int)Math.floor(sourceZ));
         if (!(level.getBlockState(sourcePos) == this.blockState)) partToPlayer = true;
         BlockEntity te = level.getBlockEntity(sourcePos);
         if (te != null && te instanceof RenderBlockTileEntity) {
