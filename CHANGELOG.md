@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## 1.20.1
+
+### [1.15.1]
+
+#### Fixed
+
+- Fix crash when mining adjacent to tile entities and particles not working in -x and/or -z areas of the world
+
 ## 1.19.3
 
 ### [1.14.0]
