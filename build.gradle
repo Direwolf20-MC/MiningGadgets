@@ -155,16 +155,16 @@ publishing {
         }
     }
 
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/Direwolf20-MC/MiningGadgets"
-            credentials {
-                username = providers.environmentVariable("GITHUB_ACTOR")
-                password = providers.environmentVariable("GITHUB_TOKEN")
-            }
-        }
-    }
+//    repositories {
+//        maven {
+//            name = "GitHubPackages"
+//            url = "https://maven.pkg.github.com/Direwolf20-MC/MiningGadgets"
+//            credentials {
+//                username = providers.environmentVariable("GITHUB_ACTOR")
+//                password = providers.environmentVariable("GITHUB_TOKEN")
+//            }
+//        }
+//    }
 }
 
 def makeChangelog() {
