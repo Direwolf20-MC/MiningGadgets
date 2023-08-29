@@ -110,7 +110,8 @@ processResources {
         expand "version": project.version,
                 "mcversion": project.mc_version,
                 "forgeversion": project.forge_version,
-                "forgeshortversion": project.forge_version.split('\\.')[0]
+                "forgeshortversion": project.forge_version.split('\\.')[0],
+                "forge_acceptable_range": project.forge_acceptable_range
     }
 
 	doLast {
