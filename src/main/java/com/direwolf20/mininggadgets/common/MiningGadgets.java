@@ -69,7 +69,7 @@ public class MiningGadgets
         event.registerCreativeModeTab(new ResourceLocation(MOD_ID, MOD_ID), builder ->
                 builder.title(Component.translatable("itemGroup." + MOD_ID))
                         .icon(() -> new ItemStack(ModItems.MININGGADGET_FANCY.get()))
-                        .displayItems((enabledFlags, populator, hasPermissions) -> {
+                        .displayItems((enabledFlags, populator) -> {
                             ModItems.ITEMS.getEntries()
                                     .stream().filter(e -> e != ModItems.MINERS_LIGHT_ITEM)
                                     .forEach(e -> {

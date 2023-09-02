@@ -143,7 +143,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
 
             int index = 0;
             for (Upgrade upgrade : this.parent.container.getUpgradesCache()) {
-                Minecraft.getInstance().getItemRenderer().renderGuiItem(new ItemStack(upgrade.getCardItem().get()), x, y);
+                Minecraft.getInstance().getItemRenderer().renderGuiItem(mStack, new ItemStack(upgrade.getCardItem().get()), x, y);
 
                 if( isMouseOver(mouseX, mouseY) && (mouseX > x && mouseX < x + 15 && mouseY > y && mouseY < y + 15)  )
                     currentUpgrade = upgrade;

@@ -52,7 +52,7 @@ public class LaserParticle extends BreakingItemParticle {
         // of the asset instead of it applying to the entire texture
         BlockColors blockColors = Minecraft.getInstance().getBlockColors();
 
-        int color = blockColors.getColor(this.blockState, this.level, new BlockPos(d, d1, d2), 0);
+        int color = blockColors.getColor(this.blockState, this.level, new BlockPos((int) d, (int) d1, (int) d2), 0);
         float f = (float) (color >> 16 & 255) / 255.0F;
         float f1 = (float) (color >> 8 & 255) / 255.0F;
         float f2 = (float) (color & 255) / 255.0F;
@@ -80,8 +80,7 @@ public class LaserParticle extends BreakingItemParticle {
         xo = x;
         yo = y;
         zo = z;
-        RenderBlockTileEntity te = (RenderBlockTileEntity) world.getBlockEntity(new BlockPos(this.x, this.y, this.z));
-        if (te != null) {
+        if (world.getBlockEntity(new BlockPos((int)Math.floor(this.x), (int)Math.floor(this.y), (int)Math.floor(this.z))) instanceof RenderBlockTileEntity te) {
             playerUUID = te.getPlayerUUID();
             voiding = !te.getBlockAllowed();
         }
@@ -99,7 +98,7 @@ public class LaserParticle extends BreakingItemParticle {
     public boolean particleToPlayer(Player player) {
         boolean partToPlayer = false;
         //if (player.isHandActive()) partToPlayer = true;
-        BlockPos sourcePos = new BlockPos(sourceX, sourceY, sourceZ);
+        BlockPos sourcePos = new BlockPos((int)Math.floor(sourceX), (int)Math.floor(sourceY), (int)Math.floor(sourceZ));
         if (!(level.getBlockState(sourcePos) == this.blockState)) partToPlayer = true;
         BlockEntity te = level.getBlockEntity(sourcePos);
         if (te != null && te instanceof RenderBlockTileEntity) {

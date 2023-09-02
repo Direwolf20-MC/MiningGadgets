@@ -2,13 +2,12 @@ package com.direwolf20.mininggadgets.client.particles.playerparticle;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
@@ -109,8 +108,6 @@ public class PlayerParticle extends TextureSheetParticle {
         moveX = (targetX - this.x) / speedAdjust;
         moveY = (targetY - this.y) / speedAdjust;
         moveZ = (targetZ - this.z) / speedAdjust;
-
-        BlockPos nextPos = new BlockPos(this.x + moveX, this.y + moveY, this.z + moveZ);
 
         if (age > 40)
             //if (world.getBlockState(nextPos).getBlock() == ModBlocks.RENDERBLOCK)

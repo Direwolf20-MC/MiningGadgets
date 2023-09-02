@@ -11,10 +11,10 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -88,8 +88,8 @@ public class EventRenderGadget {
         firstPersonRenderer.renderItem(abstractclientplayerentity,
                 event.getItemStack(),
                 rightHand
-                        ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND
-                        : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND,
+                        ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+                        : ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
                 !rightHand,
                 event.getPoseStack(),
                 event.getMultiBufferSource(),
