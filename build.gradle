@@ -5,6 +5,7 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
+    id "me.modmuss50.mod-publish-plugin" version "0.3.4"
 }
 
 apply {
@@ -148,17 +149,81 @@ jar.finalizedBy('reobfJar')
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifact jar
+        maven(MavenPublication) {
+            from components.java
+            artifactId = project.archivesBaseName.toLowerCase()
         }
     }
+
     repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
+//        maven {
+//            name = "GitHubPackages"
+//            url = "https://maven.pkg.github.com/Direwolf20-MC/MiningGadgets"
+//            credentials {
+//                username = providers.environmentVariable("GITHUB_ACTOR")
+//                password = providers.environmentVariable("GITHUB_TOKEN")
+//            }
+//        }
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+def makeChangelog() {
+    def changelogText = file("./CHANGELOG.md").text;
+
+    def output = "";
+    def readLines = false
+    for (line in changelogText.lines()) {
+        if (line.startsWith("### ") || line.startsWith("## ")) {
+            if (readLines) {
+                break;
+            }
+
+            if (line.contains("${mod_version}") && line.startsWith("### ")) {
+                readLines = true;
+            }
+        }
+        if (readLines) {
+            output += line + "\n";
+        }
+    }
+
+    return output.trim();
+}
+
+
+tasks.register("testChangelog") {
+    group = "tests"
+
+    doLast {
+        println makeChangelog()
+    }
+}
+
+publishMods {
+    dryRun = providers.environmentVariable("CURSE_TOKEN").getOrNull() == null
+    file = jar.archiveFile
+    changelog = makeChangelog()
+    type = STABLE
+
+    modLoaders.add("forge")
+
+    curseforge {
+        projectId = "351748"
+        accessToken = providers.environmentVariable("CURSE_TOKEN")
+        minecraftVersions.add(project.mc_version)
+
+        optional {
+            slug = "charging-gadgets"
+        }
+    }
+
+    github {
+        repository = "direwolf20-mc/MiningGadgets"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        commitish = providers.environmentVariable("GITHUB_SHA").orElse("dryRun")
+    }
 }

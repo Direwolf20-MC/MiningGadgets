@@ -25,7 +25,8 @@ public class RenderBlock extends Block implements EntityBlock {
                 Properties.of(Material.METAL)
                         .strength(50.0F, 1200.0F)
                         .noOcclusion()
-                        .isRedstoneConductor((a, b, c) -> false) // @mcp: setOpaque seems to replace isNormalBlock
+                        .isRedstoneConductor((a, b, c) -> false)
+                // @mcp: setOpaque seems to replace isNormalBlock
         );
     }
 
