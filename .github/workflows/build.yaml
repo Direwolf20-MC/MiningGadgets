@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+      - 'mc/*'
+      - 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK  17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
+      - name: Build
+        run: ./gradlew build --no-daemon
