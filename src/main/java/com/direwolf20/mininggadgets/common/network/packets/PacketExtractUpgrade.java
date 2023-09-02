@@ -41,7 +41,7 @@ public class PacketExtractUpgrade {
                 ServerPlayer player = ctx.get().getSender();
                 if (player == null) return;
 
-                Level world = player.level;
+                Level world = player.level();
                 BlockPos pos = msg.pos;
 
                 BlockEntity te = world.getBlockEntity(pos);

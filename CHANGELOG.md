@@ -2,6 +2,31 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## 1.20.1
+
+### [1.15.3]
+
+#### Added
+
+- Miners Lights are now replaceable meaning you can place over them with normal block placement. This is a nice little quality of life fix :D
+
+#### Fixed
+
+- [#196](https://github.com/direwolf20-mc/mininggadgets/issues/196) don't allow the renderblock to be accelerated by ProjectE
+  - This is a preventative fix for when ProjectE is ported to 1.20.1+
+
+### [1.15.2]
+
+#### Fixed
+
+- Forge version range being too restrictive
+
+### [1.15.1]
+
+#### Fixed
+
+- Fix crash when mining adjacent to tile entities and particles not working in -x and/or -z areas of the world
+
 ## 1.19.3
 
 ### [1.14.0]

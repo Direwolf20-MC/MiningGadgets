@@ -4,12 +4,13 @@ import groovy.json.JsonOutput
 plugins {
     id 'eclipse'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'net.neoforged.gradle' version '[6.0.18,6.2)'
+    id "me.modmuss50.mod-publish-plugin" version "0.3.4"
 }
 
 apply {
     // Fixes m1 macs having build time errors (#forgeplzfix)
-    from "https://raw.githubusercontent.com/mezz/JustEnoughItems/1.18/Forge/buildtools/AppleSiliconSupport.gradle"
+//    from "https://raw.githubusercontent.com/mezz/JustEnoughItems/1.18/Forge/buildtools/AppleSiliconSupport.gradle"
 }
 
 version = "${mod_version}"
@@ -69,15 +70,12 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    // JEI
     maven {
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    //JEI fallback
-    maven {
-        name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
+        name "ModMaven"
+        url "https://modmaven.k-4u.nl"
+        content {
+            includeGroup("mezz.jei")
+        }
     }
     maven {
         url "https://www.cursemaven.com"
@@ -88,10 +86,13 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    minecraft "net.neoforged:forge:${mc_version}-${forge_version}"
 
     //JEI
+    // compile against the JEI API but do not include it at runtime
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    // at runtime, use the full JEI jar
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
@@ -109,7 +110,8 @@ processResources {
         expand "version": project.version,
                 "mcversion": project.mc_version,
                 "forgeversion": project.forge_version,
-                "forgeshortversion": project.forge_version.split('\\.')[0]
+                "forgeshortversion": project.forge_version.split('\\.')[0],
+                "forge_acceptable_range": project.forge_acceptable_range
     }
 
 	doLast {
@@ -148,14 +150,79 @@ jar.finalizedBy('reobfJar')
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifact jar
+        maven(MavenPublication) {
+            from components.java
+            artifactId = project.archivesBaseName.toLowerCase()
         }
     }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
+
+//    repositories {
+//        maven {
+//            name = "GitHubPackages"
+//            url = "https://maven.pkg.github.com/Direwolf20-MC/MiningGadgets"
+//            credentials {
+//                username = providers.environmentVariable("GITHUB_ACTOR")
+//                password = providers.environmentVariable("GITHUB_TOKEN")
+//            }
+//        }
+//    }
+}
+
+def makeChangelog() {
+    def changelogText = file("./CHANGELOG.md").text;
+
+    def output = "";
+    def readLines = false
+    for (line in changelogText.lines()) {
+        if (line.startsWith("### ") || line.startsWith("## ")) {
+            if (readLines) {
+                break;
+            }
+
+            if (line.contains("${mod_version}") && line.startsWith("### ")) {
+                readLines = true;
+            }
         }
+        if (readLines) {
+            output += line + "\n";
+        }
+    }
+
+    return output.trim();
+}
+
+
+tasks.register("testChangelog") {
+    group = "tests"
+
+    doLast {
+        println makeChangelog()
+    }
+}
+
+publishMods {
+    dryRun = providers.environmentVariable("CURSE_TOKEN").getOrNull() == null
+    file = jar.archiveFile
+    changelog = makeChangelog()
+    type = STABLE
+
+    modLoaders.add("neoforge")
+    modLoaders.add("forge")
+
+    curseforge {
+        projectId = "351748"
+        accessToken = providers.environmentVariable("CURSE_TOKEN")
+        minecraftVersions.add(project.mc_version)
+
+        optional {
+            slug = "charging-gadgets"
+        }
+    }
+
+    github {
+        repository = "direwolf20-mc/MiningGadgets"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        commitish = providers.environmentVariable("GITHUB_SHA").orElse("dryRun")
     }
 }
 
