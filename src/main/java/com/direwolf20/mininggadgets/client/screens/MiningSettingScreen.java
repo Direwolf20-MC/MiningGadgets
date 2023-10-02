@@ -105,7 +105,7 @@ public class MiningSettingScreen extends Screen {
         currentSize = MiningProperties.getRange(gadget);
 
         Button sizeButton;
-        leftWidgets.add(sizeButton = new Button(Component.translatable("mininggadgets.tooltip.screen.size", currentSize), (button) -> {
+        leftWidgets.add(sizeButton = Button.builder(getTrans("tooltip.screen.size", currentSize), (button) -> {
             if (UpgradeTools.getUpgrades(gadget).contains(Upgrade.FIVE_BY_FIVE)) {
                 currentSize = currentSize == 3 ? 5 : currentSize == 1 ? 3 : 1;
             } else {
