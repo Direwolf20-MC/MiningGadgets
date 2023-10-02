@@ -11,14 +11,16 @@ import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,6 +31,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.RegisterEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,29 +68,32 @@ public class MiningGadgets
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
     }
 
-    public void buildContents(CreativeModeTabEvent.Register event) {
-        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, MOD_ID), builder ->
-                builder.title(Component.translatable("itemGroup." + MOD_ID))
-                        .icon(() -> new ItemStack(ModItems.MININGGADGET_FANCY.get()))
-                        .displayItems((enabledFlags, populator, hasPermissions) -> {
-                            ModItems.ITEMS.getEntries()
-                                    .stream().filter(e -> e != ModItems.MINERS_LIGHT_ITEM)
-                                    .forEach(e -> {
-                                        // Normal
-                                        Item item = e.get();
-                                        populator.accept(item);
+    public void buildContents(RegisterEvent event) {
+        ResourceKey<CreativeModeTab> TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(MOD_ID, "creative_tab"));
+        event.register(Registries.CREATIVE_MODE_TAB, creativeModeTabRegisterHelper ->
+        {
+            creativeModeTabRegisterHelper.register(TAB, CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.MININGGADGET_FANCY.get()))
+                    .title(Component.translatable("itemGroup." + MOD_ID))
+                    .displayItems((params, output) -> {
+                        ModItems.ITEMS.getEntries()
+                                .stream().filter(e -> e != ModItems.MINERS_LIGHT_ITEM)
+                                .forEach(e -> {
+                                    // Normal
+                                    Item item = e.get();
+                                    output.accept(item);
 
-                                        // Charged
-                                        if (item instanceof MiningGadget) {
-                                            ItemStack stack = new ItemStack(item);
-                                            stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
-                                            populator.accept(stack);
-                                        }
-                                    });
+                                    // Charged
+                                    if (item instanceof MiningGadget) {
+                                        ItemStack stack = new ItemStack(item);
+                                        stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
+                                        output.accept(stack);
+                                    }
+                                });
 
-                            ModItems.UPGRADE_ITEMS.getEntries().forEach(e -> populator.accept(e.get()));
-                        })
-        );
+                        ModItems.UPGRADE_ITEMS.getEntries().forEach(e -> output.accept(e.get()));
+                    })
+                    .build());
+        });
     }
 
     @SubscribeEvent

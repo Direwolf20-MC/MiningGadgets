@@ -47,7 +47,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -327,7 +326,7 @@ public class MiningGadget extends Item {
         if (myplayer.equals(player)) {
             if (volume != 0.0f) {
                 if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("mongo")) {
-                    if (player.level.getGameTime() % 5 == 0)
+                    if (player.level().getGameTime() % 5 == 0)
                         if (rand.nextDouble() > 0.005d)
                             player.playSound(SoundEvents.STONE_HIT, volume * 0.5f, 1f);
                         else
@@ -335,7 +334,7 @@ public class MiningGadget extends Item {
                 }
                 else {
                     if (laserLoopSound == null) {
-                        laserLoopSound = new LaserLoopSound((Player) player, volume, player.level.random);
+                        laserLoopSound = new LaserLoopSound((Player) player, volume, player.level().random);
                         Minecraft.getInstance().getSoundManager().play(laserLoopSound);
                     }
                 }
@@ -344,9 +343,12 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
+    public void onUseTick(Level world, LivingEntity livingEntity, ItemStack stack, int count)
+    {
+        if(!(livingEntity instanceof Player)) return;
+
+        Player player = (Player) livingEntity;
         //Server and Client side
-        Level world = player.level;
         if (world.isClientSide) {
             this.playLoopSound(player, stack);
         }
@@ -398,10 +400,10 @@ public class MiningGadget extends Item {
         List<BlockPos> coords = MiningCollect.collect((Player) player, lookingAt, world, MiningProperties.getRange(stack));
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
-            for (BlockPos sourcePos : findSources(player.level, coords)) {
+            for (BlockPos sourcePos : findSources(player.level(), coords)) {
                 int delay = MiningProperties.getFreezeDelay(stack);
                 if (delay == 0 || count % delay == 0)
-                    spawnFreezeParticle((Player) player, sourcePos, player.level, stack);
+                    spawnFreezeParticle((Player) player, sourcePos, player.level(), stack);
             }
         }
 
@@ -465,7 +467,7 @@ public class MiningGadget extends Item {
                     //}
                 }
                 if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("wildfirev")) {
-                    spawnFireParticle(coord, (ServerLevel) player.level);
+                    spawnFireParticle(coord, (ServerLevel) player.level());
                 }
             }
             if (!(UpgradeTools.containsActiveUpgrade(stack, Upgrade.LIGHT_PLACER)))
@@ -482,7 +484,7 @@ public class MiningGadget extends Item {
             else
                 pos = lookingAt.getBlockPos().relative(side).relative(right);
 
-            if (world.getMaxLocalRawBrightness(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
+            if (world.getMaxLocalRawBrightness(pos) <= 7 && world.getBlockState(pos).isAir()) {
                 int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
                 if (energy > Config.UPGRADECOST_LIGHT.get()) {
                     world.setBlockAndUpdate(pos, ModBlocks.MINERS_LIGHT.get().defaultBlockState());
@@ -519,7 +521,7 @@ public class MiningGadget extends Item {
             toolSpeed = toolSpeed / 3f;
         }
 
-        Level world = player.level;
+        Level world = player.level();
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             float temphardness = state.getDestroySpeed(world, coord);

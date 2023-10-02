@@ -110,7 +110,8 @@ public class PlayerParticle extends TextureSheetParticle {
         moveY = (targetY - this.y) / speedAdjust;
         moveZ = (targetZ - this.z) / speedAdjust;
 
-        BlockPos nextPos = new BlockPos(this.x + moveX, this.y + moveY, this.z + moveZ);
+        //This does not seem to be used but I will leave it here for now anyways
+        BlockPos nextPos = new BlockPos((int) this.x + (int) moveX, (int) this.y + (int) moveY, (int) this.z + (int) moveZ);
 
         if (age > 40)
             //if (world.getBlockState(nextPos).getBlock() == ModBlocks.RENDERBLOCK)

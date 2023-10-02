@@ -36,7 +36,7 @@ public final class PacketInsertUpgrade {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            Level world = player.level;
+            Level world = player.level();
             BlockPos pos = this.pos;
 
             BlockEntity te = world.getBlockEntity(pos);
@@ -44,7 +44,7 @@ public final class PacketInsertUpgrade {
             ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
             ItemStack stack = player.containerMenu.getCarried();
-            if (!stack.sameItem(upgrade)) {
+            if (!ItemStack.matches(stack, upgrade)) {
                 return;
             }
 

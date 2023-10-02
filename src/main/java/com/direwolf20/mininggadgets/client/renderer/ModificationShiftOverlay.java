@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -32,11 +33,11 @@ public class ModificationShiftOverlay {
         }
 
         BlockHitResult trace = (BlockHitResult) pick;
-        if (player.level.getBlockState(trace.getBlockPos()).getBlock() != ModBlocks.MODIFICATION_TABLE.get()) {
+        if (player.level().getBlockState(trace.getBlockPos()).getBlock() != ModBlocks.MODIFICATION_TABLE.get()) {
             return;
         }
 
-        BlockEntity blockEntity = player.level.getBlockEntity(trace.getBlockPos());
+        BlockEntity blockEntity = player.level().getBlockEntity(trace.getBlockPos());
         if (!(blockEntity instanceof ModificationTableTileEntity)) {
             return;
         }
@@ -83,7 +84,7 @@ public class ModificationShiftOverlay {
             matrix.mulPose(Axis.XP.rotationDegrees(26));
             ItemStack upgradeStack = new ItemStack(upgrade.getCardItem().get());
             BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(upgradeStack, Minecraft.getInstance().level, null, 0);
-            Minecraft.getInstance().getItemRenderer().render(upgradeStack, ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, false, matrix, outlineLayerBuffer, 15728880, OverlayTexture.NO_OVERLAY, model);
+            Minecraft.getInstance().getItemRenderer().render(upgradeStack, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, false, matrix, outlineLayerBuffer, 15728880, OverlayTexture.NO_OVERLAY, model);
             x += 1;
             if (x > 2) {
                 x = 0;

@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -36,7 +35,7 @@ public class ModificationTable extends Block implements EntityBlock {
     public static DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public ModificationTable() {
-        super(Properties.of(Material.METAL).strength(2.0f));
+        super(Properties.of().strength(2.0f));
 
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }

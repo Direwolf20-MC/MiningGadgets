@@ -74,7 +74,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             boolean contains = false;
             for (ItemStack filter : filters) {
 
-                if (dropStack.sameItem(filter)) {
+                if (ItemStack.matches(dropStack, filter)) {
                     contains = true;
                     break;
                 }

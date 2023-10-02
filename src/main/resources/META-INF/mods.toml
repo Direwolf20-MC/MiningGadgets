@@ -18,7 +18,7 @@ description='''Mining is better with lasers.'''
 [[dependencies.mininggadgets]]
     modId="forge"
     mandatory=true
-    versionRange="[${forgeversion},)"
+    versionRange="$forge_acceptable_range"
     ordering="NONE"
     side="BOTH"
 
