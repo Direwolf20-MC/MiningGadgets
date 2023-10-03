@@ -34,6 +34,7 @@ public enum Upgrade {
     // Tiered
     SIZE_1("size_1", ModItems.SIZE_1, 1, () -> 0), // 3x3
     SIZE_2("size_2", ModItems.SIZE_2, 2, () -> 0), // 5x5
+    SIZE_3("size_3", ModItems.SIZE_3, 3, () -> 0), // 7x7
 
     FORTUNE_1("fortune_1", ModItems.FORTUNE_1, 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
     FORTUNE_2("fortune_2", ModItems.FORTUNE_2, 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),

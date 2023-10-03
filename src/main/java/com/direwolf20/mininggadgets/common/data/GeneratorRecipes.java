@@ -2,10 +2,7 @@ package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
@@ -302,6 +299,14 @@ public class GeneratorRecipes extends RecipeProvider {
                 .pattern("ene")
                 .pattern("dud")
                 .pattern("epe")
+                .unlockedBy("has_size_1", has(SIZE_1.get()))
+                .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, SIZE_3.get())
+                .requires(SIZE_2.get())
+                .requires(Items.NETHERITE_PICKAXE)
+                .unlockedBy("has_size_2", has(SIZE_2.get()))
                 .unlockedBy("has_size_1", has(SIZE_1.get()))
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
                 .save(consumer);
