@@ -395,7 +395,7 @@ public class MiningGadget extends Item {
         if (world.getBlockState(VectorHelper.getLookingAt((Player) player, stack, range).getBlockPos()) == Blocks.AIR.defaultBlockState())
             return;
 
-        List<BlockPos> coords = MiningCollect.collect((Player) player, lookingAt, world, MiningProperties.getRange(stack));
+        List<BlockPos> coords = MiningCollect.collect((Player) player, lookingAt, world, MiningProperties.getRange(stack), MiningProperties.getSizeMode(stack));
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.level(), coords)) {

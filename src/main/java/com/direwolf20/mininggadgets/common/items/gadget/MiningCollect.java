@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Handles collecting the blocks for the mining action.
  */
 public class MiningCollect {
-    public static List<BlockPos> collect(Player player, BlockHitResult startBlock, Level world, int range) {
+    public static List<BlockPos> collect(Player player, BlockHitResult startBlock, Level world, int range, MiningProperties.SizeMode sizeMode) {
         List<BlockPos> coordinates = new ArrayList<>();
         BlockPos startPos = startBlock.getBlockPos();
 
@@ -45,10 +45,16 @@ public class MiningCollect {
         int downRange = midRange;
 
         if (!vertical && range > 3) {
-            double myYPos = player.position().get(Direction.UP.getAxis());
-            double hitBlockPos = startBlock.getBlockPos().get(Direction.UP.getAxis());
 
-            if (Math.abs(myYPos - hitBlockPos) < 2) {
+            if (sizeMode == MiningProperties.SizeMode.AUTO) {
+                double myYPos = player.position().get(Direction.UP.getAxis());
+                double hitBlockPos = startBlock.getBlockPos().get(Direction.UP.getAxis());
+
+                if (Math.abs(myYPos - hitBlockPos) < 2) {
+                    downRange = 1;
+                    upRange = range - 2;
+                }
+            } else if (sizeMode == MiningProperties.SizeMode.PATHWAY) {
                 downRange = 1;
                 upRange = range - 2;
             }

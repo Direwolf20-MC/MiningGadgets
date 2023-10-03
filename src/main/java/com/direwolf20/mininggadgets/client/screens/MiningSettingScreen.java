@@ -43,6 +43,7 @@ public class MiningSettingScreen extends Screen {
     private List<Upgrade> toggleableList = new ArrayList<>();
     private HashMap<Upgrade, ToggleButton> upgradeButtons = new HashMap<>();
     private boolean containsFreeze = false;
+    private MiningProperties.SizeMode currentMode;
 
     public MiningSettingScreen(ItemStack gadget) {
         super(Component.literal("title"));
@@ -51,6 +52,7 @@ public class MiningSettingScreen extends Screen {
         this.beamRange = MiningProperties.getBeamRange(gadget);
         this.volume = MiningProperties.getVolume(gadget);
         this.freezeDelay = MiningProperties.getFreezeDelay(gadget);
+        this.currentMode = MiningProperties.getSizeMode(gadget);
     }
 
     @Override
@@ -103,11 +105,11 @@ public class MiningSettingScreen extends Screen {
 
         // Left size
         currentSize = MiningProperties.getRange(gadget);
-        int maxSize = MiningProperties.getMaxMiningRange(gadget);
+        int maxMiningRange = MiningProperties.getMaxMiningRange(gadget);
 
         Button sizeButton;
         leftWidgets.add(sizeButton = Button.builder(getTrans("tooltip.screen.size", currentSize), (button) -> {
-            if (currentSize == maxSize)
+            if (currentSize == maxMiningRange)
                 currentSize = 1;
             else
                 currentSize += 2;
@@ -115,6 +117,15 @@ public class MiningSettingScreen extends Screen {
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
             PacketHandler.sendToServer(new PacketChangeMiningSize());
         }).pos(baseX - 135, 0).size(125, 20).build());
+
+        if (maxMiningRange > 3) {
+            leftWidgets.add(Button.builder(currentMode.getTooltip(), (button) -> {
+                currentMode = MiningProperties.nextSizeMode(gadget);
+
+                button.setMessage(currentMode.getTooltip());
+                PacketHandler.sendToServer(new PacketChangeMiningSizeMode());
+            }).pos(baseX - 135, 0).size(125, 20).build());
+        }
 
         ///ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
         leftWidgets.add(rangeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), Component.empty(), 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, true) {
@@ -153,8 +164,7 @@ public class MiningSettingScreen extends Screen {
             });
 
         // Button logic
-        if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.SIZE_1) &&
-            !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.SIZE_2) )
+        if (maxMiningRange == 1)
             sizeButton.active = false;
 
         // Lay the buttons out, too lazy to figure out the math every damn time.

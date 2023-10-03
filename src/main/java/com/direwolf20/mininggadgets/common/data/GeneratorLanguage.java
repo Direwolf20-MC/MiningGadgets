@@ -88,6 +88,9 @@ public class GeneratorLanguage extends LanguageProvider {
 
         // Screen Buttons and text
         addPrefixed("tooltip.screen.size", "Size: %1$d x %1$d");
+        addPrefixed("tooltip.screen.sizemode.auto", "Automatic");
+        addPrefixed("tooltip.screen.sizemode.normal", "Normal Mode");
+        addPrefixed("tooltip.screen.sizemode.pathway", "2 Down (Pathways)");
         addPrefixed("tooltip.screen.range", "Range");
         addPrefixed("tooltip.screen.visuals_menu", "Edit Visuals");
         addPrefixed("tooltip.screen.mining_gadget", "Gadget Settings");

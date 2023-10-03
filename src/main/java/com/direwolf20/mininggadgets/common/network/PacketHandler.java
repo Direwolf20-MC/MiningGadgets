@@ -30,22 +30,23 @@ public class PacketHandler {
         int id = 0;
 
         // Server side
-        HANDLER.registerMessage(id++, PacketExtractUpgrade.class,     PacketExtractUpgrade::encode,       PacketExtractUpgrade::decode,       PacketExtractUpgrade.Handler::handle);
-        HANDLER.registerMessage(id++, PacketUpdateUpgrade.class,      PacketUpdateUpgrade::encode,        PacketUpdateUpgrade::decode,        PacketUpdateUpgrade.Handler::handle);
-        HANDLER.registerMessage(id++, PacketChangeMiningSize.class,   PacketChangeMiningSize::encode,     PacketChangeMiningSize::decode,     PacketChangeMiningSize.Handler::handle);
-        HANDLER.registerMessage(id++, PacketChangeRange.class,        PacketChangeRange::encode,          PacketChangeRange::decode,          PacketChangeRange.Handler::handle);
-        HANDLER.registerMessage(id++, PacketChangeBreakType.class,    PacketChangeBreakType::encode,      PacketChangeBreakType::decode,      PacketChangeBreakType.Handler::handle);
-        HANDLER.registerMessage(id++, PacketChangeColor.class,        PacketChangeColor::encode,          PacketChangeColor::decode,          PacketChangeColor.Handler::handle);
-        HANDLER.registerMessage(id++, PacketGhostSlot.class,          PacketGhostSlot::encode,            PacketGhostSlot::decode,            PacketGhostSlot.Handler::handle);
-        HANDLER.registerMessage(id++, PacketOpenFilterContainer.class,PacketOpenFilterContainer::encode,  PacketOpenFilterContainer::decode,  PacketOpenFilterContainer.Handler::handle);
-        HANDLER.registerMessage(id++, PacketToggleFilters.class,      PacketToggleFilters::encode,        PacketToggleFilters::decode,        PacketToggleFilters.Handler::handle);
-        HANDLER.registerMessage(id++, PacketTogglePrecision.class,    PacketTogglePrecision::encode,      PacketTogglePrecision::decode,      PacketTogglePrecision.Handler::handle);
-        HANDLER.registerMessage(id++, PacketChangeVolume.class,       PacketChangeVolume::encode,         PacketChangeVolume::decode,         PacketChangeVolume.Handler::handle);
-        HANDLER.registerMessage(id++, PacketChangeFreezeDelay.class,  PacketChangeFreezeDelay::encode,    PacketChangeFreezeDelay::decode,    PacketChangeFreezeDelay.Handler::handle);
+        HANDLER.registerMessage(id++, PacketExtractUpgrade.class,      PacketExtractUpgrade::encode,       PacketExtractUpgrade::decode,       PacketExtractUpgrade.Handler::handle);
+        HANDLER.registerMessage(id++, PacketUpdateUpgrade.class,       PacketUpdateUpgrade::encode,        PacketUpdateUpgrade::decode,        PacketUpdateUpgrade.Handler::handle);
+        HANDLER.registerMessage(id++, PacketChangeMiningSize.class,    PacketChangeMiningSize::encode,     PacketChangeMiningSize::decode,     PacketChangeMiningSize.Handler::handle);
+        HANDLER.registerMessage(id++, PacketChangeRange.class,         PacketChangeRange::encode,          PacketChangeRange::decode,          PacketChangeRange.Handler::handle);
+        HANDLER.registerMessage(id++, PacketChangeBreakType.class,     PacketChangeBreakType::encode,      PacketChangeBreakType::decode,      PacketChangeBreakType.Handler::handle);
+        HANDLER.registerMessage(id++, PacketChangeColor.class,         PacketChangeColor::encode,          PacketChangeColor::decode,          PacketChangeColor.Handler::handle);
+        HANDLER.registerMessage(id++, PacketGhostSlot.class,           PacketGhostSlot::encode,            PacketGhostSlot::decode,            PacketGhostSlot.Handler::handle);
+        HANDLER.registerMessage(id++, PacketOpenFilterContainer.class, PacketOpenFilterContainer::encode,  PacketOpenFilterContainer::decode,  PacketOpenFilterContainer.Handler::handle);
+        HANDLER.registerMessage(id++, PacketToggleFilters.class,       PacketToggleFilters::encode,        PacketToggleFilters::decode,        PacketToggleFilters.Handler::handle);
+        HANDLER.registerMessage(id++, PacketTogglePrecision.class,     PacketTogglePrecision::encode,      PacketTogglePrecision::decode,      PacketTogglePrecision.Handler::handle);
+        HANDLER.registerMessage(id++, PacketChangeVolume.class,        PacketChangeVolume::encode,         PacketChangeVolume::decode,         PacketChangeVolume.Handler::handle);
+        HANDLER.registerMessage(id++, PacketChangeFreezeDelay.class,   PacketChangeFreezeDelay::encode,    PacketChangeFreezeDelay::decode,    PacketChangeFreezeDelay.Handler::handle);
 
         //Client Side
-        HANDLER.registerMessage(id++, PacketDurabilitySync.class,     PacketDurabilitySync::encode,       PacketDurabilitySync::decode,       PacketDurabilitySync.Handler::handle);
-        HANDLER.registerMessage(id++, PacketInsertUpgrade.class,      PacketInsertUpgrade::encode,        PacketInsertUpgrade::decode,        PacketInsertUpgrade::handler);
+        HANDLER.registerMessage(id++, PacketDurabilitySync.class,      PacketDurabilitySync::encode,       PacketDurabilitySync::decode,       PacketDurabilitySync.Handler::handle);
+        HANDLER.registerMessage(id++, PacketInsertUpgrade.class,       PacketInsertUpgrade::encode,        PacketInsertUpgrade::decode,        PacketInsertUpgrade::handler);
+        HANDLER.registerMessage(id++, PacketChangeMiningSizeMode.class,PacketChangeMiningSizeMode::encode, PacketChangeMiningSizeMode::decode, PacketChangeMiningSizeMode.Handler::handle);
     }
 
     public static void sendTo(Object msg, ServerPlayer player) {
