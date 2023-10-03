@@ -123,7 +123,6 @@ public class MiningProperties {
 
     public static int setMaxMiningRange(ItemStack gadget, int range) {
         gadget.getOrCreateTag().putInt(KEY_MAX_MINING_RANGE, range);
-        MiningGadgets.getLogger().info("Set max mining range to {}", range);
         return range;
     }
 

@@ -104,11 +104,9 @@ public class MiningSettingScreen extends Screen {
         // Left size
         currentSize = MiningProperties.getRange(gadget);
         int maxSize = MiningProperties.getMaxMiningRange(gadget);
-        MiningGadgets.getLogger().info("Gadget can mine up to size {} (currently {})", maxSize, currentSize);
 
         Button sizeButton;
         leftWidgets.add(sizeButton = Button.builder(getTrans("tooltip.screen.size", currentSize), (button) -> {
-            MiningGadgets.getLogger().info("Gadget can mine up to size {} (currently {})", maxSize, currentSize);
             if (currentSize == maxSize)
                 currentSize = 1;
             else
@@ -116,7 +114,6 @@ public class MiningSettingScreen extends Screen {
 
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
             PacketHandler.sendToServer(new PacketChangeMiningSize());
-            MiningGadgets.getLogger().info("Gadget can now mine {}", currentSize);
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         ///ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
