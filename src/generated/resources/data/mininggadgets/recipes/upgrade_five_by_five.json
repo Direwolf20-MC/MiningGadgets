@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "d": {
       "item": "minecraft:diamond_block"
@@ -7,11 +8,11 @@
     "e": {
       "tag": "forge:ender_pearls"
     },
-    "p": {
-      "item": "minecraft:netherite_pickaxe"
-    },
     "n": {
       "item": "minecraft:netherite_block"
+    },
+    "p": {
+      "item": "minecraft:netherite_pickaxe"
     },
     "u": {
       "item": "mininggadgets:upgrade_three_by_three"
@@ -24,5 +25,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_five_by_five"
-  }
+  },
+  "show_notification": true
 }
