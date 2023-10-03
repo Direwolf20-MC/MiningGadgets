@@ -41,8 +41,8 @@ public class ModificationTableCommands {
             }
 
             if (card.getBaseName().equals(Upgrade.SIZE_1.getBaseName())) {
-                MiningProperties.setRange(laser, UpgradeTools.getMaxMiningSize(card.getTier()));
-                MiningProperties.setMaxMiningRange(laser, UpgradeTools.getMaxMiningSize(card.getTier()));
+                MiningProperties.setRange(laser, UpgradeTools.getMaxMiningRange(card.getTier()));
+                MiningProperties.setMaxMiningRange(laser, UpgradeTools.getMaxMiningRange(card.getTier()));
             }
 
             if (UpgradeTools.containsUpgrade(laser, card))

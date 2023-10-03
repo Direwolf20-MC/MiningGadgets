@@ -1,5 +1,6 @@
 package com.direwolf20.mininggadgets.common.items.gadget;
 
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -122,6 +123,7 @@ public class MiningProperties {
 
     public static int setMaxMiningRange(ItemStack gadget, int range) {
         gadget.getOrCreateTag().putInt(KEY_MAX_MINING_RANGE, range);
+        MiningGadgets.getLogger().info("Set max mining range to {}", range);
         return range;
     }
 

@@ -52,8 +52,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.silk", "Applies the silk touch enchant to the Mining Gadget");
         add("tooltop.mininggadgets.void_junk", "Voids blocks! (adds filtering too)");
         add("tooltop.mininggadgets.magnet", "Deconstructs blocks right into your inventory");
-        add("tooltop.mininggadgets.size_1", "Allows for a 3x3 mining radius");
-        add("tooltop.mininggadgets.size_2", "Allows for a 5x5 mining radius");
+        add("tooltop.mininggadgets.size", "Allows to mine with a larger mining radius");
         add("tooltop.mininggadgets.light_placer", "Places torches whenever the surroundings light level is lower than 8");
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
