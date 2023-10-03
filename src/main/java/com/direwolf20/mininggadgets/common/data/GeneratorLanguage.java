@@ -29,6 +29,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.LIGHT_PLACER, "Upgrade: Light Placer");
         addItem(ModItems.MAGNET, "Upgrade: Magnet");
         addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
+        addItem(ModItems.FIVE_BY_FIVE, "Upgrade: 5x5");
 //        addItem(ModItems.PAVER, "Upgrade: Paver");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
@@ -52,6 +53,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.void_junk", "Voids blocks! (adds filtering too)");
         add("tooltop.mininggadgets.magnet", "Deconstructs blocks right into your inventory");
         add("tooltop.mininggadgets.three_by_three", "Allows for a 3x3 mining radius");
+        add("tooltop.mininggadgets.five_by_five", "Allows for a 5x5 mining radius");
         add("tooltop.mininggadgets.light_placer", "Places torches whenever the surroundings light level is lower than 8");
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
