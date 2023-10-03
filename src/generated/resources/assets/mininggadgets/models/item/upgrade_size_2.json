@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "mininggadgets:item/upgrade_size_5"
+    "layer0": "mininggadgets:item/upgrade_size_2"
   }
 }

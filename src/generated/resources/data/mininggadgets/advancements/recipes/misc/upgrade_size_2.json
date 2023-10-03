@@ -1,9 +1,21 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
+    "has_size_1": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mininggadgets:upgrade_size_1"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "mininggadgets:upgrade_size_3"
+        "recipe": "mininggadgets:upgrade_size_2"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -22,13 +34,14 @@
   },
   "requirements": [
     [
+      "has_size_1",
       "has_upgrade",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "mininggadgets:upgrade_size_3"
+      "mininggadgets:upgrade_size_2"
     ]
   },
   "sends_telemetry_event": false

@@ -15,7 +15,7 @@
       "item": "minecraft:netherite_pickaxe"
     },
     "u": {
-      "item": "mininggadgets:upgrade_size_3"
+      "item": "mininggadgets:upgrade_size_1"
     }
   },
   "pattern": [
@@ -24,7 +24,7 @@
     "epe"
   ],
   "result": {
-    "item": "mininggadgets:upgrade_size_5"
+    "item": "mininggadgets:upgrade_size_2"
   },
   "show_notification": true
 }
