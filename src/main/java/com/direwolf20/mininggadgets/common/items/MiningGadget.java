@@ -180,11 +180,10 @@ public class MiningGadget extends Item {
         IEnergyStorage energy = tool.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
 
-        if (MiningProperties.getRange(tool) == 3)
-            cost = cost * 9;
+        var range = MiningProperties.getRange(tool);
 
-        if (MiningProperties.getRange(tool) == 5)
-            cost = cost * 25;
+        if (range > 1)
+            cost = cost * (range * range);
 
         return energy.getEnergyStored() >= cost;
     }
