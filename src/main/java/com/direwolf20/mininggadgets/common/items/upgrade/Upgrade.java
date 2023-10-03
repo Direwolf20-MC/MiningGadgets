@@ -32,8 +32,8 @@ public enum Upgrade {
     LIGHT_PLACER("light_placer", ModItems.LIGHT_PLACER, () -> 0), // applied at operation based on config. this isn't ideal
 
     // Tiered
-    SIZE_3("size_3", ModItems.SIZE_3, 1, () -> 0), // 3x3
-    SIZE_5("size_5", ModItems.SIZE_5, 2, () -> 0), // 5x5
+    SIZE_1("size_1", ModItems.SIZE_1, 1, () -> 0), // 3x3
+    SIZE_2("size_2", ModItems.SIZE_2, 2, () -> 0), // 5x5
 
     FORTUNE_1("fortune_1", ModItems.FORTUNE_1, 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
     FORTUNE_2("fortune_2", ModItems.FORTUNE_2, 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),

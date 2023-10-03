@@ -154,8 +154,8 @@ public class MiningSettingScreen extends Screen {
             });
 
         // Button logic
-        if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.SIZE_3) &&
-            !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.SIZE_5) )
+        if( !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.SIZE_1) &&
+            !UpgradeTools.containsActiveUpgrade(gadget, Upgrade.SIZE_2) )
             sizeButton.active = false;
 
         // Lay the buttons out, too lazy to figure out the math every damn time.
