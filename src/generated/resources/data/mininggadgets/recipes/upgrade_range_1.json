@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_range_1"
-  }
+  },
+  "show_notification": true
 }

@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_magnet"
-  }
+  },
+  "show_notification": true
 }

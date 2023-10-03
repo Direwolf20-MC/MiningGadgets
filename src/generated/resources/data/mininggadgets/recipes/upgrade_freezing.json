@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_freezing"
-  }
+  },
+  "show_notification": true
 }

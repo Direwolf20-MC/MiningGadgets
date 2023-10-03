@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "mininggadgets:modificationtable"
-  }
+  },
+  "show_notification": true
 }
