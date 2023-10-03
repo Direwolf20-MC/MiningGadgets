@@ -212,4 +212,8 @@ public class UpgradeTools {
     public static Component getName(Upgrade upgrade) {
         return Component.literal(ForgeI18n.parseMessage(upgrade.getLocal()).replace(ForgeI18n.parseMessage(upgrade.getLocalReplacement()), ""));
     }
+
+    public static int getMaxMiningSize(int tier) {
+        return 1 + tier * 2; // 1 -> 3, 2 -> 5, 3 -> 7, 4 -> 9
+    }
 }

@@ -25,8 +25,8 @@
   "item.mininggadgets.upgrade_range_2": "Upgrade: Range, Tier 2",
   "item.mininggadgets.upgrade_range_3": "Upgrade: Range, Tier 3",
   "item.mininggadgets.upgrade_silk": "Upgrade: Silk touch",
-  "item.mininggadgets.upgrade_three_by_three": "Upgrade: 3x3",
-  "item.mininggadgets.upgrade_five_by_five": "Upgrade: 5x5",
+  "item.mininggadgets.upgrade_size_3": "Upgrade: 3x3",
+  "item.mininggadgets.upgrade_size_5": "Upgrade: 5x5",
   "item.mininggadgets.upgrade_void_junk": "Upgrade: Void Junk",
   "itemGroup.mininggadgets": "Mining Gadgets",
   "mininggadgets.gadget.energy": "Energy: %d/%d",
@@ -77,7 +77,7 @@
   "tooltop.mininggadgets.paver": "Creates a path for you as you mine",
   "tooltop.mininggadgets.range": "Extends your range by 5 times with each tier",
   "tooltop.mininggadgets.silk": "Applies the silk touch enchant to the Mining Gadget",
-  "tooltop.mininggadgets.three_by_three": "Allows for a 3x3 mining radius",
-  "tooltop.mininggadgets.five_by_five": "Allows for a 5x5 mining radius",
+  "tooltop.mininggadgets.size_3": "Allows for a 3x3 mining radius",
+  "tooltop.mininggadgets.size_5": "Allows for a 5x5 mining radius",
   "tooltop.mininggadgets.void_junk": "Voids blocks! (adds filtering too)"
 }

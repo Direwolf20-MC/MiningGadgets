@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "mininggadgets:upgrade_three_by_three"
+        "recipe": "mininggadgets:upgrade_size_3"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "mininggadgets:upgrade_three_by_three"
+      "mininggadgets:upgrade_size_3"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

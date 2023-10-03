@@ -162,18 +162,17 @@ public class MiningGadget extends Item {
 //    }
 
     public static void changeRange(ItemStack tool) {
-        List<Upgrade> upgrades = UpgradeTools.getUpgrades(tool);
-        if (upgrades.contains(Upgrade.FIVE_BY_FIVE)) {
-            if (MiningProperties.getRange(tool) == 3) {
-                MiningProperties.setRange(tool, 5);
-                return;
-            }
+        int maxRange = MiningProperties.getMaxMiningRange(tool);
+        if (maxRange == 1) {
+            MiningProperties.setRange(tool, 1);
+            return;
         }
 
-        if (MiningProperties.getRange(tool) == 1)
-            MiningProperties.setRange(tool, 3);
-        else
+        int range = MiningProperties.getRange(tool);
+        if (range == maxRange) // If we're at max range (set by upgrade), then we toggle back to 1x1
             MiningProperties.setRange(tool, 1);
+        else
+            MiningProperties.setRange(tool, range + 2); // 1 -> 3 -> 5 -> 7 -> 9 -> 11 -> etc
     }
 
     public static boolean canMine(ItemStack tool) {

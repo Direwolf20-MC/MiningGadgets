@@ -23,6 +23,7 @@ public class MiningProperties {
     private static final String KEY_MAX_BEAM_RANGE = "maxBeamRange";
     private static final String KEY_WHITELIST = "isWhitelist";
     private static final String KEY_RANGE = "range";
+    private static final String KEY_MAX_MINING_RANGE = "maxMiningRange";
     private static final String KEY_SPEED = "speed";
     private static final String BREAK_TYPE = "breakType";
     private static final String CAN_MINE = "canMine";
@@ -117,6 +118,16 @@ public class MiningProperties {
     public static int getBeamMaxRange(ItemStack gadget) {
         CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(KEY_MAX_BEAM_RANGE) ? setBeamMaxRange(gadget, MIN_RANGE) : compound.getInt(KEY_MAX_BEAM_RANGE);
+    }
+
+    public static int setMaxMiningRange(ItemStack gadget, int range) {
+        gadget.getOrCreateTag().putInt(KEY_MAX_MINING_RANGE, range);
+        return range;
+    }
+
+    public static int getMaxMiningRange(ItemStack gadget) {
+        CompoundTag compound = gadget.getOrCreateTag();
+        return !compound.contains(KEY_MAX_MINING_RANGE) ? setMaxMiningRange(gadget, 1) : compound.getInt(KEY_MAX_MINING_RANGE);
     }
 
     public static boolean setWhitelist(ItemStack gadget, boolean isWhitelist) {

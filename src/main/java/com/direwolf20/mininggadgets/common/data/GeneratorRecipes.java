@@ -281,7 +281,7 @@ public class GeneratorRecipes extends RecipeProvider {
             .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
             .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, THREE_BY_THREE.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SIZE_3.get())
             .define('r', Items.REDSTONE_BLOCK)
             .define('u', UPGRADE_EMPTY.get())
             .define('d', Items.DIAMOND_BLOCK)
@@ -293,16 +293,16 @@ public class GeneratorRecipes extends RecipeProvider {
             .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
             .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, FIVE_BY_FIVE.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SIZE_5.get())
                 .define('n', Items.NETHERITE_BLOCK)
-                .define('u', THREE_BY_THREE.get())
+                .define('u', SIZE_3.get())
                 .define('d', Items.DIAMOND_BLOCK)
                 .define('p', Items.NETHERITE_PICKAXE)
                 .define('e', Tags.Items.ENDER_PEARLS)
                 .pattern("ene")
                 .pattern("dud")
                 .pattern("epe")
-                .unlockedBy("has_three_by_three", has(THREE_BY_THREE.get()))
+                .unlockedBy("has_size_3", has(SIZE_3.get()))
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
                 .save(consumer);
 
