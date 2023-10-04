@@ -27,6 +27,7 @@
   "item.mininggadgets.upgrade_silk": "Upgrade: Silk touch",
   "item.mininggadgets.upgrade_size_1": "Upgrade: 3x3",
   "item.mininggadgets.upgrade_size_2": "Upgrade: 5x5",
+  "item.mininggadgets.upgrade_size_3": "Upgrade: 7x7",
   "item.mininggadgets.upgrade_void_junk": "Upgrade: Void Junk",
   "itemGroup.mininggadgets": "Mining Gadgets",
   "mininggadgets.gadget.energy": "Energy: %d/%d",
