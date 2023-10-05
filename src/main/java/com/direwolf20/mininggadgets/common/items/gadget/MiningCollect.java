@@ -50,7 +50,7 @@ public class MiningCollect {
             BlockState origState = world.getBlockState(startBlock.getBlockPos());
             var matcher = getMatcher(shape, origState);
 
-            var context = new ShapeContext(world, startBlock.getBlockPos(), startBlock.getDirection(), origState, matcher, (range * range) - 1);
+            var context = new ShapeContext(world, startBlock.getBlockPos(), startBlock.getDirection(), origState, matcher, (range * range));
             return shape.getBlocks(context);
         }
 
