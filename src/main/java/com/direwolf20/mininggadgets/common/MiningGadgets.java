@@ -15,6 +15,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -40,6 +41,9 @@ public class MiningGadgets
 {
     public static final String MOD_ID = "mininggadgets";
     private static final Logger LOGGER = LogManager.getLogger();
+
+    // Borrowed from FTB Ulitmine by LatvianModder
+    public static final TagKey<Block> EXCLUDED_BLOCKS = TagKey.create(Registries.BLOCK, new ResourceLocation(MOD_ID, "excluded_blocks"));
 
     public MiningGadgets() {
         IEventBus event = FMLJavaModLoadingContext.get().getModEventBus();

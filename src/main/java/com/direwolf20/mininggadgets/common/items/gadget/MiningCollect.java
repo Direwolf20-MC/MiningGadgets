@@ -2,6 +2,10 @@ package com.direwolf20.mininggadgets.common.items.gadget;
 
 import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
+import com.direwolf20.mininggadgets.common.collectors.BlockMatcher;
+import com.direwolf20.mininggadgets.common.collectors.Shape;
+import com.direwolf20.mininggadgets.common.collectors.ShapeContext;
+import com.direwolf20.mininggadgets.common.collectors.ShapelessWalker;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.DoorBlock;
@@ -21,7 +25,35 @@ import java.util.stream.Collectors;
  * Handles collecting the blocks for the mining action.
  */
 public class MiningCollect {
+
+    // Caching for the shape for Veinminer
+    private static Shape shapelessShape;
+
+    private static BlockMatcher getMatcher(Shape shape, BlockState origState) {
+        if (shape.getTagMatcher().actualCheck(origState, origState)) {
+            return shape.getTagMatcher();
+        } else if (BlockMatcher.CROP_LIKE.actualCheck(origState, origState)) {
+            return BlockMatcher.CROP_LIKE;
+        }
+        return BlockMatcher.MATCH;
+    }
+
     public static List<BlockPos> collect(Player player, BlockHitResult startBlock, Level world, int range, MiningProperties.SizeMode sizeMode) {
+
+        // Veinminer mode
+        if (range > 1 && sizeMode == MiningProperties.SizeMode.VEINMINE){
+            if (shapelessShape == null) {
+                shapelessShape = new ShapelessWalker();
+            }
+            var shape = shapelessShape;
+
+            BlockState origState = world.getBlockState(startBlock.getBlockPos());
+            var matcher = getMatcher(shape, origState);
+
+            var context = new ShapeContext(world, startBlock.getBlockPos(), startBlock.getDirection(), origState, matcher, range);
+            return shape.getBlocks(context);
+        }
+
         List<BlockPos> coordinates = new ArrayList<>();
         BlockPos startPos = startBlock.getBlockPos();
 

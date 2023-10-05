@@ -52,7 +52,8 @@ public class MiningProperties {
     public enum SizeMode {
         AUTO("auto"),
         NORMAL("normal"),
-        PATHWAY("pathway");
+        PATHWAY("pathway"),
+        VEINMINE("veinmine");
 
         private final String baseName;
 

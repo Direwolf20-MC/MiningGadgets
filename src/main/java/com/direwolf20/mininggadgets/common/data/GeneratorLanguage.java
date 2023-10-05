@@ -92,6 +92,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.screen.sizemode.auto", "Automatic");
         addPrefixed("tooltip.screen.sizemode.normal", "Normal Mode");
         addPrefixed("tooltip.screen.sizemode.pathway", "2 Down (Pathways)");
+        addPrefixed("tooltip.screen.sizemode.veinmine", "Veinminer");
         addPrefixed("tooltip.screen.range", "Range");
         addPrefixed("tooltip.screen.visuals_menu", "Edit Visuals");
         addPrefixed("tooltip.screen.mining_gadget", "Gadget Settings");

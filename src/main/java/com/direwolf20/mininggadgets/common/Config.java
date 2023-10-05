@@ -1,13 +1,17 @@
 package com.direwolf20.mininggadgets.common;
 
+import com.direwolf20.mininggadgets.common.util.BlockTagConfigMatcher;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.nio.file.Path;
+import java.util.List;
 
 @Mod.EventBusSubscriber
 public class Config {
@@ -16,6 +20,9 @@ public class Config {
     public static final String CATEGORY_POWER = "power";
     public static final String SUBCATEGORY_MININGGADGET = "mining_gadget";
     public static final String SUBCATEGORY_UPGRADES = "upgrades";
+
+    // Borrowed from FTB Ulitmine by LatvianModder
+    public static final String SUBCATEGORY_ULTIMINE = "ultimine";
 
     private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
     private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
@@ -41,6 +48,11 @@ public class Config {
     public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY1;
     public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY2;
     public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY3;
+
+    // Borrowed from FTB Ulitmine by LatvianModder
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> MERGE_TAGS_SHAPELESS;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> MERGE_TAGS_SHAPED;
+
 
     static {
 
@@ -101,6 +113,24 @@ public class Config {
                 .defineInRange("battery2", 5000000, 0, Integer.MAX_VALUE);
         UPGRADECOST_BATTERY3 = COMMON_BUILDER.comment("Capacity Boost from Battery 3 Upgrade")
                 .defineInRange("battery3", 10000000, 0, Integer.MAX_VALUE);
+
+        // Borrowed from FTB Ulitmine by LatvianModder
+        COMMON_BUILDER.pop();
+
+        COMMON_BUILDER.comment("Ultimine settings").push(SUBCATEGORY_ULTIMINE);
+
+        MERGE_TAGS_SHAPELESS = COMMON_BUILDER.comment("These tags will be considered the same block when checking for blocks to Ultimine in shapeless mining mode")
+                .defineListAllowEmpty("merge_tags", List.of("minecraft:base_stone_overworld",
+                        "c:*_ores",
+                        "forge:ores/*"),
+                        (Object o) -> o instanceof String && ResourceLocation.isValidResourceLocation((String) o));
+
+        MERGE_TAGS_SHAPED = COMMON_BUILDER.comment("These tags will be considered the same block when checking for blocks to Ultimine in shaped mining modes")
+                .defineListAllowEmpty("merge_tags_shaped",
+                List.of(
+                        "*"
+                ),
+                (o) -> o instanceof  String && ResourceLocation.isValidResourceLocation((String)o));
 
         COMMON_BUILDER.pop();
     }
