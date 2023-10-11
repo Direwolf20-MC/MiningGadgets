@@ -90,6 +90,9 @@ public class ModificationTableCommands {
             if (upgrade.getBaseName().equals(Upgrade.SIZE_1.getBaseName())) {
                 MiningProperties.setRange(laser, 1);
                 MiningProperties.setMaxMiningRange(laser, 1);
+
+                // Does this matter really? it only affects block rendering for anything with more size
+                //MiningProperties.setSizeMode(laser, MiningProperties.SizeMode.AUTO);
             }
 
             // Set both max and default range to MIN_RANGE.
