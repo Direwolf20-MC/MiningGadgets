@@ -439,7 +439,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         }
 
 
-        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
+        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, this.level.getBlockEntity(this.worldPosition), player, tempTool);
 
         if (this.blockAllowed) {
             int exp = this.renderBlock.getExpDrop(this.level, this.level.random, this.worldPosition, fortune, silk);
