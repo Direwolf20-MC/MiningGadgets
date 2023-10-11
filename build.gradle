@@ -220,7 +220,7 @@ publishMods {
     }
 
     github {
-        repository = "direwolf20-mc/MiningGadgets"
+        repository = providers.environmentVariable("GITHUB_REPOSITORY")
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
         commitish = providers.environmentVariable("GITHUB_SHA").orElse("dryRun")
     }

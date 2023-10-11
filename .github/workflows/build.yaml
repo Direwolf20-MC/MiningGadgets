@@ -20,5 +20,13 @@ jobs:
         with:
           cache-read-only: false
           gradle-home-cache-cleanup: true
-      - name: Build & Publish to Github Maven
+      - name: Build mod
         run: ./gradlew build --no-daemon
+      - name: Create data
+        run: ./gradlew runData --no-daemon
+      - name: Create jar
+        run: ./gradlew jar --no-daemon
+      - name: Publish
+        run: ./gradlew build publishGithub --no-daemon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
