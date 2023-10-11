@@ -39,9 +39,13 @@ public class MiningCollect {
     }
 
     public static List<BlockPos> collect(Player player, BlockHitResult startBlock, Level world, int range, MiningProperties.SizeMode sizeMode) {
+        List<BlockPos> coordinates = new ArrayList<>();
+        if( !isValid(player, startBlock.getBlockPos(), world) )
+            return coordinates;
 
         // Veinminer mode
         if (range > 1 && sizeMode == MiningProperties.SizeMode.VEINMINE){
+
             if (shapelessShape == null) {
                 shapelessShape = new ShapelessWalker();
             }
@@ -54,13 +58,8 @@ public class MiningCollect {
             return shape.getBlocks(context);
         }
 
-        List<BlockPos> coordinates = new ArrayList<>();
         BlockPos startPos = startBlock.getBlockPos();
-
         if (range == 1) {
-            if( !isValid(player, startBlock.getBlockPos(), world) )
-                return coordinates;
-
             coordinates.add(startBlock.getBlockPos());
             return coordinates;
         }
