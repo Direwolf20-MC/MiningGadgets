@@ -15,33 +15,20 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "mininggadgets:upgrade_size_2"
+        "recipe": "upgrade-mininggadgets:upgrade_size_2"
       },
       "trigger": "minecraft:recipe_unlocked"
-    },
-    "has_upgrade": {
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "mininggadgets:upgrade_empty"
-            ]
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
     }
   },
   "requirements": [
     [
       "has_size_1",
-      "has_upgrade",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "mininggadgets:upgrade_size_2"
+      "upgrade-mininggadgets:upgrade_size_2"
     ]
   },
   "sends_telemetry_event": false

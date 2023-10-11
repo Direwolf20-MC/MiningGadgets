@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 
@@ -290,7 +291,7 @@ public class GeneratorRecipes extends RecipeProvider {
             .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
             .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SIZE_2.get())
+        /* ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SIZE_2.get())
                 .define('n', Items.NETHERITE_BLOCK)
                 .define('u', SIZE_1.get())
                 .define('d', Items.DIAMOND_BLOCK)
@@ -301,15 +302,33 @@ public class GeneratorRecipes extends RecipeProvider {
                 .pattern("epe")
                 .unlockedBy("has_size_1", has(SIZE_1.get()))
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
-                .save(consumer);
+                .save(consumer);*/
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, SIZE_3.get())
+        SmithingTransformRecipeBuilder.smithing(
+                Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                Ingredient.of(SIZE_1.get()),
+                Ingredient.of(Items.NETHERITE_PICKAXE),
+                RecipeCategory.MISC,
+                SIZE_2.get())
+            .unlocks("has_size_1", has(SIZE_1.get()))
+            .save(consumer, "upgrade-" + SIZE_2.getId());
+
+        /*ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, SIZE_3.get())
                 .requires(SIZE_2.get())
-                .requires(Items.NETHERITE_PICKAXE)
+                .requires(Items.NETHERITE_BLOCK)
                 .unlockedBy("has_size_2", has(SIZE_2.get()))
                 .unlockedBy("has_size_1", has(SIZE_1.get()))
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
-                .save(consumer);
+                .save(consumer);*/
+
+        SmithingTransformRecipeBuilder.smithing(
+                    Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                    Ingredient.of(SIZE_2.get()),
+                    Ingredient.of(Items.NETHERITE_BLOCK),
+                    RecipeCategory.MISC,
+                    SIZE_3.get())
+                .unlocks("has_size_2", has(SIZE_2.get()))
+                .save(consumer, "upgrade-" + SIZE_3.getId());
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, VOID_JUNK.get())
             .define('r', Tags.Items.DUSTS_REDSTONE)

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:netherite_pickaxe"
+  },
+  "base": {
+    "item": "mininggadgets:upgrade_size_1"
+  },
+  "result": {
+    "item": "mininggadgets:upgrade_size_2"
+  },
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  }
+}
