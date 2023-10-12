@@ -26,7 +26,8 @@ jobs:
         run: ./gradlew runData --no-daemon
       - name: Create jar
         run: ./gradlew jar --no-daemon
-      - name: Publish
-        run: ./gradlew build publishGithub --no-daemon
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact from build
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact
+          path: ${{ github.workspace }}/build/libs
