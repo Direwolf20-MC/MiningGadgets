@@ -1,4 +1,4 @@
-// 1.20.1	2023-10-03T15:56:54.8115799	Recipes
+// 1.20.1	2023-10-13T13:23:20.1098383	Recipes
 67baba67b52a425c919efd8b2da87e6521c6343b data/mininggadgets/advancements/recipes/misc/modificationtable.json
 76a18c784a4afe6ad6753ec7b1ce479529e9ad51 data/mininggadgets/advancements/recipes/misc/upgrade_battery_1.json
 e51c6b2722bc015ec25c0d9b9afb399921a63d9c data/mininggadgets/advancements/recipes/misc/upgrade_battery_2.json
@@ -51,5 +51,5 @@ e57e5586e85ab9056ba3b1fd03e66656bd79df11 data/mininggadgets/recipes/upgrade_rang
 20f3c6275af6476f4e37b00fbfb1d76d1336d200 data/mininggadgets/recipes/upgrade_silk.json
 a7a45abf2c8887562490e41fd7e1bba48360341f data/mininggadgets/recipes/upgrade_size_1.json
 63a2251eb33ec5e94e2d859952f1df752821ae7d data/mininggadgets/recipes/upgrade_size_2.json
-a7cfad6517995d396b22fba4d4807e91aabcc8f8 data/mininggadgets/recipes/upgrade_size_3.json
+4ff3fbabfc3427d90846b5c4506036e895a448e9 data/mininggadgets/recipes/upgrade_size_3.json
 b4b7ecbdad882d55c08e65304837551386e64344 data/mininggadgets/recipes/upgrade_void_junk.json

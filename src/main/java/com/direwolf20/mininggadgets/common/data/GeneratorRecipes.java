@@ -303,9 +303,15 @@ public class GeneratorRecipes extends RecipeProvider {
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, SIZE_3.get())
-                .requires(SIZE_2.get())
-                .requires(Items.NETHERITE_PICKAXE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SIZE_3.get())
+                .define('n', Items.NETHERITE_BLOCK)
+                .define('u', SIZE_2.get())
+                .define('s', Tags.Items.NETHER_STARS)
+                .define('p', Items.NETHERITE_PICKAXE)
+                .define('e', Tags.Items.ENDER_PEARLS)
+                .pattern("sns")
+                .pattern("eue")
+                .pattern("sps")
                 .unlockedBy("has_size_2", has(SIZE_2.get()))
                 .unlockedBy("has_size_1", has(SIZE_1.get()))
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))

@@ -1,15 +1,30 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "ingredients": [
-    {
-      "item": "mininggadgets:upgrade_size_2"
+  "key": {
+    "e": {
+      "tag": "forge:ender_pearls"
     },
-    {
+    "n": {
+      "item": "minecraft:netherite_block"
+    },
+    "p": {
       "item": "minecraft:netherite_pickaxe"
+    },
+    "s": {
+      "tag": "forge:nether_stars"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_size_2"
     }
+  },
+  "pattern": [
+    "sns",
+    "eue",
+    "sps"
   ],
   "result": {
     "item": "mininggadgets:upgrade_size_3"
-  }
+  },
+  "show_notification": true
 }
