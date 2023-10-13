@@ -43,5 +43,6 @@
     "recipes": [
       "mininggadgets:upgrade_battery_2"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

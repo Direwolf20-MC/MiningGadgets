@@ -43,5 +43,6 @@
     "recipes": [
       "mininggadgets:upgrade_range_3"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

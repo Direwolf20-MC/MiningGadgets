@@ -162,18 +162,27 @@ public class MiningGadget extends Item {
 //    }
 
     public static void changeRange(ItemStack tool) {
-        if (MiningProperties.getRange(tool) == 1)
-            MiningProperties.setRange(tool, 3);
-        else
+        int maxRange = MiningProperties.getMaxMiningRange(tool);
+        if (maxRange == 1) {
             MiningProperties.setRange(tool, 1);
+            return;
+        }
+
+        int range = MiningProperties.getRange(tool);
+        if (range == maxRange) // If we're at max range (set by upgrade), then we toggle back to 1x1
+            MiningProperties.setRange(tool, 1);
+        else
+            MiningProperties.setRange(tool, range + 2); // 1 -> 3 -> 5 -> 7 -> 9 -> 11 -> etc
     }
 
     public static boolean canMine(ItemStack tool) {
         IEnergyStorage energy = tool.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
 
-        if (MiningProperties.getRange(tool) == 3)
-            cost = cost * 9;
+        var range = MiningProperties.getRange(tool);
+
+        if (range > 1)
+            cost = cost * (range * range);
 
         return energy.getEnergyStored() >= cost;
     }
@@ -386,7 +395,7 @@ public class MiningGadget extends Item {
         if (world.getBlockState(VectorHelper.getLookingAt((Player) player, stack, range).getBlockPos()) == Blocks.AIR.defaultBlockState())
             return;
 
-        List<BlockPos> coords = MiningCollect.collect((Player) player, lookingAt, world, MiningProperties.getRange(stack));
+        List<BlockPos> coords = MiningCollect.collect((Player) player, lookingAt, world, MiningProperties.getRange(stack), MiningProperties.getSizeMode(stack));
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
             for (BlockPos sourcePos : findSources(player.level(), coords)) {

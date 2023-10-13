@@ -30,5 +30,6 @@
     "recipes": [
       "mininggadgets:upgrade_light_placer"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

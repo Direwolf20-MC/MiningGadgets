@@ -40,6 +40,11 @@ public class ModificationTableCommands {
                 MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
             }
 
+            if (card.getBaseName().equals(Upgrade.SIZE_1.getBaseName())) {
+                MiningProperties.setRange(laser, UpgradeTools.getMaxMiningRange(card.getTier()));
+                MiningProperties.setMaxMiningRange(laser, UpgradeTools.getMaxMiningRange(card.getTier()));
+            }
+
             if (UpgradeTools.containsUpgrade(laser, card))
                 return false;
 
@@ -82,8 +87,10 @@ public class ModificationTableCommands {
                 player.drop(new ItemStack(upgrade.getCardItem().get(), 1), true);
             }
 
-            if (upgrade == Upgrade.THREE_BY_THREE)
+            if (upgrade.getBaseName().equals(Upgrade.SIZE_1.getBaseName())) {
                 MiningProperties.setRange(laser, 1);
+                MiningProperties.setMaxMiningRange(laser, 1);
+            }
 
             // Set both max and default range to MIN_RANGE.
             if (upgrade.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
