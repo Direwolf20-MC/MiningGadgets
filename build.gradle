@@ -69,7 +69,15 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// All jar files from this folder will be added automatically as runtime mod dependencies
+def extraModsDir = "extra-mods"
+
 repositories {
+    flatDir {
+        name "extra-mods"
+        dir file(extraModsDir)
+    }
+
     maven {
         name "ModMaven"
         url "https://modmaven.k-4u.nl"
@@ -87,6 +95,16 @@ repositories {
 
 dependencies {
     minecraft "net.neoforged:forge:${mc_version}-${forge_version}"
+
+    // Locally sourced extra mods for runtime (i.e. testing)
+    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
+        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
+        def versionSep = basename.lastIndexOf('-')
+        assert versionSep != -1
+        def artifactId = basename.substring(0, versionSep)
+        def version = basename.substring(versionSep + 1)
+        runtimeOnly fg.deobf("extra-mods:$artifactId:$version")
+    }
 
     //JEI
     // compile against the JEI API but do not include it at runtime
