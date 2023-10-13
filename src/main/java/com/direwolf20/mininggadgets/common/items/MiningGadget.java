@@ -476,11 +476,8 @@ public class MiningGadget extends Item {
             Direction up = vertical ? player.getDirection() : Direction.UP;
             Direction right = vertical ? up.getClockWise() : side.getCounterClockWise();
 
-            BlockPos pos;
-            if (MiningProperties.getRange(stack) == 1)
-                pos = lookingAt.getBlockPos().relative(side, 4);
-            else
-                pos = lookingAt.getBlockPos().relative(side).relative(right);
+            int rightAmt = MiningProperties.getRange(stack) / 2;
+            BlockPos pos = lookingAt.getBlockPos().relative(side).relative(right, rightAmt);
 
             if (world.getMaxLocalRawBrightness(pos) <= 7 && world.getBlockState(pos).isAir()) {
                 int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
