@@ -173,17 +173,6 @@ publishing {
             artifactId = project.archivesBaseName.toLowerCase()
         }
     }
-
-//    repositories {
-//        maven {
-//            name = "GitHubPackages"
-//            url = "https://maven.pkg.github.com/Direwolf20-MC/MiningGadgets"
-//            credentials {
-//                username = providers.environmentVariable("GITHUB_ACTOR")
-//                password = providers.environmentVariable("GITHUB_TOKEN")
-//            }
-//        }
-//    }
 }
 
 def makeChangelog() {
@@ -241,6 +230,7 @@ publishMods {
         repository = "direwolf20-mc/MiningGadgets"
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
         commitish = providers.environmentVariable("GITHUB_SHA").orElse("dryRun")
+        tagName = providers.environmentVariable("GITHUB_REF_NAME").orElse("dryRun")
     }
 }
 

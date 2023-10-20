@@ -4,7 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## 1.20.1
 
-### [1.15.3]
+### [1.15.5]
+
+#### Fixed
+
+- 3x3 upgrades will no longer disappear from the gadget after updating from `1.15.3` or earlier. Thanks to [#227](https://github.com/Direwolf20-MC/MiningGadgets/pull/227) [@Anoyomouse](https://github.com/Anoyomouse)
+
+### [1.15.4]
 
 #### Added
 
