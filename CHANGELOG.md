@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### [1.15.5]
 
+#### Added
+
+- Creative energy upgrade. Thanks to [#197](https://github.com/Direwolf20-MC/MiningGadgets/pull/197) [@Anoyomouse](https://github.com/Anoyomouse)
+- Portuguese (Brazil) translations. Thanks to [#211](https://github.com/Direwolf20-MC/MiningGadgets/pull/211) [@3AAndreAugustoDev](https://github.com/AndreAugustoDev)
+- French translations. Thanks to [#171](https://github.com/Direwolf20-MC/MiningGadgets/pull/171) [@dadobug1111](https://github.com/dadobug1111)
+
 #### Fixed
 
 - 3x3 upgrades will no longer disappear from the gadget after updating from `1.15.3` or earlier. Thanks to [#227](https://github.com/Direwolf20-MC/MiningGadgets/pull/227) [@Anoyomouse](https://github.com/Anoyomouse)

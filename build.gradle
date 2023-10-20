@@ -85,6 +85,9 @@ repositories {
             includeGroup("mezz.jei")
         }
     }
+
+    maven { url = "https://maven.architectury.dev" }
+
     maven {
         url "https://www.cursemaven.com"
         content {
@@ -115,8 +118,9 @@ dependencies {
 
 //    runtimeOnly fg.deobf("curse.maven:inventory-tweaks-renewed:3102237")
 //    runtimeOnly fg.deobf("curse.maven:lollipop-347954:3232534")
-//    runtimeOnly fg.deobf("curse.maven:powah-352656:352656")
 //    runtimeOnly fg.deobf("curse.maven:mekanism-268560:268560")
+
+    runtimeOnly fg.deobf("curse.maven:charging-gadgets-399757:4617304")
 }
 
 processResources {
@@ -138,12 +142,15 @@ processResources {
 		def jsonBytesSaved = 0
 
 	    fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
-
 			File file = it
 			jsonMinified++
 			def oldLength = file.length()
-			file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
-			jsonBytesSaved += oldLength - file.length()
+			try {
+                file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+                jsonBytesSaved += oldLength - file.length()
+            } catch (Exception e) {
+                println('Failed to minify ' + it + ' ' + e)
+            }
 		}
 
 		println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
