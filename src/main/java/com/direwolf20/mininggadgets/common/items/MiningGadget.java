@@ -56,6 +56,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.level.BlockEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -78,6 +79,18 @@ public class MiningGadget extends Item {
     }
 
     //TODO Add an override for onCreated and initialize all NBT Tags in it
+
+    @Override
+    public void verifyTagAfterLoad(@NotNull CompoundTag tag) {
+        if (UpgradeTools.containsUpgrades(tag)) {
+            UpgradeTools.walkUpgradesOnTag(tag, (CompoundTag upgradeTag, String upgradeName) -> {
+                if (upgradeName.equalsIgnoreCase("three_by_three")) {
+                    return Upgrade.SIZE_1.getName();
+                }
+                return null;
+            });
+        }
+    }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
@@ -414,7 +427,7 @@ public class MiningGadget extends Item {
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
             float hardness = getHardness(coords, (Player) player, efficiency);
-            hardness = hardness * MiningProperties.getRange(stack) * 1;
+            // hardness = hardness * MiningProperties.getRange(stack) * 1;
             hardness = (float) Math.floor(hardness);
             if (hardness == 0) hardness = 1;
             for (BlockPos coord : coords) {
