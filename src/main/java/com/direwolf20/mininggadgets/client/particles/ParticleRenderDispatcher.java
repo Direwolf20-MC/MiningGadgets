@@ -14,8 +14,8 @@ public class ParticleRenderDispatcher {
 
     @SubscribeEvent
     public static void registerProviders(RegisterParticleProvidersEvent event) {
-        event.register(ModParticles.LASERPARTICLE.get(), LaserParticle.FACTORY);
-        event.register(ModParticles.PLAYERPARTICLE.get(), PlayerParticleType.FACTORY::new);
-        event.register(ModParticles.LIGHT_PARTICLE.get(), LightParticleType.LightParticleFactory::new);
+        event.registerSpecial(ModParticles.LASERPARTICLE.get(), LaserParticle.FACTORY);
+        event.registerSpriteSet(ModParticles.PLAYERPARTICLE.get(), PlayerParticleType.FACTORY::new);
+        event.registerSpriteSet(ModParticles.LIGHT_PARTICLE.get(), LightParticleType.LightParticleFactory::new);
     }
 }

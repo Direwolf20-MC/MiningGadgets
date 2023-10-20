@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -75,7 +76,7 @@ public class MyRenderType extends RenderType {
             DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, false,
             RenderType.CompositeState.builder()
 //                    .setShaderState(SMOOTH_SHADE)
-                    .setShaderState(ShaderStateShard.BLOCK_SHADER)
+                    .setShaderState(ShaderStateShard.RENDERTYPE_SOLID_SHADER)
                     .setLightmapState(LIGHTMAP)
                     .setTextureState(BLOCK_SHEET_MIPPED)
                     .setLayeringState(VIEW_OFFSET_Z_LAYERING)

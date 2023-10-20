@@ -7,8 +7,7 @@ import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -18,6 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import org.joml.Matrix4f;
 
 import java.awt.*;
 import java.util.List;
@@ -35,7 +35,7 @@ public class BlockOverlayRender {
             return;
         }
 
-        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.level, MiningProperties.getRange(item));
+        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.level, MiningProperties.getRange(item), MiningProperties.getSizeMode(item));
         Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
 
         PoseStack matrix = event.getPoseStack();
@@ -51,7 +51,7 @@ public class BlockOverlayRender {
                 matrix.translate(e.getX(), e.getY(), e.getZ());
                 matrix.translate(-0.005f, -0.005f, -0.005f);
                 matrix.scale(1.01f, 1.01f, 1.01f);
-                matrix.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
+                matrix.mulPose(Axis.YP.rotationDegrees(-90.0F));
 
                 Matrix4f positionMatrix = matrix.last().pose();
                 BlockOverlayRender.render(positionMatrix, builder, e, Color.GREEN);

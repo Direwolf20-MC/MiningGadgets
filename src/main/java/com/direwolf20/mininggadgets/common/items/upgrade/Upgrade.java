@@ -29,10 +29,13 @@ public enum Upgrade {
     VOID_JUNK("void_junk", ModItems.VOID_JUNK, () -> Config.UPGRADECOST_VOID.get()),
     MAGNET("magnet", ModItems.MAGNET, () -> Config.UPGRADECOST_MAGNET.get()),
     FREEZING("freezing", ModItems.FREEZING, () -> 0), // applied at operation based on config. this isn't ideal
-    THREE_BY_THREE("three_by_three", ModItems.THREE_BY_THREE, () -> 0, false),
     LIGHT_PLACER("light_placer", ModItems.LIGHT_PLACER, () -> 0), // applied at operation based on config. this isn't ideal
 
     // Tiered
+    SIZE_1("size_1", ModItems.SIZE_1, 1, () -> 0), // 3x3
+    SIZE_2("size_2", ModItems.SIZE_2, 2, () -> 0), // 5x5
+    SIZE_3("size_3", ModItems.SIZE_3, 3, () -> 0), // 7x7
+
     FORTUNE_1("fortune_1", ModItems.FORTUNE_1, 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
     FORTUNE_2("fortune_2", ModItems.FORTUNE_2, 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),
     FORTUNE_3("fortune_3", ModItems.FORTUNE_3, 3, () -> Config.UPGRADECOST_FORTUNE3.get(), true),

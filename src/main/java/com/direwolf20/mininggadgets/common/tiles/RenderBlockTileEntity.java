@@ -10,6 +10,7 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
@@ -37,10 +38,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.level.BlockEvent;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
@@ -76,7 +74,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             boolean contains = false;
             for (ItemStack filter : filters) {
 
-                if (dropStack.sameItem(filter)) {
+                if (ItemStack.matches(dropStack, filter)) {
                     contains = true;
                     break;
                 }
@@ -245,7 +243,7 @@ public class RenderBlockTileEntity extends BlockEntity {
                 double randomY = this.rand.nextDouble();
                 double randomZ = this.rand.nextDouble();
 
-                LaserParticleData data = LaserParticleData.laserparticle(this.renderBlock, (float) randomPartSize, 1f, 1f, 1f, 200);
+                LaserParticleData data = LaserParticleData.laserparticle(this.renderBlock, (float) randomPartSize, 200);
                 this.getLevel().addParticle(data, this.getBlockPos().getX() + randomX, this.getBlockPos().getY() + randomY, this.getBlockPos().getZ() + randomZ, 0, 0.0f, 0);
             }
         }
@@ -367,7 +365,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        this.renderBlock = NbtUtils.readBlockState(tag.getCompound("renderBlock"));
+        this.renderBlock = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), tag.getCompound("renderBlock"));
         this.originalDurability = tag.getInt("originalDurability");
         this.priorDurability = tag.getInt("priorDurability");
         this.durability = tag.getInt("durability");
@@ -513,11 +511,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         }
 
         if (!this.level.isClientSide) {
-            if (this.renderBlock != null) {
-                this.level.setBlockAndUpdate(this.worldPosition, this.renderBlock);
-            } else {
-                this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
-            }
+            this.level.setBlockAndUpdate(this.worldPosition, Objects.requireNonNullElseGet(this.renderBlock, Blocks.AIR::defaultBlockState));
         }
     }
 

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "s": {
       "item": "minecraft:snowball"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_freezing"
-  }
+  },
+  "show_notification": true
 }

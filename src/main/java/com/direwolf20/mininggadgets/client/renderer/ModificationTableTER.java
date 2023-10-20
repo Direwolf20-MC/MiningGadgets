@@ -3,18 +3,18 @@ package com.direwolf20.mininggadgets.client.renderer;
 import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.core.Direction;
-import com.mojang.math.Vector3f;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 public class ModificationTableTER implements BlockEntityRenderer<ModificationTableTileEntity> {
     public ModificationTableTER(BlockEntityRendererProvider.Context p_173636_) {
@@ -23,7 +23,7 @@ public class ModificationTableTER implements BlockEntityRenderer<ModificationTab
 
     @Override
     public void render(ModificationTableTileEntity tile, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int combinedLights, int combinedOverlay) {
-        ItemStack stack = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(e -> e.getStackInSlot(0)).orElse(ItemStack.EMPTY);
+        ItemStack stack = tile.getCapability(ForgeCapabilities.ITEM_HANDLER).map(e -> e.getStackInSlot(0)).orElse(ItemStack.EMPTY);
         if (stack.isEmpty()) {
             return;
         }
@@ -39,17 +39,17 @@ public class ModificationTableTER implements BlockEntityRenderer<ModificationTab
         float leftModifier = isCool ? 0 : (isFancy ? .15f : .2f);
         if (facing == Direction.SOUTH) {
             matrix.translate(.7f - leftModifier, 0, .85f);
-            matrix.mulPose(Vector3f.YP.rotationDegrees(90));
+            matrix.mulPose(Axis.YP.rotationDegrees(90));
         } else if (facing == Direction.EAST) {
             matrix.translate(.85f, 0, .3f + leftModifier);
-            matrix.mulPose(Vector3f.YP.rotationDegrees(180));
+            matrix.mulPose(Axis.YP.rotationDegrees(180));
         } else if (facing == Direction.NORTH) {
             matrix.translate(.3f + leftModifier, 0, .15f);
-            matrix.mulPose(Vector3f.YP.rotationDegrees(270));
+            matrix.mulPose(Axis.YP.rotationDegrees(270));
         } else {
             matrix.translate(.15f, 0, .7f - leftModifier);
         }
-        matrix.mulPose(Vector3f.ZN.rotationDegrees(90));
+        matrix.mulPose(Axis.ZN.rotationDegrees(90));
 
         if (isCool) {
             matrix.scale(.65f, .65f, .65f);
@@ -58,7 +58,7 @@ public class ModificationTableTER implements BlockEntityRenderer<ModificationTab
         }
 
         BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(stack, Minecraft.getInstance().level, null, 0);
-        Minecraft.getInstance().getItemRenderer().render(stack, ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, false, matrix,buffer, combinedLights, combinedOverlay, model);
+        Minecraft.getInstance().getItemRenderer().render(stack, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, false, matrix,buffer, combinedLights, combinedOverlay, model);
         matrix.popPose();
     }
 }

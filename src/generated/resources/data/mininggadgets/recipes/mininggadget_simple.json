@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "key": {
     "d": {
       "tag": "forge:gems/diamond"
@@ -24,5 +25,6 @@
   ],
   "result": {
     "item": "mininggadgets:mininggadget_simple"
-  }
+  },
+  "show_notification": true
 }

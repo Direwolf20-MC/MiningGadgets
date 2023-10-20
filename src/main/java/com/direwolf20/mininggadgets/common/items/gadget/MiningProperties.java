@@ -1,6 +1,8 @@
 package com.direwolf20.mininggadgets.common.items.gadget;
 
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -23,6 +25,8 @@ public class MiningProperties {
     private static final String KEY_MAX_BEAM_RANGE = "maxBeamRange";
     private static final String KEY_WHITELIST = "isWhitelist";
     private static final String KEY_RANGE = "range";
+    private static final String KEY_MAX_MINING_RANGE = "maxMiningRange";
+    private static final String KEY_SIZE_MODE = "sizeMode"; // Normal, Walkway, Others
     private static final String KEY_SPEED = "speed";
     private static final String BREAK_TYPE = "breakType";
     private static final String CAN_MINE = "canMine";
@@ -44,6 +48,22 @@ public class MiningProperties {
     public enum BreakTypes {
         SHRINK,
         FADE
+    }
+
+    public enum SizeMode {
+        AUTO("auto"),
+        NORMAL("normal"),
+        PATHWAY("pathway");
+
+        private final String baseName;
+
+        SizeMode(String baseName) {
+            this.baseName = baseName;
+        }
+
+        public Component getTooltip() {
+            return Component.translatable(MiningGadgets.MOD_ID + ".tooltip.screen.sizemode." + baseName);
+        }
     }
 
     public static short getColor(ItemStack gadget, String color) {
@@ -120,6 +140,16 @@ public class MiningProperties {
         return !compound.contains(KEY_MAX_BEAM_RANGE) ? setBeamMaxRange(gadget, MIN_RANGE) : compound.getInt(KEY_MAX_BEAM_RANGE);
     }
 
+    public static int setMaxMiningRange(ItemStack gadget, int range) {
+        gadget.getOrCreateTag().putInt(KEY_MAX_MINING_RANGE, range);
+        return range;
+    }
+
+    public static int getMaxMiningRange(ItemStack gadget) {
+        CompoundTag compound = gadget.getOrCreateTag();
+        return !compound.contains(KEY_MAX_MINING_RANGE) ? setMaxMiningRange(gadget, 1) : compound.getInt(KEY_MAX_MINING_RANGE);
+    }
+
     public static boolean setWhitelist(ItemStack gadget, boolean isWhitelist) {
         gadget.getOrCreateTag().putBoolean(KEY_WHITELIST, isWhitelist);
         return isWhitelist;
@@ -148,6 +178,27 @@ public class MiningProperties {
     public static boolean getPrecisionMode(ItemStack gadget) {
         CompoundTag compound = gadget.getOrCreateTag();
         return !compound.contains(PRECISION_MODE) ? setPrecisionMode(gadget, false) : compound.getBoolean(PRECISION_MODE);
+    }
+
+
+    public static SizeMode setSizeMode(ItemStack gadget, SizeMode sizeMode) {
+        gadget.getOrCreateTag().putByte(KEY_SIZE_MODE, (byte) sizeMode.ordinal());
+        return sizeMode;
+    }
+
+    public static SizeMode nextSizeMode(ItemStack gadget) {
+        CompoundTag compound = gadget.getOrCreateTag();
+        if (compound.contains(KEY_SIZE_MODE)) {
+            int type = getSizeMode(gadget).ordinal() == SizeMode.values().length - 1 ? 0 : getSizeMode(gadget).ordinal() + 1;
+            return setSizeMode(gadget, SizeMode.values()[type]);
+        } else {
+            return setSizeMode(gadget, SizeMode.NORMAL);
+        }
+    }
+
+    public static SizeMode getSizeMode(ItemStack gadget) {
+        CompoundTag compound = gadget.getOrCreateTag();
+        return !compound.contains(KEY_SIZE_MODE) ? setSizeMode(gadget, SizeMode.NORMAL) : SizeMode.values()[compound.getByte(KEY_SIZE_MODE)];
     }
 
     public static float setVolume(ItemStack gadget, float volume) {

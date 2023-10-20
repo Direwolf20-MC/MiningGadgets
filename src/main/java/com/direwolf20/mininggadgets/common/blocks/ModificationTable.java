@@ -18,14 +18,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -36,7 +35,7 @@ public class ModificationTable extends Block implements EntityBlock {
     public static DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public ModificationTable() {
-        super(Properties.of(Material.METAL).strength(2.0f));
+        super(Properties.of().strength(2.0f));
 
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
@@ -79,7 +78,7 @@ public class ModificationTable extends Block implements EntityBlock {
         if (newState.getBlock() != this) {
             BlockEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity != null) {
-                LazyOptional<IItemHandler> cap = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                LazyOptional<IItemHandler> cap = tileEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
                 cap.ifPresent(handler -> {
                     for(int i = 0; i < handler.getSlots(); ++i) {
                         Containers.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), handler.getStackInSlot(i));

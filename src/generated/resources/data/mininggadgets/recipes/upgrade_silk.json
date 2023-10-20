@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "d": {
       "item": "minecraft:golden_apple"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_silk"
-  }
+  },
+  "show_notification": true
 }

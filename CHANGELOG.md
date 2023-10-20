@@ -2,11 +2,141 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## 1.20.1
+
+### [1.15.5]
+
+#### Fixed
+
+- 3x3 upgrades will no longer disappear from the gadget after updating from `1.15.3` or earlier. Thanks to [#227](https://github.com/Direwolf20-MC/MiningGadgets/pull/227) [@Anoyomouse](https://github.com/Anoyomouse)
+
+### [1.15.4]
+
+#### Added
+
+- 5x5 and 7x7 upgrades
+
+### [1.15.3]
+
+#### Added
+
+- Miners Lights are now replaceable meaning you can place over them with normal block placement. This is a nice little
+  quality of life fix :D
+
+#### Fixed
+
+- [#196](https://github.com/direwolf20-mc/mininggadgets/issues/196) don't allow the renderblock to be accelerated by ProjectE
+  - This is a preventative fix for when ProjectE is ported to 1.20.1+
+
+### [1.15.2]
+
+#### Fixed
+
+- Forge version range being too restrictive
+
+### [1.15.1]
+
+#### Fixed
+
+- Fix crash when mining adjacent to tile entities and particles not working in -x and/or -z areas of the world
+
+## 1.19.3
+
+### [1.14.0]
+
+#### Changed
+
+- Ported to 1.19.3
+
+## 1.19.2
+
+### [1.13.0]
+
+#### Changed
+
+- Updated to 1.19.2
+
+## 1.19
+
+### [1.12.1]
+
+#### Changed
+
+- Updated to the latest forge version and slight work to make 1.19 and 1.19.1 work on the samve version 
+
+### [1.12.0]
+
+#### Changed
+
+- Updated to 1.19
+
+## 1.18.2
+
+### [1.11.1]
+
+#### Fixed
+
+- Fixed client sounds having issues
+
+### [1.11.0]
+
+#### Changed
+
+- Ported to 1.18.2
+
+## 1.18
+
+### [1.10.2]
+
+#### Fixed
+
+- Effect block not rendering correctly
+- Progress bar on durability not reflecting correct value
+- Errors being logged on mining
+
+### [1.10.1] - 2021-12-01
+
+#### Fixed
+
+- Block entities (Modification table, effect block) not saving their data correctly
+
+### [1.10.0] - 2021-12-01
+
+#### Changed
+
+- Updated to 1.18!
+
+## 1.17.1
+
+### [1.9.0] - 2021-12-01
+
+#### Changed
+
+- Ported to 1.17 :D
+
+#### Fixed
+
+- Render quads for the null side on "render blocks" (thanks to malte0811)
+- Modification table slot issues, filter slot order being flipped
+- Filter slot duplication issues
+
 ## 1.16.5
+
+### [1.7.6] - 2022-7-27
+
+#### Changed
+
+- Added Mining Gadget to FTB Ultimine blacklist to avoid block voiding
+
+#### Fixed
+
+- Call break events correctly 
+- Fixed an issue with hardness not being calculated properly causing blocks to break very slowly
+- Removed a random print line...
 
 ### [1.7.5] - 2021-04-17
 
-## Added
+#### Added
 
 - All new and amazing textures for the gadgets, modification table, and upgrades courtesy of the one and
   only [Ridanisaurus Rid](https://github.com/Ridanisaurus)
@@ -16,13 +146,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
     - We've also added a super fancy render of the laser on the outside of the block. You'll see what I'm talking
       about...
 
-### Changed
+#### Changed
 
 - Changed the strength of the `render block` to stop players being able to hit the block and void its
   drops. [#130](https://github.com/Direwolf20-MC/MiningGadgets/issues/130)
 - Modified the gadgets recipes slightly to allow for multiple lasers.
 
-### Fixed
+#### Fixed
 
 - Added blocking area on JEI to stop the modification gadgets slot overlapping a deletion area when in cheat
   mode. [#142](https://github.com/Direwolf20-MC/MiningGadgets/issues/142)

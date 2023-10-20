@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "g": {
       "tag": "forge:ingots/gold"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_magnet"
-  }
+  },
+  "show_notification": true
 }

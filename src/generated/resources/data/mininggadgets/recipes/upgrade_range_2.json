@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "e": {
       "item": "minecraft:emerald"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_range_2"
-  }
+  },
+  "show_notification": true
 }

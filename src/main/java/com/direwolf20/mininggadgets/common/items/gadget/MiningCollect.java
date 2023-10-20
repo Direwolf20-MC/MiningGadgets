@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Handles collecting the blocks for the mining action.
  */
 public class MiningCollect {
-    public static List<BlockPos> collect(Player player, BlockHitResult startBlock, Level world, int range) {
+    public static List<BlockPos> collect(Player player, BlockHitResult startBlock, Level world, int range, MiningProperties.SizeMode sizeMode) {
         List<BlockPos> coordinates = new ArrayList<>();
         BlockPos startPos = startBlock.getBlockPos();
 
@@ -40,17 +40,34 @@ public class MiningCollect {
         Direction right = vertical ? up.getClockWise() : side.getCounterClockWise();
         Direction left = right.getOpposite();
 
-        coordinates.add(startPos.relative(up).relative(left));
-        coordinates.add(startPos.relative(up));
-        coordinates.add(startPos.relative(up).relative(right));
-        coordinates.add(startPos.relative(left));
-        coordinates.add(startPos);
-        coordinates.add(startPos.relative(right));
-        coordinates.add(startPos.relative(down).relative(left));
-        coordinates.add(startPos.relative(down));
-        coordinates.add(startPos.relative(down).relative(right));
+        int midRange = ((range - 1) / 2);
+        int upRange = midRange;
+        int downRange = midRange;
 
-        return coordinates.stream().filter(e -> isValid(player, e, world)).collect(Collectors.toList());
+        if (!vertical && range > 3) {
+
+            if (sizeMode == MiningProperties.SizeMode.AUTO) {
+                double myYPos = player.position().get(Direction.UP.getAxis());
+                double hitBlockPos = startBlock.getBlockPos().get(Direction.UP.getAxis());
+
+                if (Math.abs(myYPos - hitBlockPos) < 2) {
+                    downRange = 1;
+                    upRange = range - 2;
+                }
+            } else if (sizeMode == MiningProperties.SizeMode.PATHWAY) {
+                downRange = 1;
+                upRange = range - 2;
+            }
+        }
+
+        BlockPos topLeft = startPos.relative(up, upRange).relative(left, midRange);
+        BlockPos bottomRight = startPos.relative(down, downRange).relative(right, midRange);
+
+        return BlockPos
+                .betweenClosedStream(topLeft, bottomRight)
+                .map(BlockPos::immutable)
+                .filter(e -> isValid(player, e, world))
+                .collect(Collectors.toList());
     }
 
     private static boolean isValid(Player player, BlockPos pos, Level world) {

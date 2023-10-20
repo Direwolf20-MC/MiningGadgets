@@ -8,10 +8,16 @@ import com.direwolf20.mininggadgets.common.containers.ModContainers;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
 import net.minecraftforge.common.MinecraftForge;
@@ -25,6 +31,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.RegisterEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,15 +40,6 @@ public class MiningGadgets
 {
     public static final String MOD_ID = "mininggadgets";
     private static final Logger LOGGER = LogManager.getLogger();
-
-    public static CreativeModeTab itemGroup = new CreativeModeTab(MiningGadgets.MOD_ID) {
-        @Override
-        public ItemStack makeIcon() {
-            ItemStack itemStack = new ItemStack(ModItems.MININGGADGET.get());
-            itemStack.getOrCreateTag().putInt("energy", Integer.MAX_VALUE);
-            return itemStack;
-        }
-    };
 
     public MiningGadgets() {
         IEventBus event = FMLJavaModLoadingContext.get().getModEventBus();
@@ -63,10 +61,39 @@ public class MiningGadgets
 
         // Register the setup method for modloading
         event.addListener(this::setup);
+        event.addListener(this::buildContents);
         MinecraftForge.EVENT_BUS.register(this);
 
         Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-client.toml"));
         Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
+    }
+
+    public void buildContents(RegisterEvent event) {
+        ResourceKey<CreativeModeTab> TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(MOD_ID, "creative_tab"));
+        event.register(Registries.CREATIVE_MODE_TAB, creativeModeTabRegisterHelper ->
+        {
+            creativeModeTabRegisterHelper.register(TAB, CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.MININGGADGET_FANCY.get()))
+                    .title(Component.translatable("itemGroup." + MOD_ID))
+                    .displayItems((params, output) -> {
+                        ModItems.ITEMS.getEntries()
+                                .stream().filter(e -> e != ModItems.MINERS_LIGHT_ITEM)
+                                .forEach(e -> {
+                                    // Normal
+                                    Item item = e.get();
+                                    output.accept(item);
+
+                                    // Charged
+                                    if (item instanceof MiningGadget) {
+                                        ItemStack stack = new ItemStack(item);
+                                        stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
+                                        output.accept(stack);
+                                    }
+                                });
+
+                        ModItems.UPGRADE_ITEMS.getEntries().forEach(e -> output.accept(e.get()));
+                    })
+                    .build());
+        });
     }
 
     @SubscribeEvent

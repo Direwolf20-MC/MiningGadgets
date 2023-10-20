@@ -4,7 +4,6 @@ import com.direwolf20.mininggadgets.client.OurKeys;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
 import com.direwolf20.mininggadgets.common.Config;
-import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
@@ -24,7 +23,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -39,14 +37,16 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -56,8 +56,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.level.BlockEvent;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,13 +73,24 @@ public class MiningGadget extends Item {
     public MiningGadget() {
         super(new Item.Properties()
                 .stacksTo(1)
-                .tab(MiningGadgets.itemGroup)
                 .setNoRepair());
 
         this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
     //TODO Add an override for onCreated and initialize all NBT Tags in it
+
+    @Override
+    public void verifyTagAfterLoad(@NotNull CompoundTag tag) {
+        if (UpgradeTools.containsUpgrades(tag)) {
+            UpgradeTools.walkUpgradesOnTag(tag, (CompoundTag upgradeTag, String upgradeName) -> {
+                if (upgradeName.equalsIgnoreCase("three_by_three")) {
+                    return Upgrade.SIZE_1.getName();
+                }
+                return null;
+            });
+        }
+    }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
@@ -160,22 +171,30 @@ public class MiningGadget extends Item {
                 });
     }
 
-    @Override
-    public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items) {
-        super.fillItemCategory(group, items);
-        if (!allowedIn(group))
-            return;
-
-        ItemStack charged = new ItemStack(this);
-        charged.getOrCreateTag().putDouble("energy", Config.MININGGADGET_MAXPOWER.get());
-        items.add(charged);
-    }
+    // TODO: Use event
+//    @Override
+//    public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items) {
+//        super.fillItemCategory(group, items);
+//        if (!allowedIn(group))
+//            return;
+//
+//        ItemStack charged = new ItemStack(this);
+//        charged.getOrCreateTag().putDouble("energy", Config.MININGGADGET_MAXPOWER.get());
+//        items.add(charged);
+//    }
 
     public static void changeRange(ItemStack tool) {
-        if (MiningProperties.getRange(tool) == 1)
-            MiningProperties.setRange(tool, 3);
-        else
+        int maxRange = MiningProperties.getMaxMiningRange(tool);
+        if (maxRange == 1) {
             MiningProperties.setRange(tool, 1);
+            return;
+        }
+
+        int range = MiningProperties.getRange(tool);
+        if (range == maxRange) // If we're at max range (set by upgrade), then we toggle back to 1x1
+            MiningProperties.setRange(tool, 1);
+        else
+            MiningProperties.setRange(tool, range + 2); // 1 -> 3 -> 5 -> 7 -> 9 -> 11 -> etc
     }
 
     public static boolean canMine(ItemStack tool) {
@@ -185,8 +204,10 @@ public class MiningGadget extends Item {
         IEnergyStorage energy = tool.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
 
-        if (MiningProperties.getRange(tool) == 3)
-            cost = cost * 9;
+        var range = MiningProperties.getRange(tool);
+
+        if (range > 1)
+            cost = cost * (range * range);
 
         return energy.getEnergyStored() >= cost;
     }
@@ -328,7 +349,7 @@ public class MiningGadget extends Item {
         if (myplayer.equals(player)) {
             if (volume != 0.0f) {
                 if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("mongo")) {
-                    if (player.level.getGameTime() % 5 == 0)
+                    if (player.level().getGameTime() % 5 == 0)
                         if (rand.nextDouble() > 0.005d)
                             player.playSound(SoundEvents.STONE_HIT, volume * 0.5f, 1f);
                         else
@@ -336,7 +357,7 @@ public class MiningGadget extends Item {
                 }
                 else {
                     if (laserLoopSound == null) {
-                        laserLoopSound = new LaserLoopSound((Player) player, volume, player.level.random);
+                        laserLoopSound = new LaserLoopSound((Player) player, volume, player.level().random);
                         Minecraft.getInstance().getSoundManager().play(laserLoopSound);
                     }
                 }
@@ -345,9 +366,12 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
+    public void onUseTick(Level world, LivingEntity livingEntity, ItemStack stack, int count)
+    {
+        if(!(livingEntity instanceof Player)) return;
+
+        Player player = (Player) livingEntity;
         //Server and Client side
-        Level world = player.level;
         if (world.isClientSide) {
             this.playLoopSound(player, stack);
         }
@@ -396,13 +420,13 @@ public class MiningGadget extends Item {
         if (world.getBlockState(VectorHelper.getLookingAt((Player) player, stack, range).getBlockPos()) == Blocks.AIR.defaultBlockState())
             return;
 
-        List<BlockPos> coords = MiningCollect.collect((Player) player, lookingAt, world, MiningProperties.getRange(stack));
+        List<BlockPos> coords = MiningCollect.collect((Player) player, lookingAt, world, MiningProperties.getRange(stack), MiningProperties.getSizeMode(stack));
 
         if (UpgradeTools.containsActiveUpgrade(stack, Upgrade.FREEZING)) {
-            for (BlockPos sourcePos : findSources(player.level, coords)) {
+            for (BlockPos sourcePos : findSources(player.level(), coords)) {
                 int delay = MiningProperties.getFreezeDelay(stack);
                 if (delay == 0 || count % delay == 0)
-                    spawnFreezeParticle((Player) player, sourcePos, player.level, stack);
+                    spawnFreezeParticle((Player) player, sourcePos, player.level(), stack);
             }
         }
 
@@ -415,7 +439,7 @@ public class MiningGadget extends Item {
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
             float hardness = getHardness(coords, (Player) player, efficiency);
-            hardness = hardness * MiningProperties.getRange(stack) * 1;
+            // hardness = hardness * MiningProperties.getRange(stack) * 1;
             hardness = (float) Math.floor(hardness);
             if (hardness == 0) hardness = 1;
             for (BlockPos coord : coords) {
@@ -466,7 +490,7 @@ public class MiningGadget extends Item {
                     //}
                 }
                 if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("wildfirev")) {
-                    spawnFireParticle(coord, (ServerLevel) player.level);
+                    spawnFireParticle(coord, (ServerLevel) player.level());
                 }
             }
             if (!(UpgradeTools.containsActiveUpgrade(stack, Upgrade.LIGHT_PLACER)))
@@ -477,13 +501,10 @@ public class MiningGadget extends Item {
             Direction up = vertical ? player.getDirection() : Direction.UP;
             Direction right = vertical ? up.getClockWise() : side.getCounterClockWise();
 
-            BlockPos pos;
-            if (MiningProperties.getRange(stack) == 1)
-                pos = lookingAt.getBlockPos().relative(side, 4);
-            else
-                pos = lookingAt.getBlockPos().relative(side).relative(right);
+            int rightAmt = MiningProperties.getRange(stack) / 2;
+            BlockPos pos = lookingAt.getBlockPos().relative(side).relative(right, rightAmt);
 
-            if (world.getMaxLocalRawBrightness(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
+            if (world.getMaxLocalRawBrightness(pos) <= 7 && world.getBlockState(pos).isAir()) {
                 int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
                 if (energy > Config.UPGRADECOST_LIGHT.get()) {
                     world.setBlockAndUpdate(pos, ModBlocks.MINERS_LIGHT.get().defaultBlockState());
@@ -523,7 +544,7 @@ public class MiningGadget extends Item {
             toolSpeed = toolSpeed / 3f;
         }
 
-        Level world = player.level;
+        Level world = player.level();
         for (BlockPos coord : coords) {
             BlockState state = world.getBlockState(coord);
             float temphardness = state.getDestroySpeed(world, coord);

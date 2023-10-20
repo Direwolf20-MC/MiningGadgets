@@ -3,10 +3,10 @@ package com.direwolf20.mininggadgets.client.particles.playerparticle;
 import com.direwolf20.mininggadgets.client.particles.ModParticles;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.core.Registry;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -75,10 +75,10 @@ public class PlayerParticleData implements ParticleOptions {
     @Override
     public String writeToString() {
         return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %.2f %.2f %s",
-                Registry.PARTICLE_TYPE.getKey(this.getType()), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
+                ForgeRegistries.PARTICLE_TYPES.getKey(this.getType()), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
     }
 
-    public static final ParticleOptions.Deserializer<PlayerParticleData> DESERIALIZER = new ParticleOptions.Deserializer<PlayerParticleData>() {
+    public static final ParticleOptions.Deserializer<PlayerParticleData> DESERIALIZER = new ParticleOptions.Deserializer<>() {
         @Nonnull
         @Override
         public PlayerParticleData fromCommand(@Nonnull ParticleType<PlayerParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {

@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ModItems {
     // The item group is the creative tab it will go into.
-    public static final Item.Properties ITEM_GROUP = new Item.Properties().tab(MiningGadgets.itemGroup);
+    public static final Item.Properties ITEM_GROUP = new Item.Properties();
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MiningGadgets.MOD_ID);
 
     // We have a separate register just to contain all of the upgrades for quick reference
@@ -34,7 +34,9 @@ public class ModItems {
     public static final RegistryObject<Item> SILK = UPGRADE_ITEMS.register("upgrade_silk", () -> new UpgradeCard(Upgrade.SILK));
     public static final RegistryObject<Item> VOID_JUNK = UPGRADE_ITEMS.register("upgrade_void_junk", () -> new UpgradeCard(Upgrade.VOID_JUNK));
     public static final RegistryObject<Item> MAGNET = UPGRADE_ITEMS.register("upgrade_magnet", () -> new UpgradeCard(Upgrade.MAGNET));
-    public static final RegistryObject<Item> THREE_BY_THREE = UPGRADE_ITEMS.register("upgrade_three_by_three", () -> new UpgradeCard(Upgrade.THREE_BY_THREE));
+    public static final RegistryObject<Item> SIZE_1 = UPGRADE_ITEMS.register("upgrade_size_1", () -> new UpgradeCard(Upgrade.SIZE_1));
+    public static final RegistryObject<Item> SIZE_2 = UPGRADE_ITEMS.register("upgrade_size_2", () -> new UpgradeCard(Upgrade.SIZE_2));
+    public static final RegistryObject<Item> SIZE_3 = UPGRADE_ITEMS.register("upgrade_size_3", () -> new UpgradeCard(Upgrade.SIZE_3));
     public static final RegistryObject<Item> LIGHT_PLACER = UPGRADE_ITEMS.register("upgrade_light_placer", () -> new UpgradeCard(Upgrade.LIGHT_PLACER));
     public static final RegistryObject<Item> FREEZING = UPGRADE_ITEMS.register("upgrade_freezing", () -> new UpgradeCard(Upgrade.FREEZING));
     public static final RegistryObject<Item> FORTUNE_1 = UPGRADE_ITEMS.register("upgrade_fortune_1", () -> new UpgradeCard(Upgrade.FORTUNE_1));

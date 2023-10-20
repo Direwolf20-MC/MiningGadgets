@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class UpgradeTools {
@@ -120,6 +121,23 @@ public class UpgradeTools {
         return functionalUpgrades;
     }
 
+    public static void walkUpgradesOnTag(CompoundTag tagCompound, BiFunction<CompoundTag, String, String> consumer) {
+        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Tag.TAG_COMPOUND);
+
+        if (upgrades.isEmpty())
+            return;
+
+        for (int i = 0; i < upgrades.size(); i++) {
+            CompoundTag tag = upgrades.getCompound(i);
+
+            var name = tag.getString(KEY_UPGRADE);
+            var result = consumer.apply(tag, name);
+            if (result != null && !result.equalsIgnoreCase(name)) {
+                tag.putString(KEY_UPGRADE, result);
+            }
+        }
+    }
+
     @Nullable
     public static Upgrade getUpgradeByName(String name) {
         // If the name doesn't exist then move on
@@ -144,6 +162,9 @@ public class UpgradeTools {
 
     public static boolean containsUpgrades(ItemStack tool) {
         return tool.getOrCreateTag().contains(KEY_UPGRADES);
+    }
+    public static boolean containsUpgrades(CompoundTag tag) {
+        return tag.contains(KEY_UPGRADES);
     }
 
     /**
@@ -211,5 +232,9 @@ public class UpgradeTools {
      */
     public static Component getName(Upgrade upgrade) {
         return Component.literal(ForgeI18n.parseMessage(upgrade.getLocal()).replace(ForgeI18n.parseMessage(upgrade.getLocalReplacement()), ""));
+    }
+
+    public static int getMaxMiningRange(int tier) {
+        return 1 + tier * 2; // 1 -> 3, 2 -> 5, 3 -> 7, 4 -> 9
     }
 }

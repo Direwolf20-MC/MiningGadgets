@@ -1,13 +1,13 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 
+import com.direwolf20.mininggadgets.common.items.EnergisedItem;
+import com.direwolf20.mininggadgets.common.items.MiningGadget;
+import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.UpgradeCard;
-import com.direwolf20.mininggadgets.common.items.EnergisedItem;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -38,6 +38,11 @@ public class ModificationTableCommands {
                 // We set max range on the gadget so we don't have to check if an upgrade exists.
                 MiningProperties.setBeamRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
                 MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(card.getTier()));
+            }
+
+            if (card.getBaseName().equals(Upgrade.SIZE_1.getBaseName())) {
+                MiningProperties.setRange(laser, UpgradeTools.getMaxMiningRange(card.getTier()));
+                MiningProperties.setMaxMiningRange(laser, UpgradeTools.getMaxMiningRange(card.getTier()));
             }
 
             if (UpgradeTools.containsUpgrade(laser, card))
@@ -88,8 +93,10 @@ public class ModificationTableCommands {
                 player.drop(new ItemStack(upgrade.getCardItem().get(), 1), true);
             }
 
-            if (upgrade == Upgrade.THREE_BY_THREE)
+            if (upgrade.getBaseName().equals(Upgrade.SIZE_1.getBaseName())) {
                 MiningProperties.setRange(laser, 1);
+                MiningProperties.setMaxMiningRange(laser, 1);
+            }
 
             // Set both max and default range to MIN_RANGE.
             if (upgrade.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {

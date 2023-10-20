@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "d": {
       "item": "minecraft:diamond"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_range_1"
-  }
+  },
+  "show_notification": true
 }
