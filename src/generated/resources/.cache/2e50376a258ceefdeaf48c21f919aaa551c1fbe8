@@ -1,9 +1,10 @@
-// 1.20.1	2023-10-03T15:56:54.8095774	Item Models
+// 1.20.1	2023-10-20T21:43:10.440018	Item Models
 8da37fe8fa2b785fbf0633e3d25dfc8502305df3 assets/mininggadgets/models/item/minerslight.json
 6e083fdcfbbe3ace1ce88136cfe9d68bf07c5490 assets/mininggadgets/models/item/modificationtable.json
 00d58751e2423f4999a59ca9019b15100de3da1b assets/mininggadgets/models/item/upgrade_battery_1.json
 5b7cbf3ad35790168c87ca770fa22158436459f0 assets/mininggadgets/models/item/upgrade_battery_2.json
 bbf2e8b8b73bdecaa471e48bde4064c6f165106a assets/mininggadgets/models/item/upgrade_battery_3.json
+7554d06952f0b2d0fa9d205b76a557575a8a3281 assets/mininggadgets/models/item/upgrade_battery_creative.json
 58815a83891b831ec777b939d77ebc1ec3b83777 assets/mininggadgets/models/item/upgrade_efficiency_1.json
 f6c8071ed2b64977071d63b1a4d9e6803ff0cff1 assets/mininggadgets/models/item/upgrade_efficiency_2.json
 4423e551abeb76abb309020a89ee44fa0871f00c assets/mininggadgets/models/item/upgrade_efficiency_3.json
