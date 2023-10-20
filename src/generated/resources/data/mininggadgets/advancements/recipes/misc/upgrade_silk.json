@@ -30,5 +30,6 @@
     "recipes": [
       "mininggadgets:upgrade_silk"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

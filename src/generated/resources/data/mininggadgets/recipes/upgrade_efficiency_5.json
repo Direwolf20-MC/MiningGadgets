@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "mininggadgets:upgrade_efficiency_5"
-  }
+  },
+  "show_notification": true
 }

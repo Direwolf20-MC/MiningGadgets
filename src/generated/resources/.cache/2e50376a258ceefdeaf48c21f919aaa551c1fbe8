@@ -1,4 +1,4 @@
-// 1.19.3	2023-01-31T20:09:58.060333	Item Models
+// 1.20.1	2023-10-03T15:56:54.8095774	Item Models
 8da37fe8fa2b785fbf0633e3d25dfc8502305df3 assets/mininggadgets/models/item/minerslight.json
 6e083fdcfbbe3ace1ce88136cfe9d68bf07c5490 assets/mininggadgets/models/item/modificationtable.json
 00d58751e2423f4999a59ca9019b15100de3da1b assets/mininggadgets/models/item/upgrade_battery_1.json
@@ -20,5 +20,7 @@ aba2919cf33b6c7126881eb44eb06b6350b6cb6f assets/mininggadgets/models/item/upgrad
 5fc25b17f0a3ac2c97b10a63c2fd3649b5e5c6bc assets/mininggadgets/models/item/upgrade_range_2.json
 60f7951dfd57c8b590786ab0b4cd2161f1a41944 assets/mininggadgets/models/item/upgrade_range_3.json
 ad095b591d09241b3610f8d51943deac75fe3030 assets/mininggadgets/models/item/upgrade_silk.json
-837ad01f4f52fce2cfc234f37929a0f6c91f70fc assets/mininggadgets/models/item/upgrade_three_by_three.json
+29be6b75b60754dc0e37bd97d2bb39c03c1ce6b7 assets/mininggadgets/models/item/upgrade_size_1.json
+cff900229026cccb2bf31d38d7c14854380cebea assets/mininggadgets/models/item/upgrade_size_2.json
+dfde0932c69131a292434b5a3b9e67f05f932702 assets/mininggadgets/models/item/upgrade_size_3.json
 995b5905752ffbd22e680ce26cec6881a3c211e5 assets/mininggadgets/models/item/upgrade_void_junk.json

@@ -35,7 +35,7 @@ public class BlockOverlayRender {
             return;
         }
 
-        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.level, MiningProperties.getRange(item));
+        List<BlockPos> coords = MiningCollect.collect(mc.player, lookingAt, mc.level, MiningProperties.getRange(item), MiningProperties.getSizeMode(item));
         Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
 
         PoseStack matrix = event.getPoseStack();

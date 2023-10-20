@@ -43,5 +43,6 @@
     "recipes": [
       "mininggadgets:upgrade_fortune_2"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

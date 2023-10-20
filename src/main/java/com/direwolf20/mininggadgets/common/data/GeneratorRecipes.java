@@ -2,10 +2,7 @@ package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
@@ -281,7 +278,7 @@ public class GeneratorRecipes extends RecipeProvider {
             .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
             .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, THREE_BY_THREE.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SIZE_1.get())
             .define('r', Items.REDSTONE_BLOCK)
             .define('u', UPGRADE_EMPTY.get())
             .define('d', Items.DIAMOND_BLOCK)
@@ -292,6 +289,33 @@ public class GeneratorRecipes extends RecipeProvider {
             .pattern("rpr")
             .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
             .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SIZE_2.get())
+                .define('n', Items.NETHERITE_BLOCK)
+                .define('u', SIZE_1.get())
+                .define('d', Items.DIAMOND_BLOCK)
+                .define('p', Items.NETHERITE_PICKAXE)
+                .define('e', Tags.Items.ENDER_PEARLS)
+                .pattern("ene")
+                .pattern("dud")
+                .pattern("epe")
+                .unlockedBy("has_size_1", has(SIZE_1.get()))
+                .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, SIZE_3.get())
+                .define('n', Items.NETHERITE_BLOCK)
+                .define('u', SIZE_2.get())
+                .define('s', Tags.Items.NETHER_STARS)
+                .define('p', Items.NETHERITE_PICKAXE)
+                .define('e', Tags.Items.ENDER_PEARLS)
+                .pattern("sns")
+                .pattern("eue")
+                .pattern("sps")
+                .unlockedBy("has_size_2", has(SIZE_2.get()))
+                .unlockedBy("has_size_1", has(SIZE_1.get()))
+                .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
+                .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, VOID_JUNK.get())
             .define('r', Tags.Items.DUSTS_REDSTONE)

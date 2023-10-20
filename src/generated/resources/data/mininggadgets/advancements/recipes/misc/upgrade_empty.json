@@ -28,5 +28,6 @@
     "recipes": [
       "mininggadgets:upgrade_empty"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

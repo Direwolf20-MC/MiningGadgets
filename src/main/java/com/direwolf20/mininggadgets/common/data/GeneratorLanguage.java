@@ -28,7 +28,9 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.FREEZING, "Upgrade: Freezing");
         addItem(ModItems.LIGHT_PLACER, "Upgrade: Light Placer");
         addItem(ModItems.MAGNET, "Upgrade: Magnet");
-        addItem(ModItems.THREE_BY_THREE, "Upgrade: 3x3");
+        addItem(ModItems.SIZE_1, "Upgrade: 3x3");
+        addItem(ModItems.SIZE_2, "Upgrade: 5x5");
+        addItem(ModItems.SIZE_3, "Upgrade: 7x7");
 //        addItem(ModItems.PAVER, "Upgrade: Paver");
         addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
         addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
@@ -51,7 +53,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.silk", "Applies the silk touch enchant to the Mining Gadget");
         add("tooltop.mininggadgets.void_junk", "Voids blocks! (adds filtering too)");
         add("tooltop.mininggadgets.magnet", "Deconstructs blocks right into your inventory");
-        add("tooltop.mininggadgets.three_by_three", "Allows for a 3x3 mining radius");
+        add("tooltop.mininggadgets.size", "Allows to mine with a larger mining radius");
         add("tooltop.mininggadgets.light_placer", "Places torches whenever the surroundings light level is lower than 8");
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
@@ -87,6 +89,9 @@ public class GeneratorLanguage extends LanguageProvider {
 
         // Screen Buttons and text
         addPrefixed("tooltip.screen.size", "Size: %1$d x %1$d");
+        addPrefixed("tooltip.screen.sizemode.auto", "Automatic");
+        addPrefixed("tooltip.screen.sizemode.normal", "Normal Mode");
+        addPrefixed("tooltip.screen.sizemode.pathway", "2 Down (Pathways)");
         addPrefixed("tooltip.screen.range", "Range");
         addPrefixed("tooltip.screen.visuals_menu", "Edit Visuals");
         addPrefixed("tooltip.screen.mining_gadget", "Gadget Settings");

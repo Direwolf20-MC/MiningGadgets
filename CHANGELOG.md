@@ -8,7 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Added
 
-- Miners Lights are now replaceable meaning you can place over them with normal block placement. This is a nice little quality of life fix :D
+- 5x5 and 7x7 upgrades
+
+### [1.15.3]
+
+#### Added
+
+- Miners Lights are now replaceable meaning you can place over them with normal block placement. This is a nice little
+  quality of life fix :D
 
 #### Fixed
 
