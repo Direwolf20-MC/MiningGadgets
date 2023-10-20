@@ -99,6 +99,9 @@ public class MiningGadget extends Item {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return false;
+
         IEnergyStorage energy = stack.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         return (energy.getEnergyStored() < energy.getMaxEnergyStored());
     }
@@ -111,6 +114,9 @@ public class MiningGadget extends Item {
 
     @Override
     public int getBarWidth(ItemStack stack) {
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return 13;
+
         return stack.getCapability(ForgeCapabilities.ENERGY, null)
                 .map(e -> Math.min(13 * e.getEnergyStored() / e.getMaxEnergyStored(), 13))
                 .orElse(0);
@@ -118,6 +124,9 @@ public class MiningGadget extends Item {
 
     @Override
     public int getBarColor(ItemStack stack) {
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return Mth.color(0, 1, 0);
+
         return stack.getCapability(ForgeCapabilities.ENERGY)
                 .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
                 .orElse(super.getBarColor(stack));
@@ -189,6 +198,9 @@ public class MiningGadget extends Item {
     }
 
     public static boolean canMine(ItemStack tool) {
+        if (MiningProperties.getBatteryTier(tool) == Upgrade.BATTERY_CREATIVE.getTier())
+            return true;
+
         IEnergyStorage energy = tool.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
 
@@ -503,6 +515,9 @@ public class MiningGadget extends Item {
     }
 
     public static int getEnergyCost(ItemStack stack) {
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return 0;
+
         int cost = Config.MININGGADGET_BASECOST.get();
         List<Upgrade> upgrades = UpgradeTools.getActiveUpgrades(stack);
         if (upgrades.isEmpty())

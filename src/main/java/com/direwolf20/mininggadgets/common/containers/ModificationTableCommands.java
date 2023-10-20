@@ -56,8 +56,14 @@ public class ModificationTableCommands {
             // Did we just insert a battery upgrade?
             if(card.getBaseName().equals(Upgrade.BATTERY_1.getBaseName())) {
                 UpgradeBatteryLevels.getBatteryByLevel(card.getTier()).ifPresent(power -> {
-                    laser.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(power.getPower()));
+                    laser.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> {
+                        ((EnergisedItem) e).updatedMaxEnergy(power.getPower());
+                        if (card.getTier() == Upgrade.BATTERY_CREATIVE.getTier()) {
+                            e.receiveEnergy(e.getMaxEnergyStored() - e.getEnergyStored(), false);
+                        }
+                    });
                 });
+                MiningProperties.setBatteryTier(laser, card.getTier());
             }
 
             return true;
@@ -98,8 +104,10 @@ public class ModificationTableCommands {
                 MiningProperties.setBeamMaxRange(laser, UpgradeTools.getMaxBeamRange(0));
             }
 
-            if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName()))
+            if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName())) {
+                MiningProperties.setBatteryTier(laser, 0);
                 laser.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
+            }
         });
     }
 }
