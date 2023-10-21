@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:redstone_block"
+    },
+    "g": {
+      "item": "minecraft:gold_block"
+    },
+    "u": {
+      "item": "mininggadgets:upgrade_efficiency_5"
+    }
+  },
+  "pattern": [
+    "bbb",
+    "gug",
+    "bbb"
+  ],
+  "result": {
+    "item": "mininggadgets:upgrade_efficiency_6"
+  },
+  "show_notification": true
+}

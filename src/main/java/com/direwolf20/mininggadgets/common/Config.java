@@ -3,9 +3,7 @@ package com.direwolf20.mininggadgets.common;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 
 import java.nio.file.Path;
 
@@ -36,6 +34,7 @@ public class Config {
     public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY3;
     public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY4;
     public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY5;
+    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY6;
     public static ForgeConfigSpec.IntValue UPGRADECOST_LIGHT;
     public static ForgeConfigSpec.IntValue UPGRADECOST_FREEZE;
     public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY1;
@@ -91,6 +90,8 @@ public class Config {
                 .defineInRange("upgradeEfficiency4", 40, 0, Integer.MAX_VALUE);
         UPGRADECOST_EFFICIENCY5 = COMMON_BUILDER.comment("Cost per block for Efficiency 5 upgrade")
                 .defineInRange("upgradeEfficiency5", 50, 0, Integer.MAX_VALUE);
+        UPGRADECOST_EFFICIENCY6 = COMMON_BUILDER.comment("Cost per block for Efficiency 6 upgrade")
+                .defineInRange("upgradeEfficiency6", 60, 0, Integer.MAX_VALUE);
         UPGRADECOST_LIGHT = COMMON_BUILDER.comment("Cost per Light Block placed")
                 .defineInRange("upgradeLight", 100, 0, Integer.MAX_VALUE);
         UPGRADECOST_FREEZE = COMMON_BUILDER.comment("Cost per block Frozen")

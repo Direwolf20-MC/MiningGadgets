@@ -44,6 +44,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.EFFICIENCY_3, "Upgrade: Efficiency, Tier 3");
         addItem(ModItems.EFFICIENCY_4, "Upgrade: Efficiency, Tier 4");
         addItem(ModItems.EFFICIENCY_5, "Upgrade: Efficiency, Tier 5");
+        addItem(ModItems.EFFICIENCY_6, "Upgrade: Efficiency, Tier 6");
         addItem(ModItems.BATTERY_1, "Upgrade: Battery, Tier 1");
         addItem(ModItems.BATTERY_2, "Upgrade: Battery, Tier 2");
         addItem(ModItems.BATTERY_3, "Upgrade: Battery, Tier 3");

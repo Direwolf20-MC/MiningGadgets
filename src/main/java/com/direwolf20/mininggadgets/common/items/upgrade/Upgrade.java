@@ -53,7 +53,8 @@ public enum Upgrade {
     EFFICIENCY_2("efficiency_2", ModItems.EFFICIENCY_2, 2, () -> Config.UPGRADECOST_EFFICIENCY2.get(), true),
     EFFICIENCY_3("efficiency_3", ModItems.EFFICIENCY_3, 3, () -> Config.UPGRADECOST_EFFICIENCY3.get(), true),
     EFFICIENCY_4("efficiency_4", ModItems.EFFICIENCY_4, 4, () -> Config.UPGRADECOST_EFFICIENCY4.get(), true),
-    EFFICIENCY_5("efficiency_5", ModItems.EFFICIENCY_5, 5, () -> Config.UPGRADECOST_EFFICIENCY5.get(), true);
+    EFFICIENCY_5("efficiency_5", ModItems.EFFICIENCY_5, 5, () -> Config.UPGRADECOST_EFFICIENCY5.get(), true),
+    EFFICIENCY_6("efficiency_6", ModItems.EFFICIENCY_6, 6, () -> Config.UPGRADECOST_EFFICIENCY6.get(), true);
 
     private final String name;
     private final String baseName;

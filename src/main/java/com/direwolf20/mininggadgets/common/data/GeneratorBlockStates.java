@@ -16,14 +16,6 @@ public class GeneratorBlockStates extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-//        horizontalBlock(ModBlocks.MODIFICATION_TABLE.get(), models().orientableWithBottom(
-//                Objects.requireNonNull(ModBlocks.MODIFICATION_TABLE.get().getRegistryName()).getPath(),
-//                modLoc("block/modificationtable_side"),
-//                modLoc("block/modificationtable_front"),
-//                modLoc("block/modificationtable_bottom"),
-//                modLoc("block/modificationtable_top")
-//        ).texture("particle", modLoc("block/modificationtable_side")));
-
         horizontalBlock(ModBlocks.MODIFICATION_TABLE.get(), new ModelFile.UncheckedModelFile(modLoc("block/modificationtable")));
 
         // Render block
