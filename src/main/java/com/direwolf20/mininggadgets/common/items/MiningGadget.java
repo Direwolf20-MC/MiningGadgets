@@ -551,7 +551,7 @@ public class MiningGadget extends Item {
 
             if (state.getBlock() instanceof RenderBlock) {
                 RenderBlockTileEntity blockEntity = (RenderBlockTileEntity) world.getBlockEntity(coord);
-                if (blockEntity != null) {
+                if (blockEntity != null && blockEntity.getRenderBlock() != null) {
                     temphardness = blockEntity.getRenderBlock().getDestroySpeed(world, coord);
                 }
             }

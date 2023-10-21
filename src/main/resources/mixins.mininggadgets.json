@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "com.direwolf20.mininggadgets.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "mixins.mininggadgets.refmap.json",
+  "minVersion": "0.8",
+  "mixins": [
+
+  ],
+  "client": [
+    "client.LocalPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
