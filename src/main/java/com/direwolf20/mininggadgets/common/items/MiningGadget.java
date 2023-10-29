@@ -14,6 +14,7 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.sounds.LaserLoopSound;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.direwolf20.mininggadgets.common.util.DevelopmentHelpers;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -240,6 +241,11 @@ public class MiningGadget extends Item {
     @Override
     public int getUseDuration(ItemStack stack) {
         return 72000;
+    }
+
+    @Override
+    public void onCraftedBy(ItemStack stack, Level level, Player player) {
+        DevelopmentHelpers.constructCompleteGadget(level, stack, player);
     }
 
     @Override
