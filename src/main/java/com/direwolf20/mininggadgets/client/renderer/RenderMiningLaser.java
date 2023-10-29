@@ -35,9 +35,6 @@ public class RenderMiningLaser {
 
     public static void renderLaser(RenderLevelStageEvent event, Player player, float ticks) {
         ItemStack stack = MiningGadget.getGadget(player);
-        if (!(stack.getItem() instanceof MiningGadget)) {
-            return;
-        }
 
         if (!MiningProperties.getCanMine(stack))
             return;
@@ -92,16 +89,6 @@ public class RenderMiningLaser {
 
         matrix.translate(-view.x(), -view.y(), -view.z());
         matrix.translate(from.x, from.y, from.z);
-
-        var localPlayer = (LocalPlayer) player;
-        float j = Mth.lerp(ticks, localPlayer.xBobO, localPlayer.xBob);
-        float k = Mth.lerp(ticks, localPlayer.yBobO, localPlayer.yBob);
-
-        matrix.mulPose(Axis.XP.rotationDegrees((localPlayer.getViewXRot(ticks) - j) * 0.1f));
-        matrix.mulPose(Axis.YP.rotationDegrees((localPlayer.getViewYRot(ticks) - k) * 0.1f));
-
-        matrix.pushPose();
-
         matrix.mulPose(Axis.YP.rotationDegrees(Mth.lerp(ticks, -player.getYRot(), -player.yRotO)));
         matrix.mulPose(Axis.XP.rotationDegrees(Mth.lerp(ticks, player.getXRot(), player.xRotO)));
 
@@ -109,11 +96,11 @@ public class RenderMiningLaser {
         Matrix3f matrixNormal = matrixstack$entry.normal();
         Matrix4f positionMatrix = matrixstack$entry.pose();
 
-//        //additive laser beam
+        //additive laser beam
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_ADDITIVE);
         drawBeam(stack, xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, additiveThickness, activeHand, distance, 0.5, 1, ticks, r,g,b,0.7f);
-//
-//        //main laser, colored part
+
+        //main laser, colored part
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_BEAM);
         drawBeam(stack, xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness, activeHand, distance, v, v + distance * 1.5, ticks, r,g,b,1f);
 
@@ -121,8 +108,6 @@ public class RenderMiningLaser {
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
         drawBeam(stack, xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness/2, activeHand, distance, v, v + distance * 1.5, ticks, beam2r,beam2g,beam2b,1f);
         matrix.popPose();
-        matrix.popPose();
-
 //        RenderSystem.disableDepthTest();
         buffer.endBatch();
     }
@@ -159,16 +144,16 @@ public class RenderMiningLaser {
             startYOffset = -.120f;
             startXOffset = 0.25f;
         }
-        float f = (Mth.lerp(ticks, player.xRotO, player.getXRot()));//- Mth.lerp(ticks, player.xBobO, player.xBob));
-        float f1 = (Mth.lerp(ticks, player.yRotO, player.getYRot())); //- Mth.lerp(ticks, player.yBobO, player.yBob));
-        startXOffset = startXOffset;// + (f1 / 750);
-        startYOffset = startYOffset;// + (f / 750);
+        float f = (Mth.lerp(ticks, player.xRotO, player.getXRot()) - Mth.lerp(ticks, player.xBobO, player.xBob));
+        float f1 = (Mth.lerp(ticks, player.yRotO, player.getYRot()) - Mth.lerp(ticks, player.yBobO, player.yBob));
+        startXOffset = startXOffset + (f1 / 750);
+        startYOffset = startYOffset + (f / 750);
 
         Vector4f vec1 = new Vector4f(startXOffset, -thickness + startYOffset, startZOffset, 1.0F);
         vec1.mul(positionMatrix);
-        Vector4f vec2 = new Vector4f(0, -thickness, (float) distance, 1.0F);
+        Vector4f vec2 = new Vector4f((float) xOffset, -thickness + (float) yOffset, (float) distance + (float) zOffset, 1.0F);
         vec2.mul(positionMatrix);
-        Vector4f vec3 = new Vector4f(0, thickness, (float) distance, 1.0F);
+        Vector4f vec3 = new Vector4f((float) xOffset, thickness + (float) yOffset, (float) distance + (float) zOffset, 1.0F);
         vec3.mul(positionMatrix);
         Vector4f vec4 = new Vector4f(startXOffset, thickness + startYOffset, startZOffset, 1.0F);
         vec4.mul(positionMatrix);
