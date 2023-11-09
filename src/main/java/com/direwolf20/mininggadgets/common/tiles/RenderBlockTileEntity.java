@@ -228,8 +228,14 @@ public class RenderBlockTileEntity extends BlockEntity {
             return costOfOperation;
         }
 
-        world.setBlockAndUpdate(pos, state);
-        return costOfOperation;
+        if (world.getBlockEntity(pos) == null)
+        {
+            world.setBlockAndUpdate(pos, state);
+            return costOfOperation;
+        }
+
+        // Block is a block entity, we don't replace it, costs zero
+        return 0;
     }
 
     public void spawnParticle() {
