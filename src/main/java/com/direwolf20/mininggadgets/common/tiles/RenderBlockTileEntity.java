@@ -222,7 +222,8 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         // If the block is just water logged, remove the fluid
         BlockState blockState = world.getBlockState(pos);
-        if (blockState.hasProperty(BlockStateProperties.WATERLOGGED) && blockState.getValue(BlockStateProperties.WATERLOGGED) && world.getBlockEntity(pos) == null) {
+        // Chests have a tile entity, and are then converted to ice below, we need them to lose waterlogged
+        if (blockState.hasProperty(BlockStateProperties.WATERLOGGED) && blockState.getValue(BlockStateProperties.WATERLOGGED)) {
             world.setBlockAndUpdate(pos, blockState.setValue(BlockStateProperties.WATERLOGGED, false));
             return costOfOperation;
         }
