@@ -59,7 +59,7 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.freezing", "Freezes water and stops lava in it's place!");
         add("tooltop.mininggadgets.fortune", "Applies fortune to the Mining Gadget");
         add("tooltop.mininggadgets.battery", "Upgrades the internal capacitors");
-        add("tooltop.mininggadgets.range", "Extends your range by 5 times with each tier");
+        add("tooltop.mininggadgets.range", "Extends the range by 5 with each tier");
         add("tooltop.mininggadgets.efficiency", "Applies efficiency to the Mining Gadget");
         add("tooltop.mininggadgets.paver", "Creates a path for you as you mine");
 

@@ -80,7 +80,7 @@
   "tooltop.mininggadgets.light_placer": "Places torches whenever the surroundings light level is lower than 8",
   "tooltop.mininggadgets.magnet": "Deconstructs blocks right into your inventory",
   "tooltop.mininggadgets.paver": "Creates a path for you as you mine",
-  "tooltop.mininggadgets.range": "Extends your range by 5 times with each tier",
+  "tooltop.mininggadgets.range": "Extends the range by 5 with each tier",
   "tooltop.mininggadgets.silk": "Applies the silk touch enchant to the Mining Gadget",
   "tooltop.mininggadgets.size": "Allows to mine with a larger mining radius",
   "tooltop.mininggadgets.void_junk": "Voids blocks! (adds filtering too)"
