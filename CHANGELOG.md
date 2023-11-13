@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+### [1.15.6]
+
+#### Changed
+
+- Improved the range tooltip to be more clear about what it does. Thanks to [#235](https://github.com/Direwolf20-MC/MiningGadgets/pull/235) [@Anoyomouse](https://github.com/Anoyomouse)
+
 ## 1.20.1
 
 ### [1.15.5]
