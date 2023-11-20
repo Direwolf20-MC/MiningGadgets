@@ -145,11 +145,13 @@ public class LaserParticle extends BreakingItemParticle {
         forward = forward.scale(0.85f);
         down = down.scale(-0.35);
 
-        // Check which hand is player's main hand.
-        boolean isRightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
+        // Check which hand the gadget is in.
+        boolean isRightHanded = player.getMainArm() == HumanoidArm.RIGHT;
+        boolean isGadgetInMainHand = player.getMainHandItem().getItem() instanceof MiningGadget;
+        boolean isGadgetInRightHand = (isRightHanded && isGadgetInMainHand) || (!isRightHanded && !isGadgetInMainHand);
 
         //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
-        Vec3 laserPos = isRightHanded ? playerPos.add(right) : playerPos.subtract(right);
+        Vec3 laserPos = isGadgetInRightHand ? playerPos.add(right) : playerPos.subtract(right);
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
 
