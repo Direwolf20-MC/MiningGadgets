@@ -12,6 +12,7 @@ import net.minecraft.client.particle.BreakingItemParticle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -132,6 +133,8 @@ public class LaserParticle extends BreakingItemParticle {
         Vec3 playerPos = player.position().add(0, player.getEyeHeight(), 0);
         Vec3 blockPos = new Vec3(sourceX, sourceY, sourceZ);
         Vec3 look = player.getLookAngle(); // or getLook(partialTicks)
+
+
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3 right = new Vec3(-look.z, 0, look.x).normalize();
         Vec3 forward = look;
@@ -142,8 +145,11 @@ public class LaserParticle extends BreakingItemParticle {
         forward = forward.scale(0.85f);
         down = down.scale(-0.35);
 
+        // Check which hand is player's main hand.
+        boolean isRightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
+
         //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
-        Vec3 laserPos = playerPos.add(right);
+        Vec3 laserPos = isRightHanded ? playerPos.add(right) : playerPos.subtract(right);
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
 
