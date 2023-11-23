@@ -134,7 +134,6 @@ public class LaserParticle extends BreakingItemParticle {
         Vec3 blockPos = new Vec3(sourceX, sourceY, sourceZ);
         Vec3 look = player.getLookAngle(); // or getLook(partialTicks)
 
-
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3 right = new Vec3(-look.z, 0, look.x).normalize();
         Vec3 forward = look;
