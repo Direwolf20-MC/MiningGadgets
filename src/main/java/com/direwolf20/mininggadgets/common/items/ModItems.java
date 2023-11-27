@@ -46,6 +46,7 @@ public class ModItems {
     public static final RegistryObject<Item> BATTERY_1 = UPGRADE_ITEMS.register("upgrade_battery_1", () -> Upgrade.BATTERY_1.getCard());
     public static final RegistryObject<Item> BATTERY_2 = UPGRADE_ITEMS.register("upgrade_battery_2", () -> Upgrade.BATTERY_2.getCard());
     public static final RegistryObject<Item> BATTERY_3 = UPGRADE_ITEMS.register("upgrade_battery_3", () -> Upgrade.BATTERY_3.getCard());
+    public static final RegistryObject<Item> BATTERY_CREATIVE = UPGRADE_ITEMS.register("upgrade_battery_creative", () -> Upgrade.BATTERY_CREATIVE.getCard());
     public static final RegistryObject<Item> EFFICIENCY_1 = UPGRADE_ITEMS.register("upgrade_efficiency_1", () -> Upgrade.EFFICIENCY_1.getCard());
     public static final RegistryObject<Item> EFFICIENCY_2 = UPGRADE_ITEMS.register("upgrade_efficiency_2", () -> Upgrade.EFFICIENCY_2.getCard());
     public static final RegistryObject<Item> EFFICIENCY_3 = UPGRADE_ITEMS.register("upgrade_efficiency_3", () -> Upgrade.EFFICIENCY_3.getCard());

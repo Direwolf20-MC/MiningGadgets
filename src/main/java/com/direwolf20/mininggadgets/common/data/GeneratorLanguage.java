@@ -45,6 +45,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(ModItems.BATTERY_1, "Upgrade: Battery, Tier 1");
         addItem(ModItems.BATTERY_2, "Upgrade: Battery, Tier 2");
         addItem(ModItems.BATTERY_3, "Upgrade: Battery, Tier 3");
+        addItem(ModItems.BATTERY_CREATIVE, "Upgrade: Creative Battery");
 
         // Upgrade tooltips :D
         add("tooltop.mininggadgets.empty", "Used to craft other upgrades");

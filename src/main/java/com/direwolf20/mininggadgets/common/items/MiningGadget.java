@@ -54,8 +54,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -88,7 +88,10 @@ public class MiningGadget extends Item {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        IEnergyStorage energy = stack.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return false;
+
+        IEnergyStorage energy = stack.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         return (energy.getEnergyStored() < energy.getMaxEnergyStored());
     }
 
@@ -100,14 +103,20 @@ public class MiningGadget extends Item {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return stack.getCapability(CapabilityEnergy.ENERGY, null)
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return 13;
+
+        return stack.getCapability(ForgeCapabilities.ENERGY, null)
                 .map(e -> Math.min(13 * e.getEnergyStored() / e.getMaxEnergyStored(), 13))
                 .orElse(0);
     }
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return stack.getCapability(CapabilityEnergy.ENERGY)
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return Mth.color(0, 1, 0);
+
+        return stack.getCapability(ForgeCapabilities.ENERGY)
                 .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
                 .orElse(super.getBarColor(stack));
     }
@@ -141,7 +150,7 @@ public class MiningGadget extends Item {
             }
         }
 
-        stack.getCapability(CapabilityEnergy.ENERGY, null)
+        stack.getCapability(ForgeCapabilities.ENERGY, null)
                 .ifPresent(energy -> {
                     TranslatableComponent energyText = !sneakPressed
                             ? new TranslatableComponent("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
@@ -169,7 +178,10 @@ public class MiningGadget extends Item {
     }
 
     public static boolean canMine(ItemStack tool) {
-        IEnergyStorage energy = tool.getCapability(CapabilityEnergy.ENERGY, null).orElse(null);
+        if (MiningProperties.getBatteryTier(tool) == Upgrade.BATTERY_CREATIVE.getTier())
+            return true;
+
+        IEnergyStorage energy = tool.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
         int cost = getEnergyCost(tool);
 
         if (MiningProperties.getRange(tool) == 3)
@@ -443,7 +455,7 @@ public class MiningGadget extends Item {
                 else*/
                         durability = durability - 1;
                         if (durability <= 0) {
-                            stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
+                            stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
                             if (MiningProperties.getPrecisionMode(stack)) {
                                 MiningProperties.setCanMine(stack, false);
                                 player.stopUsingItem();
@@ -472,16 +484,19 @@ public class MiningGadget extends Item {
                 pos = lookingAt.getBlockPos().relative(side).relative(right);
 
             if (world.getMaxLocalRawBrightness(pos) <= 7 && world.getBlockState(pos).getMaterial() == Material.AIR) {
-                int energy = stack.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+                int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
                 if (energy > Config.UPGRADECOST_LIGHT.get()) {
                     world.setBlockAndUpdate(pos, ModBlocks.MINERS_LIGHT.get().defaultBlockState());
-                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
+                    stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
                 }
             }
         }
     }
 
     public static int getEnergyCost(ItemStack stack) {
+        if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
+            return 0;
+
         int cost = Config.MININGGADGET_BASECOST.get();
         List<Upgrade> upgrades = UpgradeTools.getActiveUpgrades(stack);
         if (upgrades.isEmpty())

@@ -23,6 +23,7 @@ public class EnergisedItem extends EnergyStorage {
     public void updatedMaxEnergy(int max) {
         stack.getOrCreateTag().putInt("max_energy", max);
         this.capacity = max;
+        this.energy = Math.min(max, this.energy);
 
         // Ensure the current stored energy is up to date with the new max.
         this.receiveEnergy(1, false);

@@ -31,7 +31,7 @@ public enum Upgrade {
     THREE_BY_THREE("three_by_three", () -> 0, false),
     LIGHT_PLACER("light_placer", () -> 0), // applied at operation based on config. this isn't ideal
 //    PAVER("paver", () -> 10),
-    
+
     // Tiered
     FORTUNE_1("fortune_1", 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
     FORTUNE_2("fortune_2", 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),
@@ -40,6 +40,7 @@ public enum Upgrade {
     BATTERY_1("battery_1", 1, () -> 0),
     BATTERY_2("battery_2", 2, () -> 0),
     BATTERY_3("battery_3", 3, () -> 0),
+    BATTERY_CREATIVE("battery_CREATIVE", 4, () -> 0),
 
     RANGE_1("range_1", 1, () -> 0),
     RANGE_2("range_2", 2, () -> 0),
