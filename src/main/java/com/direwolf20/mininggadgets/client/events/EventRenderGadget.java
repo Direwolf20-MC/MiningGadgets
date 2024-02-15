@@ -2,7 +2,7 @@ package com.direwolf20.mininggadgets.client.events;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.setup.Registration;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -11,15 +11,15 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RenderHandEvent;
+
 
 @Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT)
 public class EventRenderGadget {
@@ -30,7 +30,7 @@ public class EventRenderGadget {
             return;
         }
 
-        boolean isFancyGadget = ModItems.MININGGADGET_FANCY.get().equals(event.getItemStack().getItem());
+        boolean isFancyGadget = Registration.MININGGADGET_FANCY.get().equals(event.getItemStack().getItem());
 
         Minecraft mc = Minecraft.getInstance();
         PoseStack matrixStackIn = event.getPoseStack();
@@ -59,7 +59,7 @@ public class EventRenderGadget {
         matrixStackIn.mulPose(Axis.ZP.rotationDegrees(f * f5 * -20.0F));
 
         AbstractClientPlayer abstractclientplayerentity = mc.player;
-        RenderSystem.setShaderTexture(0, abstractclientplayerentity.getSkinTextureLocation());
+        RenderSystem.setShaderTexture(0, abstractclientplayerentity.getSkin().texture());
 
         matrixStackIn.translate(f * -1.0F, 3.6F, 3.5D);
         matrixStackIn.mulPose(Axis.ZP.rotationDegrees(f * 120.0F));

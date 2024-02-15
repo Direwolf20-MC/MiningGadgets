@@ -9,20 +9,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderHighlightEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.List;
 
 public class ClientEvents {
     @SubscribeEvent
-    static void drawBlockHighlightEvent(RenderHighlightEvent evt) {
-        if( Minecraft.getInstance().player == null )
+    static void drawBlockHighlightEvent(RenderHighlightEvent.Block evt) {
+        if (Minecraft.getInstance().player == null)
             return;
 
-        if(MiningGadget.isHolding(Minecraft.getInstance().player))
+        if (MiningGadget.isHolding(Minecraft.getInstance().player))
             evt.setCanceled(true);
     }
 

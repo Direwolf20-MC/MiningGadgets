@@ -1,9 +1,9 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningCollect;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
+import com.direwolf20.mininggadgets.setup.Registration;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
 import java.awt.*;
@@ -45,7 +45,7 @@ public class BlockOverlayRender {
         VertexConsumer builder;
         builder = buffer.getBuffer(MyRenderType.BlockOverlay);
         coords.forEach(e -> {
-            if (mc.level.getBlockState(e).getBlock() != ModBlocks.RENDER_BLOCK.get()) {
+            if (mc.level.getBlockState(e).getBlock() != Registration.RENDER_BLOCK.get()) {
 
                 matrix.pushPose();
                 matrix.translate(e.getX(), e.getY(), e.getZ());

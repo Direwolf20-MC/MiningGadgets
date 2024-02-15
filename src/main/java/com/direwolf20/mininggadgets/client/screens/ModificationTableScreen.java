@@ -24,8 +24,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraftforge.client.gui.widget.ScrollPanel;
-import net.minecraftforge.common.ForgeI18n;
+import net.neoforged.neoforge.client.gui.widget.ScrollPanel;
+
 
 public class ModificationTableScreen extends AbstractContainerScreen<ModificationTableContainer> {
     private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
@@ -44,7 +44,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
+        // this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
         this.scrollingUpgrades.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -53,10 +53,12 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         int relX = (this.width) / 2;
         int relY = (this.height) / 2;
 
-        guiGraphics.drawCenteredString(font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 100, 0xFFFFFF);
+        //guiGraphics.drawCenteredString(font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 100, 0xFFFFFF);
+        guiGraphics.drawCenteredString(font, MiningGadgets.MOD_ID + "text.modification_table", relX, relY - 100, 0xFFFFFF);
 
         if (this.container.getUpgradesCache().size() == 0) {
-            String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
+            //String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
+            String string = MiningGadgets.MOD_ID + "text.empty_table_helper";
             String[] parts = string.split("\n");
             for (int i = 0; i < parts.length; i++) {
                 drawScaledCenteredString(guiGraphics, (relX + 17) - (font.width(parts[0]) / 2), (relY - 68) + (i * font.lineHeight), .8f, parts[i], 0xFFFFFF);
@@ -124,11 +126,11 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
 
         // Fixes a forge bug where the screen will screen when no scroll is available
         @Override
-        public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+        public boolean mouseScrolled(double mouseX, double mouseY, double scroll, double scrollY) {
             if (this.getContentHeight() < this.height)
                 return false;
 
-            return super.mouseScrolled(mouseX, mouseY, scroll);
+            return super.mouseScrolled(mouseX, mouseY, scroll, scrollY);
         }
 
         @Override

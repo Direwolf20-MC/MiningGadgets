@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.data;
 
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
+import com.direwolf20.mininggadgets.setup.Registration;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -37,12 +37,12 @@ public class GeneratorLoot extends LootTableProvider {
 
         @Override
         protected void generate() {
-            this.dropSelf(ModBlocks.MODIFICATION_TABLE.get());
+            this.dropSelf(Registration.MODIFICATION_TABLE.get());
         }
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return Collections.singletonList(ModBlocks.MODIFICATION_TABLE.get());
+            return Collections.singletonList(Registration.MODIFICATION_TABLE.get());
         }
     }
 }

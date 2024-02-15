@@ -2,25 +2,28 @@ package com.direwolf20.mininggadgets.common.containers;
 
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
-import net.minecraft.world.entity.player.Player;
+import com.direwolf20.mininggadgets.setup.Registration;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+
 
 public class FilterContainer extends AbstractContainerMenu {
-    FilterContainer(int windowId, Inventory playerInventory, FriendlyByteBuf buf) {
+    public FilterContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
         this(windowId, playerInventory, new ItemStackHandler(30));
+
     }
 
     public FilterContainer(int windowId, Inventory playerInventory, IItemHandler ghostInventory) {
-        super(ModContainers.FILTER_CONTAINER.get(), windowId);
+        super(Registration.FILTER_CONTAINER.get(), windowId);
         this.setup(new InvWrapper(playerInventory), ghostInventory);
     }
 

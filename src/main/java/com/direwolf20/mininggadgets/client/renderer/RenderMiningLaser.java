@@ -2,10 +2,10 @@ package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.setup.Registration;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -21,7 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -117,14 +117,14 @@ public class RenderMiningLaser {
     }
 
     private static void drawBeam(ItemStack stack, double xOffset, double yOffset, double zOffset, VertexConsumer builder, Matrix4f positionMatrix, Matrix3f matrixNormalIn, float thickness, InteractionHand hand, double distance, double v1, double v2, float ticks, float r, float g, float b, float alpha) {
-        boolean isFancy = stack.getItem().equals(ModItems.MININGGADGET_FANCY.get());
-        boolean isSimple = stack.getItem().equals(ModItems.MININGGADGET_SIMPLE.get());
+        boolean isFancy = stack.getItem().equals(Registration.MININGGADGET_FANCY.get());
+        boolean isSimple = stack.getItem().equals(Registration.MININGGADGET_SIMPLE.get());
 
         Vector3f vector3f = new Vector3f(0.0f, 1.0f, 0.0f);
         vector3f.mul(matrixNormalIn);//TODO: validate //.transform(matrixNormalIn);
         LocalPlayer player = Minecraft.getInstance().player;
         // Support for hand sides remembering to take into account of Skin options
-        if( Minecraft.getInstance().options.mainHand().get() != HumanoidArm.RIGHT )
+        if (Minecraft.getInstance().options.mainHand().get() != HumanoidArm.RIGHT)
             hand = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         float startXOffset = -0.20f;
         float startYOffset = -.108f;

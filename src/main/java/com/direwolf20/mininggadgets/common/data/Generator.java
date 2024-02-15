@@ -1,19 +1,23 @@
 package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+
 
 @Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Generator {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
-        var includeServer = event.includeServer();
-        var includeClient = event.includeClient();
-        var generator = event.getGenerator();
-        var helper = event.getExistingFileHelper();
-        var packOutput = event.getGenerator().getPackOutput();
+        DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = generator.getPackOutput();
+        boolean includeServer = event.includeServer();
+        boolean includeClient = event.includeClient();
+        ExistingFileHelper helper = event.getExistingFileHelper();
 
         // Client
         generator.addProvider(includeClient, new GeneratorLanguage(packOutput));

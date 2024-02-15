@@ -1,37 +1,23 @@
 package com.direwolf20.mininggadgets.common;
 
-import com.direwolf20.mininggadgets.client.ClientEvents;
-import com.direwolf20.mininggadgets.client.ClientSetup;
-import com.direwolf20.mininggadgets.client.particles.ModParticles;
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.containers.ModContainers;
-import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
+import com.direwolf20.mininggadgets.common.capabilities.EnergisedItem;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.ModItems;
-import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.sounds.OurSounds;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import com.direwolf20.mininggadgets.setup.ClientSetup;
+import com.direwolf20.mininggadgets.setup.Config;
+import com.direwolf20.mininggadgets.setup.ModSetup;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,65 +27,34 @@ public class MiningGadgets
     public static final String MOD_ID = "mininggadgets";
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public MiningGadgets() {
-        IEventBus event = FMLJavaModLoadingContext.get().getModEventBus();
-
+    public MiningGadgets(IEventBus event) {
         // Register all of our items, blocks, item blocks, etc
-        ModItems.ITEMS.register(event);
-        ModItems.UPGRADE_ITEMS.register(event);
-        ModBlocks.BLOCKS.register(event);
-        ModBlocks.TILES_ENTITIES.register(event);
-        ModContainers.CONTAINERS.register(event);
-        ModParticles.PARTICLE_TYPES.register(event);
-        OurSounds.SOUND_REGISTRY.register(event);
+        Registration.init(event);
+        Config.register();
 
-        event.addListener(this::setup);
-        event.addListener(this::setupClient);
+        event.addListener(ModSetup::init);
+        ModSetup.TABS.register(event);
+        NeoForge.EVENT_BUS.register(this);
+        event.addListener(PacketHandler::registerNetworking);
+        event.addListener(this::registerCapabilities);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
-
-        // Register the setup method for modloading
-        event.addListener(this::setup);
-        event.addListener(this::buildContents);
-        MinecraftForge.EVENT_BUS.register(this);
-
-        Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-client.toml"));
-        Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MOD_ID + "-common.toml"));
+        if (FMLLoader.getDist().isClient()) {
+            event.addListener(ClientSetup::init);
+        }
     }
 
-    public void buildContents(RegisterEvent event) {
-        ResourceKey<CreativeModeTab> TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(MOD_ID, "creative_tab"));
-        event.register(Registries.CREATIVE_MODE_TAB, creativeModeTabRegisterHelper ->
-        {
-            creativeModeTabRegisterHelper.register(TAB, CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.MININGGADGET_FANCY.get()))
-                    .title(Component.translatable("itemGroup." + MOD_ID))
-                    .displayItems((params, output) -> {
-                        ModItems.ITEMS.getEntries()
-                                .stream().filter(e -> e != ModItems.MINERS_LIGHT_ITEM)
-                                .forEach(e -> {
-                                    // Normal
-                                    Item item = e.get();
-                                    output.accept(item);
-
-                                    // Charged
-                                    if (item instanceof MiningGadget) {
-                                        ItemStack stack = new ItemStack(item);
-                                        stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
-                                        output.accept(stack);
-                                    }
-                                });
-
-                        ModItems.UPGRADE_ITEMS.getEntries().forEach(e -> output.accept(e.get()));
-                    })
-                    .build());
-        });
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerItem(Capabilities.EnergyStorage.ITEM, (itemStack, context) -> new EnergisedItem(itemStack, ((MiningGadget) itemStack.getItem()).getEnergyMax()),
+                Registration.MININGGADGET.get(),
+                Registration.MININGGADGET_FANCY.get(),
+                Registration.MININGGADGET_SIMPLE.get()
+        );
     }
 
     @SubscribeEvent
     public void rightClickEvent(PlayerInteractEvent.RightClickBlock event) {
         ItemStack stack = MiningGadget.getGadget(event.getEntity());
-        if( stack.getItem() instanceof MiningGadget ) {
+        if (stack.getItem() instanceof MiningGadget) {
             if (this.stackIsAnnoying(event.getEntity().getMainHandItem())
                     || this.stackIsAnnoying(event.getEntity().getOffhandItem())
                     || event.getLevel().getBlockState(event.getPos()).getBlock() instanceof RedStoneOreBlock) {
@@ -121,23 +76,6 @@ public class MiningGadgets
         Block block = ((BlockItem) stack.getItem()).getBlock();
         return block instanceof TorchBlock || block instanceof LanternBlock || block.equals(Blocks.GLOWSTONE)
                 || block instanceof RedstoneLampBlock || block instanceof EndRodBlock;
-    }
-
-    private void setup(final FMLCommonSetupEvent event)
-    {
-        PacketHandler.register();
-        MinecraftForge.EVENT_BUS.register(ServerTickHandler.class);
-    }
-
-    /**
-     * Only run on the client making it a safe place to register client
-     * components. Remember that you shouldn't reference client only
-     * methods in this class as it'll crash the mod :P
-     */
-    private void setupClient(final FMLClientSetupEvent event) {
-        // Register the container screens.
-        ClientSetup.setup();
-        MinecraftForge.EVENT_BUS.register(ClientEvents.class);
     }
 
     public static Logger getLogger() {
