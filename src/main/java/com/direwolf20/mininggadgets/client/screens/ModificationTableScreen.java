@@ -6,9 +6,8 @@ import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
-import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
+import com.direwolf20.mininggadgets.common.network.data.ExtractUpgradePayload;
+import com.direwolf20.mininggadgets.common.network.data.InsertUpgradePayload;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,6 +24,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.client.gui.widget.ScrollPanel;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public class ModificationTableScreen extends AbstractContainerScreen<ModificationTableContainer> {
@@ -106,7 +106,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
                     return false;
                 }
 
-                PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
+                PacketDistributor.SERVER.noArg().send(new InsertUpgradePayload(this.tePos, heldStack));
                 this.menu.setCarried(ItemStack.EMPTY);
             }
         }
@@ -168,7 +168,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
             if( !isMouseOver(mouseX, mouseY) || this.upgrade == null )
                 return false;
 
-            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
+            PacketDistributor.SERVER.noArg().send(new ExtractUpgradePayload(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
             return super.mouseClicked(mouseX, mouseY, button);
         }
 

@@ -2,8 +2,7 @@ package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.common.containers.FilterContainer;
 import com.direwolf20.mininggadgets.common.containers.GhostSlot;
-import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.network.packets.PacketGhostSlot;
+import com.direwolf20.mininggadgets.common.network.data.GhostSlotPayload;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -11,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Complete props and thanks to @amadones for their awesome implementation of this system
@@ -59,7 +59,7 @@ public class FilterScreen extends AbstractContainerScreen<FilterContainer> {
         stack = stack.copy().split(hoveredSlot.getMaxStackSize()); // Limit to slot limit
         hoveredSlot.set(stack); // Temporarily update the client for continuity purposes
 
-        PacketHandler.sendToServer(new PacketGhostSlot(hoveredSlot.index, stack));
+        PacketDistributor.SERVER.noArg().send(new GhostSlotPayload(hoveredSlot.index, stack));
         return true;
     }
 

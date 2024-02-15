@@ -1,11 +1,10 @@
 package com.direwolf20.mininggadgets.client.screens;
 
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
-import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.network.packets.PacketChangeBreakType;
-import com.direwolf20.mininggadgets.common.network.packets.PacketChangeColor;
+import com.direwolf20.mininggadgets.common.network.data.ChangeBreakTypePayload;
+import com.direwolf20.mininggadgets.common.network.data.ChangeColorPayload;
 import com.mojang.blaze3d.platform.InputConstants;
-import it.unimi.dsi.fastutil.ints.IntConsumer;
+import it.unimi.dsi.fastutil.shorts.ShortConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -13,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,12 +20,12 @@ import java.util.Map;
 public class MiningVisualsScreen extends Screen {
     private ItemStack gadget;
     private Button blockBreakButton;
-    private int red;
-    private int green;
-    private int blue;
-    private int red_inner;
-    private int green_inner;
-    private int blue_inner;
+    private short red;
+    private short green;
+    private short blue;
+    private short red_inner;
+    private short green_inner;
+    private short blue_inner;
     private ExtendedSlider sliderRedInner;
     private ExtendedSlider sliderGreenInner;
     private ExtendedSlider sliderBlueInner;
@@ -33,7 +33,7 @@ public class MiningVisualsScreen extends Screen {
     private ExtendedSlider sliderGreenOuter;
     private ExtendedSlider sliderBlueOuter;
 
-    private Map<ExtendedSlider, IntConsumer> sliderMap = new HashMap<>();
+    private Map<ExtendedSlider, ShortConsumer> sliderMap = new HashMap<>();
 
     public MiningVisualsScreen(ItemStack gadget) {
         super(Component.literal("title"));
@@ -64,7 +64,7 @@ public class MiningVisualsScreen extends Screen {
                     else
                         button.setMessage(Component.translatable("mininggadgets.tooltip.screen.shrink"));
 
-                    PacketHandler.sendToServer(new PacketChangeBreakType());
+                    PacketDistributor.SERVER.noArg().send(new ChangeBreakTypePayload());
                 }
         )
                 .pos(baseX - (150), baseY - 55)
@@ -76,38 +76,38 @@ public class MiningVisualsScreen extends Screen {
         sliderRedInner = new ExtendedSlider(baseX - (150), baseY - 10, 150, 20, Component.translatable("mininggadgets.tooltip.screen.red").append(": "), Component.empty(), 0, 255, this.red, true) {
             @Override
             protected void applyValue() {
-                red_inner = this.getValueInt();
+                red_inner = (short) this.getValueInt();
             }
         };
         sliderGreenInner = new ExtendedSlider(baseX - (150), baseY + 15, 150, 20, Component.translatable("mininggadgets.tooltip.screen.green").append(": "), Component.empty(), 0, 255, this.green, true) {
             @Override
             protected void applyValue() {
-                green_inner = this.getValueInt();
+                green_inner = (short) this.getValueInt();
             }
         };
         sliderBlueInner = new ExtendedSlider(baseX - (150), baseY + 40, 150, 20, Component.translatable("mininggadgets.tooltip.screen.blue").append(": "), Component.empty(), 0, 255, this.blue, true) {
             @Override
             protected void applyValue() {
-                blue_inner = this.getValueInt();
+                blue_inner = (short) this.getValueInt();
             }
         };
 
         sliderRedOuter = new ExtendedSlider(baseX + (25), baseY - 10, 150, 20, Component.translatable("mininggadgets.tooltip.screen.red").append(": "), Component.empty(), 0, 255, this.red_inner, true) {
             @Override
             protected void applyValue() {
-                red = this.getValueInt();
+                red = (short) this.getValueInt();
             }
         };
         sliderGreenOuter = new ExtendedSlider(baseX + (25), baseY + 15, 150, 20, Component.translatable("mininggadgets.tooltip.screen.green").append(": "), Component.empty(), 0, 255, this.green_inner, true) {
             @Override
             protected void applyValue() {
-                green = this.getValueInt();
+                green = (short) this.getValueInt();
             }
         };
         sliderBlueOuter = new ExtendedSlider(baseX + (25), baseY + 40, 150, 20, Component.translatable("mininggadgets.tooltip.screen.blue").append(": "), Component.empty(), 0, 255, this.blue_inner, true) {
             @Override
             protected void applyValue() {
-                blue = this.getValueInt();
+                blue = (short) this.getValueInt();
             }
         };
 
@@ -177,7 +177,7 @@ public class MiningVisualsScreen extends Screen {
     }
 
     private void syncColors() {
-        PacketHandler.sendToServer(new PacketChangeColor(this.red, this.green, this.blue, this.red_inner, this.green_inner, this.blue_inner));
+        PacketDistributor.SERVER.noArg().send(new ChangeColorPayload(this.red, this.green, this.blue, this.red_inner, this.green_inner, this.blue_inner));
     }
 
     @Override

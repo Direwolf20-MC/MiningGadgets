@@ -62,7 +62,6 @@ import java.util.Locale;
 import java.util.Random;
 
 public class MiningGadget extends Item {
-    private final int energyCapacity;
     private final Random rand = new Random();
     private LaserLoopSound laserLoopSound;
     //private static int energyPerItem = 15;
@@ -72,7 +71,6 @@ public class MiningGadget extends Item {
                 .stacksTo(1)
                 .setNoRepair());
 
-        this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
     }
 
     public int getEnergyMax() {
@@ -95,7 +93,7 @@ public class MiningGadget extends Item {
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        return this.energyCapacity;
+        return this.getEnergyMax();
     }
 
     @Override

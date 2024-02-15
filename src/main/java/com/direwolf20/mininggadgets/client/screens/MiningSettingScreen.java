@@ -5,8 +5,7 @@ import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.network.packets.*;
+import com.direwolf20.mininggadgets.common.network.data.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -20,6 +19,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.awt.*;
 import java.util.List;
@@ -90,14 +90,14 @@ public class MiningSettingScreen extends Screen {
         if( containsVoid ) {
             addRenderableWidget(
                     Button.builder(getTrans("tooltip.screen.edit_filters"), (button) -> {
-                        PacketHandler.sendToServer(new PacketOpenFilterContainer());
+                        PacketDistributor.SERVER.noArg().send(new OpenFilterContainerPayload());
                     }).pos(baseX + 10, top + 20).size( 95, 20).build()
             );
 
             addRenderableWidget(new WhitelistButton(baseX + 10 + (115 - 20), top + 20, 20, 20, isWhitelist, (button) -> {
                 isWhitelist = !isWhitelist;
                 ((WhitelistButton) button).setWhitelist(isWhitelist);
-                PacketHandler.sendToServer(new PacketToggleFilters());
+                PacketDistributor.SERVER.noArg().send(new ToggleFiltersPayload());
             }));
         }
 
@@ -113,7 +113,7 @@ public class MiningSettingScreen extends Screen {
                 currentSize += 2;
 
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
-            PacketHandler.sendToServer(new PacketChangeMiningSize());
+            PacketDistributor.SERVER.noArg().send(new ChangeMiningSizePayload());
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         if (maxMiningRange > 3) {
@@ -121,7 +121,7 @@ public class MiningSettingScreen extends Screen {
                 currentMode = MiningProperties.nextSizeMode(gadget);
 
                 button.setMessage(currentMode.getTooltip());
-                PacketHandler.sendToServer(new PacketChangeMiningSizeMode());
+                PacketDistributor.SERVER.noArg().send(new ChangeMiningSizeModePayload());
             }).pos(baseX - 135, 0).size(125, 20).build());
         }
 
@@ -141,7 +141,7 @@ public class MiningSettingScreen extends Screen {
         leftWidgets.add(Button.builder(getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
             isPrecision = !isPrecision;
             button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
-            PacketHandler.sendToServer(new PacketTogglePrecision());
+            PacketDistributor.SERVER.noArg().send(new TogglePrecisionPayload());
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         // volume slider
@@ -177,7 +177,7 @@ public class MiningSettingScreen extends Screen {
         // When the button is clicked we toggle
         if( update ) {
             this.updateButtons(upgrade);
-            PacketHandler.sendToServer(new PacketUpdateUpgrade(upgrade.getName()));
+            PacketDistributor.SERVER.noArg().send(new UpdateUpgradePayload(upgrade.getName()));
         }
 
         // When we're just init the gui, we check if it's on or off.
@@ -239,9 +239,9 @@ public class MiningSettingScreen extends Screen {
 
     @Override
     public void removed() {
-        PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
-        PacketHandler.sendToServer(new PacketChangeVolume(this.volume));
-        PacketHandler.sendToServer(new PacketChangeFreezeDelay(this.freezeDelay));
+        PacketDistributor.SERVER.noArg().send(new ChangeRangePayload(this.beamRange));
+        PacketDistributor.SERVER.noArg().send(new ChangeVolumePayload(this.volume));
+        PacketDistributor.SERVER.noArg().send(new ChangeFreezeDelayPayload(this.freezeDelay));
 
         super.removed();
     }
