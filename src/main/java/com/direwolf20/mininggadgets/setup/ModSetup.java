@@ -23,11 +23,24 @@ public class ModSetup {
     public static final String TAB_NAME = "mininggadgets";
     public static DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MiningGadgets.MOD_ID);
     public static DeferredHolder<CreativeModeTab, CreativeModeTab> TAB_MININGGADGETS = TABS.register(TAB_NAME, () -> CreativeModeTab.builder()
-            .title(Component.literal("MiningGadgets"))
+            .title(Component.literal("Mining Gadgets"))
             .icon(() -> new ItemStack(Registration.MININGGADGET.get()))
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
             .displayItems((featureFlags, output) -> {
                 Registration.ITEMS.getEntries().stream().filter(e -> e != Registration.MINERS_LIGHT_ITEM)
+                        .forEach(e -> {
+                            // Normal
+                            Item item = e.get();
+                            output.accept(item);
+
+                            // Charged
+                            if (item instanceof MiningGadget) {
+                                ItemStack stack = new ItemStack(item);
+                                stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
+                                output.accept(stack);
+                            }
+                        });
+                Registration.UPGRADE_ITEMS.getEntries().stream().filter(e -> e != Registration.MINERS_LIGHT_ITEM)
                         .forEach(e -> {
                             // Normal
                             Item item = e.get();

@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.common;
 import com.direwolf20.mininggadgets.common.capabilities.EnergisedItem;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
+import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
 import com.direwolf20.mininggadgets.setup.ClientSetup;
 import com.direwolf20.mininggadgets.setup.Config;
 import com.direwolf20.mininggadgets.setup.ModSetup;
@@ -49,6 +50,10 @@ public class MiningGadgets
                 Registration.MININGGADGET_FANCY.get(),
                 Registration.MININGGADGET_SIMPLE.get()
         );
+        event.registerBlock(Capabilities.ItemHandler.BLOCK,
+                (level, pos, state, be, side) -> ((ModificationTableTileEntity) be).handler,
+                // blocks to register for
+                Registration.MODIFICATION_TABLE.get());
     }
 
     @SubscribeEvent
