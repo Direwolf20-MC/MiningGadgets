@@ -73,38 +73,38 @@ public class MiningVisualsScreen extends Screen {
 
         addRenderableWidget(blockBreakButton);
 
-        sliderRedInner = new ExtendedSlider(baseX - (150), baseY - 10, 150, 20, Component.translatable("mininggadgets.tooltip.screen.red").append(": "), Component.empty(), 0, 255, this.red, true) {
+        sliderRedInner = new ExtendedSlider(baseX - (150), baseY - 10, 150, 20, Component.translatable("mininggadgets.tooltip.screen.red").append(": "), Component.empty(), 0, 255, this.red_inner, true) {
             @Override
             protected void applyValue() {
                 red_inner = (short) this.getValueInt();
             }
         };
-        sliderGreenInner = new ExtendedSlider(baseX - (150), baseY + 15, 150, 20, Component.translatable("mininggadgets.tooltip.screen.green").append(": "), Component.empty(), 0, 255, this.green, true) {
+        sliderGreenInner = new ExtendedSlider(baseX - (150), baseY + 15, 150, 20, Component.translatable("mininggadgets.tooltip.screen.green").append(": "), Component.empty(), 0, 255, this.green_inner, true) {
             @Override
             protected void applyValue() {
                 green_inner = (short) this.getValueInt();
             }
         };
-        sliderBlueInner = new ExtendedSlider(baseX - (150), baseY + 40, 150, 20, Component.translatable("mininggadgets.tooltip.screen.blue").append(": "), Component.empty(), 0, 255, this.blue, true) {
+        sliderBlueInner = new ExtendedSlider(baseX - (150), baseY + 40, 150, 20, Component.translatable("mininggadgets.tooltip.screen.blue").append(": "), Component.empty(), 0, 255, this.blue_inner, true) {
             @Override
             protected void applyValue() {
                 blue_inner = (short) this.getValueInt();
             }
         };
 
-        sliderRedOuter = new ExtendedSlider(baseX + (25), baseY - 10, 150, 20, Component.translatable("mininggadgets.tooltip.screen.red").append(": "), Component.empty(), 0, 255, this.red_inner, true) {
+        sliderRedOuter = new ExtendedSlider(baseX + (25), baseY - 10, 150, 20, Component.translatable("mininggadgets.tooltip.screen.red").append(": "), Component.empty(), 0, 255, this.red, true) {
             @Override
             protected void applyValue() {
                 red = (short) this.getValueInt();
             }
         };
-        sliderGreenOuter = new ExtendedSlider(baseX + (25), baseY + 15, 150, 20, Component.translatable("mininggadgets.tooltip.screen.green").append(": "), Component.empty(), 0, 255, this.green_inner, true) {
+        sliderGreenOuter = new ExtendedSlider(baseX + (25), baseY + 15, 150, 20, Component.translatable("mininggadgets.tooltip.screen.green").append(": "), Component.empty(), 0, 255, this.green, true) {
             @Override
             protected void applyValue() {
                 green = (short) this.getValueInt();
             }
         };
-        sliderBlueOuter = new ExtendedSlider(baseX + (25), baseY + 40, 150, 20, Component.translatable("mininggadgets.tooltip.screen.blue").append(": "), Component.empty(), 0, 255, this.blue_inner, true) {
+        sliderBlueOuter = new ExtendedSlider(baseX + (25), baseY + 40, 150, 20, Component.translatable("mininggadgets.tooltip.screen.blue").append(": "), Component.empty(), 0, 255, this.blue, true) {
             @Override
             protected void applyValue() {
                 blue = (short) this.getValueInt();
