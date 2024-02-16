@@ -46,16 +46,15 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_size_2",
       "has_size_1",
-      "has_upgrade",
-      "has_the_recipe"
+      "has_upgrade"
     ]
   ],
   "rewards": {
     "recipes": [
       "mininggadgets:upgrade_size_3"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

@@ -34,15 +34,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_efficiency_3",
-      "has_upgrade",
-      "has_the_recipe"
+      "has_upgrade"
     ]
   ],
   "rewards": {
     "recipes": [
       "mininggadgets:upgrade_efficiency_4"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

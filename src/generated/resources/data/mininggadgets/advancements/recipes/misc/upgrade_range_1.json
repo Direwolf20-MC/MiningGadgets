@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_upgrade",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_upgrade"
     ]
   ],
   "rewards": {
     "recipes": [
       "mininggadgets:upgrade_range_1"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }
