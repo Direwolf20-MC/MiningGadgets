@@ -24,6 +24,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.client.gui.widget.ScrollPanel;
+import net.neoforged.neoforge.common.I18nExtension;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 
@@ -54,11 +55,11 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         int relY = (this.height) / 2;
 
         //guiGraphics.drawCenteredString(font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 100, 0xFFFFFF);
-        guiGraphics.drawCenteredString(font, MiningGadgets.MOD_ID + "text.modification_table", relX, relY - 100, 0xFFFFFF);
+        guiGraphics.drawCenteredString(font, Component.translatable(MiningGadgets.MOD_ID + ".text.modification_table"), relX, relY - 100, 0xFFFFFF);
 
         if (this.container.getUpgradesCache().size() == 0) {
-            //String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
-            String string = MiningGadgets.MOD_ID + "text.empty_table_helper";
+            String string = I18nExtension.parseMessage(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
+            //String string = MiningGadgets.MOD_ID + ".text.empty_table_helper";
             String[] parts = string.split("\n");
             for (int i = 0; i < parts.length; i++) {
                 drawScaledCenteredString(guiGraphics, (relX + 17) - (font.width(parts[0]) / 2), (relY - 68) + (i * font.lineHeight), .8f, parts[i], 0xFFFFFF);
