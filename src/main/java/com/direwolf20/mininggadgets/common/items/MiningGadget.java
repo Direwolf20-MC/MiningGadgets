@@ -448,7 +448,7 @@ public class MiningGadget extends Item {
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
             float hardness = getHardness(coords, (Player) player, efficiency);
-            // hardness = hardness * MiningProperties.getRange(stack) * 1;
+            hardness = hardness * MiningProperties.getRange(stack) * 1;
             hardness = (float) Math.floor(hardness);
             if (hardness == 0) hardness = 1;
             for (BlockPos coord : coords) {
