@@ -6,7 +6,7 @@
       "item": "minecraft:gold_block"
     },
     "l": {
-      "item": "minecraft:lapis_block"
+      "tag": "forge:gems/lapis"
     },
     "u": {
       "item": "mininggadgets:upgrade_fortune_1"

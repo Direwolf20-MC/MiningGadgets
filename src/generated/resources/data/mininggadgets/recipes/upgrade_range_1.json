@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "d": {
-      "item": "minecraft:diamond"
+      "tag": "forge:gems/diamond"
     },
     "g": {
-      "item": "minecraft:glass"
+      "tag": "forge:glass"
     },
     "l": {
       "item": "minecraft:lapis_lazuli"

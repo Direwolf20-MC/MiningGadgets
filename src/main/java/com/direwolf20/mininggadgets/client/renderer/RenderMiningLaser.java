@@ -35,9 +35,6 @@ public class RenderMiningLaser {
 
     public static void renderLaser(RenderLevelStageEvent event, Player player, float ticks) {
         ItemStack stack = MiningGadget.getGadget(player);
-        if (!(stack.getItem() instanceof MiningGadget)) {
-            return;
-        }
 
         if (!MiningProperties.getCanMine(stack)) {
             return;

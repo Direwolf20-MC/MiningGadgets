@@ -11,6 +11,7 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.sounds.LaserLoopSound;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.direwolf20.mininggadgets.common.util.DevelopmentHelpers;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.direwolf20.mininggadgets.setup.Config;
@@ -612,6 +613,14 @@ public class MiningGadget extends Item {
             }
         }
         return heldItem;
+    }
+
+    /**
+     * Support for giving a fully upgraded gadget to a developer for testing.
+     */
+    @Override
+    public void onCraftedBy(ItemStack stack, Level level, Player player) {
+        DevelopmentHelpers.constructCompleteGadget(level, stack, player);
     }
 
     public static boolean isHolding(Player entity) {

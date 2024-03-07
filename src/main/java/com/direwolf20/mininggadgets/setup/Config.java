@@ -67,37 +67,39 @@ public class Config {
         MININGGADGET_MAXPOWER = COMMON_BUILDER.comment("Maximum power for the Mining Gadget")
                 .defineInRange("maxPower", 1000000, 0, Integer.MAX_VALUE);
         MININGGADGET_BASECOST = COMMON_BUILDER.comment("Base cost per block broken")
-                .defineInRange("baseCost", 200, 0, Integer.MAX_VALUE);
+                .defineInRange("baseCost", 10, 0, Integer.MAX_VALUE);
         COMMON_BUILDER.pop();
 
         COMMON_BUILDER.comment("Upgrade Cost Settings").push(SUBCATEGORY_UPGRADES);
 
         UPGRADECOST_SILKTOUCH = COMMON_BUILDER.comment("Cost per block for Silk Touch upgrade")
-                .defineInRange("upgradeSilkCost", 100, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeSilkCost", 10, 0, Integer.MAX_VALUE);
         UPGRADECOST_MAGNET = COMMON_BUILDER.comment("Cost per block for Magnet upgrade")
-                .defineInRange("upgradeMagnet", 25, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeMagnet", 0, 0, Integer.MAX_VALUE);
         UPGRADECOST_VOID = COMMON_BUILDER.comment("Cost per block for Void Junk upgrade")
-                .defineInRange("upgradeVoid", 10, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeVoid", 0, 0, Integer.MAX_VALUE);
         UPGRADECOST_FORTUNE1 = COMMON_BUILDER.comment("Cost per block for Fortune 1 upgrade")
-                .defineInRange("upgradeFortune1", 30, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeFortune1", 5, 0, Integer.MAX_VALUE);
         UPGRADECOST_FORTUNE2 = COMMON_BUILDER.comment("Cost per block for Fortune 2 upgrade")
-                .defineInRange("upgradeFortune2", 60, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeFortune2", 10, 0, Integer.MAX_VALUE);
         UPGRADECOST_FORTUNE3 = COMMON_BUILDER.comment("Cost per block for Fortune 3 upgrade")
-                .defineInRange("upgradeFortune3", 100, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeFortune3", 15, 0, Integer.MAX_VALUE);
         UPGRADECOST_EFFICIENCY1 = COMMON_BUILDER.comment("Cost per block for Efficiency 1 upgrade")
-                .defineInRange("upgradeEfficiency1", 10, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeEfficiency1", 5, 0, Integer.MAX_VALUE);
         UPGRADECOST_EFFICIENCY2 = COMMON_BUILDER.comment("Cost per block for Efficiency 2 upgrade")
-                .defineInRange("upgradeEfficiency2", 20, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeEfficiency2", 10, 0, Integer.MAX_VALUE);
         UPGRADECOST_EFFICIENCY3 = COMMON_BUILDER.comment("Cost per block for Efficiency 3 upgrade")
-                .defineInRange("upgradeEfficiency3", 30, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeEfficiency3", 15, 0, Integer.MAX_VALUE);
         UPGRADECOST_EFFICIENCY4 = COMMON_BUILDER.comment("Cost per block for Efficiency 4 upgrade")
-                .defineInRange("upgradeEfficiency4", 40, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeEfficiency4", 20, 0, Integer.MAX_VALUE);
         UPGRADECOST_EFFICIENCY5 = COMMON_BUILDER.comment("Cost per block for Efficiency 5 upgrade")
-                .defineInRange("upgradeEfficiency5", 50, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeEfficiency5", 25, 0, Integer.MAX_VALUE);
+        UPGRADECOST_EFFICIENCY6 = COMMON_BUILDER.comment("Cost per block for Efficiency 6 upgrade")
+                .defineInRange("upgradeEfficiency6", 30, 0, Integer.MAX_VALUE);
         UPGRADECOST_LIGHT = COMMON_BUILDER.comment("Cost per Light Block placed")
-                .defineInRange("upgradeLight", 100, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeLight", 10, 0, Integer.MAX_VALUE);
         UPGRADECOST_FREEZE = COMMON_BUILDER.comment("Cost per block Frozen")
-                .defineInRange("upgradeFreeze", 100, 0, Integer.MAX_VALUE);
+                .defineInRange("upgradeFreeze", 5, 0, Integer.MAX_VALUE);
         UPGRADECOST_BATTERY1 = COMMON_BUILDER.comment("Capacity Boost from Battery 1 Upgrade")
                 .defineInRange("battery1", 2000000, 0, Integer.MAX_VALUE);
         UPGRADECOST_BATTERY2 = COMMON_BUILDER.comment("Capacity Boost from Battery 2 Upgrade")

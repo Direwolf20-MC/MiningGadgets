@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "g": {
-      "item": "minecraft:iron_block"
+      "tag": "forge:ingots/iron"
     },
     "l": {
-      "item": "minecraft:lapis_block"
+      "tag": "forge:gems/lapis"
     },
     "u": {
       "item": "mininggadgets:upgrade_empty"

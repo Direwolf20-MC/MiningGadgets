@@ -29,7 +29,7 @@ public class GeneratorRecipes extends RecipeProvider {
     protected void buildRecipes(@NotNull RecipeOutput recipeOutput) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, UPGRADE_EMPTY.get())
                 .define('r', Tags.Items.DUSTS_REDSTONE)
-                .define('g', Tags.Items.GLASS_PANES)
+                .define('g', Tags.Items.GLASS)
                 .define('l', Tags.Items.GEMS_LAPIS)
                 .define('d', Tags.Items.GEMS_DIAMOND)
                 .pattern("rlr")
@@ -184,8 +184,8 @@ public class GeneratorRecipes extends RecipeProvider {
 
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, FORTUNE_1.get())
-                .define('l', Items.LAPIS_BLOCK)
-                .define('g', Items.IRON_BLOCK)
+                .define('l', Tags.Items.GEMS_LAPIS)
+                .define('g', Tags.Items.INGOTS_IRON)
                 .define('u', UPGRADE_EMPTY.get())
                 .pattern("lgl")
                 .pattern("lul")
@@ -194,7 +194,7 @@ public class GeneratorRecipes extends RecipeProvider {
                 .save(recipeOutput);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, FORTUNE_2.get())
-                .define('l', Items.LAPIS_BLOCK)
+                .define('l', Tags.Items.GEMS_LAPIS)
                 .define('g', Items.GOLD_BLOCK)
                 .define('u', FORTUNE_1.get())
                 .pattern("lgl")
@@ -205,8 +205,8 @@ public class GeneratorRecipes extends RecipeProvider {
                 .save(recipeOutput);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, FORTUNE_3.get())
-                .define('l', Items.LAPIS_BLOCK)
-                .define('d', Items.DIAMOND)
+                .define('l', Tags.Items.GEMS_LAPIS)
+                .define('d', Tags.Items.GEMS_DIAMOND)
                 .define('u', FORTUNE_2.get())
                 .pattern("ldl")
                 .pattern("lul")
@@ -217,8 +217,8 @@ public class GeneratorRecipes extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, RANGE_1.get())
                 .define('l', Items.LAPIS_LAZULI)
-                .define('g', Items.GLASS)
-                .define('d', Items.DIAMOND)
+                .define('g', Tags.Items.GLASS)
+                .define('d', Tags.Items.GEMS_DIAMOND)
                 .define('u', UPGRADE_EMPTY.get())
                 .pattern("lgl")
                 .pattern("dud")
@@ -228,7 +228,7 @@ public class GeneratorRecipes extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, RANGE_2.get())
                 .define('l', Items.LAPIS_LAZULI)
-                .define('g', Items.GLASS)
+                .define('g', Tags.Items.GLASS)
                 .define('e', Items.EMERALD)
                 .define('u', RANGE_1.get())
                 .pattern("lgl")
@@ -239,8 +239,8 @@ public class GeneratorRecipes extends RecipeProvider {
                 .save(recipeOutput);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, RANGE_3.get())
-                .define('l', Items.LAPIS_BLOCK)
-                .define('g', Items.GLASS)
+                .define('l', Tags.Items.GEMS_LAPIS)
+                .define('g', Tags.Items.GLASS)
                 .define('d', Items.DIAMOND_BLOCK)
                 .define('e', Items.EMERALD_BLOCK)
                 .define('u', RANGE_2.get())
@@ -261,7 +261,7 @@ public class GeneratorRecipes extends RecipeProvider {
                 .save(recipeOutput);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, LIGHT_PLACER.get())
-                .define('g', Items.GLOWSTONE_DUST)
+                .define('g', Tags.Items.DUSTS_GLOWSTONE)
                 .define('b', Items.GLOWSTONE)
                 .define('r', Items.REDSTONE_LAMP)
                 .define('a', Items.LANTERN)

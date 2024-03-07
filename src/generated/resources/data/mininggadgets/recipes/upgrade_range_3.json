@@ -9,10 +9,10 @@
       "item": "minecraft:emerald_block"
     },
     "g": {
-      "item": "minecraft:glass"
+      "tag": "forge:glass"
     },
     "l": {
-      "item": "minecraft:lapis_block"
+      "tag": "forge:gems/lapis"
     },
     "u": {
       "item": "mininggadgets:upgrade_range_2"

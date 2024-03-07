@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "d": {
-      "item": "minecraft:diamond"
+      "tag": "forge:gems/diamond"
     },
     "l": {
-      "item": "minecraft:lapis_block"
+      "tag": "forge:gems/lapis"
     },
     "u": {
       "item": "mininggadgets:upgrade_fortune_2"

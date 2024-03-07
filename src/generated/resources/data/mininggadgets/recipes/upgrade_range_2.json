@@ -6,7 +6,7 @@
       "item": "minecraft:emerald"
     },
     "g": {
-      "item": "minecraft:glass"
+      "tag": "forge:glass"
     },
     "l": {
       "item": "minecraft:lapis_lazuli"
