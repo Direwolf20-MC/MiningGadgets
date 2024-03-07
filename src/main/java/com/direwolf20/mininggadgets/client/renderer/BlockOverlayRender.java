@@ -27,6 +27,10 @@ public class BlockOverlayRender {
     public static void render(RenderLevelStageEvent event, ItemStack item) {
         final Minecraft mc = Minecraft.getInstance();
 
+        if (mc.gameMode != null && !(mc.gameMode.getPlayerMode().isCreative() || mc.gameMode.getPlayerMode().isSurvival())) {
+            return;
+        }
+
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 
         int range = MiningProperties.getBeamRange(item);
