@@ -97,6 +97,7 @@ public class Registration {
     public static final DeferredHolder<Item, UpgradeCard> EFFICIENCY_3 = UPGRADE_ITEMS.register("upgrade_efficiency_3", () -> new UpgradeCard(Upgrade.EFFICIENCY_3));
     public static final DeferredHolder<Item, UpgradeCard> EFFICIENCY_4 = UPGRADE_ITEMS.register("upgrade_efficiency_4", () -> new UpgradeCard(Upgrade.EFFICIENCY_4));
     public static final DeferredHolder<Item, UpgradeCard> EFFICIENCY_5 = UPGRADE_ITEMS.register("upgrade_efficiency_5", () -> new UpgradeCard(Upgrade.EFFICIENCY_5));
+    public static final DeferredHolder<Item, UpgradeCard> EFFICIENCY_6 = UPGRADE_ITEMS.register("upgrade_efficiency_6", () -> new UpgradeCard(Upgrade.EFFICIENCY_6));
     //    public static final RegistryObject<Item> PAVER =            UPGRADE_ITEMS.register("upgrade_paver", Upgrade.PAVER::getCard);
 
 

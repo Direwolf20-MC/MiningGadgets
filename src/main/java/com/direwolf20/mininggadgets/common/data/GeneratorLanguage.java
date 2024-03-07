@@ -44,6 +44,7 @@ public class GeneratorLanguage extends LanguageProvider {
         addItem(Registration.EFFICIENCY_3, "Upgrade: Efficiency, Tier 3");
         addItem(Registration.EFFICIENCY_4, "Upgrade: Efficiency, Tier 4");
         addItem(Registration.EFFICIENCY_5, "Upgrade: Efficiency, Tier 5");
+        addItem(Registration.EFFICIENCY_6, "Upgrade: Efficiency, Tier 6");
         addItem(Registration.BATTERY_1, "Upgrade: Battery, Tier 1");
         addItem(Registration.BATTERY_2, "Upgrade: Battery, Tier 2");
         addItem(Registration.BATTERY_3, "Upgrade: Battery, Tier 3");

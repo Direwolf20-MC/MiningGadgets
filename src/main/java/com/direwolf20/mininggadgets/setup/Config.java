@@ -30,6 +30,7 @@ public class Config {
     public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY3;
     public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY4;
     public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY5;
+    public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY6;
     public static ModConfigSpec.IntValue UPGRADECOST_LIGHT;
     public static ModConfigSpec.IntValue UPGRADECOST_FREEZE;
     public static ModConfigSpec.IntValue UPGRADECOST_BATTERY1;

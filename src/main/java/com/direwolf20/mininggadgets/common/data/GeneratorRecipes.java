@@ -33,7 +33,7 @@ public class GeneratorRecipes extends RecipeProvider {
                 .define('l', Tags.Items.GEMS_LAPIS)
                 .define('d', Tags.Items.GEMS_DIAMOND)
                 .pattern("rlr")
-                .pattern("dgd")
+                .pattern("gdg")
                 .pattern("rlr")
                 .unlockedBy("has_diamonds", has(Tags.Items.GEMS_DIAMOND))
                 .save(recipeOutput);
@@ -76,11 +76,13 @@ public class GeneratorRecipes extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Registration.MODIFICATION_TABLE.get())
                 .define('r', Tags.Items.DUSTS_REDSTONE)
-                .define('u', UPGRADE_EMPTY.get())
+                .define('b', Tags.Items.BOOKSHELVES)
+                .define('c', Tags.Items.CHESTS)
                 .define('i', Tags.Items.INGOTS_IRON)
-                .pattern("iii")
-                .pattern("rur")
-                .pattern("iii")
+                .define('x', Tags.Items.STORAGE_BLOCKS_IRON)
+                .pattern("ici")
+                .pattern("rbr")
+                .pattern("ixi")
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
                 .save(recipeOutput);
 
@@ -168,6 +170,18 @@ public class GeneratorRecipes extends RecipeProvider {
                 .unlockedBy("has_efficiency_4", has(EFFICIENCY_4.get()))
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
                 .save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, EFFICIENCY_6.get())
+                .define('u', EFFICIENCY_5.get())
+                .define('b', Items.REDSTONE_BLOCK)
+                .define('g', Items.GOLD_BLOCK)
+                .pattern("bbb")
+                .pattern("gug")
+                .pattern("bbb")
+                .unlockedBy("has_efficiency_5", has(EFFICIENCY_5.get()))
+                .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
+                .save(recipeOutput);
+
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, FORTUNE_1.get())
                 .define('l', Items.LAPIS_BLOCK)
@@ -329,19 +343,5 @@ public class GeneratorRecipes extends RecipeProvider {
                 .pattern("ror")
                 .unlockedBy("has_upgrade", has(UPGRADE_EMPTY.get()))
                 .save(recipeOutput);
-
-        //        ShapedRecipeBuilder.shapedRecipe(PAVER.get())
-        //                .key('r', Tags.Items.DUSTS_REDSTONE)
-        //                .key('c', Tags.Items.COBBLESTONE)
-        //                .key('u', UPGRADE_EMPTY.get())
-        //                .key('g', Tags.Items.NUGGETS_GOLD)
-        //                .key('l', Items.LAVA_BUCKET)
-        //                .key('p', Blocks.PISTON)
-        //                .key('w', Items.WATER_BUCKET)
-        //                .patternLine("rgr")
-        //                .patternLine("cuc")
-        //                .patternLine("lpw")
-        //                .addCriterion("has_upgrade", hasItem(UPGRADE_EMPTY.get()))
-        //                .build(recipeOutput);
     }
 }

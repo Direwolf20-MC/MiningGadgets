@@ -30,3 +30,6 @@ description='''Mining is better with lasers.'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+
+[[mixins]]
+config="mixins.mininggadgets.json"
