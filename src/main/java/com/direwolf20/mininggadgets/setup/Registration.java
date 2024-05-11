@@ -13,7 +13,6 @@ import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import com.direwolf20.mininggadgets.common.util.MGDataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;

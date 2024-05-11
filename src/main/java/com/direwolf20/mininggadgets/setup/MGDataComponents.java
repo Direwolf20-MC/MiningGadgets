@@ -1,12 +1,13 @@
-package com.direwolf20.mininggadgets.common.util;
+package com.direwolf20.mininggadgets.setup;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.common.containers.handlers.DireItemContainerContents;
+import com.direwolf20.mininggadgets.common.util.CodecHelpers;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,7 @@ import java.util.List;
 public class MGDataComponents {
     public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.createDataComponents(MiningGadgets.MOD_ID);
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DireItemContainerContents>> ITEMSTACK_HANDLER = COMPONENTS.register("itemstack_handler", () -> DataComponentType.<DireItemContainerContents>builder().persistent(DireItemContainerContents.CODEC).networkSynchronized(DireItemContainerContents.STREAM_CODEC).cacheEncoding().build());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FORGE_ENERGY = COMPONENTS.register("forge_energy", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FORGE_ENERGY_MAX_ENERGY = COMPONENTS.register("forge_energy_max_energy", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
@@ -38,7 +40,7 @@ public class MGDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FREEZE_DELAY = COMPONENTS.register("freeze_delay", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BATTERY_TIER = COMPONENTS.register("battery_tier", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ItemStack>>> FILTER_LIST = COMPONENTS.register("filter_list", () -> DataComponentType.<List<ItemStack>>builder().persistent(ItemStack.CODEC.listOf()).networkSynchronized(ItemStack.LIST_STREAM_CODEC).build());
+    //public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ItemStack>>> FILTER_LIST = COMPONENTS.register("filter_list", () -> DataComponentType.<List<ItemStack>>builder().persistent(ItemStack.CODEC.listOf()).networkSynchronized(ItemStack.LIST_STREAM_CODEC).build());
 
     private static @NotNull <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, final Codec<T> codec) {
         return register(name, codec, null);

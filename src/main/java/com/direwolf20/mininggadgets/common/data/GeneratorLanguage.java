@@ -109,8 +109,8 @@ public class GeneratorLanguage extends LanguageProvider {
         addPrefixed("tooltip.screen.toggle_upgrades", "Toggle Upgrades");
         addPrefixed("tooltip.screen.edit_filters", "Edit Filters");
         addPrefixed("tooltip.screen.no_upgrades", "No Upgrades available");
-        addPrefixed("tooltip.screen.whitelist", "Whitelist active");
-        addPrefixed("tooltip.screen.blacklist", "Blacklist active");
+        addPrefixed("tooltip.screen.whitelist", "Keep List");
+        addPrefixed("tooltip.screen.blacklist", "Destroy List");
         addPrefixed("tooltip.screen.precision_mode", "Precision Mode: %1$d");
         addPrefixed("tooltip.screen.volume", "Volume");
         addPrefixed("tooltip.screen.freeze_delay", "Freeze Delay");

@@ -32,6 +32,9 @@ public class ModificationTableCommands {
             boolean hasFortune = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.FORTUNE_1);
             boolean hasSilk = UpgradeTools.containsUpgradeFromList(upgrades, Upgrade.SILK);
 
+            if (UpgradeTools.containsUpgrade(laser, card))
+                return false;
+
             // Did we just insert a Range upgrade?
             if (card.getBaseName().equals(Upgrade.RANGE_1.getBaseName())) {
                 // Always reset the range regardless if it's bigger or smaller
@@ -44,9 +47,6 @@ public class ModificationTableCommands {
                 MiningProperties.setRange(laser, UpgradeTools.getMaxMiningRange(card.getTier()));
                 MiningProperties.setMaxMiningRange(laser, UpgradeTools.getMaxMiningRange(card.getTier()));
             }
-
-            if (UpgradeTools.containsUpgrade(laser, card))
-                return false;
 
             if (hasFortune && card.getBaseName().equals(Upgrade.SILK.getBaseName()) || hasSilk && card.getBaseName().equals(Upgrade.FORTUNE_1.getBaseName()))
                 ((UpgradeCard) upgrade.getItem()).getUpgrade().setEnabled(false);

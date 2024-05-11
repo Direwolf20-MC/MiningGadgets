@@ -10,10 +10,6 @@ import javax.annotation.Nonnull;
 public class ModificationTableHandler extends ItemStackHandler {
     ModificationTableTileEntity blockEntity;
 
-    public ModificationTableHandler(int size) {
-        super(size);
-    }
-
     public ModificationTableHandler(int size, ModificationTableTileEntity blockEntity) {
         super(size);
         this.blockEntity = blockEntity;

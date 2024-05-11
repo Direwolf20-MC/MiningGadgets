@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common.capabilities;
 
-import com.direwolf20.mininggadgets.common.util.MGDataComponents;
+import com.direwolf20.mininggadgets.setup.MGDataComponents;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
@@ -11,7 +11,7 @@ public class EnergyStorageItemstack extends EnergyStorage {
     protected final ItemStack itemStack;
 
     public EnergyStorageItemstack(int capacity, ItemStack itemStack) {
-        super(capacity, capacity, capacity, 0);
+        super(getMaxCapacity(itemStack, capacity), Integer.MAX_VALUE, Integer.MAX_VALUE);
         this.itemStack = itemStack;
         this.energy = itemStack.getOrDefault(MGDataComponents.FORGE_ENERGY, 0);
     }
@@ -19,6 +19,10 @@ public class EnergyStorageItemstack extends EnergyStorage {
     public void setEnergy(int energy) {
         this.energy = energy;
         itemStack.set(MGDataComponents.FORGE_ENERGY, energy);
+    }
+
+    private static int getMaxCapacity(ItemStack stack, int capacity) {
+        return stack.getOrDefault(MGDataComponents.FORGE_ENERGY_MAX_ENERGY, capacity);
     }
 
     public void updatedMaxEnergy(int max) {

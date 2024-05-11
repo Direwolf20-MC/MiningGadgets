@@ -3,7 +3,7 @@ package com.direwolf20.mininggadgets.common.items.upgrade;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.util.CodecHelpers;
-import com.direwolf20.mininggadgets.common.util.MGDataComponents;
+import com.direwolf20.mininggadgets.setup.MGDataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -27,21 +27,11 @@ public class UpgradeTools {
      * kind of unchecked functionality
      */
     private static void setUpgradeNBT(ItemStack tool, UpgradeCard upgrade) {
-        List<CodecHelpers.UpgradeData> upgradeData = tool.getOrDefault(MGDataComponents.UPGRADE_DATA, new ArrayList<>());
+        List<CodecHelpers.UpgradeData> upgradeData = new ArrayList<>(tool.getOrDefault(MGDataComponents.UPGRADE_DATA, new ArrayList<>()));
         CodecHelpers.UpgradeData newUpgrade = new CodecHelpers.UpgradeData(upgrade.getUpgrade().getName(), upgrade.getUpgrade().isEnabled());
         upgradeData.removeIf(k -> k.upgradeName().equals(upgrade.getUpgrade().getName()));
         upgradeData.add(newUpgrade);
         tool.set(MGDataComponents.UPGRADE_DATA, upgradeData);
-    }
-
-    public static List<CodecHelpers.UpgradeData> setUpgrades(ItemStack tool, List<Upgrade> laserUpgrades) {
-        List<CodecHelpers.UpgradeData> upgradeData = new ArrayList<>();
-        laserUpgrades.forEach(upgrade -> {
-            CodecHelpers.UpgradeData newUpgrade = new CodecHelpers.UpgradeData(upgrade.getName(), upgrade.isEnabled());
-            upgradeData.add(newUpgrade);
-        });
-        tool.set(MGDataComponents.UPGRADE_DATA, upgradeData);
-        return upgradeData;
     }
 
     public static void setUpgrade(ItemStack tool, UpgradeCard upgrade) {
@@ -148,23 +138,6 @@ public class UpgradeTools {
         return functionalUpgrades;
     }
 
-    /*public static void walkUpgradesOnTag(CompoundTag tagCompound, BiFunction<CompoundTag, String, String> consumer) {
-        ListTag upgrades = tagCompound.getList(KEY_UPGRADES, Tag.TAG_COMPOUND);
-
-        if (upgrades.isEmpty())
-            return;
-
-        for (int i = 0; i < upgrades.size(); i++) {
-            CompoundTag tag = upgrades.getCompound(i);
-
-            var name = tag.getString(KEY_UPGRADE);
-            var result = consumer.apply(tag, name);
-            if (result != null && !result.equalsIgnoreCase(name)) {
-                tag.putString(KEY_UPGRADE, result);
-            }
-        }
-    }*/
-
     @Nullable
     public static Upgrade getUpgradeByName(String name) {
         // If the name doesn't exist then move on
@@ -203,7 +176,7 @@ public class UpgradeTools {
      * as the gadget stores the full name and not it's base name
      */
     public static void removeUpgrade(ItemStack tool, Upgrade upgrade) {
-        List<CodecHelpers.UpgradeData> upgradeData = tool.getOrDefault(MGDataComponents.UPGRADE_DATA, new ArrayList<>());
+        List<CodecHelpers.UpgradeData> upgradeData = new ArrayList<>(tool.getOrDefault(MGDataComponents.UPGRADE_DATA, new ArrayList<>()));
         upgradeData.removeIf(k -> k.upgradeName().equals(upgrade.getName()));
         tool.set(MGDataComponents.UPGRADE_DATA, upgradeData);
     }

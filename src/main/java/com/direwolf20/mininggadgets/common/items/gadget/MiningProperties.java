@@ -1,8 +1,9 @@
 package com.direwolf20.mininggadgets.common.items.gadget;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.common.containers.handlers.DataComponentHandler;
 import com.direwolf20.mininggadgets.common.util.CodecHelpers;
-import com.direwolf20.mininggadgets.common.util.MGDataComponents;
+import com.direwolf20.mininggadgets.setup.MGDataComponents;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -119,11 +120,11 @@ public class MiningProperties {
     }
 
     public static int getBeamRange(ItemStack gadget) {
-        return gadget.getOrDefault(MGDataComponents.BEAM_RANGE, 1);
+        return gadget.getOrDefault(MGDataComponents.BEAM_RANGE, MIN_RANGE);
     }
 
     public static int getBeamMaxRange(ItemStack gadget) {
-        return gadget.getOrDefault(MGDataComponents.MAX_BEAM_RANGE, 1);
+        return gadget.getOrDefault(MGDataComponents.MAX_BEAM_RANGE, MIN_RANGE);
     }
 
     public static void setMaxMiningRange(ItemStack gadget, int range) {
@@ -174,7 +175,7 @@ public class MiningProperties {
     }
 
     public static SizeMode getSizeMode(ItemStack gadget) {
-        return SizeMode.values()[gadget.getOrDefault(MGDataComponents.SIZE_MODE, (byte) SizeMode.NORMAL.ordinal())];
+        return SizeMode.values()[gadget.getOrDefault(MGDataComponents.SIZE_MODE, (byte) SizeMode.AUTO.ordinal())];
     }
 
     public static void setVolume(ItemStack gadget, float volume) {
@@ -202,11 +203,14 @@ public class MiningProperties {
     }
 
     public static List<ItemStack> getFiltersAsList(ItemStack gadget) {
-        return gadget.getOrDefault(MGDataComponents.FILTER_LIST, new ArrayList<>());
-    }
-
-    public static void setFiltersAsList(ItemStack gadget, List<ItemStack> stacks) {
-        gadget.set(MGDataComponents.FILTER_LIST, stacks);
+        List<ItemStack> returnList = new ArrayList<>();
+        DataComponentHandler ghostInventory = new DataComponentHandler(gadget, 30);
+        for (int i = 0; i < ghostInventory.getSlots(); i++) {
+            ItemStack itemStack = ghostInventory.getStackInSlot(i);
+            if (!itemStack.isEmpty())
+                returnList.add(itemStack);
+        }
+        return returnList;
     }
 
     // mostly stolen from ItemStackHandler

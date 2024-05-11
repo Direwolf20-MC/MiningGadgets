@@ -70,7 +70,7 @@ java {
 // These can be tweaked, removed, or duplicated as needed.
 runs {
     // applies to all the run configs below
-    configureEach {
+    configureEach { net.neoforged.gradle.dsl.common.runs.run.Run run ->
         // Recommended logging data for a userdev environment
         // The markers can be added/remove as needed separated by commas.
         // "SCAN": For mods scan.
@@ -86,9 +86,9 @@ runs {
         modSource project.sourceSets.main
 
         //if the selected toolchain is a JBR, enable DCEVM
-        //if (run.project.javaToolchains.launcherFor(java.toolchain).map { it.metadata.vendor }.getOrElse("").contains("JetBrains")) {
-        //    run.jvmArgument("-XX:+AllowEnhancedClassRedefinition")
-        //}
+        if (run.project.javaToolchains.launcherFor(java.toolchain).map { it.metadata.vendor }.getOrElse("").contains("JetBrains")) {
+            run.jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+        }
     }
 
     client {

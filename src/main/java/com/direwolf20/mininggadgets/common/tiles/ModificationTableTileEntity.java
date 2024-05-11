@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import static com.direwolf20.mininggadgets.setup.Registration.MODIFICATIONTABLE_TILE;
 
 public class ModificationTableTileEntity extends BlockEntity implements MenuProvider {
-    public final ModificationTableHandler handler = new ModificationTableHandler(2);
+    public final ModificationTableHandler handler = new ModificationTableHandler(2, this);
 
     public ModificationTableTileEntity(BlockPos pos, BlockState state) {
         super(MODIFICATIONTABLE_TILE.get(), pos, state);

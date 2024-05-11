@@ -21,7 +21,7 @@ public record GhostSlotPayload(
 
     public static final StreamCodec<RegistryFriendlyByteBuf, GhostSlotPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT, GhostSlotPayload::slotNumber,
-            ItemStack.STREAM_CODEC, GhostSlotPayload::stack,
+            ItemStack.OPTIONAL_STREAM_CODEC, GhostSlotPayload::stack,
             GhostSlotPayload::new
     );
 }
