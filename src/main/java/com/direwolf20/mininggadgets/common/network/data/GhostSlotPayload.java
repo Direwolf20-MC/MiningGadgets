@@ -1,7 +1,9 @@
 package com.direwolf20.mininggadgets.common.network.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -10,21 +12,17 @@ public record GhostSlotPayload(
         int slotNumber,
         ItemStack stack
 ) implements CustomPacketPayload {
-    public static final ResourceLocation ID = new ResourceLocation(MiningGadgets.MOD_ID, "ghost_slot");
-
-    public GhostSlotPayload(final FriendlyByteBuf buffer) {
-        this(buffer.readInt(), buffer.readItem());
-    }
+    public static final Type<GhostSlotPayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "ghost_slot"));
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeInt(slotNumber());
-        buffer.writeItem(stack());
+    public Type<GhostSlotPayload> type() {
+        return TYPE;
     }
 
-    @Override
-    public ResourceLocation id() {
-        return ID;
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, GhostSlotPayload> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, GhostSlotPayload::slotNumber,
+            ItemStack.OPTIONAL_STREAM_CODEC, GhostSlotPayload::stack,
+            GhostSlotPayload::new
+    );
 }
 

@@ -3,32 +3,32 @@ package com.direwolf20.mininggadgets.common.network;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.network.data.*;
 import com.direwolf20.mininggadgets.common.network.handler.*;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 
 public class PacketHandler {
-    public static void registerNetworking(final RegisterPayloadHandlerEvent event) {
-        final IPayloadRegistrar registrar = event.registrar(MiningGadgets.MOD_ID);
+    public static void registerNetworking(final RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar(MiningGadgets.MOD_ID);
 
         // Server side
-        registrar.play(ExtractUpgradePayload.ID, ExtractUpgradePayload::new, handler -> handler.server(PacketExtractUpgrade.get()::handle));
-        registrar.play(UpdateUpgradePayload.ID, UpdateUpgradePayload::new, handler -> handler.server(PacketUpdateUpgrade.get()::handle));
-        registrar.play(ChangeMiningSizePayload.ID, ChangeMiningSizePayload::new, handler -> handler.server(PacketChangeMiningSize.get()::handle));
-        registrar.play(ChangeMiningSizeModePayload.ID, ChangeMiningSizeModePayload::new, handler -> handler.server(PacketChangeMiningSizeMode.get()::handle));
-        registrar.play(ChangeRangePayload.ID, ChangeRangePayload::new, handler -> handler.server(PacketChangeRange.get()::handle));
-        registrar.play(ChangeBreakTypePayload.ID, ChangeBreakTypePayload::new, handler -> handler.server(PacketChangeBreakType.get()::handle));
-        registrar.play(ChangeColorPayload.ID, ChangeColorPayload::new, handler -> handler.server(PacketChangeColor.get()::handle));
-        registrar.play(GhostSlotPayload.ID, GhostSlotPayload::new, handler -> handler.server(PacketGhostSlot.get()::handle));
-        registrar.play(OpenFilterContainerPayload.ID, OpenFilterContainerPayload::new, handler -> handler.server(PacketOpenFilterContainer.get()::handle));
-        registrar.play(ToggleFiltersPayload.ID, ToggleFiltersPayload::new, handler -> handler.server(PacketToggleFilters.get()::handle));
-        registrar.play(TogglePrecisionPayload.ID, TogglePrecisionPayload::new, handler -> handler.server(PacketTogglePrecision.get()::handle));
-        registrar.play(ChangeVolumePayload.ID, ChangeVolumePayload::new, handler -> handler.server(PacketChangeVolume.get()::handle));
-        registrar.play(ChangeFreezeDelayPayload.ID, ChangeFreezeDelayPayload::new, handler -> handler.server(PacketChangeFreezeDelay.get()::handle));
-        registrar.play(InsertUpgradePayload.ID, InsertUpgradePayload::new, handler -> handler.server(PacketInsertUpgrade.get()::handle));
+        registrar.playToServer(ExtractUpgradePayload.TYPE, ExtractUpgradePayload.STREAM_CODEC, PacketExtractUpgrade.get()::handle);
+        registrar.playToServer(UpdateUpgradePayload.TYPE, UpdateUpgradePayload.STREAM_CODEC, PacketUpdateUpgrade.get()::handle);
+        registrar.playToServer(ChangeMiningSizePayload.TYPE, ChangeMiningSizePayload.STREAM_CODEC, PacketChangeMiningSize.get()::handle);
+        registrar.playToServer(ChangeMiningSizeModePayload.TYPE, ChangeMiningSizeModePayload.STREAM_CODEC, PacketChangeMiningSizeMode.get()::handle);
+        registrar.playToServer(ChangeRangePayload.TYPE, ChangeRangePayload.STREAM_CODEC, PacketChangeRange.get()::handle);
+        registrar.playToServer(ChangeBreakTypePayload.TYPE, ChangeBreakTypePayload.STREAM_CODEC, PacketChangeBreakType.get()::handle);
+        registrar.playToServer(ChangeColorPayload.TYPE, ChangeColorPayload.STREAM_CODEC, PacketChangeColor.get()::handle);
+        registrar.playToServer(GhostSlotPayload.TYPE, GhostSlotPayload.STREAM_CODEC, PacketGhostSlot.get()::handle);
+        registrar.playToServer(OpenFilterContainerPayload.TYPE, OpenFilterContainerPayload.STREAM_CODEC, PacketOpenFilterContainer.get()::handle);
+        registrar.playToServer(ToggleFiltersPayload.TYPE, ToggleFiltersPayload.STREAM_CODEC, PacketToggleFilters.get()::handle);
+        registrar.playToServer(TogglePrecisionPayload.TYPE, TogglePrecisionPayload.STREAM_CODEC, PacketTogglePrecision.get()::handle);
+        registrar.playToServer(ChangeVolumePayload.TYPE, ChangeVolumePayload.STREAM_CODEC, PacketChangeVolume.get()::handle);
+        registrar.playToServer(ChangeFreezeDelayPayload.TYPE, ChangeFreezeDelayPayload.STREAM_CODEC, PacketChangeFreezeDelay.get()::handle);
+        registrar.playToServer(InsertUpgradePayload.TYPE, InsertUpgradePayload.STREAM_CODEC, PacketInsertUpgrade.get()::handle);
 
         //Client Side
-        registrar.play(DurabilitySyncPayload.ID, DurabilitySyncPayload::new, handler -> handler.client(PacketDurabilitySync.get()::handle));
+        registrar.playToClient(DurabilitySyncPayload.TYPE, DurabilitySyncPayload.STREAM_CODEC, PacketDurabilitySync.get()::handle);
 
     }
 }

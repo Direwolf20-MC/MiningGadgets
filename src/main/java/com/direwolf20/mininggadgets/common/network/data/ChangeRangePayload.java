@@ -2,26 +2,24 @@ package com.direwolf20.mininggadgets.common.network.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record ChangeRangePayload(
         int range
 ) implements CustomPacketPayload {
-    public static final ResourceLocation ID = new ResourceLocation(MiningGadgets.MOD_ID, "change_range");
-
-    public ChangeRangePayload(final FriendlyByteBuf buffer) {
-        this(buffer.readInt());
-    }
+    public static final Type<ChangeRangePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "change_range"));
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeInt(range());
+    public Type<ChangeRangePayload> type() {
+        return TYPE;
     }
 
-    @Override
-    public ResourceLocation id() {
-        return ID;
-    }
+    public static final StreamCodec<FriendlyByteBuf, ChangeRangePayload> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, ChangeRangePayload::range,
+            ChangeRangePayload::new
+    );
 }
 

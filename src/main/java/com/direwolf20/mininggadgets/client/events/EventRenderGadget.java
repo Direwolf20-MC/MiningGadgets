@@ -17,11 +17,11 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 
 
-@Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT)
 public class EventRenderGadget {
 
     @SubscribeEvent

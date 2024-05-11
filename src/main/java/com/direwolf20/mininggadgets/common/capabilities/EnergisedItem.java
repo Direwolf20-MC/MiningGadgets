@@ -1,10 +1,6 @@
 package com.direwolf20.mininggadgets.common.capabilities;
 
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.energy.EnergyStorage;
-
-
-public class EnergisedItem extends EnergyStorage {
+/*public class EnergisedItem extends EnergyStorage {
     private ItemStack stack;
 
     public EnergisedItem(ItemStack stack, int capacity) {
@@ -49,3 +45,4 @@ public class EnergisedItem extends EnergyStorage {
         return amount;
     }
 }
+*/

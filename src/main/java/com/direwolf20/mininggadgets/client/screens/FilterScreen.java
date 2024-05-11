@@ -59,7 +59,7 @@ public class FilterScreen extends AbstractContainerScreen<FilterContainer> {
         stack = stack.copy().split(hoveredSlot.getMaxStackSize()); // Limit to slot limit
         hoveredSlot.set(stack); // Temporarily update the client for continuity purposes
 
-        PacketDistributor.SERVER.noArg().send(new GhostSlotPayload(hoveredSlot.index, stack));
+        PacketDistributor.sendToServer(new GhostSlotPayload(hoveredSlot.index, stack));
         return true;
     }
 

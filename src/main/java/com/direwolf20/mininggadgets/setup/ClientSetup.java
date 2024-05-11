@@ -6,19 +6,18 @@ import com.direwolf20.mininggadgets.client.renderer.RenderBlockTER;
 import com.direwolf20.mininggadgets.client.screens.FilterScreen;
 import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
-@Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ClientSetup {
     public static void init(final FMLClientSetupEvent event) {
         //registerRenderers(event);
-        registerContainerScreens(event);
 
         //Register our Render Events Class
         NeoForge.EVENT_BUS.register(ClientEvents.class);
@@ -27,12 +26,10 @@ public class ClientSetup {
     /**
      * Called from some Client Dist runner in the main class
      */
-    private static void registerContainerScreens(final FMLClientSetupEvent event) {
-        //Screens
-        event.enqueueWork(() -> {
-            MenuScreens.register(Registration.MODIFICATIONTABLE_CONTAINER.get(), ModificationTableScreen::new);
-            MenuScreens.register(Registration.FILTER_CONTAINER.get(), FilterScreen::new);
-        });
+    @SubscribeEvent
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(Registration.MODIFICATIONTABLE_CONTAINER.get(), ModificationTableScreen::new);
+        event.register(Registration.FILTER_CONTAINER.get(), FilterScreen::new);
     }
 
     /**

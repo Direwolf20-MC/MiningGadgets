@@ -3,16 +3,16 @@
   "category": "misc",
   "key": {
     "d": {
-      "tag": "forge:gems/diamond"
+      "tag": "c:gems/diamond"
     },
     "g": {
-      "tag": "forge:glass_panes"
+      "tag": "c:glass_panes"
     },
     "l": {
-      "tag": "forge:gems/lapis"
+      "tag": "c:gems/lapis"
     },
     "r": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [
@@ -21,6 +21,7 @@
     "rlr"
   ],
   "result": {
-    "item": "mininggadgets:upgrade_empty"
+    "count": 1,
+    "id": "mininggadgets:upgrade_empty"
   }
 }

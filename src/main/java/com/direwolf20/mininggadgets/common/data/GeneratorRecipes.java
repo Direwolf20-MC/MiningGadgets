@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.setup.Registration;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -11,11 +12,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
+
 import static com.direwolf20.mininggadgets.setup.Registration.*;
 
 public class GeneratorRecipes extends RecipeProvider {
-    public GeneratorRecipes(PackOutput output) {
-        super(output);
+    public GeneratorRecipes(PackOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+        super(output, completableFuture);
     }
 
     /**

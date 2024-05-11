@@ -5,6 +5,7 @@ import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.util.CodecHelpers;
 import com.direwolf20.mininggadgets.setup.Registration;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -47,7 +48,13 @@ public class RenderMiningLaser {
         // parse data from item
         float speedModifier = getSpeedModifier(stack);
 
-        drawLasers(stack, event, playerPos, trace, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
+        CodecHelpers.LaserColor laserColor = MiningProperties.getColors(stack);
+
+        float red = laserColor.red() / 255f;
+        float green = laserColor.green() / 255f;
+        float blue = laserColor.blue() / 255f;
+
+        drawLasers(stack, event, playerPos, trace, 0, 0, 0, red, green, blue, 0.02f, player, ticks, speedModifier);
     }
 
     private static float getSpeedModifier(ItemStack stack) {
@@ -76,9 +83,11 @@ public class RenderMiningLaser {
         double v = gameTime * speedModifier;
         float additiveThickness = (thickness * 3.5f) * calculateLaserFlickerModifier(gameTime);
 
-        float beam2r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f;
-        float beam2g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f;
-        float beam2b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
+        CodecHelpers.LaserColor laserColor = MiningProperties.getColors(stack);
+
+        float beam2r = laserColor.innerRed() / 255f;
+        float beam2g = laserColor.innerGreen() / 255f;
+        float beam2b = laserColor.innerBlue() / 255f;
 
         Vec3 view = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();

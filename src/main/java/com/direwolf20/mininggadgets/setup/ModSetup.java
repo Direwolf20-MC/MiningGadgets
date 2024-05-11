@@ -36,7 +36,7 @@ public class ModSetup {
                             // Charged
                             if (item instanceof MiningGadget) {
                                 ItemStack stack = new ItemStack(item);
-                                stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
+                                stack.set(MGDataComponents.FORGE_ENERGY, UpgradeBatteryLevels.BATTERY.getPower());
                                 output.accept(stack);
                             }
                         });
@@ -49,7 +49,7 @@ public class ModSetup {
                             // Charged
                             if (item instanceof MiningGadget) {
                                 ItemStack stack = new ItemStack(item);
-                                stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
+                                stack.set(MGDataComponents.FORGE_ENERGY, UpgradeBatteryLevels.BATTERY.getPower());
                                 output.accept(stack);
                             }
                         });

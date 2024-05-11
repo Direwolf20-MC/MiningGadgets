@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.setup.Config;
+import com.direwolf20.mininggadgets.setup.MGDataComponents;
 import com.direwolf20.mininggadgets.setup.Registration;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -36,7 +37,7 @@ public class MiningGadgetsJEI implements IModPlugin {
                 return IIngredientSubtypeInterpreter.NONE;
             }
 
-            double energy = stack.getOrCreateTag().getDouble("energy");
+            int energy = stack.getOrDefault(MGDataComponents.FORGE_ENERGY, 0);
             if (energy == 0) {
                 return "empty";
             } else if (energy == Config.MININGGADGET_MAXPOWER.get()) {

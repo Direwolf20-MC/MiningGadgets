@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.setup;
 
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -37,17 +37,17 @@ public class Config {
     public static ModConfigSpec.IntValue UPGRADECOST_BATTERY3;
 
 
-    public static void register() {
+    public static void register(ModContainer container) {
         //registerServerConfigs();
-        registerCommonConfigs();
+        registerCommonConfigs(container);
         //registerClientConfigs();
     }
 
     private static void registerClientConfigs() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
+        //ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
     }
 
-    private static void registerCommonConfigs() {
+    private static void registerCommonConfigs(ModContainer container) {
         COMMON_BUILDER.comment("General settings").push(CATEGORY_GENERAL);
         COMMON_BUILDER.pop();
 
@@ -57,7 +57,7 @@ public class Config {
 
         COMMON_BUILDER.pop();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
+        container.registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
     }
 
     private static void setupMiningGadgetConfig() {

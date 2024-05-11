@@ -1,6 +1,6 @@
 package com.direwolf20.mininggadgets.common;
 
-import com.direwolf20.mininggadgets.common.capabilities.EnergisedItem;
+import com.direwolf20.mininggadgets.common.capabilities.EnergyStorageItemstack;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -28,10 +29,10 @@ public class MiningGadgets
     public static final String MOD_ID = "mininggadgets";
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public MiningGadgets(IEventBus event) {
+    public MiningGadgets(IEventBus event, ModContainer container) {
         // Register all of our items, blocks, item blocks, etc
         Registration.init(event);
-        Config.register();
+        Config.register(container);
 
         event.addListener(ModSetup::init);
         ModSetup.TABS.register(event);
@@ -45,7 +46,7 @@ public class MiningGadgets
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerItem(Capabilities.EnergyStorage.ITEM, (itemStack, context) -> new EnergisedItem(itemStack, ((MiningGadget) itemStack.getItem()).getEnergyMax()),
+        event.registerItem(Capabilities.EnergyStorage.ITEM, (itemStack, context) -> new EnergyStorageItemstack(((MiningGadget) itemStack.getItem()).getEnergyMax(), itemStack),
                 Registration.MININGGADGET.get(),
                 Registration.MININGGADGET_FANCY.get(),
                 Registration.MININGGADGET_SIMPLE.get()

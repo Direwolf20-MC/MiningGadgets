@@ -45,6 +45,7 @@ public class Registration {
         CONTAINERS.register(eventBus);
         ModParticles.PARTICLE_TYPES.register(eventBus);
         OurSounds.SOUND_REGISTRY.register(eventBus);
+        MGDataComponents.COMPONENTS.register(eventBus);
     }
 
     /**

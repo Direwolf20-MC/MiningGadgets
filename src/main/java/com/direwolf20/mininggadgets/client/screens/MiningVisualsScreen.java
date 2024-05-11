@@ -3,6 +3,7 @@ package com.direwolf20.mininggadgets.client.screens;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.network.data.ChangeBreakTypePayload;
 import com.direwolf20.mininggadgets.common.network.data.ChangeColorPayload;
+import com.direwolf20.mininggadgets.common.util.CodecHelpers;
 import com.mojang.blaze3d.platform.InputConstants;
 import it.unimi.dsi.fastutil.shorts.ShortConsumer;
 import net.minecraft.client.gui.GuiGraphics;
@@ -38,12 +39,13 @@ public class MiningVisualsScreen extends Screen {
     public MiningVisualsScreen(ItemStack gadget) {
         super(Component.literal("title"));
         this.gadget = gadget;
-        this.red = MiningProperties.getColor(gadget, MiningProperties.COLOR_RED);
-        this.green = MiningProperties.getColor(gadget, MiningProperties.COLOR_GREEN);
-        this.blue = MiningProperties.getColor(gadget, MiningProperties.COLOR_BLUE);
-        this.red_inner = MiningProperties.getColor(gadget, MiningProperties.COLOR_RED_INNER);
-        this.green_inner = MiningProperties.getColor(gadget, MiningProperties.COLOR_GREEN_INNER);
-        this.blue_inner = MiningProperties.getColor(gadget, MiningProperties.COLOR_BLUE_INNER);
+        CodecHelpers.LaserColor laserColor = MiningProperties.getColors(gadget);
+        this.red = laserColor.red();
+        this.green = laserColor.green();
+        this.blue = laserColor.blue();
+        this.red_inner = laserColor.innerRed();
+        this.green_inner = laserColor.innerGreen();
+        this.blue_inner = laserColor.innerBlue();
     }
 
     @Override
@@ -64,7 +66,7 @@ public class MiningVisualsScreen extends Screen {
                     else
                         button.setMessage(Component.translatable("mininggadgets.tooltip.screen.shrink"));
 
-                    PacketDistributor.SERVER.noArg().send(new ChangeBreakTypePayload());
+                    PacketDistributor.sendToServer(new ChangeBreakTypePayload());
                 }
         )
                 .pos(baseX - (150), baseY - 55)
@@ -177,7 +179,7 @@ public class MiningVisualsScreen extends Screen {
     }
 
     private void syncColors() {
-        PacketDistributor.SERVER.noArg().send(new ChangeColorPayload(this.red, this.green, this.blue, this.red_inner, this.green_inner, this.blue_inner));
+        PacketDistributor.sendToServer(new ChangeColorPayload(new CodecHelpers.LaserColor(this.red, this.green, this.blue, this.red_inner, this.green_inner, this.blue_inner)));
     }
 
     @Override

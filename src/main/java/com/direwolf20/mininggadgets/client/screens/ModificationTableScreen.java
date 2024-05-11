@@ -21,10 +21,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.client.gui.widget.ScrollPanel;
-import net.neoforged.neoforge.common.I18nExtension;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 
@@ -58,7 +58,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         guiGraphics.drawCenteredString(font, Component.translatable(MiningGadgets.MOD_ID + ".text.modification_table"), relX, relY - 100, 0xFFFFFF);
 
         if (this.container.getUpgradesCache().size() == 0) {
-            String string = I18nExtension.parseMessage(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
+            String string = Component.translatable(MiningGadgets.MOD_ID + ".text.modification_table").getString();
             //String string = MiningGadgets.MOD_ID + ".text.empty_table_helper";
             String[] parts = string.split("\n");
             for (int i = 0; i < parts.length; i++) {
@@ -107,7 +107,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
                     return false;
                 }
 
-                PacketDistributor.SERVER.noArg().send(new InsertUpgradePayload(this.tePos, heldStack));
+                PacketDistributor.sendToServer(new InsertUpgradePayload(this.tePos, heldStack));
                 this.menu.setCarried(ItemStack.EMPTY);
             }
         }
@@ -169,7 +169,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
             if( !isMouseOver(mouseX, mouseY) || this.upgrade == null )
                 return false;
 
-            PacketDistributor.SERVER.noArg().send(new ExtractUpgradePayload(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
+            PacketDistributor.sendToServer(new ExtractUpgradePayload(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
@@ -178,7 +178,7 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
             super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
             if( this.upgrade != null  )
-                guiGraphics.renderTooltip(Minecraft.getInstance().font, Lists.transform(new ItemStack(this.upgrade.getCardItem().get()).getTooltipLines(this.parent.getMinecraft().player, TooltipFlag.Default.NORMAL), Component::getVisualOrderText), mouseX, mouseY);
+                guiGraphics.renderTooltip(Minecraft.getInstance().font, Lists.transform(new ItemStack(this.upgrade.getCardItem().get()).getTooltipLines(Item.TooltipContext.EMPTY, this.parent.getMinecraft().player, TooltipFlag.Default.NORMAL), Component::getVisualOrderText), mouseX, mouseY);
         }
 
         @Override

@@ -1,48 +1,26 @@
 package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.setup.Registration;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.loot.BlockLootSubProvider;
-import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.data.loot.packs.VanillaBlockLoot;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.LootDataId;
-import net.minecraft.world.level.storage.loot.LootDataType;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.ValidationContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GeneratorLoot extends LootTableProvider {
-    public GeneratorLoot(PackOutput output) {
-        super(output, Set.of(), ImmutableList.of(
-                new SubProviderEntry(Blocks::new, LootContextParamSets.BLOCK)
-        ));
+public class GeneratorLoot extends VanillaBlockLoot {
+
+    @Override
+    protected void generate() {
+        dropSelf(Registration.MODIFICATION_TABLE.get());
+        add(Registration.RENDER_BLOCK.get(), noDrop());
+        add(Registration.MINERS_LIGHT.get(), noDrop());
     }
 
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationContext) {
-        map.forEach((name, table) -> table.validate(validationContext.setParams(table.getParamSet()).enterElement("{" + name + "}", new LootDataId<>(LootDataType.TABLE, name))));
-    }
-
-    private static class Blocks extends BlockLootSubProvider {
-        protected Blocks() {
-            super(Set.of(), FeatureFlags.REGISTRY.allFlags());
-        }
-
-        @Override
-        protected void generate() {
-            this.dropSelf(Registration.MODIFICATION_TABLE.get());
-        }
-
-        @Override
-        protected Iterable<Block> getKnownBlocks() {
-            return Collections.singletonList(Registration.MODIFICATION_TABLE.get());
-        }
+    protected Iterable<Block> getKnownBlocks() {
+        List<Block> knownBlocks = new ArrayList<>();
+        knownBlocks.addAll(Registration.BLOCKS.getEntries().stream().map(DeferredHolder::get).toList());
+        return knownBlocks;
     }
 }

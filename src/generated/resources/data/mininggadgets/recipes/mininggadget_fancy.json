@@ -3,16 +3,16 @@
   "category": "equipment",
   "key": {
     "d": {
-      "tag": "forge:gems/diamond"
+      "tag": "c:gems/diamond"
     },
     "g": {
-      "tag": "forge:ingots/gold"
+      "tag": "c:ingots/gold"
     },
     "i": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     },
     "r": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     },
     "u": {
       "item": "mininggadgets:upgrade_empty"
@@ -24,6 +24,7 @@
     "dig"
   ],
   "result": {
-    "item": "mininggadgets:mininggadget_fancy"
+    "count": 1,
+    "id": "mininggadgets:mininggadget_fancy"
   }
 }
