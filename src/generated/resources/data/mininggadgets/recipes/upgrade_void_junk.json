@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "e": {
-      "tag": "forge:ender_pearls"
+      "tag": "c:ender_pearls"
     },
     "o": {
       "item": "minecraft:obsidian"
     },
     "r": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     },
     "u": {
       "item": "mininggadgets:upgrade_empty"
@@ -21,6 +21,7 @@
     "ror"
   ],
   "result": {
-    "item": "mininggadgets:upgrade_void_junk"
+    "count": 1,
+    "id": "mininggadgets:upgrade_void_junk"
   }
 }

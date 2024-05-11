@@ -90,14 +90,14 @@ public class MiningSettingScreen extends Screen {
         if( containsVoid ) {
             addRenderableWidget(
                     Button.builder(getTrans("tooltip.screen.edit_filters"), (button) -> {
-                        PacketDistributor.SERVER.noArg().send(new OpenFilterContainerPayload());
+                        PacketDistributor.sendToServer(new OpenFilterContainerPayload());
                     }).pos(baseX + 10, top + 20).size( 95, 20).build()
             );
 
             addRenderableWidget(new WhitelistButton(baseX + 10 + (115 - 20), top + 20, 20, 20, isWhitelist, (button) -> {
                 isWhitelist = !isWhitelist;
                 ((WhitelistButton) button).setWhitelist(isWhitelist);
-                PacketDistributor.SERVER.noArg().send(new ToggleFiltersPayload());
+                PacketDistributor.sendToServer(new ToggleFiltersPayload());
             }));
         }
 
@@ -113,7 +113,7 @@ public class MiningSettingScreen extends Screen {
                 currentSize += 2;
 
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
-            PacketDistributor.SERVER.noArg().send(new ChangeMiningSizePayload());
+            PacketDistributor.sendToServer(new ChangeMiningSizePayload());
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         if (maxMiningRange > 3) {
@@ -121,7 +121,7 @@ public class MiningSettingScreen extends Screen {
                 currentMode = MiningProperties.nextSizeMode(gadget);
 
                 button.setMessage(currentMode.getTooltip());
-                PacketDistributor.SERVER.noArg().send(new ChangeMiningSizeModePayload());
+                PacketDistributor.sendToServer(new ChangeMiningSizeModePayload());
             }).pos(baseX - 135, 0).size(125, 20).build());
         }
 
@@ -141,7 +141,7 @@ public class MiningSettingScreen extends Screen {
         leftWidgets.add(Button.builder(getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
             isPrecision = !isPrecision;
             button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
-            PacketDistributor.SERVER.noArg().send(new TogglePrecisionPayload());
+            PacketDistributor.sendToServer(new TogglePrecisionPayload());
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         // volume slider
@@ -177,7 +177,7 @@ public class MiningSettingScreen extends Screen {
         // When the button is clicked we toggle
         if( update ) {
             this.updateButtons(upgrade);
-            PacketDistributor.SERVER.noArg().send(new UpdateUpgradePayload(upgrade.getName()));
+            PacketDistributor.sendToServer(new UpdateUpgradePayload(upgrade.getName()));
         }
 
         // When we're just init the gui, we check if it's on or off.
@@ -239,9 +239,9 @@ public class MiningSettingScreen extends Screen {
 
     @Override
     public void removed() {
-        PacketDistributor.SERVER.noArg().send(new ChangeRangePayload(this.beamRange));
-        PacketDistributor.SERVER.noArg().send(new ChangeVolumePayload(this.volume));
-        PacketDistributor.SERVER.noArg().send(new ChangeFreezeDelayPayload(this.freezeDelay));
+        PacketDistributor.sendToServer(new ChangeRangePayload(this.beamRange));
+        PacketDistributor.sendToServer(new ChangeVolumePayload(this.volume));
+        PacketDistributor.sendToServer(new ChangeFreezeDelayPayload(this.freezeDelay));
 
         super.removed();
     }

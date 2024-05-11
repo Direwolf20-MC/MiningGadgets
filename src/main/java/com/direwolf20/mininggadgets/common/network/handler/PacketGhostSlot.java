@@ -5,9 +5,7 @@ import com.direwolf20.mininggadgets.common.network.data.GhostSlotPayload;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
-
-import java.util.Optional;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketGhostSlot {
     public static final PacketGhostSlot INSTANCE = new PacketGhostSlot();
@@ -16,12 +14,9 @@ public class PacketGhostSlot {
         return INSTANCE;
     }
 
-    public void handle(final GhostSlotPayload payload, final PlayPayloadContext context) {
-        context.workHandler().submitAsync(() -> {
-            Optional<Player> senderOptional = context.player();
-            if (senderOptional.isEmpty())
-                return;
-            Player player = senderOptional.get();
+    public void handle(final GhostSlotPayload payload, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player player = context.player();
 
             AbstractContainerMenu container = player.containerMenu;
             if (container == null)

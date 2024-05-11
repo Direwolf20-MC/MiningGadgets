@@ -4,6 +4,7 @@ import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
+import com.direwolf20.mininggadgets.common.util.MGDataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -36,7 +37,7 @@ public class ModSetup {
                             // Charged
                             if (item instanceof MiningGadget) {
                                 ItemStack stack = new ItemStack(item);
-                                stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
+                                stack.set(MGDataComponents.FORGE_ENERGY, UpgradeBatteryLevels.BATTERY.getPower());
                                 output.accept(stack);
                             }
                         });
@@ -49,7 +50,7 @@ public class ModSetup {
                             // Charged
                             if (item instanceof MiningGadget) {
                                 ItemStack stack = new ItemStack(item);
-                                stack.getOrCreateTag().putInt("energy", UpgradeBatteryLevels.BATTERY.getPower());
+                                stack.set(MGDataComponents.FORGE_ENERGY, UpgradeBatteryLevels.BATTERY.getPower());
                                 output.accept(stack);
                             }
                         });

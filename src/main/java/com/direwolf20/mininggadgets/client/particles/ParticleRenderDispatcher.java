@@ -6,11 +6,11 @@ import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerPartic
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
 
-@Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ParticleRenderDispatcher {
 
     @SubscribeEvent

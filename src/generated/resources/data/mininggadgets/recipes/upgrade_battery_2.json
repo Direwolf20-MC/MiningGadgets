@@ -6,7 +6,7 @@
       "item": "minecraft:quartz_block"
     },
     "g": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     },
     "q": {
       "item": "minecraft:quartz"
@@ -21,6 +21,7 @@
     "qbq"
   ],
   "result": {
-    "item": "mininggadgets:upgrade_battery_2"
+    "count": 1,
+    "id": "mininggadgets:upgrade_battery_2"
   }
 }

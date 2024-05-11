@@ -1,6 +1,9 @@
 package com.direwolf20.mininggadgets.common.items.gadget;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import com.direwolf20.mininggadgets.common.util.CodecHelpers;
+import com.direwolf20.mininggadgets.common.util.MGDataComponents;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -66,28 +69,20 @@ public class MiningProperties {
         }
     }
 
-    public static short getColor(ItemStack gadget, String color) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        if (color.equals(COLOR_RED) || color.contains("Inner")) {
-            return !compound.contains(color) ? setColor(gadget, (short) 255, color) : compound.getShort(color);
-        } else {
-            return !compound.contains(color) ? setColor(gadget, (short) 0, color) : compound.getShort(color);
-        }
+    public static CodecHelpers.LaserColor getColors(ItemStack gadget) {
+        return gadget.getOrDefault(MGDataComponents.LASER_COLOR, new CodecHelpers.LaserColor((short) 255, (short) 0, (short) 0, (short) 255, (short) 255, (short) 255));
     }
 
-    public static short setColor(ItemStack gadget, short colorValue, String color) {
-        gadget.getOrCreateTag().putShort(color, colorValue);
-        return colorValue;
+    public static void setColor(ItemStack gadget, CodecHelpers.LaserColor laserColor) {
+        gadget.set(MGDataComponents.LASER_COLOR, laserColor);
     }
 
-    public static BreakTypes setBreakType(ItemStack gadget, BreakTypes breakType) {
-        gadget.getOrCreateTag().putByte(BREAK_TYPE, (byte) breakType.ordinal());
-        return breakType;
+    public static void setBreakType(ItemStack gadget, BreakTypes breakType) {
+        gadget.set(MGDataComponents.BREAK_TYPE, (byte) breakType.ordinal());
     }
 
     public static void nextBreakType(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        if (compound.contains(BREAK_TYPE)) {
+        if (gadget.has(MGDataComponents.BREAK_TYPE)) {
             int type = getBreakType(gadget).ordinal() == BreakTypes.values().length - 1 ? 0 : getBreakType(gadget).ordinal() + 1;
             setBreakType(gadget, BreakTypes.values()[type]);
         } else {
@@ -96,182 +91,148 @@ public class MiningProperties {
     }
 
     public static BreakTypes getBreakType(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(BREAK_TYPE) ? setBreakType(gadget, BreakTypes.SHRINK) : BreakTypes.values()[compound.getByte(BREAK_TYPE)];
+        return BreakTypes.values()[gadget.getOrDefault(MGDataComponents.BREAK_TYPE, (byte) 0)];
     }
 
-    public static int setSpeed(ItemStack gadget, int speed) {
-        gadget.getOrCreateTag().putInt(KEY_SPEED, speed);
-        return speed;
+    public static void setSpeed(ItemStack gadget, int speed) {
+        gadget.set(MGDataComponents.SPEED, speed);
     }
 
     public static int getSpeed(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_SPEED) ? setSpeed(gadget, 1) : compound.getInt(KEY_SPEED);
+        return gadget.getOrDefault(MGDataComponents.SPEED, 1);
     }
 
-    public static int setRange(ItemStack gadget, int range) {
-        gadget.getOrCreateTag().putInt(KEY_RANGE, range);
-        return range;
+    public static void setRange(ItemStack gadget, int range) {
+        gadget.set(MGDataComponents.RANGE, range);
     }
 
     public static int getRange(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_RANGE) ? setRange(gadget, 1) : compound.getInt(KEY_RANGE);
+        return gadget.getOrDefault(MGDataComponents.RANGE, 1);
     }
 
-    public static int setBeamRange(ItemStack gadget, int range) {
-        gadget.getOrCreateTag().putInt(KEY_BEAM_RANGE, range);
-        return range;
+    public static void setBeamRange(ItemStack gadget, int range) {
+        gadget.set(MGDataComponents.BEAM_RANGE, range);
     }
 
-    public static int setBeamMaxRange(ItemStack gadget, int range) {
-        gadget.getOrCreateTag().putInt(KEY_MAX_BEAM_RANGE, range);
-        return range;
+    public static void setBeamMaxRange(ItemStack gadget, int range) {
+        gadget.set(MGDataComponents.MAX_BEAM_RANGE, range);
     }
 
     public static int getBeamRange(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_BEAM_RANGE) ? setBeamRange(gadget, MIN_RANGE) : compound.getInt(KEY_BEAM_RANGE);
+        return gadget.getOrDefault(MGDataComponents.BEAM_RANGE, 1);
     }
 
     public static int getBeamMaxRange(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_MAX_BEAM_RANGE) ? setBeamMaxRange(gadget, MIN_RANGE) : compound.getInt(KEY_MAX_BEAM_RANGE);
+        return gadget.getOrDefault(MGDataComponents.MAX_BEAM_RANGE, 1);
     }
 
-    public static int setMaxMiningRange(ItemStack gadget, int range) {
-        gadget.getOrCreateTag().putInt(KEY_MAX_MINING_RANGE, range);
-        return range;
+    public static void setMaxMiningRange(ItemStack gadget, int range) {
+        gadget.set(MGDataComponents.MAX_MINING_RANGE, range);
     }
 
     public static int getMaxMiningRange(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_MAX_MINING_RANGE) ? setMaxMiningRange(gadget, 1) : compound.getInt(KEY_MAX_MINING_RANGE);
+        return gadget.getOrDefault(MGDataComponents.MAX_MINING_RANGE, 1);
     }
 
-    public static boolean setWhitelist(ItemStack gadget, boolean isWhitelist) {
-        gadget.getOrCreateTag().putBoolean(KEY_WHITELIST, isWhitelist);
-        return isWhitelist;
+    public static void setWhitelist(ItemStack gadget, boolean isWhitelist) {
+        gadget.set(MGDataComponents.WHITELIST, isWhitelist);
     }
 
     public static boolean getWhiteList(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_WHITELIST) ? setWhitelist(gadget, true) : compound.getBoolean(KEY_WHITELIST);
+        return gadget.getOrDefault(MGDataComponents.WHITELIST, true);
     }
 
-    public static boolean setCanMine(ItemStack gadget, boolean canMine) {
-        gadget.getOrCreateTag().putBoolean(CAN_MINE, canMine);
-        return canMine;
+    public static void setCanMine(ItemStack gadget, boolean canMine) {
+        gadget.set(MGDataComponents.CAN_MINE, canMine);
     }
 
     public static boolean getCanMine(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(CAN_MINE) ? setCanMine(gadget, true) : compound.getBoolean(CAN_MINE);
+        return gadget.getOrDefault(MGDataComponents.CAN_MINE, true);
     }
 
-    public static boolean setPrecisionMode(ItemStack gadget, boolean precisionMode) {
-        gadget.getOrCreateTag().putBoolean(PRECISION_MODE, precisionMode);
-        return precisionMode;
+    public static void setPrecisionMode(ItemStack gadget, boolean precisionMode) {
+        gadget.set(MGDataComponents.PRECISION_MODE, precisionMode);
     }
 
     public static boolean getPrecisionMode(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(PRECISION_MODE) ? setPrecisionMode(gadget, false) : compound.getBoolean(PRECISION_MODE);
+        return gadget.getOrDefault(MGDataComponents.PRECISION_MODE, false);
     }
 
 
-    public static SizeMode setSizeMode(ItemStack gadget, SizeMode sizeMode) {
-        gadget.getOrCreateTag().putByte(KEY_SIZE_MODE, (byte) sizeMode.ordinal());
-        return sizeMode;
+    public static void setSizeMode(ItemStack gadget, SizeMode sizeMode) {
+        gadget.set(MGDataComponents.SIZE_MODE, (byte) sizeMode.ordinal());
     }
 
     public static SizeMode nextSizeMode(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        if (compound.contains(KEY_SIZE_MODE)) {
+        if (gadget.has(MGDataComponents.SIZE_MODE)) {
             int type = getSizeMode(gadget).ordinal() == SizeMode.values().length - 1 ? 0 : getSizeMode(gadget).ordinal() + 1;
-            return setSizeMode(gadget, SizeMode.values()[type]);
+            setSizeMode(gadget, SizeMode.values()[type]);
         } else {
-            return setSizeMode(gadget, SizeMode.NORMAL);
+            setSizeMode(gadget, SizeMode.NORMAL);
         }
+        return getSizeMode(gadget);
     }
 
     public static SizeMode getSizeMode(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_SIZE_MODE) ? setSizeMode(gadget, SizeMode.NORMAL) : SizeMode.values()[compound.getByte(KEY_SIZE_MODE)];
+        return SizeMode.values()[gadget.getOrDefault(MGDataComponents.SIZE_MODE, (byte) SizeMode.NORMAL.ordinal())];
     }
 
-    public static float setVolume(ItemStack gadget, float volume) {
-        gadget.getOrCreateTag().putFloat(VOLUME, Math.max(0.0f, Math.min(1.0f, volume)));
-        return volume;
+    public static void setVolume(ItemStack gadget, float volume) {
+        gadget.set(MGDataComponents.VOLUME, volume);
     }
 
     public static float getVolume(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(VOLUME) ? setVolume(gadget, 1.0f) : compound.getFloat(VOLUME);
+        return gadget.getOrDefault(MGDataComponents.VOLUME, 1.0f);
     }
 
-    public static int setFreezeDelay(ItemStack gadget, int volume) {
-        gadget.getOrCreateTag().putInt(FREEZE_PARTICLE_DELAY, Math.max(0, Math.min(10, volume)));
-        return volume;
+    public static void setFreezeDelay(ItemStack gadget, int freezeDelay) {
+        gadget.set(MGDataComponents.FREEZE_DELAY, freezeDelay);
     }
 
     public static int getFreezeDelay(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(FREEZE_PARTICLE_DELAY) ? setFreezeDelay(gadget, 0) : compound.getInt(FREEZE_PARTICLE_DELAY);
+        return gadget.getOrDefault(MGDataComponents.FREEZE_DELAY, 0);
     }
 
-    public static int setBatteryTier(ItemStack gadget, int tier) {
-        gadget.getOrCreateTag().putInt(KEY_BATTERY_TIER, tier);
-        return tier;
+    public static void setBatteryTier(ItemStack gadget, int tier) {
+        gadget.set(MGDataComponents.BATTERY_TIER, tier);
     }
 
     public static int getBatteryTier(ItemStack gadget) {
-        CompoundTag compound = gadget.getOrCreateTag();
-        return !compound.contains(KEY_BATTERY_TIER) ? setBatteryTier(gadget, 0) : compound.getInt(KEY_BATTERY_TIER);
+        return gadget.getOrDefault(MGDataComponents.BATTERY_TIER, 0);
     }
 
-    /**
-     * So this is a bit fun, because we only need the items in our list we're ditching half the data
-     * that the `Items` actually contains.
-     *
-     * @implNote Please do not use {@link #deserializeItemStackList(CompoundTag)} or {@link #serializeItemStackList(List)}
-     *           if you wish to maintain the original tag data on the gadget. These have specific uses.
-     *
-     *           See {@link com.direwolf20.mininggadgets.common.network.handler.PacketOpenFilterContainer} for an
-     *           understanding on why you shouldn't change the tad data on the gadget directly.
-     */
     public static List<ItemStack> getFiltersAsList(ItemStack gadget) {
-        return deserializeItemStackList(gadget.getOrCreateTagElement(MiningProperties.KEY_FILTERS));
+        return gadget.getOrDefault(MGDataComponents.FILTER_LIST, new ArrayList<>());
+    }
+
+    public static void setFiltersAsList(ItemStack gadget, List<ItemStack> stacks) {
+        gadget.set(MGDataComponents.FILTER_LIST, stacks);
     }
 
     // mostly stolen from ItemStackHandler
-    public static List<ItemStack> deserializeItemStackList(CompoundTag nbt) {
+    public static List<ItemStack> deserializeItemStackList(CompoundTag nbt, HolderLookup.Provider provider) {
         List<ItemStack> stacks = new ArrayList<>();
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-
         for (int i = 0; i < tagList.size(); i++) {
             CompoundTag itemTags = tagList.getCompound(i);
-            stacks.add(ItemStack.of(itemTags));
+            stacks.add(ItemStack.parse(provider, itemTags).orElse(ItemStack.EMPTY));
         }
 
         return stacks;
     }
 
-    public static CompoundTag serializeItemStackList(List<ItemStack> stacks) {
+    public static CompoundTag serializeItemStackList(List<ItemStack> stacks, HolderLookup.Provider provider) {
         ListTag nbtTagList = new ListTag();
-        for (int i = 0; i < stacks.size(); i++)
-        {
-            if (stacks.get(i).isEmpty())
-                continue;
-
-            CompoundTag itemTag = new CompoundTag();
-            stacks.get(i).save(itemTag);
-            nbtTagList.add(itemTag);
+        for (int i = 0; i < stacks.size(); i++) {
+            if (!stacks.get(i).isEmpty()) {
+                CompoundTag itemTag = new CompoundTag();
+                itemTag.putInt("Slot", i);
+                nbtTagList.add(stacks.get(i).save(provider, itemTag));
+            }
         }
-
         CompoundTag nbt = new CompoundTag();
         nbt.put("Items", nbtTagList);
+        nbt.putInt("Size", stacks.size());
         return nbt;
     }
 }

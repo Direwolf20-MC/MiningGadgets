@@ -1,20 +1,39 @@
 package com.direwolf20.mininggadgets.client.particles.laserparticle;
 
 import com.direwolf20.mininggadgets.client.particles.ModParticles;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.commands.arguments.blocks.BlockStateParser;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
-import java.util.Locale;
 
 public class LaserParticleData implements ParticleOptions {
+    public static final MapCodec<LaserParticleData> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    BlockState.CODEC.fieldOf("state").forGetter(p -> p.state),
+                    Codec.FLOAT.fieldOf("size").forGetter(p -> p.size),
+                    Codec.FLOAT.fieldOf("maxAgeMul").forGetter(p -> p.maxAgeMul),
+                    Codec.BOOL.fieldOf("depthTest").forGetter(p -> p.depthTest)
+            ).apply(instance, LaserParticleData::new));
+    public static final StreamCodec<RegistryFriendlyByteBuf, LaserParticleData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY),
+            LaserParticleData::getState,
+            ByteBufCodecs.FLOAT,
+            LaserParticleData::getSize,
+            ByteBufCodecs.FLOAT,
+            LaserParticleData::getMaxAgeMul,
+            ByteBufCodecs.BOOL,
+            LaserParticleData::isDepthTest,
+            LaserParticleData::new
+    );
+
     public final float size;
     public final float maxAgeMul;
     public final boolean depthTest;
@@ -35,6 +54,22 @@ public class LaserParticleData implements ParticleOptions {
         this.state = state;
     }
 
+    public float getSize() {
+        return size;
+    }
+
+    public float getMaxAgeMul() {
+        return maxAgeMul;
+    }
+
+    public boolean isDepthTest() {
+        return depthTest;
+    }
+
+    public BlockState getState() {
+        return state;
+    }
+
 
     @Nonnull
     @Override
@@ -42,42 +77,4 @@ public class LaserParticleData implements ParticleOptions {
         return ModParticles.LASERPARTICLE.get();
     }
 
-    @Override
-    public void writeToNetwork(FriendlyByteBuf buf) {
-        buf.writeVarInt(Block.BLOCK_STATE_REGISTRY.getId(state));
-        buf.writeFloat(size);
-        buf.writeFloat(maxAgeMul);
-        buf.writeBoolean(depthTest);
-    }
-
-    @Nonnull
-    @Override
-    public String writeToString() {
-        return String.format(Locale.ROOT, "%s %.2f %.2f %s",
-                this.getType(), this.size, this.maxAgeMul, this.depthTest);
-    }
-
-    public static final Deserializer<LaserParticleData> DESERIALIZER = new Deserializer<>() {
-        @Nonnull
-        @Override
-        public LaserParticleData fromCommand(@Nonnull ParticleType<LaserParticleData> type, @Nonnull StringReader reader) throws CommandSyntaxException {
-            reader.expect(' ');
-            BlockState state = (BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), reader, false).blockState());
-            reader.expect(' ');
-            float size = reader.readFloat();
-            reader.expect(' ');
-            float mam = reader.readFloat();
-            boolean depth = true;
-            if (reader.canRead()) {
-                reader.expect(' ');
-                depth = reader.readBoolean();
-            }
-            return new LaserParticleData(state, size, mam, depth);
-        }
-
-        @Override
-        public LaserParticleData fromNetwork(@Nonnull ParticleType<LaserParticleData> type, FriendlyByteBuf buf) {
-            return new LaserParticleData(Block.BLOCK_STATE_REGISTRY.byId(buf.readVarInt()), buf.readFloat(), buf.readFloat(), buf.readBoolean());
-        }
-    };
 }

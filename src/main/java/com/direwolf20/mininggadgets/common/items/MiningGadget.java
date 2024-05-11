@@ -11,6 +11,7 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.sounds.LaserLoopSound;
 import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.direwolf20.mininggadgets.common.util.CodecHelpers;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
 import com.direwolf20.mininggadgets.setup.Config;
@@ -23,7 +24,6 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
@@ -53,9 +53,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -77,9 +75,8 @@ public class MiningGadget extends Item {
         return Config.MININGGADGET_MAXPOWER.get();
     }
 
-    //TODO Add an override for onCreated and initialize all NBT Tags in it
-
-    @Override
+    //TODO Still Needed?
+    /*@Override
     public void verifyTagAfterLoad(@NotNull CompoundTag tag) {
         if (UpgradeTools.containsUpgrades(tag)) {
             UpgradeTools.walkUpgradesOnTag(tag, (CompoundTag upgradeTag, String upgradeName) -> {
@@ -89,7 +86,7 @@ public class MiningGadget extends Item {
                 return null;
             });
         }
-    }
+    }*/
 
     @Override
     public int getMaxDamage(ItemStack stack) {
@@ -135,15 +132,15 @@ public class MiningGadget extends Item {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, world, tooltip, flag);
-
-        List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, context, tooltip, flagIn);
         Minecraft mc = Minecraft.getInstance();
-
-        if (world == null || mc.player == null) {
+        if (mc.level == null || mc.player == null) {
             return;
         }
+
+        List<Upgrade> upgrades = UpgradeTools.getUpgrades(stack);
+
 
         boolean sneakPressed = Screen.hasShiftDown();
 
@@ -388,37 +385,56 @@ public class MiningGadget extends Item {
 
 
         if (!world.isClientSide && stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("rgb")) {
-            float beam2r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f;
-            float beam2g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f;
-            float beam2b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
-            float r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f;
-            float g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f;
-            float b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f;
-            if (beam2r < 1 && beam2g == 0)
-                MiningProperties.setColor(stack, (short) (beam2r * 255f + Math.min(255-(beam2r * 255f), 5)), MiningProperties.COLOR_RED_INNER);
-            else if (beam2b > 0 && beam2r == 1)
-                MiningProperties.setColor(stack, (short) (beam2b * 255f - Math.min(Math.abs(0-(beam2b * 255f)), 5)), MiningProperties.COLOR_BLUE_INNER);
-            else if (beam2g < 1 && beam2r == 1)
-                MiningProperties.setColor(stack, (short) (beam2g * 255f + Math.min(255-(beam2g * 255f), 5)), MiningProperties.COLOR_GREEN_INNER);
-            else if (beam2r > 0 && beam2g == 1)
-                MiningProperties.setColor(stack, (short) (beam2r * 255f - Math.min(Math.abs(0-(beam2r * 255f)), 5)), MiningProperties.COLOR_RED_INNER);
-            else if (beam2b < 1 && beam2g == 1)
-                MiningProperties.setColor(stack, (short) (beam2b * 255f + Math.min(255-(beam2b * 255f), 5)), MiningProperties.COLOR_BLUE_INNER);
-            else if (beam2g > 0 && beam2b == 1)
-                MiningProperties.setColor(stack, (short) (beam2g * 255f - Math.min(Math.abs(0-(beam2g * 255f)), 5)), MiningProperties.COLOR_GREEN_INNER);
+            CodecHelpers.LaserColor laserColor = MiningProperties.getColors(stack);
+            float beam2r = laserColor.innerRed() / 255f;
+            float beam2g = laserColor.innerGreen() / 255f;
+            float beam2b = laserColor.innerBlue() / 255f;
+            float r = laserColor.red() / 255f;
+            float g = laserColor.green() / 255f;
+            float b = laserColor.blue() / 255f;
 
+
+            // Calculate new color values based on conditions
+            short newInnerRed = laserColor.innerRed();
+            short newInnerGreen = laserColor.innerGreen();
+            short newInnerBlue = laserColor.innerBlue();
+            short newRed = laserColor.red();
+            short newGreen = laserColor.green();
+            short newBlue = laserColor.blue();
+
+            // Update inner beam colors
+            if (beam2r < 1 && beam2g == 0)
+                newInnerRed = (short) (beam2r * 255f + Math.min(255 - (beam2r * 255f), 5));
+            else if (beam2b > 0 && beam2r == 1)
+                newInnerBlue = (short) (beam2b * 255f - Math.min(Math.abs(0 - (beam2b * 255f)), 5));
+            else if (beam2g < 1 && beam2r == 1)
+                newInnerGreen = (short) (beam2g * 255f + Math.min(255 - (beam2g * 255f), 5));
+            else if (beam2r > 0 && beam2g == 1)
+                newInnerRed = (short) (beam2r * 255f - Math.min(Math.abs(0 - (beam2r * 255f)), 5));
+            else if (beam2b < 1 && beam2g == 1)
+                newInnerBlue = (short) (beam2b * 255f + Math.min(255 - (beam2b * 255f), 5));
+            else if (beam2g > 0 && beam2b == 1)
+                newInnerGreen = (short) (beam2g * 255f - Math.min(Math.abs(0 - (beam2g * 255f)), 5));
+
+            // Update outer beam colors
             if (r < 1 && g == 0)
-                MiningProperties.setColor(stack, (short) (r * 255f + Math.min(255-(r * 255f), 5)), MiningProperties.COLOR_RED);
+                newRed = (short) (r * 255f + Math.min(255 - (r * 255f), 5));
             else if (b > 0 && r == 1)
-                MiningProperties.setColor(stack, (short) (b * 255f - Math.min(Math.abs(0-(b * 255f)), 5)), MiningProperties.COLOR_BLUE);
+                newBlue = (short) (b * 255f - Math.min(Math.abs(0 - (b * 255f)), 5));
             else if (g < 1 && r == 1)
-                MiningProperties.setColor(stack, (short) (g * 255f + Math.min(255-(g * 255f), 5)), MiningProperties.COLOR_GREEN);
+                newGreen = (short) (g * 255f + Math.min(255 - (g * 255f), 5));
             else if (r > 0 && g == 1)
-                MiningProperties.setColor(stack, (short) (r * 255f - Math.min(Math.abs(0-(r * 255f)), 5)), MiningProperties.COLOR_RED);
+                newRed = (short) (r * 255f - Math.min(Math.abs(0 - (r * 255f)), 5));
             else if (b < 1 && g == 1)
-                MiningProperties.setColor(stack, (short) (b * 255f + Math.min(255-(b * 255f), 5)), MiningProperties.COLOR_BLUE);
+                newBlue = (short) (b * 255f + Math.min(255 - (b * 255f), 5));
             else if (g > 0 && b == 1)
-                MiningProperties.setColor(stack, (short) (g * 255f - Math.min(Math.abs(0-(g * 255f)), 5)), MiningProperties.COLOR_GREEN);
+                newGreen = (short) (g * 255f - Math.min(Math.abs(0 - (g * 255f)), 5));
+
+            // Construct the new LaserColor object
+            CodecHelpers.LaserColor newLaserColor = new CodecHelpers.LaserColor(newRed, newGreen, newBlue, newInnerRed, newInnerGreen, newInnerBlue);
+
+            // Set the new color on the item stack
+            MiningProperties.setColor(stack, newLaserColor);
 
         }
 

@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "g": {
-      "tag": "forge:ingots/gold"
+      "tag": "c:ingots/gold"
     },
     "i": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     },
     "r": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     },
     "u": {
       "item": "mininggadgets:upgrade_empty"
@@ -21,6 +21,7 @@
     "rgr"
   ],
   "result": {
-    "item": "mininggadgets:upgrade_magnet"
+    "count": 1,
+    "id": "mininggadgets:upgrade_magnet"
   }
 }

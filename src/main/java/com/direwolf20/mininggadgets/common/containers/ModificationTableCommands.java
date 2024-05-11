@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 
-import com.direwolf20.mininggadgets.common.capabilities.EnergisedItem;
+import com.direwolf20.mininggadgets.common.capabilities.EnergyStorageItemstack;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
@@ -58,7 +58,7 @@ public class ModificationTableCommands {
                 UpgradeBatteryLevels.getBatteryByLevel(card.getTier()).ifPresent(power -> {
                     var cap = laser.getCapability(Capabilities.EnergyStorage.ITEM);
                     if (cap == null) return;
-                    ((EnergisedItem) cap).updatedMaxEnergy(power.getPower());
+                    ((EnergyStorageItemstack) cap).updatedMaxEnergy(power.getPower());
                     if (card.getTier() == Upgrade.BATTERY_CREATIVE.getTier()) {
                         cap.receiveEnergy(cap.getMaxEnergyStored() - cap.getEnergyStored(), false);
                     }
@@ -108,7 +108,7 @@ public class ModificationTableCommands {
                 MiningProperties.setBatteryTier(laser, 0);
                 var cap = laser.getCapability(Capabilities.EnergyStorage.ITEM);
                 if (cap == null) return;
-                ((EnergisedItem) cap).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower());
+                ((EnergyStorageItemstack) cap).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower());
             }
         });
     }

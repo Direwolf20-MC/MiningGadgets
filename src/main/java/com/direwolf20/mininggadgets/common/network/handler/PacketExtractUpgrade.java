@@ -9,9 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
-
-import java.util.Optional;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketExtractUpgrade {
     public static final PacketExtractUpgrade INSTANCE = new PacketExtractUpgrade();
@@ -20,12 +18,9 @@ public class PacketExtractUpgrade {
         return INSTANCE;
     }
 
-    public void handle(final ExtractUpgradePayload payload, final PlayPayloadContext context) {
-        context.workHandler().submitAsync(() -> {
-            Optional<Player> senderOptional = context.player();
-            if (senderOptional.isEmpty())
-                return;
-            ServerPlayer player = (ServerPlayer) senderOptional.get();
+    public void handle(final ExtractUpgradePayload payload, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player player = context.player();
 
             Level world = player.level();
             BlockPos pos = payload.pos();
@@ -34,7 +29,7 @@ public class PacketExtractUpgrade {
             if (!(te instanceof ModificationTableTileEntity)) return;
             ModificationTableContainer container = ((ModificationTableTileEntity) te).getContainer(player);
 
-            ModificationTableCommands.extractButton(container, player, payload.upgrade());
+            ModificationTableCommands.extractButton(container, (ServerPlayer) player, payload.upgrade());
         });
     }
 }

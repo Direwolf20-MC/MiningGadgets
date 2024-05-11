@@ -10,6 +10,7 @@ import com.direwolf20.mininggadgets.setup.Config;
 import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -32,7 +33,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -345,20 +345,20 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        this.load(tag);
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+        this.loadAdditional(tag, lookupProvider);
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        saveAdditional(tag);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        this.load(pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+        super.onDataPacket(net, pkt, lookupProvider);
     }
 
     public void markDirtyClient() {
@@ -370,8 +370,8 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
         this.renderBlock = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), tag.getCompound("renderBlock"));
         this.originalDurability = tag.getInt("originalDurability");
         this.priorDurability = tag.getInt("priorDurability");
@@ -382,14 +382,14 @@ public class RenderBlockTileEntity extends BlockEntity {
         }
         this.gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
         this.breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
-        this.gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"));
+        this.gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"), provider);
         this.gadgetIsWhitelist = tag.getBoolean("gadgetIsWhitelist");
         this.blockAllowed = tag.getBoolean("blockAllowed");
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
         if (this.renderBlock != null) {
             tag.put("renderBlock", NbtUtils.writeBlockState(this.renderBlock));
         }
@@ -402,7 +402,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         }
         tag.put("upgrades", UpgradeTools.setUpgradesNBT(this.gadgetUpgrades).getList("upgrades", Tag.TAG_COMPOUND));
         tag.putByte("breakType", (byte) this.breakType.ordinal());
-        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(this.getGadgetFilters()));
+        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(this.getGadgetFilters(), provider));
         tag.putBoolean("gadgetIsWhitelist", this.isGadgetIsWhitelist());
         tag.putBoolean("blockAllowed", this.blockAllowed);
     }
@@ -433,7 +433,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
-                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
+                tempTool.enchant(Enchantments.FORTUNE, fortune);
             }
         }
 
@@ -503,8 +503,8 @@ public class RenderBlockTileEntity extends BlockEntity {
     private static BlockEvent.BreakEvent fixForgeEventBreakBlock(BlockState state, Player player, Level world, BlockPos pos, ItemStack tool) {
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
         // Handle empty block or player unable to break block scenario
-        if (state != null && CommonHooks.isCorrectToolForDrops(state, player)) {
-            int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
+        if (state != null && tool.isCorrectToolForDrops(state)) {
+            int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FORTUNE, tool);
             int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
             event.setExpToDrop(state.getExpDrop(world, world.random, pos, bonusLevel, silklevel));
         }
@@ -547,7 +547,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
-                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
+                tempTool.enchant(Enchantments.FORTUNE, fortune);
             }
         }
 

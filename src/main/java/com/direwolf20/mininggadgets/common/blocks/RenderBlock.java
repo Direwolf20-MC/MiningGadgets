@@ -25,6 +25,7 @@ public class RenderBlock extends Block implements EntityBlock {
                 Properties.of()
                         .strength(50.0F, 1200.0F)
                         .noOcclusion()
+                        .pushReaction(PushReaction.BLOCK)
                         .isRedstoneConductor((a, b, c) -> false) // @mcp: setOpaque seems to replace isNormalBlock
         );
     }
@@ -51,14 +52,6 @@ public class RenderBlock extends Block implements EntityBlock {
     public RenderShape getRenderShape(BlockState state) {
         // We still make effect blocks invisible because all effects (scaling block, transparent box) are dynamic so they has to be in the TER
         return RenderShape.INVISIBLE;
-    }
-
-    /**
-     * @deprecated call via {@link BlockState#getPistonPushReaction()} whenever possible. Implementing/overriding is fine.
-     */
-    @Override
-    public PushReaction getPistonPushReaction(BlockState state) {
-        return PushReaction.BLOCK;
     }
 
     @Override

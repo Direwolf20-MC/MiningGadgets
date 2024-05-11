@@ -6,7 +6,7 @@
       "item": "minecraft:diamond_block"
     },
     "e": {
-      "tag": "forge:ender_pearls"
+      "tag": "c:ender_pearls"
     },
     "n": {
       "item": "minecraft:netherite_block"
@@ -24,6 +24,7 @@
     "epe"
   ],
   "result": {
-    "item": "mininggadgets:upgrade_size_2"
+    "count": 1,
+    "id": "mininggadgets:upgrade_size_2"
   }
 }

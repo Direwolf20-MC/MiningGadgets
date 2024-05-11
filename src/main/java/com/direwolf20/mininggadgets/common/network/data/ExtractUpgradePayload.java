@@ -2,7 +2,9 @@ package com.direwolf20.mininggadgets.common.network.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
@@ -11,22 +13,18 @@ public record ExtractUpgradePayload(
         String upgrade,
         int nameLength
 ) implements CustomPacketPayload {
-    public static final ResourceLocation ID = new ResourceLocation(MiningGadgets.MOD_ID, "extract_upgrade");
-
-    public ExtractUpgradePayload(final FriendlyByteBuf buffer) {
-        this(buffer.readBlockPos(), buffer.readUtf(), buffer.readInt());
-    }
+    public static final Type<ExtractUpgradePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "extract_upgrade"));
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeBlockPos(pos());
-        buffer.writeUtf(upgrade());
-        buffer.writeInt(nameLength());
+    public Type<ExtractUpgradePayload> type() {
+        return TYPE;
     }
 
-    @Override
-    public ResourceLocation id() {
-        return ID;
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, ExtractUpgradePayload> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC, ExtractUpgradePayload::pos,
+            ByteBufCodecs.STRING_UTF8, ExtractUpgradePayload::upgrade,
+            ByteBufCodecs.VAR_INT, ExtractUpgradePayload::nameLength,
+            ExtractUpgradePayload::new
+    );
 }
 
