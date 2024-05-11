@@ -1,10 +1,10 @@
 package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.common.data.LanguageProvider;
+
 
 public class GeneratorLanguage extends LanguageProvider {
     public GeneratorLanguage(PackOutput output) {
@@ -14,40 +14,40 @@ public class GeneratorLanguage extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add("itemGroup.mininggadgets", "Mining Gadgets");
-        addItem(ModItems.MININGGADGET, "Mining Gadget MK3");
-        addItem(ModItems.MININGGADGET_SIMPLE, "Mining Gadget MK1");
-        addItem(ModItems.MININGGADGET_FANCY, "Mining Gadget MK2");
-        addItem(ModItems.UPGRADE_EMPTY, "Blank Upgrade Module");
+        addItem(Registration.MININGGADGET, "Mining Gadget MK3");
+        addItem(Registration.MININGGADGET_SIMPLE, "Mining Gadget MK1");
+        addItem(Registration.MININGGADGET_FANCY, "Mining Gadget MK2");
+        addItem(Registration.UPGRADE_EMPTY, "Blank Upgrade Module");
 
         // This should always match the start of below upgrade names. I use this
         // to actively replace the start of the word. (it's an exact search so this should
         // still work nicely in other languages. It's rare we need the Upgrade: prefix
         // for most of the gui in the mod so it's purely a gui hack.
         addPrefixed("upgrade.replacement", "Upgrade: ");
-        addItem(ModItems.SILK, "Upgrade: Silk touch");
-        addItem(ModItems.FREEZING, "Upgrade: Freezing");
-        addItem(ModItems.LIGHT_PLACER, "Upgrade: Light Placer");
-        addItem(ModItems.MAGNET, "Upgrade: Magnet");
-        addItem(ModItems.SIZE_1, "Upgrade: 3x3");
-        addItem(ModItems.SIZE_2, "Upgrade: 5x5");
-        addItem(ModItems.SIZE_3, "Upgrade: 7x7");
+        addItem(Registration.SILK, "Upgrade: Silk touch");
+        addItem(Registration.FREEZING, "Upgrade: Freezing");
+        addItem(Registration.LIGHT_PLACER, "Upgrade: Light Placer");
+        addItem(Registration.MAGNET, "Upgrade: Magnet");
+        addItem(Registration.SIZE_1, "Upgrade: 3x3");
+        addItem(Registration.SIZE_2, "Upgrade: 5x5");
+        addItem(Registration.SIZE_3, "Upgrade: 7x7");
 //        addItem(ModItems.PAVER, "Upgrade: Paver");
-        addItem(ModItems.VOID_JUNK, "Upgrade: Void Junk");
-        addItem(ModItems.FORTUNE_1, "Upgrade: Fortune, Tier 1");
-        addItem(ModItems.FORTUNE_2, "Upgrade: Fortune, Tier 2");
-        addItem(ModItems.FORTUNE_3, "Upgrade: Fortune, Tier 3");
-        addItem(ModItems.RANGE_1, "Upgrade: Range, Tier 1");
-        addItem(ModItems.RANGE_2, "Upgrade: Range, Tier 2");
-        addItem(ModItems.RANGE_3, "Upgrade: Range, Tier 3");
-        addItem(ModItems.EFFICIENCY_1, "Upgrade: Efficiency, Tier 1");
-        addItem(ModItems.EFFICIENCY_2, "Upgrade: Efficiency, Tier 2");
-        addItem(ModItems.EFFICIENCY_3, "Upgrade: Efficiency, Tier 3");
-        addItem(ModItems.EFFICIENCY_4, "Upgrade: Efficiency, Tier 4");
-        addItem(ModItems.EFFICIENCY_5, "Upgrade: Efficiency, Tier 5");
-        addItem(ModItems.BATTERY_1, "Upgrade: Battery, Tier 1");
-        addItem(ModItems.BATTERY_2, "Upgrade: Battery, Tier 2");
-        addItem(ModItems.BATTERY_3, "Upgrade: Battery, Tier 3");
-        addItem(ModItems.BATTERY_CREATIVE, "Upgrade: Creative Battery");
+        addItem(Registration.VOID_JUNK, "Upgrade: Void Junk");
+        addItem(Registration.FORTUNE_1, "Upgrade: Fortune, Tier 1");
+        addItem(Registration.FORTUNE_2, "Upgrade: Fortune, Tier 2");
+        addItem(Registration.FORTUNE_3, "Upgrade: Fortune, Tier 3");
+        addItem(Registration.RANGE_1, "Upgrade: Range, Tier 1");
+        addItem(Registration.RANGE_2, "Upgrade: Range, Tier 2");
+        addItem(Registration.RANGE_3, "Upgrade: Range, Tier 3");
+        addItem(Registration.EFFICIENCY_1, "Upgrade: Efficiency, Tier 1");
+        addItem(Registration.EFFICIENCY_2, "Upgrade: Efficiency, Tier 2");
+        addItem(Registration.EFFICIENCY_3, "Upgrade: Efficiency, Tier 3");
+        addItem(Registration.EFFICIENCY_4, "Upgrade: Efficiency, Tier 4");
+        addItem(Registration.EFFICIENCY_5, "Upgrade: Efficiency, Tier 5");
+        addItem(Registration.BATTERY_1, "Upgrade: Battery, Tier 1");
+        addItem(Registration.BATTERY_2, "Upgrade: Battery, Tier 2");
+        addItem(Registration.BATTERY_3, "Upgrade: Battery, Tier 3");
+        addItem(Registration.BATTERY_CREATIVE, "Upgrade: Creative Battery");
 
         // Upgrade tooltips :D
         add("tooltop.mininggadgets.empty", "Used to craft other upgrades");
@@ -64,9 +64,9 @@ public class GeneratorLanguage extends LanguageProvider {
         add("tooltop.mininggadgets.paver", "Creates a path for you as you mine");
 
         // Blocks
-        addBlock(ModBlocks.MINERS_LIGHT, "Miner's Light");
-        addBlock(ModBlocks.RENDER_BLOCK, "Render Block (Don't use)");
-        addBlock(ModBlocks.MODIFICATION_TABLE, "Modification Table");
+        addBlock(Registration.MINERS_LIGHT, "Miner's Light");
+        addBlock(Registration.RENDER_BLOCK, "Render Block (Don't use)");
+        addBlock(Registration.MODIFICATION_TABLE, "Modification Table");
 
         // Fixes oneProbe? Weird
         add("block.mininggadgets.renderblock.name", "What ever it wants to be!");

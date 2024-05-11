@@ -1,12 +1,11 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
+import com.direwolf20.mininggadgets.setup.Registration;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
@@ -14,7 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 public class ModificationTableTER implements BlockEntityRenderer<ModificationTableTileEntity> {
     public ModificationTableTER(BlockEntityRendererProvider.Context p_173636_) {
@@ -23,13 +22,15 @@ public class ModificationTableTER implements BlockEntityRenderer<ModificationTab
 
     @Override
     public void render(ModificationTableTileEntity tile, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int combinedLights, int combinedOverlay) {
-        ItemStack stack = tile.getCapability(ForgeCapabilities.ITEM_HANDLER).map(e -> e.getStackInSlot(0)).orElse(ItemStack.EMPTY);
+        var cap = tile.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, tile.getBlockPos(), tile.getBlockState(), tile, null);
+        if (cap == null) return;
+        ItemStack stack = cap.getStackInSlot(0);
         if (stack.isEmpty()) {
             return;
         }
 
-        boolean isSimple = stack.getItem().equals(ModItems.MININGGADGET_SIMPLE.get());
-        boolean isFancy = stack.getItem().equals(ModItems.MININGGADGET_FANCY.get());
+        boolean isSimple = stack.getItem().equals(Registration.MININGGADGET_SIMPLE.get());
+        boolean isFancy = stack.getItem().equals(Registration.MININGGADGET_FANCY.get());
         boolean isCool = !isSimple && !isFancy;
 
         Direction facing = tile.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);

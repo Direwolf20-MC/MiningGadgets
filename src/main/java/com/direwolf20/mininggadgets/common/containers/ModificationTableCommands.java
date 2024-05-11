@@ -1,7 +1,7 @@
 package com.direwolf20.mininggadgets.common.containers;
 
 
-import com.direwolf20.mininggadgets.common.items.EnergisedItem;
+import com.direwolf20.mininggadgets.common.capabilities.EnergisedItem;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
@@ -11,7 +11,7 @@ import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 import java.util.List;
 
@@ -56,12 +56,12 @@ public class ModificationTableCommands {
             // Did we just insert a battery upgrade?
             if(card.getBaseName().equals(Upgrade.BATTERY_1.getBaseName())) {
                 UpgradeBatteryLevels.getBatteryByLevel(card.getTier()).ifPresent(power -> {
-                    laser.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> {
-                        ((EnergisedItem) e).updatedMaxEnergy(power.getPower());
-                        if (card.getTier() == Upgrade.BATTERY_CREATIVE.getTier()) {
-                            e.receiveEnergy(e.getMaxEnergyStored() - e.getEnergyStored(), false);
-                        }
-                    });
+                    var cap = laser.getCapability(Capabilities.EnergyStorage.ITEM);
+                    if (cap == null) return;
+                    ((EnergisedItem) cap).updatedMaxEnergy(power.getPower());
+                    if (card.getTier() == Upgrade.BATTERY_CREATIVE.getTier()) {
+                        cap.receiveEnergy(cap.getMaxEnergyStored() - cap.getEnergyStored(), false);
+                    }
                 });
                 MiningProperties.setBatteryTier(laser, card.getTier());
             }
@@ -106,7 +106,9 @@ public class ModificationTableCommands {
 
             if (upgrade.getBaseName().equals(Upgrade.BATTERY_1.getBaseName())) {
                 MiningProperties.setBatteryTier(laser, 0);
-                laser.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> ((EnergisedItem) e).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower()));
+                var cap = laser.getCapability(Capabilities.EnergyStorage.ITEM);
+                if (cap == null) return;
+                ((EnergisedItem) cap).updatedMaxEnergy(UpgradeBatteryLevels.BATTERY.getPower());
             }
         });
     }

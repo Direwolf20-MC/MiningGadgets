@@ -34,15 +34,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_fortune_2",
-      "has_upgrade",
-      "has_the_recipe"
+      "has_upgrade"
     ]
   ],
   "rewards": {
     "recipes": [
       "mininggadgets:upgrade_fortune_3"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

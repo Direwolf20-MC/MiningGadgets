@@ -1,9 +1,9 @@
 package com.direwolf20.mininggadgets.common.items;
 
-import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeBatteryLevels;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
+import com.direwolf20.mininggadgets.setup.Config;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;

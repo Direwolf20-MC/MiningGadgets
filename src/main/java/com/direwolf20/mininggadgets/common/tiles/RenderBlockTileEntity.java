@@ -1,13 +1,13 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
-import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
+import com.direwolf20.mininggadgets.setup.Config;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -31,16 +31,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.level.BlockEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
 import java.util.*;
-
-import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
 public class RenderBlockTileEntity extends BlockEntity {
     private final Random rand = new Random();
@@ -61,7 +58,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     private boolean blockAllowed;
 
     public RenderBlockTileEntity(BlockPos pos, BlockState state) {
-        super(RENDERBLOCK_TILE.get(), pos, state);
+        super(Registration.RENDERBLOCK_TILE.get(), pos, state);
     }
 
     public static boolean blockAllowed(List<ItemStack> drops, List<ItemStack> filters, boolean isWhiteList) {
@@ -193,7 +190,9 @@ public class RenderBlockTileEntity extends BlockEntity {
 
     private void freeze(ItemStack stack) {
         int freezeCost = Config.UPGRADECOST_FREEZE.get() * -1;
-        int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+        var cap = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (cap == null) return;
+        int energy = cap.getEnergyStored();
 
         if (energy == 0) {
             return;
@@ -217,8 +216,9 @@ public class RenderBlockTileEntity extends BlockEntity {
         if (remainingEnergy < costOfOperation) {
             return 0;
         }
-
-        stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(costOfOperation, false));
+        var cap = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (cap == null) return 0;
+        cap.receiveEnergy(costOfOperation, false);
 
         // If the block is just water logged, remove the fluid
         BlockState blockState = world.getBlockState(pos);
@@ -420,7 +420,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         int silk = 0;
         int fortune = 0;
 
-        ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
+        ItemStack tempTool = new ItemStack(Registration.MININGGADGET.get());
 
         // If silk is in the upgrades, apply it without a tier.
         if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
@@ -439,7 +439,7 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         // Fire an event for other mods that we've just broken the block
         BlockEvent.BreakEvent breakEvent = fixForgeEventBreakBlock(this.renderBlock, player, level, worldPosition, tempTool);
-        MinecraftForge.EVENT_BUS.post(breakEvent);
+        NeoForge.EVENT_BUS.post(breakEvent);
         // Someone cancelled out break event
         if (breakEvent.isCanceled()) {
             return;
@@ -454,7 +454,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             for (ItemStack drop : drops) {
                 if (drop != null) {
                     if (magnetMode) {
-                        int wasPickedUp = ForgeEventFactory.onItemPickup(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
+                        int wasPickedUp = EventHooks.onItemPickup(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
                         // 1  = someone allowed the event meaning it's handled,
                         // -1 = someone blocked the event and thus we shouldn't drop it nor insert it
                         // 0  = no body captured the event and we should handle it by hand.
@@ -503,7 +503,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     private static BlockEvent.BreakEvent fixForgeEventBreakBlock(BlockState state, Player player, Level world, BlockPos pos, ItemStack tool) {
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
         // Handle empty block or player unable to break block scenario
-        if (state != null && ForgeHooks.isCorrectToolForDrops(state, player)) {
+        if (state != null && CommonHooks.isCorrectToolForDrops(state, player)) {
             int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
             int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
             event.setExpToDrop(state.getExpDrop(world, world.random, pos, bonusLevel, silklevel));
@@ -534,7 +534,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         int silk = 0;
         int fortune = 0;
 
-        ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
+        ItemStack tempTool = new ItemStack(Registration.MININGGADGET.get());
 
         // If silk is in the upgrades, apply it without a tier.
         if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {

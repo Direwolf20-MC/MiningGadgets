@@ -5,15 +5,12 @@ import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.network.packets.*;
+import com.direwolf20.mininggadgets.common.network.data.*;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -21,7 +18,8 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
+import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.awt.*;
 import java.util.List;
@@ -37,9 +35,9 @@ public class MiningSettingScreen extends Screen {
     private int currentSize = 1;
     private boolean isWhitelist = true;
     private boolean isPrecision = true;
-    private ForgeSlider rangeSlider;
-    private ForgeSlider volumeSlider;
-    private ForgeSlider freezeDelaySlider;
+    private ExtendedSlider rangeSlider;
+    private ExtendedSlider volumeSlider;
+    private ExtendedSlider freezeDelaySlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
     private HashMap<Upgrade, ToggleButton> upgradeButtons = new HashMap<>();
     private boolean containsFreeze = false;
@@ -92,14 +90,14 @@ public class MiningSettingScreen extends Screen {
         if( containsVoid ) {
             addRenderableWidget(
                     Button.builder(getTrans("tooltip.screen.edit_filters"), (button) -> {
-                        PacketHandler.sendToServer(new PacketOpenFilterContainer());
+                        PacketDistributor.SERVER.noArg().send(new OpenFilterContainerPayload());
                     }).pos(baseX + 10, top + 20).size( 95, 20).build()
             );
 
             addRenderableWidget(new WhitelistButton(baseX + 10 + (115 - 20), top + 20, 20, 20, isWhitelist, (button) -> {
                 isWhitelist = !isWhitelist;
                 ((WhitelistButton) button).setWhitelist(isWhitelist);
-                PacketHandler.sendToServer(new PacketToggleFilters());
+                PacketDistributor.SERVER.noArg().send(new ToggleFiltersPayload());
             }));
         }
 
@@ -115,7 +113,7 @@ public class MiningSettingScreen extends Screen {
                 currentSize += 2;
 
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
-            PacketHandler.sendToServer(new PacketChangeMiningSize());
+            PacketDistributor.SERVER.noArg().send(new ChangeMiningSizePayload());
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         if (maxMiningRange > 3) {
@@ -123,12 +121,12 @@ public class MiningSettingScreen extends Screen {
                 currentMode = MiningProperties.nextSizeMode(gadget);
 
                 button.setMessage(currentMode.getTooltip());
-                PacketHandler.sendToServer(new PacketChangeMiningSizeMode());
+                PacketDistributor.SERVER.noArg().send(new ChangeMiningSizeModePayload());
             }).pos(baseX - 135, 0).size(125, 20).build());
         }
 
         ///ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
-        leftWidgets.add(rangeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), Component.empty(), 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, true) {
+        leftWidgets.add(rangeSlider = new ExtendedSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), Component.empty(), 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, true) {
             @Override
             protected void applyValue() {
                 beamRange = this.getValueInt();
@@ -143,11 +141,11 @@ public class MiningSettingScreen extends Screen {
         leftWidgets.add(Button.builder(getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
             isPrecision = !isPrecision;
             button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
-            PacketHandler.sendToServer(new PacketTogglePrecision());
+            PacketDistributor.SERVER.noArg().send(new TogglePrecisionPayload());
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         // volume slider
-        leftWidgets.add(volumeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, volume * 100, true) {
+        leftWidgets.add(volumeSlider = new ExtendedSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, volume * 100, true) {
             @Override
             protected void applyValue() {
                 volume = (float) (this.getValue() / 100D);
@@ -156,7 +154,7 @@ public class MiningSettingScreen extends Screen {
 
         // Freeze delay
         if( containsFreeze )
-            leftWidgets.add(freezeDelaySlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").append(": "), Component.literal(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), true) {
+            leftWidgets.add(freezeDelaySlider = new ExtendedSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").append(": "), Component.literal(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), true) {
                 @Override
                 protected void applyValue() {
                     freezeDelay = this.getValueInt();
@@ -179,7 +177,7 @@ public class MiningSettingScreen extends Screen {
         // When the button is clicked we toggle
         if( update ) {
             this.updateButtons(upgrade);
-            PacketHandler.sendToServer(new PacketUpdateUpgrade(upgrade.getName()));
+            PacketDistributor.SERVER.noArg().send(new UpdateUpgradePayload(upgrade.getName()));
         }
 
         // When we're just init the gui, we check if it's on or off.
@@ -199,7 +197,7 @@ public class MiningSettingScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
+        //this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
         int top = (height / 2) - (containsFreeze ? 80 : 60);
@@ -219,11 +217,11 @@ public class MiningSettingScreen extends Screen {
                     guiGraphics.renderTooltip(font, isWhitelist ? getTrans("tooltip.screen.whitelist") : getTrans("tooltip.screen.blacklist"), mouseX, mouseY);
             } else if( e.equals(freezeDelaySlider) ) {
                 if( e.isMouseOver(mouseX, mouseY) ) {
-                    assert e instanceof ForgeSlider;
+                    assert e instanceof ExtendedSlider;
 
                     // This is a bit silly, not going to lie
                     List<FormattedText> helpText = Arrays.stream(getTrans("tooltip.screen.delay_explain").getString().split("\n")).map(Component::literal).collect(Collectors.toList());
-                    guiGraphics.renderTooltip(font, Language.getInstance().getVisualOrder(helpText), ((ForgeSlider)e).getX() - 8, ((ForgeSlider)e).getY() + 40);
+                    guiGraphics.renderTooltip(font, Language.getInstance().getVisualOrder(helpText), ((ExtendedSlider) e).getX() - 8, ((ExtendedSlider) e).getY() + 40);
                 }
             } else {
                 assert e instanceof ToggleButton;
@@ -241,9 +239,9 @@ public class MiningSettingScreen extends Screen {
 
     @Override
     public void removed() {
-        PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
-        PacketHandler.sendToServer(new PacketChangeVolume(this.volume));
-        PacketHandler.sendToServer(new PacketChangeFreezeDelay(this.freezeDelay));
+        PacketDistributor.SERVER.noArg().send(new ChangeRangePayload(this.beamRange));
+        PacketDistributor.SERVER.noArg().send(new ChangeVolumePayload(this.volume));
+        PacketDistributor.SERVER.noArg().send(new ChangeFreezeDelayPayload(this.freezeDelay));
 
         super.removed();
     }
@@ -265,16 +263,16 @@ public class MiningSettingScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if( rangeSlider.isMouseOver(mouseX, mouseY) ) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta, double deltaY) {
+        if (rangeSlider.isMouseOver(mouseX, mouseY)) {
             rangeSlider.setValue(rangeSlider.getValueInt() + (delta > 0 ? 1 : -1));
             beamRange = rangeSlider.getValueInt();
         }
-        if( freezeDelaySlider != null && freezeDelaySlider.isMouseOver(mouseX, mouseY) ) {
+        if (freezeDelaySlider != null && freezeDelaySlider.isMouseOver(mouseX, mouseY)) {
             freezeDelaySlider.setValue(freezeDelaySlider.getValueInt() + (delta > 0 ? 1 : -1));
             freezeDelay = freezeDelaySlider.getValueInt();
         }
-        if( volumeSlider.isMouseOver(mouseX, mouseY) ) {
+        if (volumeSlider.isMouseOver(mouseX, mouseY)) {
             volumeSlider.setValue(volumeSlider.getValueInt() + (delta > 0 ? 1 : -1));
             volume = volumeSlider.getValueInt();
         }

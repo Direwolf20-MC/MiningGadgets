@@ -1,10 +1,10 @@
 package com.direwolf20.mininggadgets.client;
 
 import com.direwolf20.mininggadgets.client.screens.ModificationTableScreen;
-import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.setup.Config;
+import com.direwolf20.mininggadgets.setup.Registration;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
@@ -46,9 +46,9 @@ public class MiningGadgetsJEI implements IModPlugin {
             return IIngredientSubtypeInterpreter.NONE;
         };
 
-        registration.registerSubtypeInterpreter(ModItems.MININGGADGET.get(), chargedProvider);
-        registration.registerSubtypeInterpreter(ModItems.MININGGADGET_SIMPLE.get(), chargedProvider);
-        registration.registerSubtypeInterpreter(ModItems.MININGGADGET_FANCY.get(), chargedProvider);
+        registration.registerSubtypeInterpreter(Registration.MININGGADGET.get(), chargedProvider);
+        registration.registerSubtypeInterpreter(Registration.MININGGADGET_SIMPLE.get(), chargedProvider);
+        registration.registerSubtypeInterpreter(Registration.MININGGADGET_FANCY.get(), chargedProvider);
     }
 
     @Override

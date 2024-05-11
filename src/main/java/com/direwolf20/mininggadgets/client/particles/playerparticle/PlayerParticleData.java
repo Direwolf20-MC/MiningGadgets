@@ -6,7 +6,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -75,7 +74,7 @@ public class PlayerParticleData implements ParticleOptions {
     @Override
     public String writeToString() {
         return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %.2f %.2f %s",
-                ForgeRegistries.PARTICLE_TYPES.getKey(this.getType()), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
+                this.getType(), this.size, this.r, this.g, this.b, this.maxAgeMul, this.depthTest);
     }
 
     public static final ParticleOptions.Deserializer<PlayerParticleData> DESERIALIZER = new ParticleOptions.Deserializer<>() {

@@ -1,11 +1,11 @@
 package com.direwolf20.mininggadgets.common.items.gadget;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -238,7 +238,7 @@ public class MiningProperties {
      * @implNote Please do not use {@link #deserializeItemStackList(CompoundTag)} or {@link #serializeItemStackList(List)}
      *           if you wish to maintain the original tag data on the gadget. These have specific uses.
      *
-     *           See {@link com.direwolf20.mininggadgets.common.network.packets.PacketOpenFilterContainer.Handler} for an
+     *           See {@link com.direwolf20.mininggadgets.common.network.handler.PacketOpenFilterContainer} for an
      *           understanding on why you shouldn't change the tad data on the gadget directly.
      */
     public static List<ItemStack> getFiltersAsList(ItemStack gadget) {

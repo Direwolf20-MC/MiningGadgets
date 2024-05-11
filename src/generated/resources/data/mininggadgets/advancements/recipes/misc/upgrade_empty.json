@@ -20,14 +20,13 @@
   },
   "requirements": [
     [
-      "has_diamonds",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_diamonds"
     ]
   ],
   "rewards": {
     "recipes": [
       "mininggadgets:upgrade_empty"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

@@ -1,10 +1,10 @@
 package com.direwolf20.mininggadgets.common.containers;
 
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -16,10 +16,10 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class ModificationTableContainer extends AbstractContainerMenu {
     private List<Upgrade> upgradesCache = new ArrayList<>();
 
     public ModificationTableContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
-        super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
+        super(Registration.MODIFICATIONTABLE_CONTAINER.get(), windowId);
 
         this.tileEntity = Minecraft.getInstance().level.getBlockEntity(extraData.readBlockPos());
         this.playerInventory = new InvWrapper(playerInventory);
@@ -41,7 +41,7 @@ public class ModificationTableContainer extends AbstractContainerMenu {
     }
 
     public ModificationTableContainer(int windowId, Level world, BlockPos pos, Inventory playerInventory) {
-        super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
+        super(Registration.MODIFICATIONTABLE_CONTAINER.get(), windowId);
         this.tileEntity = world.getBlockEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);
 
@@ -51,13 +51,14 @@ public class ModificationTableContainer extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player playerIn) {
-        return stillValid(ContainerLevelAccess.create(getTE().getLevel(), tileEntity.getBlockPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
+        return stillValid(ContainerLevelAccess.create(getTE().getLevel(), tileEntity.getBlockPos()), playerIn, Registration.MODIFICATION_TABLE.get());
     }
 
     private void setupContainerSlots() {
-        this.getTE().getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
-            addSlot(new WatchedSlot(h, 0,  -16, 84, this::updateUpgradeCache));
-        });
+        var cap = this.tileEntity.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, tileEntity.getBlockPos(), tileEntity.getBlockState(), tileEntity, null);
+        if (cap != null) {
+            addSlot(new WatchedSlot(cap, 0, -16, 84, this::updateUpgradeCache));
+        }
     }
 
     private void updateUpgradeCache(int index) {

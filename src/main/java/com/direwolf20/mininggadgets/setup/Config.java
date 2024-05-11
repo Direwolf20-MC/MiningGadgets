@@ -1,15 +1,9 @@
-package com.direwolf20.mininggadgets.common;
+package com.direwolf20.mininggadgets.setup;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.nio.file.Path;
-
-@Mod.EventBusSubscriber
 public class Config {
 
     public static final String CATEGORY_GENERAL = "general";
@@ -17,33 +11,43 @@ public class Config {
     public static final String SUBCATEGORY_MININGGADGET = "mining_gadget";
     public static final String SUBCATEGORY_UPGRADES = "upgrades";
 
-    private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
-    private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
+    private static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
 
-    public static ForgeConfigSpec COMMON_CONFIG;
-    public static ForgeConfigSpec CLIENT_CONFIG;
+    public static ModConfigSpec COMMON_CONFIG;
+    public static ModConfigSpec CLIENT_CONFIG;
 
-    public static ForgeConfigSpec.IntValue MININGGADGET_MAXPOWER;
-    public static ForgeConfigSpec.IntValue MININGGADGET_BASECOST;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_SILKTOUCH;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_MAGNET;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_VOID;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE1;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE2;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_FORTUNE3;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY1;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY2;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY3;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY4;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_EFFICIENCY5;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_LIGHT;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_FREEZE;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY1;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY2;
-    public static ForgeConfigSpec.IntValue UPGRADECOST_BATTERY3;
+    public static ModConfigSpec.IntValue MININGGADGET_MAXPOWER;
+    public static ModConfigSpec.IntValue MININGGADGET_BASECOST;
+    public static ModConfigSpec.IntValue UPGRADECOST_SILKTOUCH;
+    public static ModConfigSpec.IntValue UPGRADECOST_MAGNET;
+    public static ModConfigSpec.IntValue UPGRADECOST_VOID;
+    public static ModConfigSpec.IntValue UPGRADECOST_FORTUNE1;
+    public static ModConfigSpec.IntValue UPGRADECOST_FORTUNE2;
+    public static ModConfigSpec.IntValue UPGRADECOST_FORTUNE3;
+    public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY1;
+    public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY2;
+    public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY3;
+    public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY4;
+    public static ModConfigSpec.IntValue UPGRADECOST_EFFICIENCY5;
+    public static ModConfigSpec.IntValue UPGRADECOST_LIGHT;
+    public static ModConfigSpec.IntValue UPGRADECOST_FREEZE;
+    public static ModConfigSpec.IntValue UPGRADECOST_BATTERY1;
+    public static ModConfigSpec.IntValue UPGRADECOST_BATTERY2;
+    public static ModConfigSpec.IntValue UPGRADECOST_BATTERY3;
 
-    static {
 
+    public static void register() {
+        //registerServerConfigs();
+        registerCommonConfigs();
+        //registerClientConfigs();
+    }
+
+    private static void registerClientConfigs() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
+    }
+
+    private static void registerCommonConfigs() {
         COMMON_BUILDER.comment("General settings").push(CATEGORY_GENERAL);
         COMMON_BUILDER.pop();
 
@@ -53,9 +57,7 @@ public class Config {
 
         COMMON_BUILDER.pop();
 
-
-        COMMON_CONFIG = COMMON_BUILDER.build();
-        CLIENT_CONFIG = CLIENT_BUILDER.build();
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
     }
 
     private static void setupMiningGadgetConfig() {
@@ -105,7 +107,7 @@ public class Config {
         COMMON_BUILDER.pop();
     }
 
-    public static void loadConfig(ForgeConfigSpec spec, Path path) {
+    /*public static void loadConfig(ModConfigSpec spec, Path path) {
 
         final CommentedFileConfig configData = CommentedFileConfig.builder(path)
                 .sync()
@@ -115,6 +117,6 @@ public class Config {
 
         configData.load();
         spec.setConfig(configData);
-    }
+    }*/
 }
 

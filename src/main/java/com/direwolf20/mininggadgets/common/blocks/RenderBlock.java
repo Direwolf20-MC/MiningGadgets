@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -13,8 +14,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -37,7 +38,7 @@ public class RenderBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return ModBlocks.RENDERBLOCK_TILE.get().create(p_153215_, p_153216_);
+        return Registration.RENDERBLOCK_TILE.get().create(p_153215_, p_153216_);
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.direwolf20.mininggadgets.common.blocks;
 
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -23,10 +23,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
@@ -56,7 +53,7 @@ public class ModificationTable extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-        return ModBlocks.MODIFICATIONTABLE_TILE.get().create(p_153215_, p_153216_);
+        return Registration.MODIFICATIONTABLE_TILE.get().create(p_153215_, p_153216_);
     }
 
     @Override
@@ -64,7 +61,7 @@ public class ModificationTable extends Block implements EntityBlock {
         if (!world.isClientSide) {
             BlockEntity tileEntity = world.getBlockEntity(pos);
             if (tileEntity instanceof MenuProvider) {
-                NetworkHooks.openScreen((ServerPlayer) player, (MenuProvider) tileEntity, tileEntity.getBlockPos());
+                player.openMenu((MenuProvider) tileEntity, tileEntity.getBlockPos());
             } else {
                 throw new IllegalStateException("Our named container provider is missing!");
             }
@@ -76,16 +73,15 @@ public class ModificationTable extends Block implements EntityBlock {
     @Override
     public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (newState.getBlock() != this) {
-            BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity != null) {
-                LazyOptional<IItemHandler> cap = tileEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
-                cap.ifPresent(handler -> {
-                    for(int i = 0; i < handler.getSlots(); ++i) {
-                        Containers.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), handler.getStackInSlot(i));
-                    }
-                });
+            BlockEntity tile = worldIn.getBlockEntity(pos);
+            if (tile != null) {
+                var cap = tile.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, tile.getBlockPos(), tile.getBlockState(), tile, null);
+                if (cap == null) return;
+                for (int i = 0; i < cap.getSlots(); ++i) {
+                    Containers.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), cap.getStackInSlot(i));
+                }
+                super.onRemove(state, worldIn, pos, newState, isMoving);
             }
-            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 

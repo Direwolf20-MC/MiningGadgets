@@ -3,10 +3,7 @@ package com.direwolf20.mininggadgets.common.items;
 import com.direwolf20.mininggadgets.client.OurKeys;
 import com.direwolf20.mininggadgets.client.particles.playerparticle.PlayerParticleData;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
-import com.direwolf20.mininggadgets.common.Config;
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
-import com.direwolf20.mininggadgets.common.capabilities.CapabilityEnergyProvider;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningCollect;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
@@ -16,6 +13,8 @@ import com.direwolf20.mininggadgets.common.sounds.OurSounds;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
 import com.direwolf20.mininggadgets.common.util.MagicHelpers;
 import com.direwolf20.mininggadgets.common.util.VectorHelper;
+import com.direwolf20.mininggadgets.setup.Config;
+import com.direwolf20.mininggadgets.setup.Registration;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -49,13 +48,11 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.level.BlockEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -65,7 +62,6 @@ import java.util.Locale;
 import java.util.Random;
 
 public class MiningGadget extends Item {
-    private final int energyCapacity;
     private final Random rand = new Random();
     private LaserLoopSound laserLoopSound;
     //private static int energyPerItem = 15;
@@ -75,7 +71,10 @@ public class MiningGadget extends Item {
                 .stacksTo(1)
                 .setNoRepair());
 
-        this.energyCapacity = Config.MININGGADGET_MAXPOWER.get();
+    }
+
+    public int getEnergyMax() {
+        return Config.MININGGADGET_MAXPOWER.get();
     }
 
     //TODO Add an override for onCreated and initialize all NBT Tags in it
@@ -94,7 +93,7 @@ public class MiningGadget extends Item {
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        return this.energyCapacity;
+        return this.getEnergyMax();
     }
 
     @Override
@@ -102,14 +101,11 @@ public class MiningGadget extends Item {
         if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
             return false;
 
-        IEnergyStorage energy = stack.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
+        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energy == null) {
+            return false;
+        }
         return (energy.getEnergyStored() < energy.getMaxEnergyStored());
-    }
-
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new CapabilityEnergyProvider(stack, Config.MININGGADGET_MAXPOWER.get());
     }
 
     @Override
@@ -117,9 +113,12 @@ public class MiningGadget extends Item {
         if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
             return 13;
 
-        return stack.getCapability(ForgeCapabilities.ENERGY, null)
-                .map(e -> Math.min(13 * e.getEnergyStored() / e.getMaxEnergyStored(), 13))
-                .orElse(0);
+        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energy == null) {
+            return 13;
+        }
+
+        return Math.min(13 * energy.getEnergyStored() / energy.getMaxEnergyStored(), 13);
     }
 
     @Override
@@ -127,9 +126,11 @@ public class MiningGadget extends Item {
         if (MiningProperties.getBatteryTier(stack) == Upgrade.BATTERY_CREATIVE.getTier())
             return Mth.color(0, 1, 0);
 
-        return stack.getCapability(ForgeCapabilities.ENERGY)
-                .map(e -> Mth.hsvToRgb(Math.max(0.0F, (float) e.getEnergyStored() / (float) e.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F))
-                .orElse(super.getBarColor(stack));
+        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energy == null) {
+            super.getBarColor(stack);
+        }
+        return Mth.hsvToRgb(Math.max(0.0F, (float) energy.getEnergyStored() / (float) energy.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -162,13 +163,16 @@ public class MiningGadget extends Item {
             }
         }
 
-        stack.getCapability(ForgeCapabilities.ENERGY, null)
-                .ifPresent(energy -> {
-                    MutableComponent energyText = !sneakPressed
-                            ? Component.translatable("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
-                            : Component.translatable("mininggadgets.gadget.energy", String.format("%,d", energy.getEnergyStored()), String.format("%,d", energy.getMaxEnergyStored()));
-                    tooltip.add(energyText.withStyle(ChatFormatting.GREEN));
-                });
+        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energy == null) {
+            return;
+        }
+
+        MutableComponent energyText = !sneakPressed
+                ? Component.translatable("mininggadgets.gadget.energy", MagicHelpers.tidyValue(energy.getEnergyStored()), MagicHelpers.tidyValue(energy.getMaxEnergyStored()))
+                : Component.translatable("mininggadgets.gadget.energy", String.format("%,d", energy.getEnergyStored()), String.format("%,d", energy.getMaxEnergyStored()));
+        tooltip.add(energyText.withStyle(ChatFormatting.GREEN));
+
     }
 
     // TODO: Use event
@@ -201,7 +205,10 @@ public class MiningGadget extends Item {
         if (MiningProperties.getBatteryTier(tool) == Upgrade.BATTERY_CREATIVE.getTier())
             return true;
 
-        IEnergyStorage energy = tool.getCapability(ForgeCapabilities.ENERGY, null).orElse(null);
+        var energy = tool.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energy == null) {
+            return false;
+        }
         int cost = getEnergyCost(tool);
 
         var range = MiningProperties.getRange(tool);
@@ -216,7 +223,7 @@ public class MiningGadget extends Item {
         if (!player.mayBuild() || !world.mayInteract(player, pos))
             return false;
 
-        if (MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, state, player)))
+        if (NeoForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, state, player)).isCanceled())
             return false;
 
         return canMine(tool);
@@ -432,6 +439,8 @@ public class MiningGadget extends Item {
 
         // Server Side
         if (!world.isClientSide) {
+            var cap = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+            if (cap == null) return;
             // As all upgrade types with tiers contain the same name, we can check for a single
             // type in the enum and produce a result that we can then pull the tier from
             int efficiency = 0;
@@ -439,7 +448,7 @@ public class MiningGadget extends Item {
                 efficiency = UpgradeTools.getUpgradeFromGadget((stack), Upgrade.EFFICIENCY_1).get().getTier();
 
             float hardness = getHardness(coords, (Player) player, efficiency);
-            // hardness = hardness * MiningProperties.getRange(stack) * 1;
+            hardness = hardness * MiningProperties.getRange(stack) * 1;
             hardness = (float) Math.floor(hardness);
             if (hardness == 0) hardness = 1;
             for (BlockPos coord : coords) {
@@ -450,7 +459,7 @@ public class MiningGadget extends Item {
                         return;
                     }
                     List<Upgrade> gadgetUpgrades = UpgradeTools.getUpgrades(stack);
-                    boolean placed = world.setBlockAndUpdate(coord, ModBlocks.RENDER_BLOCK.get().defaultBlockState());
+                    boolean placed = world.setBlockAndUpdate(coord, Registration.RENDER_BLOCK.get().defaultBlockState());
                     RenderBlockTileEntity te = (RenderBlockTileEntity) world.getBlockEntity(coord);
 
                     if (!placed || te == null) {
@@ -479,7 +488,7 @@ public class MiningGadget extends Item {
                 else*/
                         durability = durability - 1;
                         if (durability <= 0) {
-                            stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(getEnergyCost(stack) * -1, false));
+                            cap.receiveEnergy(getEnergyCost(stack) * -1, false);
                             if (MiningProperties.getPrecisionMode(stack)) {
                                 MiningProperties.setCanMine(stack, false);
                                 player.stopUsingItem();
@@ -505,11 +514,12 @@ public class MiningGadget extends Item {
             BlockPos pos = lookingAt.getBlockPos().relative(side).relative(right, rightAmt);
 
             if (world.getMaxLocalRawBrightness(pos) <= 7 && world.getBlockState(pos).isAir()) {
-                int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+                int energy = cap.getEnergyStored();
                 if (energy > Config.UPGRADECOST_LIGHT.get()) {
-                    world.setBlockAndUpdate(pos, ModBlocks.MINERS_LIGHT.get().defaultBlockState());
-                    stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false));
+                    world.setBlockAndUpdate(pos, Registration.MINERS_LIGHT.get().defaultBlockState());
+                    cap.receiveEnergy((Config.UPGRADECOST_LIGHT.get() * -1), false);
                 }
+
             }
         }
     }

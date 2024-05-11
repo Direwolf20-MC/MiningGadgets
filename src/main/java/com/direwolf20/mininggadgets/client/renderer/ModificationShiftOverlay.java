@@ -1,15 +1,14 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
+import com.direwolf20.mininggadgets.setup.Registration;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -20,7 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class ModificationShiftOverlay {
         }
 
         BlockHitResult trace = (BlockHitResult) pick;
-        if (player.level().getBlockState(trace.getBlockPos()).getBlock() != ModBlocks.MODIFICATION_TABLE.get()) {
+        if (player.level().getBlockState(trace.getBlockPos()).getBlock() != Registration.MODIFICATION_TABLE.get()) {
             return;
         }
 
@@ -43,7 +42,7 @@ public class ModificationShiftOverlay {
         }
 
         // Finally, lets try and render something if we have a gadget in the main slot
-        ItemStack stack = ((ModificationTableTileEntity) blockEntity).handler.map(e -> e.getStackInSlot(0)).orElse(ItemStack.EMPTY);
+        ItemStack stack = ((ModificationTableTileEntity) blockEntity).handler.getStackInSlot(0);
         if (stack.isEmpty() || !(stack.getItem() instanceof MiningGadget)) {
             return;
         }

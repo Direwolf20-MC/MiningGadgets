@@ -10,7 +10,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -55,7 +54,7 @@ public class LaserParticleData implements ParticleOptions {
     @Override
     public String writeToString() {
         return String.format(Locale.ROOT, "%s %.2f %.2f %s",
-                ForgeRegistries.PARTICLE_TYPES.getKey(this.getType()), this.size, this.maxAgeMul, this.depthTest);
+                this.getType(), this.size, this.maxAgeMul, this.depthTest);
     }
 
     public static final Deserializer<LaserParticleData> DESERIALIZER = new Deserializer<>() {
