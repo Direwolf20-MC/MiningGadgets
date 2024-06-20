@@ -459,7 +459,7 @@ public class RenderBlockTileEntity extends BlockEntity {
                 if (drop != null) {
                     if (magnetMode) {
                         ItemEntityPickupEvent.Pre wasPickedUp = EventHooks.fireItemPickupPre(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
-                        if (wasPickedUp.canPickup() == TriState.DEFAULT) { //TODO Validate
+                        if (wasPickedUp.canPickup() == TriState.DEFAULT) {
                             if (!player.addItem(drop)) {
                                 Block.popResource(this.level, this.worldPosition, drop);
                             }
@@ -503,11 +503,6 @@ public class RenderBlockTileEntity extends BlockEntity {
 
     private static BlockEvent.BreakEvent fixForgeEventBreakBlock(BlockState state, Player player, Level world, BlockPos pos, ItemStack tool) {
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
-        // Handle empty block or player unable to break block scenario
-        /*if (state != null && tool.isCorrectToolForDrops(state)) { //TODO Validate
-            event.setExpToDrop(state.getExpDrop(world, world.random, pos));
-        }*/
-
         return event;
     }
 

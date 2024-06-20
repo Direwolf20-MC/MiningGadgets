@@ -19,8 +19,6 @@ import java.util.List;
  * want it to be but as we have to handle types it makes any complex implementation
  * very complex which kinda misses the point of a nicer class.
  *
- * todo: turn this entire class into a cap as it'll reduce the amount of hash
- *       getting that we're doing on each getOrCreate methods.
  */
 public class MiningProperties {
     private MiningProperties() {}

@@ -131,7 +131,7 @@ public class RenderMiningLaser {
         boolean isSimple = stack.getItem().equals(Registration.MININGGADGET_SIMPLE.get());
 
         Vector3f vector3f = new Vector3f(0.0f, 1.0f, 0.0f);
-        vector3f.mul(matrixNormalIn);//TODO: validate //.transform(matrixNormalIn);
+        vector3f.mul(matrixNormalIn);
         LocalPlayer player = Minecraft.getInstance().player;
         // Support for hand sides remembering to take into account of Skin options
         if (Minecraft.getInstance().options.mainHand().get() != HumanoidArm.RIGHT)
