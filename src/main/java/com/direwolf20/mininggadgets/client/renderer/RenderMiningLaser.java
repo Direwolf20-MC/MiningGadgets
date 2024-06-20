@@ -149,7 +149,15 @@ public class RenderMiningLaser {
             startYOffset -= .005f;
         }
         // Adjust for fov changing
-        startZOffset += (1 - player.getFieldOfViewModifier());
+        float fov = player.getFieldOfViewModifier();
+        float fovSetting = Minecraft.getInstance().options.fov().get();
+        float fovSettingAdjuster = 0;
+        if (fovSetting != 70)
+            fovSettingAdjuster = fovSetting < 70f ? (fovSetting / 70.0f) / 0.5f : -(fovSetting / 70.0f) / 6f;
+        if (fov >= 1)
+            startZOffset += (1 - fov) * 0.5f + fovSettingAdjuster;
+        else
+            startZOffset += (1 - fov) * 1.5f + fovSettingAdjuster;
         if (hand == InteractionHand.OFF_HAND) {
             startYOffset = -.120f;
             startXOffset = 0.25f;
