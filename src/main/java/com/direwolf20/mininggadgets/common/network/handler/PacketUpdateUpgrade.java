@@ -24,7 +24,7 @@ public class PacketUpdateUpgrade {
                 return;
 
             ItemStack stack = MiningGadget.getGadget(player);
-            UpgradeTools.updateUpgrade(stack, upgrade); //todo: change.
+            UpgradeTools.updateUpgrade(stack, upgrade);
         });
     }
 }

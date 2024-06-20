@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record ChangeBreakTypePayload() implements CustomPacketPayload {
     public static final ChangeBreakTypePayload INSTANCE = new ChangeBreakTypePayload();
-    public static final Type<ChangeBreakTypePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "change_break_type"));
+    public static final Type<ChangeBreakTypePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "change_break_type"));
 
     @Override
     public Type<ChangeBreakTypePayload> type() {

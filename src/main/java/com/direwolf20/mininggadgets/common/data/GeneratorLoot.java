@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.setup.Registration;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.packs.VanillaBlockLoot;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -9,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GeneratorLoot extends VanillaBlockLoot {
+
+    public GeneratorLoot(HolderLookup.Provider p_344962_) {
+        super(p_344962_);
+    }
 
     @Override
     protected void generate() {

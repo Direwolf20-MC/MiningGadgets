@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public record ChangeFreezeDelayPayload(
         int freezeDelay
 ) implements CustomPacketPayload {
-    public static final Type<ChangeFreezeDelayPayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "change_freeze_delay"));
+    public static final Type<ChangeFreezeDelayPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "change_freeze_delay"));
 
     @Override
     public Type<ChangeFreezeDelayPayload> type() {

@@ -212,7 +212,7 @@ public class UpgradeTools {
      * @param upgrade the upgrade Enum
      * @return A formatted string of the Upgrade without it's `Upgrade:` prefix
      */
-    public static Component getName(Upgrade upgrade) { //TODO Validate what this did
+    public static Component getName(Upgrade upgrade) {
         return Component.translatable(upgrade.getLocal());//.replace(Component.translatable(upgrade.getLocalReplacement()), ""));
     }
 

@@ -2,13 +2,13 @@ package com.direwolf20.mininggadgets.client.particles.playerparticle;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
@@ -26,10 +26,10 @@ public class PlayerParticle extends TextureSheetParticle {
     private int particlePicker;
     protected final SpriteSet spriteSet;
 
-    public static final ResourceLocation iceParticle = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/snowflake1.png");
-    public static final ResourceLocation iceParticle2 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/snowflake2.png");
-    public static final ResourceLocation iceParticle3 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/snowflake3.png");
-    public static final ResourceLocation lightParticle = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/particle/lightparticle.png");
+    public static final ResourceLocation iceParticle = ResourceLocation.parse(MiningGadgets.MOD_ID + ":textures/particle/snowflake1.png");
+    public static final ResourceLocation iceParticle2 = ResourceLocation.parse(MiningGadgets.MOD_ID + ":textures/particle/snowflake2.png");
+    public static final ResourceLocation iceParticle3 = ResourceLocation.parse(MiningGadgets.MOD_ID + ":textures/particle/snowflake3.png");
+    public static final ResourceLocation lightParticle = ResourceLocation.parse(MiningGadgets.MOD_ID + ":textures/particle/lightparticle.png");
 
 
     public PlayerParticle(ClientLevel world, double sourceX, double sourceY, double sourceZ, double targetX, double targetY, double targetZ, double xSpeed, double ySpeed, double zSpeed,

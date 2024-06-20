@@ -75,19 +75,6 @@ public class MiningGadget extends Item {
         return Config.MININGGADGET_MAXPOWER.get();
     }
 
-    //TODO Still Needed?
-    /*@Override
-    public void verifyTagAfterLoad(@NotNull CompoundTag tag) {
-        if (UpgradeTools.containsUpgrades(tag)) {
-            UpgradeTools.walkUpgradesOnTag(tag, (CompoundTag upgradeTag, String upgradeName) -> {
-                if (upgradeName.equalsIgnoreCase("three_by_three")) {
-                    return Upgrade.SIZE_1.getName();
-                }
-                return null;
-            });
-        }
-    }*/
-
     @Override
     public int getMaxDamage(ItemStack stack) {
         return this.getEnergyMax();
@@ -172,18 +159,6 @@ public class MiningGadget extends Item {
 
     }
 
-    // TODO: Use event
-//    @Override
-//    public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items) {
-//        super.fillItemCategory(group, items);
-//        if (!allowedIn(group))
-//            return;
-//
-//        ItemStack charged = new ItemStack(this);
-//        charged.getOrCreateTag().putDouble("energy", Config.MININGGADGET_MAXPOWER.get());
-//        items.add(charged);
-//    }
-
     public static void changeRange(ItemStack tool) {
         int maxRange = MiningProperties.getMaxMiningRange(tool);
         if (maxRange == 1) {
@@ -242,7 +217,7 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack stack) {
+    public int getUseDuration(ItemStack stack, LivingEntity livingEntity) {
         return 72000;
     }
 
@@ -265,7 +240,6 @@ public class MiningGadget extends Item {
             }
 
             // INTENTIONALLY LEFT IN. I DON'T HAVE THE TIME TO FIX THIS ISSUE ATM
-            // @todo: migrate keybinding setting onto gadget so I can set a tag on the item
             return InteractionResultHolder.pass(itemstack);
         }
 

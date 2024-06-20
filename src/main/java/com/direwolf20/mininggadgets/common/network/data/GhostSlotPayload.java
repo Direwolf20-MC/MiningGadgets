@@ -12,7 +12,7 @@ public record GhostSlotPayload(
         int slotNumber,
         ItemStack stack
 ) implements CustomPacketPayload {
-    public static final Type<GhostSlotPayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "ghost_slot"));
+    public static final Type<GhostSlotPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "ghost_slot"));
 
     @Override
     public Type<GhostSlotPayload> type() {
