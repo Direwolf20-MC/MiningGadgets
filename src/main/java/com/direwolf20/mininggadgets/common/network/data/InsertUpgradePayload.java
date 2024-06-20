@@ -12,7 +12,7 @@ public record InsertUpgradePayload(
         BlockPos pos,
         ItemStack upgrade
 ) implements CustomPacketPayload {
-    public static final Type<InsertUpgradePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "insert_upgrade"));
+    public static final Type<InsertUpgradePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "insert_upgrade"));
 
     @Override
     public Type<InsertUpgradePayload> type() {

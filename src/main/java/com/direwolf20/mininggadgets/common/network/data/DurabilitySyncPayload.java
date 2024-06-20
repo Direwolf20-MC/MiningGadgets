@@ -13,7 +13,7 @@ import java.util.List;
 public record DurabilitySyncPayload(
         List<CodecHelpers.DurabilitySyncData> updateList
 ) implements CustomPacketPayload {
-    public static final Type<DurabilitySyncPayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "durability_sync"));
+    public static final Type<DurabilitySyncPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "durability_sync"));
 
     @Override
     public Type<DurabilitySyncPayload> type() {

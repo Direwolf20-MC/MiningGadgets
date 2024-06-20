@@ -13,7 +13,7 @@ public record ExtractUpgradePayload(
         String upgrade,
         int nameLength
 ) implements CustomPacketPayload {
-    public static final Type<ExtractUpgradePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "extract_upgrade"));
+    public static final Type<ExtractUpgradePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "extract_upgrade"));
 
     @Override
     public Type<ExtractUpgradePayload> type() {

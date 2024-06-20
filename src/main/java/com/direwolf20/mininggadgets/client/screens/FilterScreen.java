@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  */
 public class FilterScreen extends AbstractContainerScreen<FilterContainer> {
     // Stealing the normal chest gui, should make this a tad simpler.
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.parse("textures/gui/container/generic_54.png");
 
     public FilterScreen(FilterContainer container, Inventory inv, Component name) {
         super(container, inv, name);

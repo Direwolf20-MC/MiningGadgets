@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public record ChangeVolumePayload(
         float volume
 ) implements CustomPacketPayload {
-    public static final Type<ChangeVolumePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "change_volume"));
+    public static final Type<ChangeVolumePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "change_volume"));
 
     @Override
     public Type<ChangeVolumePayload> type() {

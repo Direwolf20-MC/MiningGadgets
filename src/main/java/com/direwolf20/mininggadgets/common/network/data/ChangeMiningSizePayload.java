@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record ChangeMiningSizePayload() implements CustomPacketPayload {
     public static final ChangeMiningSizePayload INSTANCE = new ChangeMiningSizePayload();
-    public static final Type<ChangeMiningSizePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "change_mining_size"));
+    public static final Type<ChangeMiningSizePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "change_mining_size"));
 
     @Override
     public Type<ChangeMiningSizePayload> type() {

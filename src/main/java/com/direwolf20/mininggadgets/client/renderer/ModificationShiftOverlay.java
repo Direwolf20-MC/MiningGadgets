@@ -55,7 +55,7 @@ public class ModificationShiftOverlay {
         Vec3 view = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         BlockPos blockPos = ((BlockHitResult) pick).getBlockPos();
 
-        double distance = player.getPosition(evt.getPartialTick()).distanceTo(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+        double distance = player.getPosition(evt.getPartialTick().getRealtimeDeltaTicks()).distanceTo(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
         float scaleFactor = Math.max(.2f, ((float) distance / 10) + .1f);
 
         PoseStack matrix = evt.getPoseStack();

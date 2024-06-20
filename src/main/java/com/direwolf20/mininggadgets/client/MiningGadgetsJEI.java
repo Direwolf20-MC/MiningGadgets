@@ -27,7 +27,7 @@ import java.util.List;
 public class MiningGadgetsJEI implements IModPlugin {
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(MiningGadgets.MOD_ID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "jei_plugin");
     }
 
     @Override

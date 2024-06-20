@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record ToggleFiltersPayload() implements CustomPacketPayload {
     public static final ToggleFiltersPayload INSTANCE = new ToggleFiltersPayload();
-    public static final Type<ToggleFiltersPayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "toggle_filters"));
+    public static final Type<ToggleFiltersPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "toggle_filters"));
 
     @Override
     public Type<ToggleFiltersPayload> type() {

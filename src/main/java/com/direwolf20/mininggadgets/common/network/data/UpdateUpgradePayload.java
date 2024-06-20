@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public record UpdateUpgradePayload(
         String upgrade
 ) implements CustomPacketPayload {
-    public static final Type<UpdateUpgradePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "update_upgrade"));
+    public static final Type<UpdateUpgradePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "update_upgrade"));
 
     @Override
     public Type<UpdateUpgradePayload> type() {

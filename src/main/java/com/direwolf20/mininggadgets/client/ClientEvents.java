@@ -50,7 +50,7 @@ public class ClientEvents {
             ItemStack heldItem = MiningGadget.getGadget(player);
             if (player.isUsingItem() && heldItem.getItem() instanceof MiningGadget) {
                 if (MiningGadget.canMine(heldItem)) {
-                    RenderMiningLaser.renderLaser(evt, player, Minecraft.getInstance().getFrameTime());
+                    RenderMiningLaser.renderLaser(evt, player, evt.getPartialTick().getGameTimeDeltaPartialTick(false));
                 }
             }
         }

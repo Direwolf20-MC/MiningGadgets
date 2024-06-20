@@ -74,7 +74,7 @@ public class MiningSettingScreen extends Screen {
         // Remove 6 from x to center it as the padding on the right pushes off center... (I'm a ui nerd)
         int index = 0, x = baseX + 10, y = top + (containsVoid ? 45 : 20);
         for (Upgrade upgrade : toggleableList) {
-            ToggleButton btn = new ToggleButton(x + (index * 30), y, UpgradeTools.getName(upgrade), new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send));
+            ToggleButton btn = new ToggleButton(x + (index * 30), y, UpgradeTools.getName(upgrade), ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send));
             addRenderableWidget(btn);
             upgradeButtons.put(upgrade, btn);
 

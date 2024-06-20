@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public record ChangeRangePayload(
         int range
 ) implements CustomPacketPayload {
-    public static final Type<ChangeRangePayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "change_range"));
+    public static final Type<ChangeRangePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "change_range"));
 
     @Override
     public Type<ChangeRangePayload> type() {

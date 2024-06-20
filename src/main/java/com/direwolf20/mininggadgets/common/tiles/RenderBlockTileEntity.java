@@ -22,7 +22,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -34,7 +34,9 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
 import java.util.*;
@@ -424,7 +426,8 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         // If silk is in the upgrades, apply it without a tier.
         if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
-            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
+            HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            tempTool.enchant(registrylookup.getOrThrow(Enchantments.SILK_TOUCH), 1);
             silk = 1;
         }
 
@@ -433,7 +436,8 @@ public class RenderBlockTileEntity extends BlockEntity {
             Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
-                tempTool.enchant(Enchantments.FORTUNE, fortune);
+                HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+                tempTool.enchant(registrylookup.getOrThrow(Enchantments.FORTUNE), fortune);
             }
         }
 
@@ -449,16 +453,13 @@ public class RenderBlockTileEntity extends BlockEntity {
         List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
 
         if (this.blockAllowed) {
-            int exp = this.renderBlock.getExpDrop(this.level, this.level.random, this.worldPosition, fortune, silk);
+            int exp = this.renderBlock.getExpDrop(this.level, this.level.random, this.worldPosition);
             boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
                 if (drop != null) {
                     if (magnetMode) {
-                        int wasPickedUp = EventHooks.onItemPickup(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
-                        // 1  = someone allowed the event meaning it's handled,
-                        // -1 = someone blocked the event and thus we shouldn't drop it nor insert it
-                        // 0  = no body captured the event and we should handle it by hand.
-                        if (wasPickedUp == 0) {
+                        ItemEntityPickupEvent.Pre wasPickedUp = EventHooks.fireItemPickupPre(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
+                        if (wasPickedUp.canPickup() == TriState.DEFAULT) { //TODO Validate
                             if (!player.addItem(drop)) {
                                 Block.popResource(this.level, this.worldPosition, drop);
                             }
@@ -503,11 +504,9 @@ public class RenderBlockTileEntity extends BlockEntity {
     private static BlockEvent.BreakEvent fixForgeEventBreakBlock(BlockState state, Player player, Level world, BlockPos pos, ItemStack tool) {
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
         // Handle empty block or player unable to break block scenario
-        if (state != null && tool.isCorrectToolForDrops(state)) {
-            int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FORTUNE, tool);
-            int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
-            event.setExpToDrop(state.getExpDrop(world, world.random, pos, bonusLevel, silklevel));
-        }
+        /*if (state != null && tool.isCorrectToolForDrops(state)) { //TODO Validate
+            event.setExpToDrop(state.getExpDrop(world, world.random, pos));
+        }*/
 
         return event;
     }
@@ -538,7 +537,8 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         // If silk is in the upgrades, apply it without a tier.
         if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
-            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
+            HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            tempTool.enchant(registrylookup.getOrThrow(Enchantments.SILK_TOUCH), 1);
             silk = 1;
         }
 
@@ -547,7 +547,8 @@ public class RenderBlockTileEntity extends BlockEntity {
             Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
-                tempTool.enchant(Enchantments.FORTUNE, fortune);
+                HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+                tempTool.enchant(registrylookup.getOrThrow(Enchantments.FORTUNE), fortune);
             }
         }
 

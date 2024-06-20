@@ -1,4 +1,4 @@
-// 1.20.6	2024-05-11T13:25:30.043646	Loot Tables
-df030720e5de655cb2bcf400a7dd5b4295ca8286 data/mininggadgets/loot_tables/blocks/minerslight.json
-b0114caa0db068619f8d048678afab221aa33db5 data/mininggadgets/loot_tables/blocks/modificationtable.json
-7901c0f2a3f7693ebaea10cda8c580bcd78d027d data/mininggadgets/loot_tables/blocks/renderblock.json
+// 1.21	2024-06-20T10:38:45.5540779	Loot Tables
+df030720e5de655cb2bcf400a7dd5b4295ca8286 data/mininggadgets/loot_table/blocks/minerslight.json
+b0114caa0db068619f8d048678afab221aa33db5 data/mininggadgets/loot_table/blocks/modificationtable.json
+7901c0f2a3f7693ebaea10cda8c580bcd78d027d data/mininggadgets/loot_table/blocks/renderblock.json

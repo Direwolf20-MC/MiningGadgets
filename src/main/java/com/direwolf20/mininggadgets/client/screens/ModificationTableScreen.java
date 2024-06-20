@@ -29,7 +29,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public class ModificationTableScreen extends AbstractContainerScreen<ModificationTableContainer> {
-    private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
+    private ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
     private BlockPos tePos;
     private ModificationTableContainer container;
     private Inventory playerInventory;

@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public record ChangeColorPayload(
         CodecHelpers.LaserColor laserColor
 ) implements CustomPacketPayload {
-    public static final Type<ChangeColorPayload> TYPE = new Type<>(new ResourceLocation(MiningGadgets.MOD_ID, "change_color"));
+    public static final Type<ChangeColorPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MiningGadgets.MOD_ID, "change_color"));
 
     @Override
     public Type<ChangeColorPayload> type() {
