@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.143'
+    id 'net.neoforged.gradle.userdev' version '7.0.152'
 }
 
 version = "${mod_version}"

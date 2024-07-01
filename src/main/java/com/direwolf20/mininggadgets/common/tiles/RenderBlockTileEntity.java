@@ -453,7 +453,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
 
         if (this.blockAllowed) {
-            int exp = this.renderBlock.getExpDrop(this.level, this.level.random, this.worldPosition);
+            int exp = this.renderBlock.getExpDrop(this.level, this.worldPosition, null, player, tempTool);
             boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
                 if (drop != null) {
