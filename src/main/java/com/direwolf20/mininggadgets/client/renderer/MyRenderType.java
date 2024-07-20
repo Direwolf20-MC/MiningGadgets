@@ -27,19 +27,19 @@ public class MyRenderType extends RenderType {
                     .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                     .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setDepthTestState(NO_DEPTH_TEST)
-                    .setCullState(NO_CULL)
+                    .setDepthTestState(LEQUAL_DEPTH_TEST)
+                    .setCullState(CULL)
                     .setLightmapState(NO_LIGHTMAP)
-                    .setWriteMaskState(COLOR_WRITE)
+                    .setWriteMaskState(COLOR_DEPTH_WRITE)
                     .createCompositeState(false));
 
     public static final RenderType LASER_MAIN_ADDITIVE = create("MiningLaserAdditiveBeam",
             DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, false,
-            RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
+            net.minecraft.client.renderer.RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
                     .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                     .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setDepthTestState(NO_DEPTH_TEST)
+                    .setDepthTestState(LEQUAL_DEPTH_TEST)
                     .setCullState(NO_CULL)
                     .setLightmapState(NO_LIGHTMAP)
                     .setWriteMaskState(COLOR_WRITE)
@@ -47,7 +47,7 @@ public class MyRenderType extends RenderType {
 
     public static final RenderType LASER_MAIN_CORE = create("MiningLaserCoreBeam",
             DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, false,
-            RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
+            net.minecraft.client.renderer.RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
                     .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                     .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
@@ -59,7 +59,7 @@ public class MyRenderType extends RenderType {
 
     public static final RenderType BlockOverlay = create("MiningLaserBlockOverlay",
             DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256,false, false,
-            RenderType.CompositeState.builder()
+            net.minecraft.client.renderer.RenderType.CompositeState.builder()
                     .setShaderState(ShaderStateShard.POSITION_COLOR_SHADER)
                     .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
@@ -72,7 +72,7 @@ public class MyRenderType extends RenderType {
 
     public static final RenderType RenderBlock = create("MiningLaserRenderBlock",
             DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, false,
-            RenderType.CompositeState.builder()
+            net.minecraft.client.renderer.RenderType.CompositeState.builder()
 //                    .setShaderState(SMOOTH_SHADE)
                     .setShaderState(ShaderStateShard.RENDERTYPE_SOLID_SHADER)
                     .setLightmapState(LIGHTMAP)
@@ -83,4 +83,42 @@ public class MyRenderType extends RenderType {
                     .setCullState(CULL)
                     .setWriteMaskState(COLOR_WRITE)
                     .createCompositeState(false));
+
+    /*public static void updateRenders() {
+        LASER_MAIN_BEAM = create("MiningLaserMainBeam",
+                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, false,
+                net.minecraft.client.renderer.RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam2, false, false))
+                        .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+                        .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                        .setDepthTestState(LEQUAL_DEPTH_TEST)
+                        .setCullState(CULL)
+                        .setLightmapState(NO_LIGHTMAP)
+                        .setWriteMaskState(COLOR_DEPTH_WRITE)
+                        .createCompositeState(false));
+
+        LASER_MAIN_ADDITIVE = create("MiningLaserAdditiveBeam",
+                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, false,
+                net.minecraft.client.renderer.RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
+                        .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+                        .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                        .setDepthTestState(LEQUAL_DEPTH_TEST)
+                        .setCullState(NO_CULL)
+                        .setLightmapState(NO_LIGHTMAP)
+                        .setWriteMaskState(COLOR_WRITE)
+                        .createCompositeState(false));
+
+        LASER_MAIN_CORE = create("MiningLaserCoreBeam",
+                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, false,
+                net.minecraft.client.renderer.RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
+                        .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+                        .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                        .setDepthTestState(NO_DEPTH_TEST)
+                        .setCullState(NO_CULL)
+                        .setLightmapState(NO_LIGHTMAP)
+                        .setWriteMaskState(COLOR_WRITE)
+                        .createCompositeState(false));
+    }*/
 }
