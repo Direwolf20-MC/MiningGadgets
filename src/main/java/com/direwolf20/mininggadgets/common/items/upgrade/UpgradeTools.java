@@ -83,6 +83,7 @@ public class UpgradeTools {
     public static CompoundTag setUpgradesNBT(List<Upgrade> laserUpgrades) {
         CompoundTag listCompound = new CompoundTag();
         ListTag list = new ListTag();
+        if (laserUpgrades.isEmpty()) return listCompound;
 
         laserUpgrades.forEach( upgrade -> {
             CompoundTag compound = new CompoundTag();
