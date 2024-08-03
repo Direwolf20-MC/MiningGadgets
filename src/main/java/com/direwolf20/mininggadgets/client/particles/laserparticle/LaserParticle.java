@@ -137,8 +137,11 @@ public class LaserParticle extends BreakingItemParticle {
         Vec3 forward = look;
         Vec3 down = right.cross(forward);
 
-        //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
-        right = right.scale(0.65f);
+        // Determine which hand is holding the item
+        boolean isRightHand = player.getMainHandItem().getItem() instanceof MiningGadget;
+
+        // Adjust the right vector for the offhand if necessary
+        right = right.scale(isRightHand ? 0.65f : -0.65f);
         forward = forward.scale(0.85f);
         down = down.scale(-0.35);
 
