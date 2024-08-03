@@ -51,7 +51,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     private UUID playerUUID;
     private int originalDurability;
     private int ticksSinceMine = 0;
-    private List<Upgrade> gadgetUpgrades;
+    private List<Upgrade> gadgetUpgrades = new ArrayList<>();
     private List<ItemStack> gadgetFilters;
     private boolean gadgetIsWhitelist;
     private boolean packetReceived = false;
@@ -149,6 +149,8 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     public BlockState getRenderBlock() {
+        if (this.renderBlock == null)
+            return Blocks.COBBLESTONE.defaultBlockState();
         return this.renderBlock;
     }
 
