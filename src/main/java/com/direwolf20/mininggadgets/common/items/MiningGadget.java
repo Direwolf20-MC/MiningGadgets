@@ -443,6 +443,8 @@ public class MiningGadget extends Item {
             if (hardness == 0) hardness = 1;
             for (BlockPos coord : coords) {
                 BlockState state = world.getBlockState(coord);
+                if (state.isAir())
+                    continue;
                 if (!(state.getBlock() instanceof RenderBlock)) {
                     //if (!world.isRemote) {
                     if (!canMineBlock(stack, world, (Player) player, coord, state)) {

@@ -243,6 +243,8 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     public void spawnParticle() {
+        if (this.renderBlock.isAir())
+            return;
         if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET) && this.originalDurability > 0) {
             int PartCount = 20 / this.originalDurability;
             if (PartCount <= 1) {
