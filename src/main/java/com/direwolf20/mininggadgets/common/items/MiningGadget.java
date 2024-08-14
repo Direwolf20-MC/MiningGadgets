@@ -34,6 +34,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -297,8 +298,14 @@ public class MiningGadget extends Item {
         down = down.scale(-0.35);
         backward = backward.scale(0.05);
 
+        // Check which hand the gadget is in.
+        boolean isRightHanded = player.getMainArm() == HumanoidArm.RIGHT;
+        ItemStack heldItem = player.getMainHandItem();
+        boolean isGadgetInMainHand = heldItem.getItem() instanceof MiningGadget;
+        boolean isGadgetInRightHand = (isRightHanded && isGadgetInMainHand) || (!isRightHanded && !isGadgetInMainHand);
+
         //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
-        Vec3 laserPos = playerPos.add(right);
+        Vec3 laserPos = isGadgetInRightHand ? playerPos.add(right) : playerPos.subtract(right);
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
         lookingAt = lookingAt.add(backward);
