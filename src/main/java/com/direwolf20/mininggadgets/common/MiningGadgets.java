@@ -22,10 +22,14 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import net.minecraft.client.resources.model.ModelLoadingPlugin;
+import com.direwolf20.mininggadgets.client.renderer.GadgetModelLoader;
+
+
 
 @Mod(MiningGadgets.MOD_ID)
-public class MiningGadgets
-{
+public class MiningGadgets {
+
     public static final String MOD_ID = "mininggadgets";
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -42,18 +46,23 @@ public class MiningGadgets
 
         if (FMLLoader.getDist().isClient()) {
             event.addListener(ClientSetup::init);
+
+            // تسجيل موديلات الجادجت بالطريقة الجديدة
+            ModelLoadingPlugin.register(new GadgetModelLoader());
         }
-    }
+    }   // ← هنا الكنستركتر بيتقفل صح
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerItem(Capabilities.EnergyStorage.ITEM, (itemStack, context) -> new EnergyStorageItemstack(((MiningGadget) itemStack.getItem()).getEnergyMax(), itemStack),
+        event.registerItem(Capabilities.EnergyStorage.ITEM,
+                (itemStack, context) -> new EnergyStorageItemstack(
+                        ((MiningGadget) itemStack.getItem()).getEnergyMax(), itemStack),
                 Registration.MININGGADGET.get(),
                 Registration.MININGGADGET_FANCY.get(),
                 Registration.MININGGADGET_SIMPLE.get()
         );
+
         event.registerBlock(Capabilities.ItemHandler.BLOCK,
                 (level, pos, state, be, side) -> ((ModificationTableTileEntity) be).handler,
-                // blocks to register for
                 Registration.MODIFICATION_TABLE.get());
     }
 
@@ -69,22 +78,21 @@ public class MiningGadgets
         }
     }
 
-    /**
-     * I've tried to identity annoying offhand items that can be placed whilst mining.
-     * I assume some level of logic, so we assume that you'd have that item in your offhand
-     * whilst using the gadget.
-     */
     private boolean stackIsAnnoying(ItemStack stack) {
-        // This should never happen but I like casting safety
         if (!(stack.getItem() instanceof BlockItem))
             return false;
 
         Block block = ((BlockItem) stack.getItem()).getBlock();
-        return block instanceof TorchBlock || block instanceof LanternBlock || block.equals(Blocks.GLOWSTONE)
-                || block instanceof RedstoneLampBlock || block instanceof EndRodBlock;
+        return block instanceof TorchBlock || block instanceof LanternBlock
+                || block.equals(Blocks.GLOWSTONE)
+                || block instanceof RedstoneLampBlock
+                || block instanceof EndRodBlock;
     }
 
     public static Logger getLogger() {
         return LOGGER;
     }
 }
+
+
+ 
