@@ -23,7 +23,7 @@ public class VectorHelper {
         Vec3 start = new Vec3(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
 
         Vec3 end = new Vec3(player.getX() + look.x * (double) range, player.getY() + player.getEyeHeight() + look.y * (double) range, player.getZ() + look.z * (double) range);
-        ClipContext context = new ClipContext(start, end, ClipContext.Block.COLLIDER, rayTraceFluid, player);
+        ClipContext context = new ClipContext(start, end, ClipContext.Block.OUTLINE, rayTraceFluid, player);
         return world.clip(context);
     }
 }
