@@ -1,0 +1,19 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for env
+        run: |
+          if [ -z "${{ secrets.CURSE_TOKEN }}" ]; then
+            echo "CURSE_TOKEN is not set"
+            exit 1
+          else
+            echo "CURSE_TOKEN is set"
+          fi
