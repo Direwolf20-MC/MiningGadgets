@@ -1,0 +1,18 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+labels: [feature-request]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        To help us help you, please provide as much information as you can, this helps us with understanding and implementing the feature.
+        
+        All feature requests are considered for the *Latest* version of the mod. Please state if you are requesting a feature for an older version of the mod in the extra info box at the end.
+  - type: textarea
+    id: featuredesc
+    attributes:
+      label: Describe the issue
+      description: |
+        A clear and concise description of what the feature is and what problem it solves
+    validations:
+      required: true
