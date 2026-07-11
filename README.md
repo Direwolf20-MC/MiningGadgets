@@ -44,7 +44,6 @@ Check the config file in your `mcdir/config/` folder. You can change the upgrade
 - [ItsTheBdoge](https://github.com/ItsTheBdoge) `3D Laser Model`
 - [Soaryn](https://www.twitch.tv/soaryn) `Breaker of mods, Laser render help`
 - [Rorax](https://twitter.com/Rosespikes) `Original Laser texture`
-- [Forge Devs](https://minecraftforge.net) `CPW and Lex for making Forge the best API ever!!` [*support them*](https://www.patreon.com/LexManos)
 
 ## License 
 [License MIT](LICENSE.txt)
