@@ -20,15 +20,8 @@ public class Generator {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
 
-        // Client
         generator.addProvider(true, new GeneratorLanguage(packOutput));
         generator.addProvider(true, new GeneratorModels(packOutput));
-    }
-
-    @SubscribeEvent
-    public static void gatherDataServer(GatherDataEvent.Server event) {
-        DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
 
         generator.addProvider(true, new LootTableProvider(packOutput, Collections.emptySet(), List.of(new LootTableProvider.SubProviderEntry(GeneratorLoot::new, LootContextParamSets.BLOCK)), event.getLookupProvider()));
         generator.addProvider(true, new GeneratorRecipes.Runner(packOutput, event.getLookupProvider()));
