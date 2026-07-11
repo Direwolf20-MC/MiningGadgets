@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [1.19.2]
+
+### Fixed
+* Particles now come from the correct hand position when using the gadget in the offhand. Thanks to #238
+
+### Changed
+* Updated `FR` translations
+
 ## 1.20.1
 
 ### [1.15.7]

@@ -1,0 +1,34 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      gradle-tasks:
+        description: "tasks the gradle action should run"
+        default: build
+        required: false
+        type: string
+    secrets:
+      curse-token:
+        required: false
+      github-token:
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+      - name: Build with Gradle
+        run: ./gradlew ${{ inputs.gradle-tasks }}
+        env:
+          CURSE_TOKEN: ${{ secrets.curse-token }}
+          GITHUB_TOKEN: ${{ secrets.github-token }}
