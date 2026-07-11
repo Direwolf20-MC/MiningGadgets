@@ -1,30 +1,27 @@
 plugins {
     id 'java-library'
-    id 'eclipse'
-    id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.152'
+    id 'net.neoforged.moddev' version '2.0.141'
+    id 'idea'
+    id "me.modmuss50.mod-publish-plugin" version "2.1.0"
 }
 
-version = "${mod_version}"
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
 group = mod_group_id
 
-// All jar files from this folder will be added automatically as runtime mod dependencies
-def extraModsDir = "extra-mods"
-def extraAPIDir = "extra-api"
+sourceSets.main.resources {
+    srcDir('src/generated/resources')
+
+    exclude("**/*.bbmodel") // BlockBench project files
+    exclude("src/generated/**/.cache") // datagen cache files
+}
 
 repositories {
     mavenLocal()
-
-    flatDir {
-        name "extra-mods"
-        dir file(extraModsDir)
-    }
-
-    flatDir {
-        name "extra-api"
-        dir file(extraAPIDir)
-    }
 
     maven { //Patchouli && JEI
         url 'https://maven.blamejared.com'
@@ -56,142 +53,76 @@ base {
     archivesName = mod_id
 }
 
-// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-        vendor.set(JvmVendorSpec.JETBRAINS)
-    }
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-//minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
+neoForge {
+    version = project.neo_version
 
-// Default run configurations.
-// These can be tweaked, removed, or duplicated as needed.
-runs {
-    // applies to all the run configs below
-    configureEach { net.neoforged.gradle.dsl.common.runs.run.Run run ->
-        // Recommended logging data for a userdev environment
-        // The markers can be added/remove as needed separated by commas.
-        // "SCAN": For mods scan.
-        // "REGISTRIES": For firing of registry events.
-        // "REGISTRYDUMP": For getting the contents of all registries.
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
+    // This line is optional. Access Transformers are automatically detected
+    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
-        // Recommended logging level for the console
-        // You can set various levels here.
-        // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-        systemProperty 'forge.logging.console.level', 'debug'
+    runs {
+        client {
+            client()
 
-        modSource project.sourceSets.main
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            programArguments.addAll '--username', 'Direwolf20'
+        }
 
-        //if the selected toolchain is a JBR, enable DCEVM
-        if (run.project.javaToolchains.launcherFor(java.toolchain).map { it.metadata.vendor }.getOrElse("").contains("JetBrains")) {
-            run.jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+        client2 {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            programArguments.addAll '--username', 'Direwolf21'
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            data()
+
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+            logLevel = org.slf4j.event.Level.DEBUG
         }
     }
 
-    client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        programArguments.addAll '--username', 'Direwolf20'
-    }
-
-    client2 {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        configure('client')
-        programArguments.addAll '--username', 'Direwolf21'
-    }
-
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        //programArgument '--nogui'
-    }
-
-    // This run config launches GameTestServer and runs all registered gametests, then exits.
-    // By default, the server will crash when no gametests are provided.
-    // The gametest system is also enabled by default for other run configs under the /test command.
-    gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    data {
-        // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-        // workingDirectory project.file('run-data')
-
-        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
     }
 }
 
-// Include resources generated by data generators.
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+// Sets up a dependency configuration called 'localRuntime'.
+// This configuration should be used instead of 'runtimeOnly' to declare
+// a dependency that will be present for runtime testing but that is
+// "optional", meaning it will not be pulled by dependents of this mod.
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
 
 dependencies {
-    // Specify the version of Minecraft to use.
-    // Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
-    // The group for userdev is net.neoforged, the module name is neoforge, and the version is the same as the neoforge version.
-    // You can however also use the vanilla plugin (net.neoforged.gradle.vanilla) to use a version of Minecraft without the neoforge loader.
-    // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
-    // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
-    implementation "net.neoforged:neoforge:${neo_version}"
-
-    //AE2
-    //compileOnly "appeng:appliedenergistics2-neoforge:${ae2_version}:api"
-    //runtimeOnly "appeng:appliedenergistics2-neoforge:${ae2_version}"
-
-    //Curios
-    //runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
-    //compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
-
-    // Example mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     compileOnly "mezz.jei:jei-${jei_mc_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${jei_mc_version}-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-${jei_mc_version}-neoforge:${jei_version}"
-    //runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
-
-    // Locally sourced extra mods for runtime (i.e. testing)
-    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
-        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
-        def versionSep = basename.lastIndexOf('-')
-        assert versionSep != -1
-        def artifactId = basename.substring(0, versionSep)
-        def version = basename.substring(versionSep + 1)
-        runtimeOnly "extra-mods:$artifactId:$version"
-    }
-
-    // Locally sourced extra mods for compiling (i.e. API)
-    for (extraModJar in fileTree(dir: extraAPIDir, include: '*.jar')) {
-        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
-        def versionSep = basename.lastIndexOf('-')
-        assert versionSep != -1
-        def artifactId = basename.substring(0, versionSep)
-        def version = basename.substring(versionSep + 1)
-        compileOnly "extra-api:$artifactId:$version"
-    }
-
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
-    // The group id is ignored when searching -- in this case, it is "blank"
-    // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
-
-    // Example mod dependency using a file as dependency
-    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-
-    // Example project dependency using a sister or child project:
-    // implementation project(":myproject")
-
-    // For more info:
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
-// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
-// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
 tasks.withType(ProcessResources).configureEach {
     var replaceProperties = [
             minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
@@ -201,13 +132,44 @@ tasks.withType(ProcessResources).configureEach {
             mod_authors         : mod_authors, mod_description: mod_description,
     ]
     inputs.properties replaceProperties
-
     filesMatching(['META-INF/neoforge.mods.toml']) {
         expand replaceProperties + [project: project]
     }
 }
 
-// Example configuration to allow publishing using the maven-publish plugin
+publishMods {
+    def token = providers.environmentVariable("CURSE_TOKEN");
+    dryRun = !token.isPresent()
+    changelog = createChangelog()
+    version = "${mod_version}"
+    type = STABLE
+
+    file = project.provider { tasks.jar }.flatMap { it.archiveFile }
+
+    curseforge {
+        projectId = "351748"
+        accessToken = token.getOrElse("")
+        displayName = "MiningGadgets NeoForge ${mod_version}"
+        modLoaders.add("neoforge")
+        minecraftVersions.add("${minecraft_version}")
+        javaVersions.add(JavaVersion.VERSION_21)
+
+        client = true
+        server = true
+    }
+
+    github {
+        announcementTitle = "${mod_version}"
+
+        repository = "direwolf20-mc/mininggadgets"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+
+        commitish = providers.environmentVariable("GITHUB_SHA").orElse("dryRun")
+        tagName = providers.environmentVariable("GITHUB_REF_NAME").orElse("dryRun")
+
+    }
+}
+
 publishing {
     publications {
         register('mavenJava', MavenPublication) {
@@ -223,4 +185,57 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+def createChangelog() {
+    def issueNumberPattern = ~/(?i)(?<!\S)#[0-9]+(?!\S)/
+    def githubMentionPattern = ~/(?i)(?<!\S)@([a-zA-Z0-9-_]+)(?!\S)/
+
+    def github = "https://github.com"
+    def repo = "$github/direwolf20-mc/mininggadgets"
+
+    def changelogFile = file('CHANGELOG.md')
+    if (!changelogFile.exists()) {
+        throw new GradleException("CHANGELOG.md file not found!")
+    }
+
+    def changelogContent = changelogFile.text
+    def output = ""
+
+    def reading = false
+    def lines = changelogContent.readLines()
+    for (line in lines) {
+        if (line.startsWith("## ") && line.contains(mod_version)) {
+            println("Found changelog for version ${mod_version}")
+            reading = true
+            continue
+        } else if (line.startsWith("## ") && reading) {
+            break
+        } else if (!reading) {
+            continue
+        }
+
+        // Inject issues and mentions links
+        line = line.replaceAll(issueNumberPattern) { fullMatch ->
+            def issueNumber = fullMatch.substring(1)
+            "[#${issueNumber}](${repo}/issues/${issueNumber})"
+        }
+
+        line = line.replaceAll(githubMentionPattern) { fullMatch, username ->
+            "[@${username}](${github}/${username})"
+        }
+
+        output += line + "\n"
+    }
+
+    def finalOutput = output.trim();
+    return finalOutput.isEmpty() ? "No changelog available." : finalOutput
 }
