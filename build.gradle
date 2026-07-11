@@ -159,7 +159,7 @@ publishMods {
     }
 
     github {
-        announcementTitle = "${mod_version}"
+        displayName = "${mod_version}"
 
         repository = "direwolf20-mc/mininggadgets"
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
