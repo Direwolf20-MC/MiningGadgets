@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - mc/*
   pull_request:
     branches:
       - master
