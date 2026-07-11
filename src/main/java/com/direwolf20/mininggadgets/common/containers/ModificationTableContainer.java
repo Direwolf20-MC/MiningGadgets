@@ -1,10 +1,10 @@
 package com.direwolf20.mininggadgets.common.containers;
 
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -16,10 +16,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,42 +25,47 @@ import java.util.List;
 public class ModificationTableContainer extends AbstractContainerMenu {
 
     private BlockEntity tileEntity;
-    private IItemHandler playerInventory;
     private List<Upgrade> upgradesCache = new ArrayList<>();
 
     public ModificationTableContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
-        super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
+        super(Registration.MODIFICATIONTABLE_CONTAINER.get(), windowId);
 
         this.tileEntity = Minecraft.getInstance().level.getBlockEntity(extraData.readBlockPos());
-        this.playerInventory = new InvWrapper(playerInventory);
 
         setupContainerSlots();
-        layoutPlayerInventorySlots(8, 84);
+        layoutPlayerInventorySlots(playerInventory, 8, 84);
     }
 
     public ModificationTableContainer(int windowId, Level world, BlockPos pos, Inventory playerInventory) {
-        super(ModContainers.MODIFICATIONTABLE_CONTAINER.get(), windowId);
+        super(Registration.MODIFICATIONTABLE_CONTAINER.get(), windowId);
         this.tileEntity = world.getBlockEntity(pos);
-        this.playerInventory = new InvWrapper(playerInventory);
 
         setupContainerSlots();
-        layoutPlayerInventorySlots(10, 70);
+        layoutPlayerInventorySlots(playerInventory, 10, 70);
     }
 
     @Override
     public boolean stillValid(Player playerIn) {
-        return stillValid(ContainerLevelAccess.create(getTE().getLevel(), tileEntity.getBlockPos()), playerIn, ModBlocks.MODIFICATION_TABLE.get());
+        return stillValid(ContainerLevelAccess.create(getTE().getLevel(), tileEntity.getBlockPos()), playerIn, Registration.MODIFICATION_TABLE.get());
     }
 
     private void setupContainerSlots() {
-        this.getTE().getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
-            addSlot(new WatchedSlot(h, 0,  -16, 84, this::updateUpgradeCache));
-        });
+        var inv = this.tileEntity.getLevel().getCapability(Capabilities.Item.BLOCK,  tileEntity.getBlockPos(), tileEntity.getBlockState(), tileEntity, null);
+        if (inv instanceof ModificationTableHandler handler) {
+            addSlot(new WatchedSlot(handler, 0, -16, 84) {
+                @Override
+                protected void setStackCopy(@NonNull ItemStack stack)
+                {
+                    super.setStackCopy(stack);
+                    updateUpgradeCache(0);
+                }
+            });
+        }
     }
 
     private void updateUpgradeCache(int index) {
         ItemStack stack = this.getSlot(index).getItem();
-        if( (stack.isEmpty() && !upgradesCache.isEmpty()) || !(stack.getItem() instanceof MiningGadget) ) {
+        if((stack.isEmpty() && !upgradesCache.isEmpty()) || !(stack.getItem() instanceof MiningGadget)) {
             upgradesCache.clear();
             return;
         }
@@ -80,16 +83,16 @@ public class ModificationTableContainer extends AbstractContainerMenu {
         return this.tileEntity;
     }
 
-    private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
+    private int addSlotRange(Inventory handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0; i < amount; i++) {
-            addSlot(new SlotItemHandler(handler, index, x, y));
+            addSlot(new Slot(handler, index, x, y));
             x += dx;
             index++;
         }
         return index;
     }
 
-    private int addSlotBox(IItemHandler handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
+    private int addSlotBox(Inventory handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
         for (int j = 0; j < verAmount; j++) {
             index = addSlotRange(handler, index, x, y, horAmount, dx);
             y += dy;
@@ -97,13 +100,13 @@ public class ModificationTableContainer extends AbstractContainerMenu {
         return index;
     }
 
-    private void layoutPlayerInventorySlots(int leftCol, int topRow) {
+    private void layoutPlayerInventorySlots(Inventory inventory, int leftCol, int topRow) {
         // Player inventory
-        addSlotBox(playerInventory, 9, leftCol, topRow, 9, 18, 3, 18);
+        addSlotBox(inventory, 9, leftCol, topRow, 9, 18, 3, 18);
 
         // Hotbar
         topRow += 58;
-        addSlotRange(playerInventory, 0, leftCol, topRow, 9, 18);
+        addSlotRange(inventory, 0, leftCol, topRow, 9, 18);
     }
 
     @Override
@@ -125,7 +128,7 @@ public class ModificationTableContainer extends AbstractContainerMenu {
                     }
                 } else if (stack.getItem() instanceof UpgradeCard) {
                     // Push the item right into the modification table.
-                    if( ModificationTableCommands.insertButton(this, stack) ) {
+                    if(ModificationTableCommands.insertButton(this, stack) ) {
                         int maxSize = Math.min(slot.getMaxStackSize(), stack.getMaxStackSize());
                         int remove = maxSize - itemstack.getCount();
                         stack.shrink(remove == 0 ? 1 : remove);

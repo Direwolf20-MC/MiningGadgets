@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "e": "#c:ender_pearls",
+    "o": "minecraft:obsidian",
+    "r": "#c:dusts/redstone",
+    "u": "mininggadgets:upgrade_empty"
+  },
+  "pattern": [
+    "ror",
+    "eue",
+    "ror"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_void_junk"
+  }
+}

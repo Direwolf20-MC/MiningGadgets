@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "d": "#c:gems/diamond",
+    "g": "#c:ingots/gold",
+    "i": "#c:ingots/iron",
+    "r": "#c:dusts/redstone",
+    "u": "mininggadgets:upgrade_empty"
+  },
+  "pattern": [
+    "dig",
+    "dur",
+    "dig"
+  ],
+  "result": {
+    "id": "mininggadgets:mininggadget"
+  }
+}

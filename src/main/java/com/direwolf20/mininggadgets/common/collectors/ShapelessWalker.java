@@ -1,10 +1,10 @@
 package com.direwolf20.mininggadgets.common.collectors;
 
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.*;
 
@@ -64,7 +64,7 @@ public class ShapelessWalker {
             BlockPos ptr = openSet.pop();
 
             Block block = level.getBlockState(ptr).getBlock();
-            if ((block == Blocks.OAK_LOG || block == ModBlocks.RENDER_BLOCK.get()) && known.add(ptr)) {
+            if ((block == Blocks.OAK_LOG || block == Registration.RENDER_BLOCK.get()) && known.add(ptr)) {
                 if (known.size() >= 60) {
                     return;
                 }

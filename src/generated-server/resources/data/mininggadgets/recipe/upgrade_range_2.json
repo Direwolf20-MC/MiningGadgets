@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "e": "minecraft:emerald",
+    "g": "minecraft:glass",
+    "l": "minecraft:lapis_lazuli",
+    "u": "mininggadgets:upgrade_range_1"
+  },
+  "pattern": [
+    "lgl",
+    "eue",
+    "lgl"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_range_2"
+  }
+}

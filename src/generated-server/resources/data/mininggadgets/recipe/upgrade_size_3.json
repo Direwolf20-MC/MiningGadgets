@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "e": "#c:ender_pearls",
+    "n": "minecraft:netherite_block",
+    "p": "minecraft:netherite_pickaxe",
+    "s": "#c:nether_stars",
+    "u": "mininggadgets:upgrade_size_2"
+  },
+  "pattern": [
+    "sns",
+    "eue",
+    "sps"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_size_3"
+  }
+}

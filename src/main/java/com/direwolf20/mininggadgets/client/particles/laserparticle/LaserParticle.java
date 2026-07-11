@@ -10,10 +10,17 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.BreakingItemParticle;
 import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,8 +30,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
 
 public class LaserParticle extends BreakingItemParticle {
-    public static final ParticleProvider<LaserParticleData> FACTORY = (data, world, x, y, z, xSpeed, ySpeed, zSpeed) ->
-                    new LaserParticle(world, x, y, z, xSpeed, ySpeed, zSpeed, data.size, data.depthTest, data.maxAgeMul, data.state);
+    public static final ParticleProvider<LaserParticleData> FACTORY =  (data, world, x, y, z, xSpeed, ySpeed, zSpeed, source) ->
+            new LaserParticle(world, x, y, z, xSpeed, ySpeed, zSpeed, data.getSize(), data.depthTest, data.maxAgeMul, data.state);
 
     private BlockState blockState;
     private UUID playerUUID;
@@ -36,8 +43,7 @@ public class LaserParticle extends BreakingItemParticle {
     private final double sourceZ;
     private final float originalSize;
 
-    public LaserParticle(ClientLevel world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
-                         float size, boolean depthTest, float maxAgeMul, BlockState blockState) {
+    public LaserParticle(ClientLevel world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed, float size, boolean depthTest, float maxAgeMul, BlockState blockState) {
         this(world, d, d1, d2, xSpeed, ySpeed, zSpeed, size, depthTest, maxAgeMul, new ItemStack(blockState.getBlock()));
 
         this.blockState = blockState;
@@ -51,21 +57,21 @@ public class LaserParticle extends BreakingItemParticle {
 
         // This isn't a perfect solution because of the above, but I'm unsure how you'd actually only apply a tint to the gray scale part
         // of the asset instead of it applying to the entire texture
-        BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-
-        int color = blockColors.getColor(this.blockState, this.level, new BlockPos((int)d, (int)d1, (int)d2), 0);
-        float f = (float) (color >> 16 & 255) / 255.0F;
-        float f1 = (float) (color >> 8 & 255) / 255.0F;
-        float f2 = (float) (color & 255) / 255.0F;
-
-        rCol = f;
-        gCol = f1;
-        bCol = f2;
+        //TODO
+//        BlockColors blockColors = Minecraft.getInstance().getBlockColors();
+//
+//        int color = blockColors.getColor(this.blockState, this.level, new BlockPos((int)d, (int)d1, (int)d2), 0);
+//        float f = (float) (color >> 16 & 255) / 255.0F;
+//        float f1 = (float) (color >> 8 & 255) / 255.0F;
+//        float f2 = (float) (color & 255) / 255.0F;
+//
+//        rCol = f;
+//        gCol = f1;
+//        bCol = f2;
     }
 
-    public LaserParticle(ClientLevel world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed,
-                         float size, boolean depthTest, float maxAgeMul, ItemStack stack) {
-        super(world, d, d1, d2, stack);
+    public LaserParticle(ClientLevel world, double d, double d1, double d2, double xSpeed, double ySpeed, double zSpeed, float size, boolean depthTest, float maxAgeMul, ItemStack stack) {
+        super(world, d, d1, d2, resolveSprite(world, stack));
         // super applies wiggle to motion so set it here instead
         xd = xSpeed;
         yd = ySpeed;
@@ -91,10 +97,32 @@ public class LaserParticle extends BreakingItemParticle {
         this.hasPhysics = false;
     }
 
-    @Override
-    public void render(VertexConsumer builder, Camera activeRenderInfo, float partialTicks) {
-        super.render(builder, activeRenderInfo, partialTicks);
+    private static TextureAtlasSprite resolveSprite(ClientLevel world, ItemStack itemStack) {
+        Minecraft mc = Minecraft.getInstance();
+        RandomSource rand = world != null ? world.getRandom() : RandomSource.create();
+        ItemStack source = itemStack.isEmpty() ? new ItemStack(Blocks.COBBLESTONE) : itemStack;
+        ItemStackRenderState renderState = new ItemStackRenderState();
+        mc.getItemModelResolver().updateForTopItem(renderState, source, ItemDisplayContext.GROUND, world, null, 0);
+        Material.Baked material = renderState.pickParticleMaterial(rand);
+        if (material != null) {
+            return material.sprite();
+        }
+        if (source.getItem() != Blocks.COBBLESTONE.asItem()) {
+            ItemStackRenderState fallbackState = new ItemStackRenderState();
+            mc.getItemModelResolver().updateForTopItem(fallbackState, new ItemStack(Blocks.COBBLESTONE), ItemDisplayContext.GROUND, world, null, 0);
+            Material.Baked fallback = fallbackState.pickParticleMaterial(rand);
+            if (fallback != null) {
+                return fallback.sprite();
+            }
+        }
+        return mc.getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS).missingSprite();
     }
+
+    @Override
+    public void extract(QuadParticleRenderState particleTypeRenderState, Camera camera, float partialTickTime) {
+        super.extract(particleTypeRenderState, camera, partialTickTime);
+    }
+
 
     public boolean particleToPlayer(Player player) {
         boolean partToPlayer = false;
@@ -139,8 +167,11 @@ public class LaserParticle extends BreakingItemParticle {
         Vec3 forward = look;
         Vec3 down = right.cross(forward);
 
-        //These are used to calculate where the particles are going. We want them going into the laser, so we move the destination right, down, and forward a bit.
-        right = right.scale(0.65f);
+        // Determine which hand is holding the item
+        boolean isRightHand = player.getMainHandItem().getItem() instanceof MiningGadget;
+
+        // Adjust the right vector for the offhand if necessary
+        right = right.scale(isRightHand ? 0.65f : -0.65f);
         forward = forward.scale(0.85f);
         down = down.scale(-0.35);
 

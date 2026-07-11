@@ -3,15 +3,15 @@ package com.direwolf20.mininggadgets.common.items.gadget;
 import com.direwolf20.mininggadgets.common.blocks.MinersLight;
 import com.direwolf20.mininggadgets.common.blocks.RenderBlock;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,11 +76,6 @@ public class MiningCollect {
         // Already checked the contained block. And declaring it invalid would prevent the contained block from being broken
         if(state.getBlock() instanceof RenderBlock)
             return true;
-
-        // TODO: 12/07/2020 Reimplement when we find a replacement (1.16 port phase)
-        // Reject, if the dimension blocks the player from mining the block
-//        if(!world.canMineBlock(player, pos))
-//           return false;
 
         // Reject fluids and air (supports waterlogged blocks too)
         if ((!state.getFluidState().isEmpty() && !state.hasProperty(BlockStateProperties.WATERLOGGED)) || world.isEmptyBlock(pos))

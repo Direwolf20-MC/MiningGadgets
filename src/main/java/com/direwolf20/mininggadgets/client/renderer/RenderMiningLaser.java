@@ -2,10 +2,12 @@ package com.direwolf20.mininggadgets.client.renderer;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.util.CodecHelpers;
+import com.direwolf20.mininggadgets.setup.Registration;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -13,7 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -21,7 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -29,9 +31,9 @@ import org.joml.Vector4f;
 
 public class RenderMiningLaser {
 
-    private final static ResourceLocation laserBeam = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser.png");
-    private final static ResourceLocation laserBeam2 = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser2.png");
-    private final static ResourceLocation laserBeamGlow = new ResourceLocation(MiningGadgets.MOD_ID + ":textures/misc/laser_glow.png");
+    private final static Identifier laserBeam = Identifier.fromNamespaceAndPath(MiningGadgets.MOD_ID, "textures/misc/laser.png");
+    private final static Identifier laserBeam2 = Identifier.fromNamespaceAndPath(MiningGadgets.MOD_ID, "textures/misc/laser2.png");
+    private final static Identifier laserBeamGlow = Identifier.fromNamespaceAndPath(MiningGadgets.MOD_ID, "textures/misc/laser_glow.png");
 
     public static void renderLaser(RenderLevelStageEvent event, Player player, float ticks) {
         ItemStack stack = MiningGadget.getGadget(player);
@@ -42,12 +44,18 @@ public class RenderMiningLaser {
         int range = MiningProperties.getBeamRange(stack);
 
         Vec3 playerPos = player.getEyePosition(ticks);
-        HitResult trace = player.pick(range, 0.0F, false);
+        HitResult trace = player.pick(range, ticks, false);
 
         // parse data from item
         float speedModifier = getSpeedModifier(stack);
 
-        drawLasers(stack, event, playerPos, trace, 0, 0, 0, MiningProperties.getColor(stack, MiningProperties.COLOR_RED) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN) / 255f, MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE) / 255f, 0.02f, player, ticks, speedModifier);
+        CodecHelpers.LaserColor laserColor = MiningProperties.getColors(stack);
+
+        float red = laserColor.red() / 255f;
+        float green = laserColor.green() / 255f;
+        float blue = laserColor.blue() / 255f;
+
+        drawLasers(stack, event, playerPos, trace, 0, 0, 0, red, green, blue, 0.02f, player, ticks, speedModifier);
     }
 
     private static float getSpeedModifier(ItemStack stack) {
@@ -76,11 +84,13 @@ public class RenderMiningLaser {
         double v = gameTime * speedModifier;
         float additiveThickness = (thickness * 3.5f) * calculateLaserFlickerModifier(gameTime);
 
-        float beam2r = MiningProperties.getColor(stack, MiningProperties.COLOR_RED_INNER) / 255f;
-        float beam2g = MiningProperties.getColor(stack, MiningProperties.COLOR_GREEN_INNER) / 255f;
-        float beam2b = MiningProperties.getColor(stack, MiningProperties.COLOR_BLUE_INNER) / 255f;
+        CodecHelpers.LaserColor laserColor = MiningProperties.getColors(stack);
 
-        Vec3 view = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        float beam2r = laserColor.innerRed() / 255f;
+        float beam2g = laserColor.innerGreen() / 255f;
+        float beam2b = laserColor.innerBlue() / 255f;
+
+        Vec3 view = Minecraft.getInstance().gameRenderer.getMainCamera().position();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 
         PoseStack matrix = event.getPoseStack();
@@ -108,7 +118,6 @@ public class RenderMiningLaser {
         builder = buffer.getBuffer(MyRenderType.LASER_MAIN_CORE);
         drawBeam(stack, xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, thickness/2, activeHand, distance, v, v + distance * 1.5, ticks, beam2r,beam2g,beam2b,1f);
         matrix.popPose();
-//        RenderSystem.disableDepthTest();
         buffer.endBatch();
     }
 
@@ -117,14 +126,14 @@ public class RenderMiningLaser {
     }
 
     private static void drawBeam(ItemStack stack, double xOffset, double yOffset, double zOffset, VertexConsumer builder, Matrix4f positionMatrix, Matrix3f matrixNormalIn, float thickness, InteractionHand hand, double distance, double v1, double v2, float ticks, float r, float g, float b, float alpha) {
-        boolean isFancy = stack.getItem().equals(ModItems.MININGGADGET_FANCY.get());
-        boolean isSimple = stack.getItem().equals(ModItems.MININGGADGET_SIMPLE.get());
+        boolean isFancy = stack.getItem().equals(Registration.MININGGADGET_FANCY.get());
+        boolean isSimple = stack.getItem().equals(Registration.MININGGADGET_SIMPLE.get());
 
         Vector3f vector3f = new Vector3f(0.0f, 1.0f, 0.0f);
-        vector3f.mul(matrixNormalIn);//TODO: validate //.transform(matrixNormalIn);
+        vector3f.mul(matrixNormalIn);
         LocalPlayer player = Minecraft.getInstance().player;
         // Support for hand sides remembering to take into account of Skin options
-        if( Minecraft.getInstance().options.mainHand().get() != HumanoidArm.RIGHT )
+        if (Minecraft.getInstance().options.mainHand().get() != HumanoidArm.RIGHT)
             hand = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         float startXOffset = -0.20f;
         float startYOffset = -.108f;
@@ -139,7 +148,16 @@ public class RenderMiningLaser {
             startYOffset -= .005f;
         }
         // Adjust for fov changing
-        startZOffset += (1 - player.getFieldOfViewModifier());
+        //TODO firstPerson effectScale
+        float fov = player.getFieldOfViewModifier(false, 0);
+        float fovSetting = Minecraft.getInstance().options.fov().get();
+        float fovSettingAdjuster = 0;
+        if (fovSetting != 70)
+            fovSettingAdjuster = fovSetting < 70f ? (fovSetting / 70.0f) / 0.5f : -(fovSetting / 70.0f) / 6f;
+        if (fov >= 1)
+            startZOffset += (1 - fov) * 0.5f + fovSettingAdjuster;
+        else
+            startZOffset += (1 - fov) * 1.5f + fovSettingAdjuster;
         if (hand == InteractionHand.OFF_HAND) {
             startYOffset = -.120f;
             startXOffset = 0.25f;
@@ -159,25 +177,25 @@ public class RenderMiningLaser {
         vec4.mul(positionMatrix);
 
         if (hand == InteractionHand.MAIN_HAND) {
-            builder.vertex(vec4.x(), vec4.y(), vec4.z(), r, g, b, alpha, 0, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec3.x(), vec3.y(), vec3.z(), r, g, b, alpha, 0, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec2.x(), vec2.y(), vec2.z(), r, g, b, alpha, 1, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec1.x(), vec1.y(), vec1.z(), r, g, b, alpha, 1, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec4.x(), vec4.y(), vec4.z()).setColor(r, g, b, alpha).setUv(0, (float) v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec3.x(), vec3.y(), vec3.z()).setColor(r, g, b, alpha).setUv(0, (float) v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec2.x(), vec2.y(), vec2.z()).setColor(r, g, b, alpha).setUv(1, (float) v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec1.x(), vec1.y(), vec1.z()).setColor(r, g, b, alpha).setUv(1, (float) v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
             //Rendering a 2nd time to allow you to see both sides in multiplayer, shouldn't be necessary with culling disabled but here we are....
-            builder.vertex(vec1.x(), vec1.y(), vec1.z(), r, g, b, alpha, 1, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec2.x(), vec2.y(), vec2.z(), r, g, b, alpha, 1, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec3.x(), vec3.y(), vec3.z(), r, g, b, alpha, 0, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec4.x(), vec4.y(), vec4.z(), r, g, b, alpha, 0, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec1.x(), vec1.y(), vec1.z()).setColor(r, g, b, alpha).setUv(1, (float) v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec2.x(), vec2.y(), vec2.z()).setColor(r, g, b, alpha).setUv(1, (float) v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec3.x(), vec3.y(), vec3.z()).setColor(r, g, b, alpha).setUv(0, (float) v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec4.x(), vec4.y(), vec4.z()).setColor(r, g, b, alpha).setUv(0, (float) v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
         } else {
-            builder.vertex(vec1.x(), vec1.y(), vec1.z(), r, g, b, alpha, 1, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec2.x(), vec2.y(), vec2.z(), r, g, b, alpha, 1, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec3.x(), vec3.y(), vec3.z(), r, g, b, alpha, 0, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec4.x(), vec4.y(), vec4.z(), r, g, b, alpha, 0, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec1.x(), vec1.y(), vec1.z()).setColor(r, g, b, alpha).setUv(1, (float) v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec2.x(), vec2.y(), vec2.z()).setColor(r, g, b, alpha).setUv(1, (float) v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec3.x(), vec3.y(), vec3.z()).setColor(r, g, b, alpha).setUv(0, (float) v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec4.x(), vec4.y(), vec4.z()).setColor(r, g, b, alpha).setUv(0, (float) v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
             //Rendering a 2nd time to allow you to see both sides in multiplayer, shouldn't be necessary with culling disabled but here we are....
-            builder.vertex(vec4.x(), vec4.y(), vec4.z(), r, g, b, alpha, 0, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec3.x(), vec3.y(), vec3.z(), r, g, b, alpha, 0, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec2.x(), vec2.y(), vec2.z(), r, g, b, alpha, 1, (float) v2, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
-            builder.vertex(vec1.x(), vec1.y(), vec1.z(), r, g, b, alpha, 1, (float) v1, OverlayTexture.NO_OVERLAY, 15728880, vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec4.x(), vec4.y(), vec4.z()).setColor(r, g, b, alpha).setUv(0, (float) v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec3.x(), vec3.y(), vec3.z()).setColor(r, g, b, alpha).setUv(0, (float) v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec2.x(), vec2.y(), vec2.z()).setColor(r, g, b, alpha).setUv(1, (float) v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
+            builder.addVertex(vec1.x(), vec1.y(), vec1.z()).setColor(r, g, b, alpha).setUv(1, (float) v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(vector3f.x(), vector3f.y(), vector3f.z());
         }
     }
 

@@ -6,32 +6,33 @@ import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.UpgradeCard;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.network.packets.PacketExtractUpgrade;
-import com.direwolf20.mininggadgets.common.network.packets.PacketInsertUpgrade;
+import com.direwolf20.mininggadgets.common.network.data.ExtractUpgradePayload;
+import com.direwolf20.mininggadgets.common.network.data.InsertUpgradePayload;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraftforge.client.gui.widget.ScrollPanel;
-import net.minecraftforge.common.ForgeI18n;
+import net.neoforged.neoforge.client.gui.widget.ScrollPanel;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.jspecify.annotations.NonNull;
+
 
 public class ModificationTableScreen extends AbstractContainerScreen<ModificationTableContainer> {
-    private ResourceLocation GUI = new ResourceLocation(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
+    private Identifier GUI = Identifier.fromNamespaceAndPath(MiningGadgets.MOD_ID, "textures/gui/modificationtable.png");
     private BlockPos tePos;
     private ModificationTableContainer container;
-    private Inventory playerInventory;
     private ScrollingUpgrades scrollingUpgrades;
 
 
@@ -39,24 +40,21 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         super(container, inv, name);
         this.tePos = container.getTE().getBlockPos();
         this.container = container;
-        this.playerInventory = inv;
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
 
-        this.scrollingUpgrades.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(guiGraphics, mouseX, mouseY); // @mcp: renderTooltip = renderHoveredToolTip
+        this.scrollingUpgrades.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
 
         int relX = (this.width) / 2;
         int relY = (this.height) / 2;
 
-        guiGraphics.drawCenteredString(font, ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.modification_table")), relX, relY - 100, 0xFFFFFF);
+        guiGraphics.text(font, Component.translatable(MiningGadgets.MOD_ID + ".text.modification_table"), relX, relY - 100, 0xFFFFFF);
 
         if (this.container.getUpgradesCache().size() == 0) {
-            String string = ForgeI18n.getPattern(String.format("%s.%s", MiningGadgets.MOD_ID, "text.empty_table_helper"));
+            String string = Component.translatable(MiningGadgets.MOD_ID + ".text.modification_table").getString();
             String[] parts = string.split("\n");
             for (int i = 0; i < parts.length; i++) {
                 drawScaledCenteredString(guiGraphics, (relX + 17) - (font.width(parts[0]) / 2), (relY - 68) + (i * font.lineHeight), .8f, parts[i], 0xFFFFFF);
@@ -65,24 +63,25 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(@NonNull GuiGraphicsExtractor graphics, int xm, int ym) {}
+
+    private void drawScaledCenteredString(GuiGraphicsExtractor guiGraphics, int x, int y, float scale, String textComponent, int color) {
+//        PoseStack matrices = guiGraphics.pose();
+//        guiGraphics.pose().pushMatrix();
+//        guiGraphics.pose().translate(x, y);
+//        guiGraphics.pose().scaleAround(scale, scale, scale);
+//        matrices.scale(scale, scale, scale);
+        guiGraphics.text(font, textComponent, 0, 0, color);
+//        guiGraphics.pose().pushMatrix();
     }
 
-    private void drawScaledCenteredString(GuiGraphics guiGraphics, int x, int y, float scale, String textComponent, int color) {
-        PoseStack matrices = guiGraphics.pose();
-        matrices.pushPose();
-        matrices.translate(x, y, 0);
-        matrices.scale(scale, scale, scale);
-        guiGraphics.drawString(font, textComponent, 0, 0, color);
-        matrices.popPose();
-    }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
         int relX = (this.width - this.imageWidth) / 2;
         int relY = (this.height - this.imageHeight) / 2;
-        guiGraphics.blit(GUI, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI, relX - 23, relY, 0, 0, this.imageWidth + 23, this.imageHeight, 256, 256);
     }
 
     @Override
@@ -94,21 +93,21 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
    }
 
     @Override
-    public boolean mouseClicked(double mouseXIn, double mouseYIn, int p_231044_5_) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         ItemStack heldStack = this.menu.getCarried();
         ItemStack gadget = this.container.slots.get(0).getItem();
         if (!gadget.isEmpty() && gadget.getItem() instanceof MiningGadget && !heldStack.isEmpty() && heldStack.getItem() instanceof UpgradeCard) {
-            if (scrollingUpgrades.isMouseOver(mouseXIn, mouseYIn)) {
+            if (scrollingUpgrades.isMouseOver(event.x(), event.y())) {
                 // Send packet to remove the item from the inventory and add it to the table
                 if (UpgradeTools.containsUpgrade(gadget, ((UpgradeCard) heldStack.getItem()).getUpgrade())) {
                     return false;
                 }
 
-                PacketHandler.sendToServer(new PacketInsertUpgrade(this.tePos, heldStack));
+                ClientPacketDistributor.sendToServer(new InsertUpgradePayload(this.tePos, heldStack));
                 this.menu.setCarried(ItemStack.EMPTY);
             }
         }
-        return super.mouseClicked(mouseXIn, mouseYIn, p_231044_5_);
+        return super.mouseClicked(event, doubleClick);
     }
 
     private static class ScrollingUpgrades extends ScrollPanel implements NarratableEntry {
@@ -124,11 +123,11 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
 
         // Fixes a forge bug where the screen will screen when no scroll is available
         @Override
-        public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+        public boolean mouseScrolled(double mouseX, double mouseY, double scroll, double scrollY) {
             if (this.getContentHeight() < this.height)
                 return false;
 
-            return super.mouseScrolled(mouseX, mouseY, scroll);
+            return super.mouseScrolled(mouseX, mouseY, scroll, scrollY);
         }
 
         @Override
@@ -137,14 +136,14 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         }
 
         @Override
-        protected void drawPanel(GuiGraphics guiGraphics, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
+        protected void drawPanel(GuiGraphicsExtractor guiGraphics, int entryRight, int relativeY, int mouseX, int mouseY) {
             Upgrade currentUpgrade = null;
             int x = (entryRight - this.width) + 3;
             int y = relativeY;
 
             int index = 0;
             for (Upgrade upgrade : this.parent.container.getUpgradesCache()) {
-                guiGraphics.renderItem(new ItemStack(upgrade.getCardItem().get()), x, y);
+                guiGraphics.item(new ItemStack(upgrade.getCardItem().get()), x, y);
 
                 if( isMouseOver(mouseX, mouseY) && (mouseX > x && mouseX < x + 15 && mouseY > y && mouseY < y + 15)  )
                     currentUpgrade = upgrade;
@@ -162,20 +161,21 @@ public class ModificationTableScreen extends AbstractContainerScreen<Modificatio
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if( !isMouseOver(mouseX, mouseY) || this.upgrade == null )
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            if( !isMouseOver(event.x(), event.y()) || this.upgrade == null )
                 return false;
 
-            PacketHandler.sendToServer(new PacketExtractUpgrade(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
-            return super.mouseClicked(mouseX, mouseY, button);
+            ClientPacketDistributor.sendToServer(new ExtractUpgradePayload(this.parent.tePos, this.upgrade.getName(), this.upgrade.getName().length()));
+            return super.mouseClicked(event, doubleClick);
         }
 
         @Override
-        public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-            super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+            super.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
 
-            if( this.upgrade != null  )
-                guiGraphics.renderTooltip(Minecraft.getInstance().font, Lists.transform(new ItemStack(this.upgrade.getCardItem().get()).getTooltipLines(this.parent.getMinecraft().player, TooltipFlag.Default.NORMAL), Component::getVisualOrderText), mouseX, mouseY);
+            if(this.upgrade != null)
+                guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, new ItemStack(this.upgrade.getCardItem().get())
+                                .getTooltipLines(Item.TooltipContext.EMPTY, this.parent.getMinecraft().player, TooltipFlag.Default.NORMAL), mouseX, mouseY);
         }
 
         @Override

@@ -1,26 +1,26 @@
 package com.direwolf20.mininggadgets.client.renderer;
 
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
+import com.direwolf20.mininggadgets.setup.Registration;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class ModificationShiftOverlay {
         }
 
         BlockHitResult trace = (BlockHitResult) pick;
-        if (player.level().getBlockState(trace.getBlockPos()).getBlock() != ModBlocks.MODIFICATION_TABLE.get()) {
+        if (player.level().getBlockState(trace.getBlockPos()).getBlock() != Registration.MODIFICATION_TABLE.get()) {
             return;
         }
 
@@ -43,7 +43,7 @@ public class ModificationShiftOverlay {
         }
 
         // Finally, lets try and render something if we have a gadget in the main slot
-        ItemStack stack = ((ModificationTableTileEntity) blockEntity).handler.map(e -> e.getStackInSlot(0)).orElse(ItemStack.EMPTY);
+        ItemStack stack = ((ModificationTableTileEntity) blockEntity).handler.getResource(0).toStack();
         if (stack.isEmpty() || !(stack.getItem() instanceof MiningGadget)) {
             return;
         }
@@ -53,10 +53,10 @@ public class ModificationShiftOverlay {
             return;
         }
 
-        Vec3 view = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        Vec3 view = Minecraft.getInstance().gameRenderer.getMainCamera().position();
         BlockPos blockPos = ((BlockHitResult) pick).getBlockPos();
 
-        double distance = player.getPosition(evt.getPartialTick()).distanceTo(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+        double distance = player.getPosition(Minecraft.getInstance().getDeltaTracker().getRealtimeDeltaTicks()).distanceTo(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
         float scaleFactor = Math.max(.2f, ((float) distance / 10) + .1f);
 
         PoseStack matrix = evt.getPoseStack();
@@ -64,7 +64,7 @@ public class ModificationShiftOverlay {
         matrix.translate(-view.x, -view.y, -view.z);
         matrix.translate(blockPos.getX() + .5f, blockPos.getY() + 1, blockPos.getZ() + .5f);
         matrix.scale(scaleFactor, scaleFactor, scaleFactor);
-        matrix.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        matrix.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().camera.rotation());
 
         MultiBufferSource.BufferSource outlineLayerBuffer = Minecraft.getInstance().renderBuffers().bufferSource();
 
@@ -83,8 +83,9 @@ public class ModificationShiftOverlay {
             matrix.mulPose(Axis.YP.rotationDegrees(90));
             matrix.mulPose(Axis.XP.rotationDegrees(26));
             ItemStack upgradeStack = new ItemStack(upgrade.getCardItem().get());
-            BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(upgradeStack, Minecraft.getInstance().level, null, 0);
-            Minecraft.getInstance().getItemRenderer().render(upgradeStack, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, false, matrix, outlineLayerBuffer, 15728880, OverlayTexture.NO_OVERLAY, model);
+            //TODO find where this has gone
+//            BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(upgradeStack, Minecraft.getInstance().level, null, 0);
+//            Minecraft.getInstance().getItemRenderer().render(upgradeStack, ItemDisplayContext.FIRST_PERSON_LEFT_HAND, false, matrix, outlineLayerBuffer, 15728880, OverlayTexture.NO_OVERLAY, model);
             x += 1;
             if (x > 2) {
                 x = 0;

@@ -4,34 +4,34 @@ import com.direwolf20.mininggadgets.client.renderer.BlockOverlayRender;
 import com.direwolf20.mininggadgets.client.renderer.ModificationShiftOverlay;
 import com.direwolf20.mininggadgets.client.renderer.RenderMiningLaser;
 import com.direwolf20.mininggadgets.client.screens.ModScreens;
+import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderHighlightEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.List;
 
+@EventBusSubscriber(modid = MiningGadgets.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
+    //TODO look into how to do this now
+//    @SubscribeEvent
+//    static void drawBlockHighlightEvent(RenderHighlightEvent.Block evt) {
+//        if (Minecraft.getInstance().player == null)
+//            return;
+//
+//        if (MiningGadget.isHolding(Minecraft.getInstance().player))
+//            evt.setCanceled(true);
+//    }
+
     @SubscribeEvent
-    static void drawBlockHighlightEvent(RenderHighlightEvent evt) {
-        if( Minecraft.getInstance().player == null )
-            return;
-
-        if(MiningGadget.isHolding(Minecraft.getInstance().player))
-            evt.setCanceled(true);
-    }
-
-    @SubscribeEvent
-    static void renderWorldLastEvent(RenderLevelStageEvent evt) {
-        if (evt.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-            return;
-        }
-
+    static void renderWorldLastEvent(RenderLevelStageEvent.AfterWeather evt) {
         List<AbstractClientPlayer> players = Minecraft.getInstance().level.players();
         Player myplayer = Minecraft.getInstance().player;
 
@@ -50,7 +50,8 @@ public class ClientEvents {
             ItemStack heldItem = MiningGadget.getGadget(player);
             if (player.isUsingItem() && heldItem.getItem() instanceof MiningGadget) {
                 if (MiningGadget.canMine(heldItem)) {
-                    RenderMiningLaser.renderLaser(evt, player, Minecraft.getInstance().getFrameTime());
+                    float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+                    RenderMiningLaser.renderLaser(evt, player, partialTick);
                 }
             }
         }

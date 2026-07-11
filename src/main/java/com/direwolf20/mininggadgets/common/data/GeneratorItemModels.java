@@ -1,40 +1,31 @@
 package com.direwolf20.mininggadgets.common.data;
 
-import com.direwolf20.mininggadgets.common.MiningGadgets;
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import com.direwolf20.mininggadgets.common.items.ModItems;
-import net.minecraft.data.PackOutput;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import com.direwolf20.mininggadgets.setup.Registration;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.model.ItemModelUtils;
+import net.minecraft.client.data.models.model.ModelLocationUtils;
+import net.minecraft.client.data.models.model.ModelTemplates;
 
-public class GeneratorItemModels extends ItemModelProvider {
-    public GeneratorItemModels(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, MiningGadgets.MOD_ID, existingFileHelper);
+public class GeneratorItemModels {
+
+    private final ItemModelGenerators generator;
+
+    public GeneratorItemModels(ItemModelGenerators generator) {
+        this.generator = generator;
     }
 
-    @Override
-    protected void registerModels() {
-        // Register all the upgrade items
-        ModItems.UPGRADE_ITEMS.getEntries().forEach(item -> {
-            String path = item.getId().getPath();
-            singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
+    public void init() {
+        Registration.UPGRADE_ITEMS.getEntries().forEach(itemDeferredHolder -> {
+            generator.generateFlatItem(itemDeferredHolder.get(), ModelTemplates.FLAT_ITEM);
         });
 
-        // Our block items
-        registerBlockModel(ModBlocks.MODIFICATION_TABLE);
-        registerBlockModel(ModBlocks.MINERS_LIGHT);
-    }
+        generator.itemModelOutput.accept(Registration.MININGGADGET.get(),
+                ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(Registration.MININGGADGET.get())));
 
-    private void registerBlockModel(RegistryObject<Block> block) {
-        String path = block.getId().getPath();
-        getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
-    }
+        generator.itemModelOutput.accept(Registration.MININGGADGET_FANCY.get(),
+                ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(Registration.MININGGADGET_FANCY.get())));
 
-    @Override
-    public String getName() {
-        return "Item Models";
+        generator.itemModelOutput.accept(Registration.MININGGADGET_SIMPLE.get(),
+                ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(Registration.MININGGADGET_SIMPLE.get())));
     }
 }

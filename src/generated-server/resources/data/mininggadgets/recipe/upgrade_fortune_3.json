@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": "minecraft:diamond",
+    "l": "minecraft:lapis_block",
+    "u": "mininggadgets:upgrade_fortune_2"
+  },
+  "pattern": [
+    "ldl",
+    "lul",
+    "ldl"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_fortune_3"
+  }
+}

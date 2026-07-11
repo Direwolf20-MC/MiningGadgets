@@ -16,8 +16,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class MinersLight extends Block {
     private static final VoxelShape SHAPE = Block.box(6.0D, 6.0D, 6.0D, 10.0D, 10.0D, 10.0D);
 
-    public MinersLight() {
-        super(Block.Properties.of().noCollission().strength(0.0f).lightLevel(e -> 14).replaceable());
+    public MinersLight(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class MinersLight extends Block {
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
 

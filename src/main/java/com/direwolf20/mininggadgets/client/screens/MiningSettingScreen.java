@@ -5,23 +5,24 @@ import com.direwolf20.mininggadgets.common.MiningGadgets;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
-import com.direwolf20.mininggadgets.common.network.PacketHandler;
-import com.direwolf20.mininggadgets.common.network.packets.*;
+import com.direwolf20.mininggadgets.common.network.data.*;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
+import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.List;
@@ -37,9 +38,9 @@ public class MiningSettingScreen extends Screen {
     private int currentSize = 1;
     private boolean isWhitelist = true;
     private boolean isPrecision = true;
-    private ForgeSlider rangeSlider;
-    private ForgeSlider volumeSlider;
-    private ForgeSlider freezeDelaySlider;
+    private ExtendedSlider rangeSlider;
+    private ExtendedSlider volumeSlider;
+    private ExtendedSlider freezeDelaySlider;
     private List<Upgrade> toggleableList = new ArrayList<>();
     private HashMap<Upgrade, ToggleButton> upgradeButtons = new HashMap<>();
     private boolean containsFreeze = false;
@@ -76,7 +77,7 @@ public class MiningSettingScreen extends Screen {
         // Remove 6 from x to center it as the padding on the right pushes off center... (I'm a ui nerd)
         int index = 0, x = baseX + 10, y = top + (containsVoid ? 45 : 20);
         for (Upgrade upgrade : toggleableList) {
-            ToggleButton btn = new ToggleButton(x + (index * 30), y, UpgradeTools.getName(upgrade), new ResourceLocation(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send));
+            ToggleButton btn = new ToggleButton(x + (index * 30), y, UpgradeTools.getName(upgrade), Identifier.fromNamespaceAndPath(MiningGadgets.MOD_ID, "textures/item/upgrade_" + upgrade.getName() + ".png"), send -> this.toggleUpgrade(upgrade, send));
             addRenderableWidget(btn);
             upgradeButtons.put(upgrade, btn);
 
@@ -92,14 +93,14 @@ public class MiningSettingScreen extends Screen {
         if( containsVoid ) {
             addRenderableWidget(
                     Button.builder(getTrans("tooltip.screen.edit_filters"), (button) -> {
-                        PacketHandler.sendToServer(new PacketOpenFilterContainer());
+                        ClientPacketDistributor.sendToServer(new OpenFilterContainerPayload());
                     }).pos(baseX + 10, top + 20).size( 95, 20).build()
             );
 
             addRenderableWidget(new WhitelistButton(baseX + 10 + (115 - 20), top + 20, 20, 20, isWhitelist, (button) -> {
                 isWhitelist = !isWhitelist;
                 ((WhitelistButton) button).setWhitelist(isWhitelist);
-                PacketHandler.sendToServer(new PacketToggleFilters());
+                ClientPacketDistributor.sendToServer(new ToggleFiltersPayload());
             }));
         }
 
@@ -115,7 +116,7 @@ public class MiningSettingScreen extends Screen {
                 currentSize += 2;
 
             button.setMessage(getTrans("tooltip.screen.size", currentSize));
-            PacketHandler.sendToServer(new PacketChangeMiningSize());
+            ClientPacketDistributor.sendToServer(new ChangeMiningSizePayload());
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         if (maxMiningRange > 3) {
@@ -123,12 +124,12 @@ public class MiningSettingScreen extends Screen {
                 currentMode = MiningProperties.nextSizeMode(gadget);
 
                 button.setMessage(currentMode.getTooltip());
-                PacketHandler.sendToServer(new PacketChangeMiningSizeMode());
+                ClientPacketDistributor.sendToServer(new ChangeMiningSizeModePayload());
             }).pos(baseX - 135, 0).size(125, 20).build());
         }
 
         ///ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
-        leftWidgets.add(rangeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), Component.empty(), 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, true) {
+        leftWidgets.add(rangeSlider = new ExtendedSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.range").append(": "), Component.empty(), 1, MiningProperties.getBeamMaxRange(gadget), this.beamRange, true) {
             @Override
             protected void applyValue() {
                 beamRange = this.getValueInt();
@@ -143,11 +144,11 @@ public class MiningSettingScreen extends Screen {
         leftWidgets.add(Button.builder(getTrans("tooltip.screen.precision_mode", isPrecision), (button) -> {
             isPrecision = !isPrecision;
             button.setMessage(getTrans("tooltip.screen.precision_mode", isPrecision));
-            PacketHandler.sendToServer(new PacketTogglePrecision());
+            ClientPacketDistributor.sendToServer(new TogglePrecisionPayload());
         }).pos(baseX - 135, 0).size(125, 20).build());
 
         // volume slider
-        leftWidgets.add(volumeSlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, volume * 100, true) {
+        leftWidgets.add(volumeSlider = new ExtendedSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.volume").append(": "), Component.literal("%"), 0, 100, volume * 100, true) {
             @Override
             protected void applyValue() {
                 volume = (float) (this.getValue() / 100D);
@@ -156,7 +157,7 @@ public class MiningSettingScreen extends Screen {
 
         // Freeze delay
         if( containsFreeze )
-            leftWidgets.add(freezeDelaySlider = new ForgeSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").append(": "), Component.literal(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), true) {
+            leftWidgets.add(freezeDelaySlider = new ExtendedSlider(baseX - 135, 0, 125, 20, getTrans("tooltip.screen.freeze_delay").append(": "), Component.literal(" ").append(getTrans("tooltip.screen.ticks")), 0, 10, MiningProperties.getFreezeDelay(gadget), true) {
                 @Override
                 protected void applyValue() {
                     freezeDelay = this.getValueInt();
@@ -179,7 +180,7 @@ public class MiningSettingScreen extends Screen {
         // When the button is clicked we toggle
         if( update ) {
             this.updateButtons(upgrade);
-            PacketHandler.sendToServer(new PacketUpdateUpgrade(upgrade.getName()));
+            ClientPacketDistributor.sendToServer(new UpdateUpgradePayload(upgrade.getName()));
         }
 
         // When we're just init the gui, we check if it's on or off.
@@ -198,17 +199,16 @@ public class MiningSettingScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
 
         int top = (height / 2) - (containsFreeze ? 80 : 60);
 
-        guiGraphics.drawString(font, getTrans("tooltip.screen.mining_gadget"), (width / 2) - 135, top, Color.WHITE.getRGB(), false);
-        guiGraphics.drawString(font, getTrans("tooltip.screen.toggle_upgrades"), (width / 2) + 10, top, Color.WHITE.getRGB(), false);
+        guiGraphics.text(font, getTrans("tooltip.screen.mining_gadget"), (width / 2) - 135, top, Color.WHITE.getRGB(), false);
+        guiGraphics.text(font, getTrans("tooltip.screen.toggle_upgrades"), (width / 2) + 10, top, Color.WHITE.getRGB(), false);
 
         if(toggleableList.size() == 0 )
-            guiGraphics.drawString(font, getTrans("tooltip.screen.no_upgrades"), (width / 2) + 10, top + 20, Color.GRAY.getRGB(), false);
+            guiGraphics.text(font, getTrans("tooltip.screen.no_upgrades"), (width / 2) + 10, top + 20, Color.GRAY.getRGB(), false);
 
         this.children().forEach(e -> {
             if( !(e instanceof ToggleButton) && !(e instanceof WhitelistButton) && !e.equals(freezeDelaySlider) )
@@ -216,20 +216,23 @@ public class MiningSettingScreen extends Screen {
 
             if( e instanceof WhitelistButton ) {
                 if( e.isMouseOver(mouseX, mouseY) )
-                    guiGraphics.renderTooltip(font, isWhitelist ? getTrans("tooltip.screen.whitelist") : getTrans("tooltip.screen.blacklist"), mouseX, mouseY);
+                    guiGraphics.setComponentTooltipForNextFrame(font, isWhitelist ? List.of(getTrans("tooltip.screen.whitelist")) : List.of(getTrans("tooltip.screen.blacklist")), mouseX, mouseY);
             } else if( e.equals(freezeDelaySlider) ) {
                 if( e.isMouseOver(mouseX, mouseY) ) {
-                    assert e instanceof ForgeSlider;
+                    assert e instanceof ExtendedSlider;
 
                     // This is a bit silly, not going to lie
-                    List<FormattedText> helpText = Arrays.stream(getTrans("tooltip.screen.delay_explain").getString().split("\n")).map(Component::literal).collect(Collectors.toList());
-                    guiGraphics.renderTooltip(font, Language.getInstance().getVisualOrder(helpText), ((ForgeSlider)e).getX() - 8, ((ForgeSlider)e).getY() + 40);
+                    List<Component> helpText = Arrays.stream(
+                            getTrans("tooltip.screen.delay_explain").getString().split("\n")
+                    ).<Component>map(Component::literal).toList();
+                    guiGraphics.setComponentTooltipForNextFrame(font, helpText, ((ExtendedSlider) e).getX() - 8, ((ExtendedSlider) e).getY() + 40);
                 }
             } else {
                 assert e instanceof ToggleButton;
                 ToggleButton btn = ((ToggleButton) e);
-                if (btn.isMouseOver(mouseX, mouseY))
-                    guiGraphics.renderTooltip(font, btn.getOurTooltip(), DefaultTooltipPositioner.INSTANCE,  mouseX, mouseY);
+                if (btn.isMouseOver(mouseX, mouseY)) {
+                        guiGraphics.setComponentTooltipForNextFrame(font, btn.getOurTooltip(),  mouseX, mouseY);
+                }
             }
         });
     }
@@ -241,23 +244,23 @@ public class MiningSettingScreen extends Screen {
 
     @Override
     public void removed() {
-        PacketHandler.sendToServer(new PacketChangeRange(this.beamRange));
-        PacketHandler.sendToServer(new PacketChangeVolume(this.volume));
-        PacketHandler.sendToServer(new PacketChangeFreezeDelay(this.freezeDelay));
+        ClientPacketDistributor.sendToServer(new ChangeRangePayload(this.beamRange));
+        ClientPacketDistributor.sendToServer(new ChangeVolumePayload(this.volume));
+        ClientPacketDistributor.sendToServer(new ChangeFreezeDelayPayload(this.freezeDelay));
 
         super.removed();
     }
 
     @Override
-    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
-        InputConstants.Key mouseKey = InputConstants.getKey(p_keyPressed_1_, p_keyPressed_2_);
-        if (p_keyPressed_1_ == 256 || minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
+    public boolean keyPressed(@NonNull KeyEvent event) {
+        InputConstants.Key mouseKey = InputConstants.getKey(event);
+        if (event.key() == 256 || minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
             onClose();
 
             return true;
         }
 
-        return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+        return super.keyPressed(event);
     }
 
     private static MutableComponent getTrans(String key, Object... args) {
@@ -265,16 +268,16 @@ public class MiningSettingScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if( rangeSlider.isMouseOver(mouseX, mouseY) ) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta, double deltaY) {
+        if (rangeSlider.isMouseOver(mouseX, mouseY)) {
             rangeSlider.setValue(rangeSlider.getValueInt() + (delta > 0 ? 1 : -1));
             beamRange = rangeSlider.getValueInt();
         }
-        if( freezeDelaySlider != null && freezeDelaySlider.isMouseOver(mouseX, mouseY) ) {
+        if (freezeDelaySlider != null && freezeDelaySlider.isMouseOver(mouseX, mouseY)) {
             freezeDelaySlider.setValue(freezeDelaySlider.getValueInt() + (delta > 0 ? 1 : -1));
             freezeDelay = freezeDelaySlider.getValueInt();
         }
-        if( volumeSlider.isMouseOver(mouseX, mouseY) ) {
+        if (volumeSlider.isMouseOver(mouseX, mouseY)) {
             volumeSlider.setValue(volumeSlider.getValueInt() + (delta > 0 ? 1 : -1));
             volume = volumeSlider.getValueInt();
         }
@@ -291,7 +294,7 @@ public class MiningSettingScreen extends Screen {
         }
 
         @Override
-        public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
 //            guiGraphics.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, 0xFFa8a8a8);
             guiGraphics.fill(this.getX() + 2, this.getY() + 2, this.getX() + this.width - 2, this.getY() + this.height - 2, this.isWhitelist ? 0xFFFFFFFF : 0xFF000000);
         }

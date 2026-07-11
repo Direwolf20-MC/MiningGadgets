@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": "minecraft:diamond_block",
+    "e": "#c:ender_pearls",
+    "p": "minecraft:diamond_pickaxe",
+    "r": "minecraft:redstone_block",
+    "u": "mininggadgets:upgrade_empty"
+  },
+  "pattern": [
+    "rdr",
+    "eue",
+    "rpr"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_size_1"
+  }
+}

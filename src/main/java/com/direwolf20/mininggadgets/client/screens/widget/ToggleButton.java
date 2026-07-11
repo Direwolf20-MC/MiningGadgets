@@ -1,14 +1,15 @@
 package com.direwolf20.mininggadgets.client.screens.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.awt.*;
@@ -19,9 +20,9 @@ import java.util.function.Predicate;
 public class ToggleButton extends AbstractWidget {
     private Predicate<Boolean> onPress;
     private boolean enabled;
-    private ResourceLocation texture;
+    private Identifier texture;
 
-    public ToggleButton(int xIn, int yIn, Component msg, ResourceLocation texture, Predicate<Boolean> onPress) {
+    public ToggleButton(int xIn, int yIn, Component msg, Identifier texture, Predicate<Boolean> onPress) {
         super(xIn, yIn, 21, 26, msg);
 
         this.onPress = onPress;
@@ -31,21 +32,24 @@ public class ToggleButton extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         Color activeColor = this.enabled ? Color.GREEN : Color.RED;
 
         guiGraphics.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, ((this.enabled ? 0x68000000 : 0x9B000000)) + activeColor.getRGB());
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        guiGraphics.blit(texture, this.getX() +2, this.getY() + 5, 0, 0, 16, 16, 16, 16);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, this.getX() +2, this.getY() + 5, 0, 0, 16, 16, 16, 16);
     }
 
-    public List<FormattedCharSequence> getOurTooltip() {
-        return Language.getInstance().getVisualOrder(Arrays.asList(this.getMessage(), Component.literal("Enabled: " + this.enabled).withStyle(this.enabled ? ChatFormatting.GREEN : ChatFormatting.RED)));
+    public List<Component> getOurTooltip() {
+        return List.of(
+                this.getMessage(),
+                Component.literal("Enabled: " + this.enabled)
+                        .withStyle(this.enabled ? ChatFormatting.GREEN : ChatFormatting.RED)
+        );
     }
 
     @Override
-    public void onClick(double p_onClick_1_, double p_onClick_3_) {
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
         this.enabled = !this.enabled;
         this.onPress.test(true);
     }

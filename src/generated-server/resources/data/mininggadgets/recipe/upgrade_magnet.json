@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": "#c:ingots/gold",
+    "i": "#c:ingots/iron",
+    "r": "#c:dusts/redstone",
+    "u": "mininggadgets:upgrade_empty"
+  },
+  "pattern": [
+    "rgr",
+    "iui",
+    "rgr"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_magnet"
+  }
+}

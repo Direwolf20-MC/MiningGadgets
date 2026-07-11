@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "r": "#c:dusts/redstone",
+    "u": "mininggadgets:upgrade_empty"
+  },
+  "pattern": [
+    "rrr",
+    "rur",
+    "rrr"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_efficiency_1"
+  }
+}

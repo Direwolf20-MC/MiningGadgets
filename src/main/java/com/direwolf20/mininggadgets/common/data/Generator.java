@@ -1,28 +1,37 @@
 package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 
-@Mod.EventBusSubscriber(modid = MiningGadgets.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+import java.util.Collections;
+import java.util.List;
+
+
+@EventBusSubscriber(modid = MiningGadgets.MOD_ID)
 public class Generator {
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
-        var includeServer = event.includeServer();
-        var includeClient = event.includeClient();
-        var generator = event.getGenerator();
-        var helper = event.getExistingFileHelper();
-        var packOutput = event.getGenerator().getPackOutput();
+    public static void gatherDataClient(GatherDataEvent.Client event) {
+        DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = generator.getPackOutput();
 
         // Client
-        generator.addProvider(includeClient, new GeneratorLanguage(packOutput));
-        generator.addProvider(includeClient, new GeneratorItemModels(packOutput, helper));
+        generator.addProvider(true, new GeneratorLanguage(packOutput));
+        generator.addProvider(true, new GeneratorModels(packOutput));
+    }
 
-        // Server
-        generator.addProvider(includeServer, new GeneratorLoot(packOutput));
-        generator.addProvider(includeServer, new GeneratorRecipes(packOutput));
-        generator.addProvider(includeServer, new GeneratorBlockTags(packOutput, event.getLookupProvider(), generator, helper));
-        generator.addProvider(includeServer, new GeneratorBlockStates(packOutput, helper));
+    @SubscribeEvent
+    public static void gatherDataServer(GatherDataEvent.Server event) {
+        DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = generator.getPackOutput();
+
+        generator.addProvider(true, new LootTableProvider(packOutput, Collections.emptySet(), List.of(new LootTableProvider.SubProviderEntry(GeneratorLoot::new, LootContextParamSets.BLOCK)), event.getLookupProvider()));
+        generator.addProvider(true, new GeneratorRecipes.Runner(packOutput, event.getLookupProvider()));
+        generator.addProvider(true, new GeneratorBlockTags(packOutput, event.getLookupProvider()));
     }
 }

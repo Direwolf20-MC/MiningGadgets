@@ -1,10 +1,11 @@
 package com.direwolf20.mininggadgets.common.items.upgrade;
 
-import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import com.direwolf20.mininggadgets.common.items.ModItems;
+import com.direwolf20.mininggadgets.common.items.UpgradeCard;
+import com.direwolf20.mininggadgets.setup.Config;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.function.Supplier;
 
@@ -23,48 +24,48 @@ import java.util.function.Supplier;
  */
 public enum Upgrade {
     //Blank
-    EMPTY("empty", ModItems.UPGRADE_EMPTY, () -> 0, false),
+    EMPTY("empty", Registration.UPGRADE_EMPTY, () -> 0, false),
 
-    SILK("silk", ModItems.SILK, () -> Config.UPGRADECOST_SILKTOUCH.get(), true),
-    VOID_JUNK("void_junk", ModItems.VOID_JUNK, () -> Config.UPGRADECOST_VOID.get()),
-    MAGNET("magnet", ModItems.MAGNET, () -> Config.UPGRADECOST_MAGNET.get()),
-    FREEZING("freezing", ModItems.FREEZING, () -> 0), // applied at operation based on config. this isn't ideal
-    LIGHT_PLACER("light_placer", ModItems.LIGHT_PLACER, () -> 0), // applied at operation based on config. this isn't ideal
+    SILK("silk", Registration.SILK, () -> Config.UPGRADECOST_SILKTOUCH.get(), true),
+    VOID_JUNK("void_junk", Registration.VOID_JUNK, () -> Config.UPGRADECOST_VOID.get()),
+    MAGNET("magnet", Registration.MAGNET, () -> Config.UPGRADECOST_MAGNET.get()),
+    FREEZING("freezing", Registration.FREEZING, () -> 0), // applied at operation based on config. this isn't ideal
+    LIGHT_PLACER("light_placer", Registration.LIGHT_PLACER, () -> 0), // applied at operation based on config. this isn't ideal
 
     // Tiered
-    SIZE_1("size_1", ModItems.SIZE_1, 1, () -> 0), // 3x3
-    SIZE_2("size_2", ModItems.SIZE_2, 2, () -> 0), // 5x5
-    SIZE_3("size_3", ModItems.SIZE_3, 3, () -> 0), // 7x7
+    SIZE_1("size_1", Registration.SIZE_1, 1, () -> 0), // 3x3
+    SIZE_2("size_2", Registration.SIZE_2, 2, () -> 0), // 5x5
+    SIZE_3("size_3", Registration.SIZE_3, 3, () -> 0), // 7x7
 
-    FORTUNE_1("fortune_1", ModItems.FORTUNE_1, 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
-    FORTUNE_2("fortune_2", ModItems.FORTUNE_2, 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),
-    FORTUNE_3("fortune_3", ModItems.FORTUNE_3, 3, () -> Config.UPGRADECOST_FORTUNE3.get(), true),
+    FORTUNE_1("fortune_1", Registration.FORTUNE_1, 1, () -> Config.UPGRADECOST_FORTUNE1.get(), true),
+    FORTUNE_2("fortune_2", Registration.FORTUNE_2, 2, () -> Config.UPGRADECOST_FORTUNE2.get(), true),
+    FORTUNE_3("fortune_3", Registration.FORTUNE_3, 3, () -> Config.UPGRADECOST_FORTUNE3.get(), true),
 
-    BATTERY_1("battery_1", ModItems.BATTERY_1, 1, () -> 0),
-    BATTERY_2("battery_2", ModItems.BATTERY_2, 2, () -> 0),
-    BATTERY_3("battery_3", ModItems.BATTERY_3, 3, () -> 0),
-    BATTERY_CREATIVE("battery_creative", ModItems.BATTERY_CREATIVE, 4, () -> 0),
+    BATTERY_1("battery_1", Registration.BATTERY_1, 1, () -> 0),
+    BATTERY_2("battery_2", Registration.BATTERY_2, 2, () -> 0),
+    BATTERY_3("battery_3", Registration.BATTERY_3, 3, () -> 0),
+    BATTERY_CREATIVE("battery_creative", Registration.BATTERY_CREATIVE, 4, () -> 0),
 
-    RANGE_1("range_1", ModItems.RANGE_1, 1, () -> 0),
-    RANGE_2("range_2", ModItems.RANGE_2, 2, () -> 0),
-    RANGE_3("range_3", ModItems.RANGE_3, 3, () -> 0),
+    RANGE_1("range_1", Registration.RANGE_1, 1, () -> 0),
+    RANGE_2("range_2", Registration.RANGE_2, 2, () -> 0),
+    RANGE_3("range_3", Registration.RANGE_3, 3, () -> 0),
 
-    EFFICIENCY_1("efficiency_1", ModItems.EFFICIENCY_1, 1, () -> Config.UPGRADECOST_EFFICIENCY1.get(), true),
-    EFFICIENCY_2("efficiency_2", ModItems.EFFICIENCY_2, 2, () -> Config.UPGRADECOST_EFFICIENCY2.get(), true),
-    EFFICIENCY_3("efficiency_3", ModItems.EFFICIENCY_3, 3, () -> Config.UPGRADECOST_EFFICIENCY3.get(), true),
-    EFFICIENCY_4("efficiency_4", ModItems.EFFICIENCY_4, 4, () -> Config.UPGRADECOST_EFFICIENCY4.get(), true),
-    EFFICIENCY_5("efficiency_5", ModItems.EFFICIENCY_5, 5, () -> Config.UPGRADECOST_EFFICIENCY5.get(), true);
+    EFFICIENCY_1("efficiency_1", Registration.EFFICIENCY_1, 1, () -> Config.UPGRADECOST_EFFICIENCY1.get(), true),
+    EFFICIENCY_2("efficiency_2", Registration.EFFICIENCY_2, 2, () -> Config.UPGRADECOST_EFFICIENCY2.get(), true),
+    EFFICIENCY_3("efficiency_3", Registration.EFFICIENCY_3, 3, () -> Config.UPGRADECOST_EFFICIENCY3.get(), true),
+    EFFICIENCY_4("efficiency_4", Registration.EFFICIENCY_4, 4, () -> Config.UPGRADECOST_EFFICIENCY4.get(), true),
+    EFFICIENCY_5("efficiency_5", Registration.EFFICIENCY_5, 5, () -> Config.UPGRADECOST_EFFICIENCY5.get(), true);
 
     private final String name;
     private final String baseName;
-    private final RegistryObject<Item> card;
+    private final DeferredHolder<Item, UpgradeCard> card;
     private final int tier;
     private final Supplier<Integer> costPerBlock;
     private boolean active = true;
     private final boolean isToggleable;
     private final String toolTip;
 
-    Upgrade(String name, RegistryObject<Item> itemCard, int tier, Supplier<Integer> costPerBlock, boolean isToggleable) {
+    Upgrade(String name, DeferredHolder<Item, UpgradeCard> itemCard, int tier, Supplier<Integer> costPerBlock, boolean isToggleable) {
         this.name = name;
         this.tier = tier;
         this.costPerBlock = costPerBlock;
@@ -74,15 +75,15 @@ public enum Upgrade {
         this.toolTip = "tooltop.mininggadgets." + this.baseName;
     }
 
-    Upgrade(String name, RegistryObject<Item> itemCard, int tier, Supplier<Integer> costPerBlock) {
+    Upgrade(String name, DeferredHolder<Item, UpgradeCard> itemCard, int tier, Supplier<Integer> costPerBlock) {
         this(name, itemCard, tier, costPerBlock, false);
     }
 
-    Upgrade(String name, RegistryObject<Item> itemCard, Supplier<Integer> costPerBlock) {
+    Upgrade(String name, DeferredHolder<Item, UpgradeCard> itemCard, Supplier<Integer> costPerBlock) {
         this(name, itemCard, -1, costPerBlock, true);
     }
 
-    Upgrade(String name, RegistryObject<Item> itemCard, Supplier<Integer> costPerBlock, boolean isToggleable) {
+    Upgrade(String name, DeferredHolder<Item, UpgradeCard> itemCard, Supplier<Integer> costPerBlock, boolean isToggleable) {
         this(name, itemCard, -1, costPerBlock, isToggleable);
     }
 
@@ -90,7 +91,7 @@ public enum Upgrade {
         return name;
     }
 
-    public RegistryObject<Item> getCardItem() {
+    public DeferredHolder<Item, UpgradeCard> getCardItem() {
         return card;
     }
 

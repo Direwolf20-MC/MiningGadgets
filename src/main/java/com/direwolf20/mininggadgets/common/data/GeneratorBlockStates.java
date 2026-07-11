@@ -1,39 +1,40 @@
 package com.direwolf20.mininggadgets.common.data;
 
 import com.direwolf20.mininggadgets.common.MiningGadgets;
-import com.direwolf20.mininggadgets.common.blocks.ModBlocks;
-import net.minecraft.data.PackOutput;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import com.direwolf20.mininggadgets.setup.Registration;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.resources.Identifier;
 
-public class GeneratorBlockStates extends BlockStateProvider {
-    public GeneratorBlockStates(PackOutput output, ExistingFileHelper exFileHelper) {
-        super(output, MiningGadgets.MOD_ID, exFileHelper);
+public class GeneratorBlockStates {
+
+    private final BlockModelGenerators blockModelGenerators;
+
+    public GeneratorBlockStates(BlockModelGenerators blockModelGenerators) {
+        this.blockModelGenerators = blockModelGenerators;
     }
 
-    @Override
-    protected void registerStatesAndModels() {
-//        horizontalBlock(ModBlocks.MODIFICATION_TABLE.get(), models().orientableWithBottom(
-//                Objects.requireNonNull(ModBlocks.MODIFICATION_TABLE.get().getRegistryName()).getPath(),
-//                modLoc("block/modificationtable_side"),
-//                modLoc("block/modificationtable_front"),
-//                modLoc("block/modificationtable_bottom"),
-//                modLoc("block/modificationtable_top")
-//        ).texture("particle", modLoc("block/modificationtable_side")));
+    public void init() {
+        blockModelGenerators.createTrivialCube(Registration.MINERS_LIGHT.get());
+        blockModelGenerators.createTrivialCube(Registration.RENDER_BLOCK.get());
 
-        horizontalBlock(ModBlocks.MODIFICATION_TABLE.get(), new ModelFile.UncheckedModelFile(modLoc("block/modificationtable")));
+        Identifier table = Identifier.fromNamespaceAndPath(MiningGadgets.MOD_ID, "block/modificationtable");
 
-        // Render block
-        buildCubeAll(ModBlocks.RENDER_BLOCK.get());
-        buildCubeAll(ModBlocks.MINERS_LIGHT.get());
-    }
-
-    private void buildCubeAll(Block block) {
-        getVariantBuilder(block).forAllStates(state ->
-                ConfiguredModel.builder().modelFile(cubeAll(block)).build()
+        MultiVariant templateManagerVariant = BlockModelGenerators.plainVariant(table);
+        blockModelGenerators.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(Registration.MODIFICATION_TABLE.get(), templateManagerVariant)
+                        .with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING)
         );
+
+//        Identifier table = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
+//                Registration.MODIFICATION_TABLE.get(),
+//                TextureMapping.orientableCube(Registration.MODIFICATION_TABLE.get()),
+//                blockModelGenerators.modelOutput);
+//
+//        MultiVariant templateManagerVariant = BlockModelGenerators.plainVariant(table);
+//        blockModelGenerators.blockStateOutput.accept(MultiVariantGenerator.dispatch(Registration.MODIFICATION_TABLE.get(), templateManagerVariant).with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING));
     }
 }

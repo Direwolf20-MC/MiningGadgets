@@ -1,15 +1,16 @@
 package com.direwolf20.mininggadgets.common.tiles;
 
 import com.direwolf20.mininggadgets.client.particles.laserparticle.LaserParticleData;
-import com.direwolf20.mininggadgets.common.Config;
 import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
-import com.direwolf20.mininggadgets.common.items.ModItems;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
+import com.direwolf20.mininggadgets.setup.Config;
+import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -18,10 +19,11 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -31,16 +33,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.level.BlockEvent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 import java.util.*;
-
-import static com.direwolf20.mininggadgets.common.blocks.ModBlocks.RENDERBLOCK_TILE;
 
 public class RenderBlockTileEntity extends BlockEntity {
     private final Random rand = new Random();
@@ -52,7 +54,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     private UUID playerUUID;
     private int originalDurability;
     private int ticksSinceMine = 0;
-    private List<Upgrade> gadgetUpgrades;
+    private List<Upgrade> gadgetUpgrades = new ArrayList<>();
     private List<ItemStack> gadgetFilters;
     private boolean gadgetIsWhitelist;
     private boolean packetReceived = false;
@@ -61,7 +63,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     private boolean blockAllowed;
 
     public RenderBlockTileEntity(BlockPos pos, BlockState state) {
-        super(RENDERBLOCK_TILE.get(), pos, state);
+        super(com.direwolf20.mininggadgets.setup.Registration.RENDERBLOCK_TILE.get(), pos, state);
     }
 
     public static boolean blockAllowed(List<ItemStack> drops, List<ItemStack> filters, boolean isWhiteList) {
@@ -103,7 +105,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             entity.spawnParticle();
         }
         //Client only
-        if (entity.level.isClientSide) {
+        if (entity.level.isClientSide()) {
             //Update ticks since last mine on client side for particle renders
             if (entity.playerUUID != null) {
                 if (entity.getPlayer() != null && !entity.getPlayer().isUsingItem()) {
@@ -129,7 +131,7 @@ public class RenderBlockTileEntity extends BlockEntity {
 
         }
         //Server Only
-        if (!entity.level.isClientSide) {
+        if (!entity.level.isClientSide()) {
             if (entity.ticksSinceMine == 1) {
                 //Immediately after player stops mining, stability the shrinking effects and notify players
                 entity.priorDurability = entity.durability;
@@ -150,6 +152,8 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     public BlockState getRenderBlock() {
+        if (this.renderBlock == null)
+            return Blocks.COBBLESTONE.defaultBlockState();
         return this.renderBlock;
     }
 
@@ -183,7 +187,7 @@ public class RenderBlockTileEntity extends BlockEntity {
                 this.freeze(stack);
             }
         }
-        if (!(this.level.isClientSide)) {
+        if (!(this.level.isClientSide())) {
             this.setChanged();
             ServerTickHandler.addToList(this.worldPosition, this.durability, this.level);
             //PacketHandler.sendToAll(new PacketDurabilitySync(pos, dur), world);
@@ -193,7 +197,9 @@ public class RenderBlockTileEntity extends BlockEntity {
 
     private void freeze(ItemStack stack) {
         int freezeCost = Config.UPGRADECOST_FREEZE.get() * -1;
-        int energy = stack.getCapability(ForgeCapabilities.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+        var cap = stack.getCapability(Capabilities.Energy.ITEM,  null);
+        if (cap == null) return;
+        int energy = cap.getAmountAsInt();
 
         if (energy == 0) {
             return;
@@ -217,8 +223,10 @@ public class RenderBlockTileEntity extends BlockEntity {
         if (remainingEnergy < costOfOperation) {
             return 0;
         }
-
-        stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(costOfOperation, false));
+        var cap = stack.getCapability(Capabilities.Energy.ITEM, null);
+        if (cap == null) return 0;
+        //TODO
+//        cap.receiveEnergy(costOfOperation, false);
 
         // If the block is just water logged, remove the fluid
         BlockState blockState = world.getBlockState(pos);
@@ -239,6 +247,8 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     public void spawnParticle() {
+        if (this.renderBlock == null || this.renderBlock.isAir())
+            return;
         if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET) && this.originalDurability > 0) {
             int PartCount = 20 / this.originalDurability;
             if (PartCount <= 1) {
@@ -345,20 +355,21 @@ public class RenderBlockTileEntity extends BlockEntity {
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        this.load(tag);
+    public void handleUpdateTag(ValueInput input)
+    {
+        this.loadCustomOnly(input);
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = new CompoundTag();
-        saveAdditional(tag);
-        return tag;
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries)
+    {
+        return saveCustomOnly(registries);
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        this.load(pkt.getTag());
+    public void onDataPacket(Connection net, ValueInput valueInput)
+    {
+        super.onDataPacket(net, valueInput);
     }
 
     public void markDirtyClient() {
@@ -369,46 +380,52 @@ public class RenderBlockTileEntity extends BlockEntity {
         }
     }
 
+    //TODO
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        this.renderBlock = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), tag.getCompound("renderBlock"));
-        this.originalDurability = tag.getInt("originalDurability");
-        this.priorDurability = tag.getInt("priorDurability");
-        this.durability = tag.getInt("durability");
-        this.ticksSinceMine = tag.getInt("ticksSinceMine");
-        if (tag.contains("playerUUID")) {
-            this.playerUUID = tag.getUUID("playerUUID");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.renderBlock = input.read("renderBlock", BlockState.CODEC).orElse(null);
+        this.originalDurability = input.getInt("originalDurability").orElse(0);
+        this.priorDurability = input.getInt("priorDurability").orElse(0);
+        this.durability = input.getInt("durability").orElse(0);
+        this.ticksSinceMine = input.getInt("ticksSinceMine").orElse(0);
+        String id = input.getString("playerUUID").orElse(null);
+        if (id != null) {
+            this.playerUUID = UUID.fromString(id);
         }
-        this.gadgetUpgrades = UpgradeTools.getUpgradesFromTag(tag);
-        this.breakType = MiningProperties.BreakTypes.values()[tag.getByte("breakType")];
-        this.gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"));
-        this.gadgetIsWhitelist = tag.getBoolean("gadgetIsWhitelist");
-        this.blockAllowed = tag.getBoolean("blockAllowed");
+        this.gadgetUpgrades = UpgradeTools.getUpgradesFromTag(Objects.requireNonNull(input.read("upgrades", CompoundTag.CODEC).orElse(null)));
+        this.breakType = MiningProperties.BreakTypes.values()[input.getByteOr("breakType", (byte) 0)];
+        //TODO
+//        this.gadgetFilters = MiningProperties.deserializeItemStackList(tag.getCompound("gadgetFilters"), provider);
+        this.gadgetIsWhitelist = input.getBooleanOr("gadgetIsWhitelist", false);
+        this.blockAllowed = input.getBooleanOr("blockAllowed", false);
     }
 
+
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(ValueOutput output)
+    {
+        super.saveAdditional(output);
         if (this.renderBlock != null) {
-            tag.put("renderBlock", NbtUtils.writeBlockState(this.renderBlock));
+            output.store("renderBlock", BlockState.CODEC, this.renderBlock);
         }
-        tag.putInt("originalDurability", this.originalDurability);
-        tag.putInt("priorDurability", this.priorDurability);
-        tag.putInt("durability", this.durability);
-        tag.putInt("ticksSinceMine", this.ticksSinceMine);
+        output.putInt("originalDurability", this.originalDurability);
+        output.putInt("priorDurability", this.priorDurability);
+        output.putInt("durability", this.durability);
+        output.putInt("ticksSinceMine", this.ticksSinceMine);
         if (this.playerUUID != null) {
-            tag.putUUID("playerUUID", this.playerUUID);
+            output.putString("playerUUID", this.playerUUID.toString());
         }
-        tag.put("upgrades", UpgradeTools.setUpgradesNBT(this.gadgetUpgrades).getList("upgrades", Tag.TAG_COMPOUND));
-        tag.putByte("breakType", (byte) this.breakType.ordinal());
-        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(this.getGadgetFilters()));
-        tag.putBoolean("gadgetIsWhitelist", this.isGadgetIsWhitelist());
-        tag.putBoolean("blockAllowed", this.blockAllowed);
+        output.store("upgrades", CompoundTag.CODEC, UpgradeTools.setUpgradesNBT(this.gadgetUpgrades));
+        output.putByte("breakType", (byte) this.breakType.ordinal());
+        //TODO
+//        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(this.getGadgetFilters(), provider));
+        output.putBoolean("gadgetIsWhitelist", this.isGadgetIsWhitelist());
+        output.putBoolean("blockAllowed", this.blockAllowed);
     }
 
     private void removeBlock() {
-        if (this.level == null || this.level.isClientSide || this.playerUUID == null) {
+        if (this.level == null || this.level.isClientSide() || this.playerUUID == null) {
             return;
         }
 
@@ -420,11 +437,12 @@ public class RenderBlockTileEntity extends BlockEntity {
         int silk = 0;
         int fortune = 0;
 
-        ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
+        ItemStack tempTool = new ItemStack(com.direwolf20.mininggadgets.setup.Registration.MININGGADGET.get());
 
         // If silk is in the upgrades, apply it without a tier.
         if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
-            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
+            HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            tempTool.enchant(registrylookup.getOrThrow(Enchantments.SILK_TOUCH), 1);
             silk = 1;
         }
 
@@ -433,13 +451,14 @@ public class RenderBlockTileEntity extends BlockEntity {
             Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
-                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
+                HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+                tempTool.enchant(registrylookup.getOrThrow(Enchantments.FORTUNE), fortune);
             }
         }
 
         // Fire an event for other mods that we've just broken the block
-        BlockEvent.BreakEvent breakEvent = fixForgeEventBreakBlock(this.renderBlock, player, level, worldPosition, tempTool);
-        MinecraftForge.EVENT_BUS.post(breakEvent);
+        BreakBlockEvent breakEvent = fixForgeEventBreakBlock(this.renderBlock, player, level, worldPosition, tempTool);
+        NeoForge.EVENT_BUS.post(breakEvent);
         // Someone cancelled out break event
         if (breakEvent.isCanceled()) {
             return;
@@ -449,16 +468,13 @@ public class RenderBlockTileEntity extends BlockEntity {
         List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
 
         if (this.blockAllowed) {
-            int exp = this.renderBlock.getExpDrop(this.level, this.level.random, this.worldPosition, fortune, silk);
+            int exp = this.renderBlock.getExpDrop(this.level, this.worldPosition, null, player, tempTool);
             boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
                 if (drop != null) {
                     if (magnetMode) {
-                        int wasPickedUp = ForgeEventFactory.onItemPickup(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
-                        // 1  = someone allowed the event meaning it's handled,
-                        // -1 = someone blocked the event and thus we shouldn't drop it nor insert it
-                        // 0  = no body captured the event and we should handle it by hand.
-                        if (wasPickedUp == 0) {
+                        ItemEntityPickupEvent.Pre wasPickedUp = EventHooks.fireItemPickupPre(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
+                        if (wasPickedUp.canPickup() == TriState.DEFAULT) {
                             if (!player.addItem(drop)) {
                                 Block.popResource(this.level, this.worldPosition, drop);
                             }
@@ -500,15 +516,10 @@ public class RenderBlockTileEntity extends BlockEntity {
         }
     }
 
-    private static BlockEvent.BreakEvent fixForgeEventBreakBlock(BlockState state, Player player, Level world, BlockPos pos, ItemStack tool) {
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
-        // Handle empty block or player unable to break block scenario
-        if (state != null && ForgeHooks.isCorrectToolForDrops(state, player)) {
-            int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
-            int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
-            event.setExpToDrop(state.getExpDrop(world, world.random, pos, bonusLevel, silklevel));
-        }
 
+
+    private static BreakBlockEvent fixForgeEventBreakBlock(BlockState state, Player player, Level world, BlockPos pos, ItemStack tool) {
+        BreakBlockEvent event = new BreakBlockEvent(world, pos, state, player);
         return event;
     }
 
@@ -517,7 +528,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             return;
         }
 
-        if (!this.level.isClientSide) {
+        if (!this.level.isClientSide()) {
             this.level.setBlockAndUpdate(this.worldPosition, Objects.requireNonNullElseGet(this.renderBlock, Blocks.AIR::defaultBlockState));
         }
     }
@@ -534,11 +545,12 @@ public class RenderBlockTileEntity extends BlockEntity {
         int silk = 0;
         int fortune = 0;
 
-        ItemStack tempTool = new ItemStack(ModItems.MININGGADGET.get());
+        ItemStack tempTool = new ItemStack(com.direwolf20.mininggadgets.setup.Registration.MININGGADGET.get());
 
         // If silk is in the upgrades, apply it without a tier.
         if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
-            tempTool.enchant(Enchantments.SILK_TOUCH, 1);
+            HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            tempTool.enchant(registrylookup.getOrThrow(Enchantments.SILK_TOUCH), 1);
             silk = 1;
         }
 
@@ -547,7 +559,8 @@ public class RenderBlockTileEntity extends BlockEntity {
             Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
             if (upgrade.isPresent()) {
                 fortune = upgrade.get().getTier();
-                tempTool.enchant(Enchantments.BLOCK_FORTUNE, fortune);
+                HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+                tempTool.enchant(registrylookup.getOrThrow(Enchantments.FORTUNE), fortune);
             }
         }
 

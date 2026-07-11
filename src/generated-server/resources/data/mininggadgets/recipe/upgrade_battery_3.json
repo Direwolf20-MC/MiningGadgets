@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": "minecraft:quartz_block",
+    "g": "#c:ingots/gold",
+    "q": "minecraft:quartz",
+    "u": "mininggadgets:upgrade_battery_2"
+  },
+  "pattern": [
+    "bqb",
+    "gug",
+    "bqb"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_battery_3"
+  }
+}

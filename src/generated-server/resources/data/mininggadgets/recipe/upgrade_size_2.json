@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": "minecraft:diamond_block",
+    "e": "#c:ender_pearls",
+    "n": "minecraft:netherite_block",
+    "p": "minecraft:netherite_pickaxe",
+    "u": "mininggadgets:upgrade_size_1"
+  },
+  "pattern": [
+    "ene",
+    "dud",
+    "epe"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_size_2"
+  }
+}

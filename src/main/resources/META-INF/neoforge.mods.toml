@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+issueTrackerURL="https://github.com/Direwolf20-MC/MiningGadgets"
+license="MIT (https://github.com/Direwolf20-MC/MiningGadgets/blob/master/LICENSE.txt)"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+updateJSONURL="https://raw.githubusercontent.com/Direwolf20-MC/MiningGadgets/master/update.json"
+displayURL="https://github.com/Direwolf20-MC/MiningGadgets/"
+logoFile="mininggadgets-logo.png"
+credits="Direwolf20, ErrorMikey, CPW and the entire neoforge team."
+authors="Direwolf20, ErrorMikey"
+description='''Mining is better with lasers.'''
+
+#forge
+[[dependencies.mininggadgets]]
+    modId="neoforge" #mandatory
+    type="required" #mandatory
+    versionRange="${neo_version_range}" #mandatory
+    ordering="NONE"
+    side="BOTH"
+
+#minecraft
+[[dependencies.mininggadgets]]
+    modId="minecraft"
+    type="required"
+    # This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"

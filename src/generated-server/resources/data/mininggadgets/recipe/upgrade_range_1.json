@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": "minecraft:diamond",
+    "g": "minecraft:glass",
+    "l": "minecraft:lapis_lazuli",
+    "u": "mininggadgets:upgrade_empty"
+  },
+  "pattern": [
+    "lgl",
+    "dud",
+    "lgl"
+  ],
+  "result": {
+    "id": "mininggadgets:upgrade_range_1"
+  }
+}
