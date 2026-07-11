@@ -26,17 +26,15 @@ You can check out our [CHANGELOG](CHANGELOG.md) to see what's been changing with
 
 ## How to:
 ### Charge the Gadget
-To charge the gadget use the Charging Station from [Building Gadgets](https://www.curseforge.com/minecraft/mc-mods/building-gadgets) if you're playing in `1.14.4` otherwise, you'll need to go and grab a mod like RFTools to charge up the gadget. We're working on a new mod called `Charging Gadgets` for all your charging needs but it's not out just yet.. Sorry.
+
+You can use any FE (Forge Energy) charger from various mods like Thermal Expansion, EnderIO, AE2, Mekanism, etc. Otherwise, you can use our own mod called [Charging Gadgets](https://www.curseforge.com/minecraft/mc-mods/charging-gadgets)
 
 ### Upgrade the Gadget
 To upgrade the Gadget you'll need to craft a __Modification Table__ and which will accept your Mining Gadget on the left of the Gui which you can then __Shift Click__ the upgrades you have crafted (Found in JEI / Creative tab) into the Gadget. Once this is done, you should see your upgrade on the Gui at the top 👍 Good luck. Word of advice, the Power and 3x3 upgrades are great starter upgrades!
 
-### Modify the power requirements
-Check the config file in your `mcdir/config/` folder. You can change the upgrades 'Power per Operation' requirements as well as the Gadgets 'Power per Block Mined'.
-
 ---
 
-*Whilst you're here, also check out my other mod [Building Gadgets](https://minecraft.curseforge.com/projects/building-gadgets) it goes really well with this one 😀*
+_Whilst you're here, also check out my other mod [Building Gadgets](https://www.curseforge.com/minecraft/mc-mods/building-gadgets) it goes really well with this one 😀_
 
 ## Credits
 - [Direwolf20](https://github.com/Direwolf20-MC/) `Author, Primary Developer, Idea's man`
