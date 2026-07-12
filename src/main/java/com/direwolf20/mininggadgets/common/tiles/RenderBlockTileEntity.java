@@ -7,14 +7,11 @@ import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import com.direwolf20.mininggadgets.setup.Config;
-import com.direwolf20.mininggadgets.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +36,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 import java.util.*;
@@ -417,7 +413,7 @@ public class RenderBlockTileEntity extends BlockEntity {
             output.putString("playerUUID", this.playerUUID.toString());
         }
         output.store("upgrades", CompoundTag.CODEC, UpgradeTools.setUpgradesNBT(this.gadgetUpgrades));
-        output.putByte("breakType", (byte) this.breakType.ordinal());
+        output.putByte("breakType", this.breakType == null ? (byte) MiningProperties.BreakTypes.SHRINK.ordinal() : (byte) this.breakType.ordinal());
         //TODO
 //        tag.put("gadgetFilters", MiningProperties.serializeItemStackList(this.getGadgetFilters(), provider));
         output.putBoolean("gadgetIsWhitelist", this.isGadgetIsWhitelist());

@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [1.19.3]
+
+### Fixed
+* Render block causing crashes in a "debug" world #282
+
 ## [1.19.2]
 
 ### Fixed
