@@ -3,10 +3,8 @@ package com.direwolf20.mininggadgets.client.particles.laserparticle;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.tiles.RenderBlockTileEntity;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.BreakingItemParticle;
 import net.minecraft.client.particle.ParticleProvider;
@@ -17,6 +15,7 @@ import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.AtlasIds;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -160,6 +159,7 @@ public class LaserParticle extends BreakingItemParticle {
         Vec3 playerPos = player.position().add(0, player.getEyeHeight(), 0);
         Vec3 blockPos = new Vec3(sourceX, sourceY, sourceZ);
         Vec3 look = player.getLookAngle(); // or getLook(partialTicks)
+
         //The next 3 variables are directions on the screen relative to the players look direction. So right = to the right of the player, regardless of facing direction.
         Vec3 right = new Vec3(-look.z, 0, look.x).normalize();
         Vec3 forward = look;
@@ -173,8 +173,13 @@ public class LaserParticle extends BreakingItemParticle {
         forward = forward.scale(0.85f);
         down = down.scale(-0.35);
 
+        // Check which hand the gadget is in.
+        boolean isRightHanded = player.getMainArm() == HumanoidArm.RIGHT;
+        boolean isGadgetInMainHand = player.getMainHandItem().getItem() instanceof MiningGadget;
+        boolean isGadgetInRightHand = (isRightHanded && isGadgetInMainHand) || (!isRightHanded && !isGadgetInMainHand);
+
         //Take the player's eye position, and shift it to where the end of the laser is (Roughly)
-        Vec3 laserPos = playerPos.add(right);
+        Vec3 laserPos = isGadgetInRightHand ? playerPos.add(right) : playerPos.subtract(right);
         laserPos = laserPos.add(forward);
         laserPos = laserPos.add(down);
 
