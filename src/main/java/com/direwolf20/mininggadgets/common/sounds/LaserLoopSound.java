@@ -6,7 +6,10 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.sounds.SoundSource;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class LaserLoopSound extends AbstractTickableSoundInstance {
     private final Player player;
     private float distance = 0.0F;

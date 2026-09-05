@@ -323,7 +323,27 @@ public class MiningGadget extends Item {
             world.sendParticles(ParticleTypes.SMOKE, sourcePos.getX() + randomTX, sourcePos.getY() + randomTY, sourcePos.getZ() + randomTZ, 1, 0D, 0D, 0D, 0.0D);
     }
 
-
+    @OnlyIn(Dist.CLIENT)
+    public void playLoopSound(LivingEntity player, ItemStack stack) {
+        float volume = MiningProperties.getVolume(stack);
+        Player myplayer = Minecraft.getInstance().player;
+        if (myplayer.equals(player)) {
+            if (volume != 0.0f) {
+                if (stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains("mongo")) {
+                    if (player.level().getGameTime() % 5 == 0)
+                        if (rand.nextDouble() > 0.005d)
+                            player.playSound(SoundEvents.STONE_HIT, volume * 0.5f, 1f);
+                        else
+                            player.playSound(SoundEvents.CREEPER_PRIMED, volume * 1f, 1f);
+                }
+                else {
+                    Minecraft.getInstance().getSoundManager().play(
+                            new LaserLoopSound((Player) player, volume, player.level().random)
+                    );
+                }
+            }
+        }
+    }
 
     @Override
     public void onUseTick(Level world, LivingEntity livingEntity, ItemStack stack, int count)
@@ -562,14 +582,11 @@ public class MiningGadget extends Item {
     }
 
     @Override
-    public boolean releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-        if (worldIn.isClientSide()) {
-            if (ClientSounds.laserLoopSound != null) {
-                float volume = MiningProperties.getVolume(stack);
-                if (volume != 0.0f && !ClientSounds.laserLoopSound.isStopped()) {
-                    entityLiving.playSound(OurSounds.LASER_END.get(), volume * 0.5f, 1f);
-                }
-                ClientSounds.laserLoopSound = null;
+    public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+        if (worldIn.isClientSide) {
+            float volume = MiningProperties.getVolume(stack);
+            if (volume != 0.0f) {
+                entityLiving.playSound(OurSounds.LASER_END.get(), volume * 0.5f, 1f);
             }
         }
 
