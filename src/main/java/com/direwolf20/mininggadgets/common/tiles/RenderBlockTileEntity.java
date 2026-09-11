@@ -52,11 +52,11 @@ public class RenderBlockTileEntity extends BlockEntity {
     private int originalDurability;
     private int ticksSinceMine = 0;
     private List<Upgrade> gadgetUpgrades = new ArrayList<>();
-    private List<ItemStack> gadgetFilters;
+    private List<ItemStack> gadgetFilters = new ArrayList<>();
     private boolean gadgetIsWhitelist;
     private boolean packetReceived = false;
     private int totalAge;
-    private MiningProperties.BreakTypes breakType;
+    private MiningProperties.BreakTypes breakType = MiningProperties.BreakTypes.SHRINK;
     private boolean blockAllowed;
 
     public RenderBlockTileEntity(BlockPos pos, BlockState state) {
@@ -378,7 +378,7 @@ public class RenderBlockTileEntity extends BlockEntity {
     @Override
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
-        this.renderBlock = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), tag.getCompound("renderBlock"));
+        this.renderBlock = NbtUtils.readBlockState(provider.lookupOrThrow(Registries.BLOCK), tag.getCompound("renderBlock"));
         this.originalDurability = tag.getInt("originalDurability");
         this.priorDurability = tag.getInt("priorDurability");
         this.durability = tag.getInt("durability");
