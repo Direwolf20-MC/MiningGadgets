@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [1.18.8]
+
+### Fixed
+
+* Prevent server crash from unconfigured RenderBlockTileEntity thanks to #283
+
 ## [1.18.7]
 
 ### Fixed
