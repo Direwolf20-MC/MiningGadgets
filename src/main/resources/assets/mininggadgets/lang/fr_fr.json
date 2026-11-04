@@ -82,6 +82,6 @@
 	"tooltop.mininggadgets.paver": "Crée un chemin pour vous pendant que vous minez",
 	"tooltop.mininggadgets.range": "Prolonge votre portée de 5 fois avec chaque niveau",
 	"tooltop.mininggadgets.silk": "Applique l'enchantement toucher soie au gadget minier",
-	"tooltop.mininggadgets.size": "Permet de miner avec un rayon minier plus large",
+	"tooltop.mininggadgets.size": "Permet de miner dans un rayon plus large",
 	"tooltop.mininggadgets.void_junk": "Désintègre les blocs! (ajoute également un filtrage)"
 }
