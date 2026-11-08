@@ -30,3 +30,10 @@ description='''Mining is better with lasers.'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.mininggadgets]]
+    modId="ftbultimine"
+    type="optional"
+    versionRange="[26.1.2.7,)"
+    ordering="NONE"
+    side="BOTH"

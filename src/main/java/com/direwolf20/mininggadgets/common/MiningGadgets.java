@@ -1,6 +1,7 @@
 package com.direwolf20.mininggadgets.common;
 
 import com.direwolf20.mininggadgets.common.capabilities.GadgetEnergyHandler;
+import com.direwolf20.mininggadgets.common.integration.ultimine.UltimineCompat;
 import com.direwolf20.mininggadgets.common.items.MiningGadget;
 import com.direwolf20.mininggadgets.common.network.PacketHandler;
 import com.direwolf20.mininggadgets.common.tiles.ModificationTableTileEntity;
@@ -37,6 +38,8 @@ public class MiningGadgets
         NeoForge.EVENT_BUS.register(this);
         event.addListener(PacketHandler::registerNetworking);
         event.addListener(this::registerCapabilities);
+
+        UltimineCompat.init();
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {

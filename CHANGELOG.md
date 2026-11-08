@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [Unreleased]
+
+### Added
+* FTB Ultimine support: holding the Ultimine key now extends the gadget's mining instead of voiding blocks. Ultimine triggers when the laser finishes a block, and every extra block uses the gadget's upgrades (silk touch, fortune, magnet, void filter) and energy
+
+### Fixed
+* Magnet upgrade now picks up items and XP the vanilla way, so pickup events (quests, stats), the pickup animation/sound, Mending and pickup notification mods work with it
+
 ## [1.19.3]
 
 ### Fixed

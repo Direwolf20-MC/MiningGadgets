@@ -29,6 +29,13 @@ repositories {
             includeGroup "mezz.jei"
         }
     }
+
+    maven { // FTB Ultimine
+        url 'https://maven.ftb.dev/releases'
+        content {
+            includeGroup "dev.ftb.mods"
+        }
+    }
 }
 
 base {
@@ -101,6 +108,9 @@ dependencies {
     compileOnly "mezz.jei:jei-${jei_mc_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${jei_mc_version}-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-${jei_mc_version}-neoforge:${jei_version}"
+
+    compileOnly("dev.ftb.mods:ftb-ultimine-neoforge:${ftb_ultimine_version}") { transitive = false }
+    compileOnly("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
