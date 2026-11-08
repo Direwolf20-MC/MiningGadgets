@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [Unreleased]
+
+### Fixed
+* Magnet upgrade now picks up items and XP the vanilla way, so pickup events (quests, stats), the pickup animation/sound, Mending and pickup notification mods work with it
+
 ## [1.19.3]
 
 ### Fixed
