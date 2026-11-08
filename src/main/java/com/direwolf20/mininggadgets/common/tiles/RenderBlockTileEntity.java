@@ -5,6 +5,7 @@ import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.util.GadgetHarvest;
 import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import com.direwolf20.mininggadgets.setup.Config;
 import net.minecraft.core.BlockPos;
@@ -16,8 +17,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.TriState;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -34,8 +33,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 import java.util.*;
@@ -467,23 +464,16 @@ public class RenderBlockTileEntity extends BlockEntity {
             int exp = this.renderBlock.getExpDrop(this.level, this.worldPosition, null, player, tempTool);
             boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
             for (ItemStack drop : drops) {
-                if (drop != null) {
+                if (drop != null && !drop.isEmpty()) {
                     if (magnetMode) {
-                        ItemEntityPickupEvent.Pre wasPickedUp = EventHooks.fireItemPickupPre(new ItemEntity(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), drop), player);
-                        if (wasPickedUp.canPickup() == TriState.DEFAULT) {
-                            if (!player.addItem(drop)) {
-                                Block.popResource(this.level, this.worldPosition, drop);
-                            }
-                        }
+                        GadgetHarvest.pickUp((ServerLevel) this.level, this.worldPosition, drop, player);
                     } else {
                         Block.popResource(this.level, this.worldPosition, drop);
                     }
                 }
             }
             if (magnetMode) {
-                if (exp > 0) {
-                    player.giveExperiencePoints(exp);
-                }
+                GadgetHarvest.pickUpXp((ServerLevel) this.level, this.worldPosition, exp, player);
             } else {
                 if (exp > 0) {
                     this.renderBlock.getBlock().popExperience((ServerLevel) this.level, this.worldPosition, exp);
