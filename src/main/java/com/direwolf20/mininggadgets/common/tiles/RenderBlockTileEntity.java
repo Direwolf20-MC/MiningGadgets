@@ -5,22 +5,18 @@ import com.direwolf20.mininggadgets.common.events.ServerTickHandler;
 import com.direwolf20.mininggadgets.common.items.gadget.MiningProperties;
 import com.direwolf20.mininggadgets.common.items.upgrade.Upgrade;
 import com.direwolf20.mininggadgets.common.items.upgrade.UpgradeTools;
+import com.direwolf20.mininggadgets.common.integration.ultimine.UltimineCompat;
 import com.direwolf20.mininggadgets.common.util.GadgetHarvest;
-import com.direwolf20.mininggadgets.common.util.SpecialBlockActions;
 import com.direwolf20.mininggadgets.setup.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -427,79 +423,23 @@ public class RenderBlockTileEntity extends BlockEntity {
             return;
         }
 
-        int silk = 0;
-        int fortune = 0;
-
-        ItemStack tempTool = new ItemStack(com.direwolf20.mininggadgets.setup.Registration.MININGGADGET.get());
-
-        // If silk is in the upgrades, apply it without a tier.
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
-            HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-            tempTool.enchant(registrylookup.getOrThrow(Enchantments.SILK_TOUCH), 1);
-            silk = 1;
-        }
-
-        // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1)) {
-            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
-            if (upgrade.isPresent()) {
-                fortune = upgrade.get().getTier();
-                HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-                tempTool.enchant(registrylookup.getOrThrow(Enchantments.FORTUNE), fortune);
-            }
-        }
+        ItemStack tempTool = GadgetHarvest.createTempTool(this.level, this.gadgetUpgrades);
 
         // Fire an event for other mods that we've just broken the block
         BreakBlockEvent breakEvent = fixForgeEventBreakBlock(this.renderBlock, player, level, worldPosition, tempTool);
-        NeoForge.EVENT_BUS.post(breakEvent);
+        if (UltimineCompat.isLoaded()) {
+            // Lets FTB Ultimine extend this break; it then breaks every block (this one included) through
+            // GadgetHarvest and cancels the event.
+            UltimineCompat.postGadgetBreak(breakEvent, (ServerLevel) this.level, this.worldPosition, this.renderBlock, player);
+        } else {
+            NeoForge.EVENT_BUS.post(breakEvent);
+        }
         // Someone cancelled out break event
         if (breakEvent.isCanceled()) {
             return;
         }
 
-
-        List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
-
-        if (this.blockAllowed) {
-            int exp = this.renderBlock.getExpDrop(this.level, this.worldPosition, null, player, tempTool);
-            boolean magnetMode = (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.MAGNET));
-            for (ItemStack drop : drops) {
-                if (drop != null && !drop.isEmpty()) {
-                    if (magnetMode) {
-                        GadgetHarvest.pickUp((ServerLevel) this.level, this.worldPosition, drop, player);
-                    } else {
-                        Block.popResource(this.level, this.worldPosition, drop);
-                    }
-                }
-            }
-            if (magnetMode) {
-                GadgetHarvest.pickUpXp((ServerLevel) this.level, this.worldPosition, exp, player);
-            } else {
-                if (exp > 0) {
-                    this.renderBlock.getBlock().popExperience((ServerLevel) this.level, this.worldPosition, exp);
-                }
-            }
-
-            this.renderBlock.spawnAfterBreak((ServerLevel) this.level, this.worldPosition, tempTool, false); // Fixes silver fish basically...
-        }
-
-        //        BlockState underState = world.getBlockState(this.pos.down());
-        this.level.removeBlockEntity(this.worldPosition);
-        this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
-
-        //        if (UpgradeTools.containsActiveUpgradeFromList(gadgetUpgrades, Upgrade.PAVER)) {
-        //            if (this.pos.getY() <= player.getPosY() && underState == Blocks.AIR.getDefaultState()) {
-        //                world.setBlockState(this.pos.down(), Blocks.COBBLESTONE.getDefaultState());
-        //            }
-        //        }
-
-        // Add to the break stats
-        player.awardStat(Stats.BLOCK_MINED.get(this.renderBlock.getBlock()));
-
-        // Handle special cases
-        if (SpecialBlockActions.getRegister().containsKey(this.renderBlock.getBlock())) {
-            SpecialBlockActions.getRegister().get(this.renderBlock.getBlock()).accept(this.level, this.worldPosition, this.renderBlock);
-        }
+        GadgetHarvest.harvest((ServerLevel) this.level, this.worldPosition, this.renderBlock, player, this.gadgetUpgrades, tempTool, this.blockAllowed);
     }
 
 
@@ -528,27 +468,7 @@ public class RenderBlockTileEntity extends BlockEntity {
         if (player == null) {
             return;
         }
-        int silk = 0;
-        int fortune = 0;
-
-        ItemStack tempTool = new ItemStack(com.direwolf20.mininggadgets.setup.Registration.MININGGADGET.get());
-
-        // If silk is in the upgrades, apply it without a tier.
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.SILK)) {
-            HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-            tempTool.enchant(registrylookup.getOrThrow(Enchantments.SILK_TOUCH), 1);
-            silk = 1;
-        }
-
-        // FORTUNE_1 is eval'd against the basename so this'll support all fortune upgrades
-        if (UpgradeTools.containsActiveUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1)) {
-            Optional<Upgrade> upgrade = UpgradeTools.getUpgradeFromList(this.gadgetUpgrades, Upgrade.FORTUNE_1);
-            if (upgrade.isPresent()) {
-                fortune = upgrade.get().getTier();
-                HolderLookup.RegistryLookup<Enchantment> registrylookup = level.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-                tempTool.enchant(registrylookup.getOrThrow(Enchantments.FORTUNE), fortune);
-            }
-        }
+        ItemStack tempTool = GadgetHarvest.createTempTool(this.level, this.gadgetUpgrades);
 
         List<ItemStack> drops = Block.getDrops(this.renderBlock, (ServerLevel) this.level, this.worldPosition, null, player, tempTool);
 
